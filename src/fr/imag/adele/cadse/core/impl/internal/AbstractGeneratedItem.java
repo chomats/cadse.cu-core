@@ -1556,7 +1556,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		if (parentId != null) {
 			String parentlt = itemOperation.getAttribute(CadseRootCST.ITEM_TYPE_at_PARENT_ITEM_TYPE_ID_);
 			Item parent = wl.getItem(parentId);
-			if (parent != null) {
+			if (parent != null && parent.isResolved()) {
 				setParent(parent, parent.getType().getOutgoingLinkType(parentlt));
 			}
 		}

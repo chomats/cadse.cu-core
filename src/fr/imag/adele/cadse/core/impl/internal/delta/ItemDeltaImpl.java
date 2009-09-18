@@ -974,8 +974,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getIncomingItemOne(fr.imag.adele.cadse.core.LinkType)
 	 */
 	public Item getIncomingItem(LinkType lt) {
-		// TODO Auto-generated method stub
-		return null;
+		Collection<Item> incomingItem = getIncomingItems(lt);
+		Item ret = incomingItem.size() == 1 ? incomingItem.iterator().next() : null;
+		return ret;
 	}
 
 	/*
@@ -2825,9 +2826,8 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#removeOutgoingItem(fr.imag.adele.cadse.core.LinkType,
 	 *      fr.imag.adele.cadse.core.Item)
 	 */
-	public Link removeOutgoingItem(LinkType linkID, Item value) throws CadseException {
-		// TODO Auto-generated method stub
-		return null;
+	public Link removeOutgoingItem(LinkType linkType, Item destination) throws CadseException {
+		return Accessor.removeOutgoingItem(this, linkType, destination);
 	}
 
 	/*

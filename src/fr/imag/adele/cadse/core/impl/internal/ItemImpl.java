@@ -603,7 +603,7 @@ public class ItemImpl extends AbstractItem implements Item {
 	 */
 	@Override
 	public synchronized void addIncomingLink(Link link, boolean notifie) {
-		if (link.isPart()) {
+		if (link.getLinkType() != null && link.getLinkType().isPart()) {
 			setParent(link.getSource(), link.getLinkType());
 		}
 		super.addIncomingLink(link, notifie);
@@ -1733,7 +1733,7 @@ public class ItemImpl extends AbstractItem implements Item {
 		}
 
 		if (lt == null) {
-			lt = Accessor.getPartParentLinkType(this);
+			lt = Accessor.getPartParentLinkType(this, parent);
 		}
 		if (lt == null) {
 			lt = getType().getIncomingPart(_parent.getType());

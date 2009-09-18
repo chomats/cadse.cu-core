@@ -611,7 +611,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	public Link commitLoadCreateLink(LinkType lt, Item destination) {
 		if (lt == CadseRootCST.LINK_DEFINITION_ATTIBUTE_TYPE_lt_DESTINATION) {
 			this._destination = (ItemType) destination;
-			if (!this.getSource().isOrphan()) {
+			if (this.getSource() != null && !this.getSource().isOrphan()) {
 				_destination.addIncomingLink(this, true);
 			}
 			return new ReflectLink(lt, this, destination, 0);

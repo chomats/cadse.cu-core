@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="fede/workspace/domain/IWSNotifieChange.java" kind="src" path="sources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="con" path="fede.workspace.eclipse.java.item.dependencies"/>
-	<classpathentry kind="src" path="components-sources"/>
-	<classpathentry kind="src" path="aj-sources"/>
-	<classpathentry kind="output" path="classes"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>

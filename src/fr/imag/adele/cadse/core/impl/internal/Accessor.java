@@ -259,6 +259,10 @@ public class Accessor {
 	}
 
 	public static void delete(Link l) throws CadseException {
+		if (l instanceof LinkDelta) {
+			((LinkDelta) l).delete();
+			return;
+		}
 		LogicalWorkspaceTransaction transaction = l.getSource().getLogicalWorkspace().createTransaction();
 		LinkDelta lOper = transaction.getLink(l);
 		if (lOper == null) {
@@ -291,10 +295,6 @@ public class Accessor {
 	}
 
 	public static Link removeOutgoingItem(Item source, LinkType linkType, Item destination) throws CadseException {
-		if (linkType.getMax() != 1) {
-			throw new CadseIllegalArgumentException(Messages.error_bad_link_type_max_not_equal_to_one, linkType
-					.getName());
-		}
 		Link l = source.getOutgoingLink(linkType, destination.getId());
 		if (l != null) {
 			delete(l);
