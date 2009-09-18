@@ -1,0 +1,216 @@
+Index: sources/fede/workspace/domain/Item.java
+===================================================================
+--- sources/fede/workspace/domain/Item.java	(revision 11841)
++++ sources/fede/workspace/domain/Item.java	(working copy)
+@@ -126,7 +126,8 @@
+ 	public static final int ABSTRACT								= 0x00000400;
+ 	public static final int HAS_CONTENT								= 0x00000800;
+ 	
+-	// 4
++	public static final int UNRESOLVED								= 0x00001000;
++	// 3
+ 	
+ 	public static final int EVOL_REQUIRER_NEW_REV					= 0x00010000;
+ 	public static final int EVOL_REV_MODIFIED						= 0x00020000;
+@@ -320,6 +321,13 @@
+ 	public abstract Collection<Item> getIncomingItem();
+ 	
+ 	/**
++	 * Return the singleton object if th
++	 * @param lt
++	 * @return
++	 */
++	public Item getIncomingItemOne(LinkType lt);
++	
++	/**
+ 	 * Get <tt>outgoings</tt> links by link type.<br/><br/>
+ 	 * 
+ 	 * @param linkType
+@@ -683,6 +691,22 @@
+ 	/**
+ 	 * Gets the part parent.
+ 	 * 
++	 * @return the part parent
++	 */
++	public abstract Item getPartParent(LinkType lt);
++	
++	
++	/**
++	 * Gets the part parent.
++	 * 
++	 * @return the part parent
++	 * @throws MelusineException 
++	 */
++	public abstract Item getPartParent(LinkType lt, boolean attemptToRecreate) throws MelusineException;
++	
++	/**
++	 * Gets the part parent.
++	 * 
+ 	 * @param typeID
+ 	 *            the type id
+ 	 * 
+Index: sources/fede/workspace/domain/attribute/AttributeTypeUnresolved.java
+===================================================================
+--- sources/fede/workspace/domain/attribute/AttributeTypeUnresolved.java	(revision 0)
++++ sources/fede/workspace/domain/attribute/AttributeTypeUnresolved.java	(revision 0)
+@@ -0,0 +1,29 @@
++package fede.workspace.domain.attribute;
++
++import fede.workspace.domain.CompactUUID;
++import fede.workspace.domain.ItemType;
++import fede.workspace.domain.delta.ItemOperation;
++
++public class AttributeTypeUnresolved extends AttributeType implements IAttributeType<Object>{
++
++	public AttributeTypeUnresolved(CompactUUID id, String name, int flag) {
++		super(id, name, flag);
++	}
++
++	public AttributeTypeUnresolved(ItemOperation item) {
++		super(item);
++	}
++
++	public ItemType getType() {
++		return null;
++	}
++
++	public Class<Object> getAttributeType() {
++		return Object.class;
++	}
++
++	public int getIntID() {
++		return 0;
++	}
++
++}
+Index: sources/fede/workspace/domain/internal/ItemTypeImpl.java
+===================================================================
+--- sources/fede/workspace/domain/internal/ItemTypeImpl.java	(revision 11841)
++++ sources/fede/workspace/domain/internal/ItemTypeImpl.java	(working copy)
+@@ -176,6 +176,8 @@
+ 
+ 	private IItemFactory itemFactory;
+ 	
++	private ItemTypeImpl[]	extendedBy;
++	
+ //	/**
+ //	 * The Constructor.
+ //	 * 
+@@ -399,29 +401,8 @@
+         try {
+ 			this.icon = itemOperation.getURLAttribut(CadseRootCST.META_ITEM_TYPE_at_ICON);
+ 		} catch (MalformedURLException e) {
+-			errorCollector.addError(itemOperation.getId(), "Cannot load the url attribute "+itemOperation.getAttribute(CadseRootCST.META_ITEM_TYPE_at_ICON));
++			errorCollector.addError(itemOperation.getId(), "Cannot load the url attribute "+itemOperation.getAttribute(CadseRootCST.META_ITEM_TYPE_at_ICON_));
+ 		}
+-		
+-//		// ne charge que les object resolu
+-		//deja fait ?
+-//		List<Item> attributesDefinitionsArray 
+-//			= desc.getLinksDest(wl, CadseRootCST.META_ITEM_TYPE_lt_ATTRIBUTES_DEFINITION, CadseRootCST.ATTRIBUTE_TYPE);
+-//		if (attributesDefinitionsArray.size() != 0) {
+-//			attributesDefinitions = new IAttributeType<?>[attributesDefinitionsArray.size()];
+-//			int i = 0;
+-//			for (Item at : attributesDefinitionsArray) {
+-//				IAttributeType<?> attributeDef = (IAttributeType<?>) at;
+-//				attributesDefinitions[i++] = attributeDef;
+-//				if (at.getType() == CadseRootCST.LINK_DEFINITION_ATTIBUTE_TYPE) {
+-//					LinkType lt = (LinkType) at;
+-//					this.outgoings.add(lt);
+-//					if (lt.isComposition())
+-//			            this.kind |= COMPOSITE;
+-//			    }
+-//				attributeDef.addIncomingLink(new ReflectLink(CadseRootCST.META_ITEM_TYPE_lt_ATTRIBUTES_DEFINITION, this, attributeDef,-1), false);
+-//			}
+-//			resetOutgoingLinkType();
+-//		}
+ 	}
+ 
+ 	/**
+Index: sources/fede/workspace/domain/internal/WorkspaceLogique.java
+===================================================================
+--- sources/fede/workspace/domain/internal/WorkspaceLogique.java	(revision 11841)
++++ sources/fede/workspace/domain/internal/WorkspaceLogique.java	(working copy)
+@@ -2394,12 +2394,12 @@
+ 	static public void preconditions_createLink( Link l, LinkType lt, Item source,Item destination) throws MelusineException {
+ 		// 7. one relation of containment by destination.
+ 		if (lt.isPart()) {
+-			if (destination.getPartParent(false) != null && destination.getPartParent(false) != source)
+-				throw new IllegalArgumentException(
+-						MessageFormat
+-								.format(
+-										Messages.error_cannot_create_part_link, //$NON-NLS-1$
+-										source.getId(), destination.getId()));
++//			if (destination.getPartParent(false) != null && destination.getPartParent(false) != source)
++//				throw new IllegalArgumentException(
++//						MessageFormat
++//								.format(
++//										Messages.error_cannot_create_part_link, //$NON-NLS-1$
++//										source.getId(), destination.getId()));
+ 		}
+ 		if (lt.isInversePart()) {
+ 			if (source.getPartParent(false) != null)
+Index: sources/fede/workspace/domain/internal/AbstractGeneratedItem.java
+===================================================================
+--- sources/fede/workspace/domain/internal/AbstractGeneratedItem.java	(revision 11841)
++++ sources/fede/workspace/domain/internal/AbstractGeneratedItem.java	(working copy)
+@@ -449,6 +449,12 @@
+ 		return Accessor.getIncomingItem(getIncomingLinks());
+ 	}
+ 	
++	public Item getIncomingItemOne(LinkType lt) {
++		Collection<Item> incomingItem = getIncomingItem(lt);
++		Item ret = incomingItem.size() == 1 ? incomingItem.iterator().next() : null;
++		return ret;
++	}
++	
+ 	public List<Link> getIncomingLinks() {
+ 		CollectedReflectLink ret = new CollectedReflectLink(this);
+ 		if (incomings != null) {
+@@ -676,6 +682,15 @@
+ 	public Item getPartParent(boolean attemptToRecreate) {
+ 		return null;
+ 	}
++	
++	public Item getPartParent(LinkType lt) {
++		return getOutgoingItemOne(lt.getInverse(), false);
++	}
++	
++	public Item getPartParent(LinkType lt, boolean attemptToRecreate)
++			throws MelusineException {
++		return getPartParent(lt);
++	}
+ 
+ 	public Item getPartParent(ItemType typeID) {
+ 		return Accessor.getPartParent(this, typeID);
+@@ -1478,6 +1493,8 @@
+ 		getType().getAllAttributeTypesKeys(all, filter);
+ 	}
+ 
++	
++	
+ 	public IAttributeType<?> getLocalAttributeType(String attName) {
+ 		if (Item.SHORT_NAME_ATTRIBUTE.equals(attName)) {
+ 			return CadseRootCST.ITEM_TYPE_at_NAME_;
+@@ -1503,4 +1520,6 @@
+ 	public IAttributeType<?>[] getLocalAllAttributeTypes() {
+ 		return getType().getAllAttributeTypes();
+ 	}
++	
++	
+ }
+Index: sources/fede/workspace/domain/internal/LinkTypeImpl.java
+===================================================================
+--- sources/fede/workspace/domain/internal/LinkTypeImpl.java	(revision 11841)
++++ sources/fede/workspace/domain/internal/LinkTypeImpl.java	(working copy)
+@@ -409,6 +409,10 @@
+      * @see fede.workspace.domain.LinkType#getInverse()
+      */
+     public LinkType getInverse() {
++    	if (this.inverse == null && isPart()) {
++    		//create pseudo linktype
++    		this.inverse = destination.createLinkType(CompactUUID.randomUUID(), 0, "#parent:"+getShortName(), 0, 0, 1, null, this);
++    	}
+     	return this.inverse;
+     }
+     
