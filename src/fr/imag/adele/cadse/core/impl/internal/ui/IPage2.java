@@ -26,12 +26,11 @@ import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.impl.ui.PageImpl;
 import fr.imag.adele.cadse.core.impl.ui.UIFieldImpl;
-import fr.imag.adele.cadse.core.CadseRootCST;
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.ui.IActionPage;
 import fr.imag.adele.cadse.core.ui.IPageFactory;
 
 public class IPage2 extends PageImpl implements IPageFactory {
-	Item parentItem;
 	public IPage2(CompactUUID id, String name, ItemType parent) {
 		super(id, name, parent);
 	}
@@ -63,8 +62,8 @@ public class IPage2 extends PageImpl implements IPageFactory {
 
 	public PageImpl createPage(int cas, Link l, Item item, IItemNode node,
 			ItemType type, LinkType lt) {
-		setParent(type, cas == PAGE_CREATION_ITEM ? CadseRootCST.META_ITEM_TYPE_lt_CREATION_PAGES: CadseRootCST.META_ITEM_TYPE_lt_MODIFICATION_PAGES);
-		parentItem = item;
+		setParent(type, cas == PAGE_CREATION_ITEM ? CadseGCST.ITEM_TYPE_lt_CREATION_PAGES: CadseGCST.ITEM_TYPE_lt_MODIFICATION_PAGES);
+		_parent = item;
 		return this;
 	}
 
@@ -73,5 +72,38 @@ public class IPage2 extends PageImpl implements IPageFactory {
 	}
 	
 	
+	@Override
+	public void setParent(Item parent, LinkType lt) {
+		setParentItem(parent);
+		if (lt == CadseGCST.CREATION_DIALOG_lt_PAGES || parent.isInstanceOf(CadseGCST.CREATION_DIALOG)) {
+			super.setParent(parent.getPartParent(), CadseGCST.ITEM_TYPE_lt_CREATION_PAGES);
+		} else if (lt == CadseGCST.MODIFICATION_DIALOG_lt_PAGES || parent.isInstanceOf(CadseGCST.MODIFICATION_DIALOG)) {
+			super.setParent(parent.getPartParent(), CadseGCST.ITEM_TYPE_lt_MODIFICATION_PAGES);
+		} else {
+			super.setParent(parent, lt);
+		}
+	}
+	
+	public void setParentItem(Item parentItem) {
+		this._parent = parentItem;
+	}
+	
+	@Override
+	public ItemType getParentItemType() {
+		if (_parent != null) {
+			if (_parent.getType() == CadseGCST.CREATION_DIALOG) {
+				return (ItemType) _parent.getPartParent();
+			}
+			if (_parent.getType() == CadseGCST.MODIFICATION_DIALOG) {
+				return (ItemType) _parent.getPartParent();
+			}
+		}
+		return super.getParentItemType();
+	}
+	
+	@Override
+	public Item getPartParent(boolean attemptToRecreate) {
+		return _parent;
+	}
 
 }

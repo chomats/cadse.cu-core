@@ -33,10 +33,13 @@ import org.apache.felix.ipojo.util.Tracker;
 import org.osgi.framework.BundleContext;
 
 import fr.imag.adele.cadse.core.CadseDomain;
+import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.ChangeID;
 import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.IWorkspaceOperation;
 import fr.imag.adele.cadse.core.Item;
+import fr.imag.adele.cadse.core.ItemDescriptionRef;
+import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.WSEvent;
 import fr.imag.adele.cadse.core.delta.ImmutableWorkspaceDelta;
@@ -59,7 +62,7 @@ public class CadseDomainImpl implements CadseDomain {
 	private static CadseDomainImpl		INSTANCE;
 
 	/** The workspace logique. */
-	private LogicalWorkspaceImpl		workspaceLogique;
+	private LogicalWorkspaceImpl		_logicalWorkspace;
 
 	/** The events manager. */
 	private transient EventsManagerImpl	eventsManager	= null;
@@ -73,6 +76,9 @@ public class CadseDomainImpl implements CadseDomain {
 	private Tracker						_IEclipseTracker;
 
 	private Tracker						_IPersistenceTracker;
+
+	public static boolean STOPPED = false;
+	public static boolean STARTED = false;
 
 	/**
 	 * Instantiates a new workspace domain impl.
@@ -96,7 +102,7 @@ public class CadseDomainImpl implements CadseDomain {
 	 * @see fr.imag.adele.cadse.core.WorkspaceDomain#getWorkspaceLogique()
 	 */
 	public LogicalWorkspace getLogicalWorkspace() {
-		return workspaceLogique;
+		return _logicalWorkspace;
 	}
 
 	/**
@@ -197,9 +203,11 @@ public class CadseDomainImpl implements CadseDomain {
 	// }
 
 	public void start() {
+		STARTED = true;
+		STOPPED = false;
 		INSTANCE = this;
 		eventsManager = new EventsManagerImpl(this);
-		workspaceLogique = new LogicalWorkspaceImpl(this);
+		_logicalWorkspace = new LogicalWorkspaceImpl(this);
 		eventsManager.start();
 		Logger mLogger = Logger.getLogger("CU.Workspace.Workspace");
 		mLogger.info("start");
@@ -219,10 +227,22 @@ public class CadseDomainImpl implements CadseDomain {
 	}
 
 	public void stop() {
-		INSTANCE = null;
-		eventsManager.setStopped(true);
+		STARTED = false;
+		STOPPED = true;
 		Logger mLogger = Logger.getLogger("CU.Workspace.Workspace");
-		mLogger.info("stop");
+		eventsManager.setStopped(true);
+		try {
+			eventsManager.waitEndAsyncEvents(2000);
+		} catch (InterruptedException e1) {
+			mLogger.log(Level.SEVERE, "Interupted !!!",e1);
+			eventsManager.stop();
+		} catch (TimeoutException e1) {
+			mLogger.log(Level.SEVERE, "Cannot send all events !!!",e1);
+			eventsManager.stop();
+		}
+		if (eventsManager.isAlive())
+				mLogger.log(Level.WARNING, "Events manager is allready alive");
+			
 		if (unresolvedObject != null) {
 			try {
 				unresolvedObject.store(new FileOutputStream(propFile), "");
@@ -245,6 +265,10 @@ public class CadseDomainImpl implements CadseDomain {
 
 		_IPersistenceTracker.close();
 		_IPersistenceTracker = null;
+		
+		INSTANCE = null;
+		mLogger.info("stop");
+		
 	}
 
 	Properties		unresolvedObject	= null;
@@ -474,5 +498,11 @@ public class CadseDomainImpl implements CadseDomain {
 
 	public EventsManagerImpl getEventsManager() {
 		return eventsManager;
+	}
+	
+	@Override
+	public Item createUnresolvedItem(ItemType itemType, String name,
+			CompactUUID id) throws CadseException {
+		return this._logicalWorkspace.loadItem(new ItemDescriptionRef(id, itemType.getId(), name, name));
 	}
 }

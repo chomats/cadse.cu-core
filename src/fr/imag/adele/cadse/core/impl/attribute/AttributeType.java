@@ -19,7 +19,7 @@
 package fr.imag.adele.cadse.core.impl.attribute;
 
 import fr.imag.adele.cadse.core.CadseException;
-import fr.imag.adele.cadse.core.CadseRootCST;
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemState;
@@ -39,7 +39,6 @@ import fr.imag.adele.cadse.core.util.Convert;
 public abstract class AttributeType extends AbstractGeneratedItem implements IInternalTWAttribute {
 
 	private String			_name;
-	private Item			_parent;
 	private TWEvol			_evol			= TWEvol.twImmutable;
 	private boolean			_TWRevSpecific	= true;
 	private TWCommitKind	_TWCommitKind	= TWCommitKind.conflict;
@@ -65,97 +64,91 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 
 	@Override
 	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
-		if (CadseRootCST.ATTRIBUTE_TYPE_at_TWEVOL_ == type) {
+		if (CadseGCST.ATTRIBUTE_at_TWEVOL_ == type) {
 			return (T) _evol;
 		}
-		if (CadseRootCST.ATTRIBUTE_TYPE_at_CANNOT_BE_UNDEFINED_ == type) {
+		if (CadseGCST.ATTRIBUTE_at_CANNOT_BE_UNDEFINED_ == type) {
 			return (T) Boolean.valueOf(!getFlag(CAN_BE_UNDEFINED));
 		}
-		if (CadseRootCST.ATTRIBUTE_TYPE_at_MUST_BE_INITIALIZED_AT_CREATION_TIME_ == type) {
+		if (CadseGCST.ATTRIBUTE_at_MUST_BE_INITIALIZED_ == type) {
 			return (T) Boolean.valueOf(getFlag(MUST_BE_INITIALIZED_AT_CREATION_TIME));
 		}
-		if (CadseRootCST.ATTRIBUTE_TYPE_at_IS_META_ATTRIBUTE_ == type) {
+		/*if (CadseGCST.ATTRIBUTE_at_IS_META_ATTRIBUTE_ == type) {
 			return (T) Boolean.valueOf(getFlag(IS_META_ATTRIBUTE));
-		}
-		if (CadseRootCST.ATTRIBUTE_TYPE_at_OVERWRITABLE_ == type) {
+		}*/
+		/*if (CadseGCST.ATTRIBUTE_at_OVERWRITABLE_ == type) {
 			return (T) Boolean.valueOf(getFlag(OVERWRITABLE));
-		}
-		if (CadseRootCST.ATTRIBUTE_TYPE_at_NAME_ == type) {
+		}*/
+		if (CadseGCST.ITEM_at_NAME_ == type) {
 			return (T) _name;
 		}
-		if (CadseRootCST.ITEM_TYPE_at_DISPLAY_NAME_ == type) {
+		if (CadseGCST.ITEM_at_DISPLAY_NAME_ == type) {
 			return (T) _name;
 		}
-		if (CadseRootCST.ITEM_TYPE_at_QUALIFIED_DISPLAY_NAME_ == type) {
+		/*if (CadseGCST.ITEM_at_QUALIFIED_DISPLAY_NAME_ == type) {
 			return (T) _name;
-		}
-		if (CadseRootCST.ITEM_TYPE_at_QUALIFIED_NAME_ == type) {
+		}*/
+		if (CadseGCST.ITEM_at_QUALIFIED_NAME_ == type) {
 			return (T) _name;
 		}
 
-		if (CadseRootCST.ATTRIBUTE_TYPE_at_TWREV_SPECIFIC_ == type) {
+		if (CadseGCST.ATTRIBUTE_at_TWREV_SPECIFIC_ == type) {
 			return (T) Boolean.valueOf(_TWRevSpecific);
 		}
-		if (CadseRootCST.ATTRIBUTE_TYPE_at_TWCOMMIT_KIND_ == type) {
+		if (CadseGCST.ATTRIBUTE_at_TWCOMMIT_KIND_ == type) {
 			return (T) _TWCommitKind;
 		}
-		if (CadseRootCST.ATTRIBUTE_TYPE_at_TWUPDATE_KIND_ == type) {
+		if (CadseGCST.ATTRIBUTE_at_TWUPDATE_KIND_ == type) {
 			return (T) _TWUpdateKind;
-		}
-		if (CadseRootCST.ATTRIBUTE_TYPE_at_CACHED_ == type) {
-			return (T) Boolean.valueOf(getFlag(PERSISTENCE_CACHE));
 		}
 		return super.internalGetOwnerAttribute(type);
 	}
 
 	@Override
 	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
-		if (CadseRootCST.ATTRIBUTE_TYPE_at_CANNOT_BE_UNDEFINED_ == type) {
+		if (CadseGCST.ATTRIBUTE_at_CANNOT_BE_UNDEFINED_ == type) {
 			return setFlag(CAN_BE_UNDEFINED, !Convert.toBoolean(value));
 		}
 
-		if (CadseRootCST.ATTRIBUTE_TYPE_at_MUST_BE_INITIALIZED_AT_CREATION_TIME_ == type) {
+		if (CadseGCST.ATTRIBUTE_at_MUST_BE_INITIALIZED_ == type) {
 			return setFlag(MUST_BE_INITIALIZED_AT_CREATION_TIME, Convert.toBoolean(value, false));
 		}
-		if (CadseRootCST.ATTRIBUTE_TYPE_at_IS_META_ATTRIBUTE_ == type) {
+		/*if (CadseGCST.ATTRIBUTE_at_IS_META_ATTRIBUTE_ == type) {
 			return setFlag(IS_META_ATTRIBUTE, Convert.toBoolean(value));
 		}
-		if (CadseRootCST.ATTRIBUTE_TYPE_at_OVERWRITABLE_ == type) {
+		if (CadseGCST.ATTRIBUTE_at_OVERWRITABLE_ == type) {
 			return setFlag(OVERWRITABLE, Convert.toBoolean(value, false));
-		}
-		if (CadseRootCST.ATTRIBUTE_TYPE_at_NAME_ == type) {
+		}*/
+		if (CadseGCST.ITEM_at_NAME_ == type) {
 			_name = Convert.toString(value);
 			return true;
 		}
-		if (CadseRootCST.ATTRIBUTE_TYPE_at_TWEVOL_ == type) {
-			_evol = CadseRootCST.ATTRIBUTE_TYPE_at_TWEVOL_.convertTo(value);
+		if (CadseGCST.ATTRIBUTE_at_TWEVOL_ == type) {
+			_evol = CadseGCST.ATTRIBUTE_at_TWEVOL_.convertTo(value);
 			if (_evol == null) {
 				_evol = TWEvol.twImmutable;
 			}
 			return true;
 		}
-		if (CadseRootCST.ATTRIBUTE_TYPE_at_TWREV_SPECIFIC_ == type) {
+		if (CadseGCST.ATTRIBUTE_at_TWREV_SPECIFIC_ == type) {
 			_TWRevSpecific = Convert.toBoolean(value, true);
 			return true;
 		}
-		if (CadseRootCST.ATTRIBUTE_TYPE_at_TWCOMMIT_KIND_ == type) {
-			_TWCommitKind = CadseRootCST.ATTRIBUTE_TYPE_at_TWCOMMIT_KIND_.convertTo(value);
+		if (CadseGCST.ATTRIBUTE_at_TWCOMMIT_KIND_ == type) {
+			_TWCommitKind = CadseGCST.ATTRIBUTE_at_TWCOMMIT_KIND_.convertTo(value);
 			if (_TWCommitKind == null) {
 				_TWCommitKind = TWCommitKind.conflict;
 			}
 			return true;
 		}
-		if (CadseRootCST.ATTRIBUTE_TYPE_at_TWUPDATE_KIND_ == type) {
-			_TWUpdateKind = CadseRootCST.ATTRIBUTE_TYPE_at_TWUPDATE_KIND_.convertTo(value);
+		if (CadseGCST.ATTRIBUTE_at_TWUPDATE_KIND_ == type) {
+			_TWUpdateKind = CadseGCST.ATTRIBUTE_at_TWUPDATE_KIND_.convertTo(value);
 			if (_TWUpdateKind == null) {
 				_TWUpdateKind = TWUpdateKind.merge;
 			}
 			return true;
 		}
-		if (CadseRootCST.ATTRIBUTE_TYPE_at_CACHED_ == type) {
-			setFlag(PERSISTENCE_CACHE, Convert.toBoolean(value, CadseRootCST.ATTRIBUTE_TYPE_at_CACHED_, false));
-			return true;
-		}
+		
 		return super.commitSetAttribute(type, key, value);
 	}
 
@@ -237,10 +230,7 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 	public void setState(ItemState modifing) {
 	}
 
-	@Override
-	public Link commitLoadCreateLink(LinkType lt, Item destination) {
-		return null;
-	}
+	
 
 	public Item getParent() {
 		return _parent;

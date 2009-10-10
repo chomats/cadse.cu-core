@@ -1,6 +1,6 @@
 package fr.imag.adele.cadse.core.impl.internal;
 
-import fr.imag.adele.cadse.core.CadseRootCST;
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.delta.SetAttributeOperation;
@@ -21,7 +21,7 @@ public class OldContextVariable extends ContextVariable {
 
 	@Override
 	public String getName(Item item) {
-		return getAttribute(item, CadseRootCST.ITEM_TYPE_at_NAME_);
+		return getAttribute(item, CadseGCST.ITEM_at_NAME_);
 	}
 
 	/**
@@ -35,7 +35,7 @@ public class OldContextVariable extends ContextVariable {
 
 	@Override
 	public String getQualifiedName(Item item) {
-		return getAttribute(item, CadseRootCST.ITEM_TYPE_at_QUALIFIED_NAME_);
+		return getAttribute(item, CadseGCST.ITEM_at_QUALIFIED_NAME_);
 	}
 
 	@Override

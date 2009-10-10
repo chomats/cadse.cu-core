@@ -12,10 +12,12 @@ import java.util.List;
 import java.util.Map;
 
 import fr.imag.adele.cadse.core.CadseException;
-import fr.imag.adele.cadse.core.CadseRootCST;
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.ChangeID;
 import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.ContentItem;
+import fr.imag.adele.cadse.core.DefaultItemManager;
+import fr.imag.adele.cadse.core.IContentItemFactory;
 import fr.imag.adele.cadse.core.IItemFactory;
 import fr.imag.adele.cadse.core.IItemManager;
 import fr.imag.adele.cadse.core.Item;
@@ -36,6 +38,7 @@ import fr.imag.adele.cadse.core.delta.OrderOperation;
 import fr.imag.adele.cadse.core.delta.SetAttributeOperation;
 import fr.imag.adele.cadse.core.delta.WLWCOperationImpl;
 import fr.imag.adele.cadse.core.impl.CadseCore;
+import fr.imag.adele.cadse.core.impl.ContentItemImpl;
 import fr.imag.adele.cadse.core.impl.ItemFactory;
 import fr.imag.adele.cadse.core.impl.ReflectLink;
 import fr.imag.adele.cadse.core.internal.IWorkingLoadingItems;
@@ -84,7 +87,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 	HashMap<ItemDelta, Item>		itemsDeleted	= new HashMap<ItemDelta, Item>();
 	HashMap<ItemDelta, Item>		itemsLoaded		= new HashMap<ItemDelta, Item>();
 
-	Collection<ProjectAssociation>	projectAssociationSet;
+	HashMap<CompactUUID, ProjectAssociation>	projectAssociationSet;
 	RegisterWorkspanceNotififier	notifie;
 
 	public TransactionItemsProcess(LogicalWorkspaceImpl wl, LogicalWorkspaceTransactionImpl copy) {
@@ -94,18 +97,20 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 		this.update = copy.isUpdate();
 		this.forceToSave = copy.isForceToSave();
 		this.copy = copy;
-		this.projectAssociationSet = copy.getProjectAssociationSet();
+		this.projectAssociationSet = new HashMap<CompactUUID, ProjectAssociation>();
+		if (copy.getProjectAssociationSet() != null)
+			for (ProjectAssociation p : copy.getProjectAssociationSet()) {
+				projectAssociationSet.put(p.getItemref(), p);
+			}
 	}
 
-	public void setProjectAssociationSet(Collection<ProjectAssociation> projectAssociationSet) {
-		this.projectAssociationSet = projectAssociationSet;
-	}
+	
 
 	public Collection<ProjectAssociation> getProjectAssociationSet() {
-		return projectAssociationSet;
+		return projectAssociationSet.values();
 	}
 
-	public Item loadItem(ItemDescriptionRef ref) throws CadseException {
+	public Item loadItem(ItemDelta ref) throws CadseException {
 		Item dest = getItem(ref.getId());
 		if (dest == null) {
 			dest = wl.loadItem(ref);
@@ -146,7 +151,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 		StringBuilder sb = new StringBuilder(" \n");
 		for (ItemDelta id : errors.keySet()) {
 			Item item = visited.get(id.getId());
-			sb.append("\t");
+			sb.append("");
 			if (item != null) {
 				sb.append(item.getName()).append(" - ");
 			}
@@ -154,7 +159,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 			String[] error = errors.get(id);
 			Assert.isNotNull(error);
 			for (String msg : error) {
-				sb.append("\t\t- ").append(msg).append("\n");
+				sb.append("\t\t* error: ").append(msg).append("\n");
 			}
 		}
 		wl.getCadseDomain().log(null, sb.toString(), null);
@@ -201,13 +206,34 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 		}
 		// traite les item charg��s...
 		for (ItemDelta loadedOperation : itemsLoaded.keySet()) {
+			setPartParent(notifie, loadedOperation, itemsLoaded.get(loadedOperation));
 			callLoadItem(notifie, loadedOperation);
 		}
-
+		
 		// traite les item ajout��s
 		for (ItemDelta addOperation : itemsAdded.keySet()) {
-			callLoadCommitItem(notifie, addOperation);
+			setPartParent(notifie, addOperation, itemsAdded.get(addOperation));
+			notifie.notifieChangeEvent(ChangeID.CREATE_ITEM, itemsAdded.get(addOperation));
+			
 		}
+		
+		for (ItemDelta loadedOperation : itemsLoaded.keySet()) {
+			Item goodItem = itemsLoaded.get(loadedOperation);
+			loadProjectAssociation(goodItem);
+			
+			ContentItem contentItem = goodItem.getContentItem();
+			if (contentItem != null) {
+				((ContentItemImpl)contentItem).setOwnerItem(goodItem);
+				if (contentItem.getPartParent() == null)
+					((ContentItemImpl)contentItem).setParentContent(
+							goodItem.getType().getItemManager().getParentContentItemWherePutMyContent(contentItem));
+				contentItem.init();
+				if (wl.getItem(contentItem.getId()) == null)
+					wl.addId(contentItem, notifie, this);
+			}
+		}
+
+		
 
 		for (ItemDelta item : operations) {
 			if (!item.isModified()) {
@@ -241,7 +267,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 					try {
 						Object currentValue = att.getCurrentValue();
 						IAttributeType<?> attributeDefinition = att.getAttributeDefinition();
-						if (attributeDefinition == CadseRootCST.ITEM_TYPE_at_NAME_ && !item.isAdded()) {
+						if (attributeDefinition == CadseGCST.ITEM_at_NAME_ && !item.isAdded()) {
 							ISpaceKey key = item.getKey();
 							if (key != null) {
 								key.setName((String) currentValue);
@@ -283,7 +309,8 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 							notifie.notifieChangeEvent(ChangeID.UNRESOLVE_INCOMING_LINK, l.getDestination(), l);
 						}
 					} else {
-						addError(item, "no find " + link);
+						// no find link to delete 
+						// it's possible ?
 					}
 
 					continue;
@@ -301,7 +328,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 				// added link or modified link
 				Item destination = getItem(link.getDestinationId());
 				if (destination == null) {
-					destination = loadItem(link.getDestinationDescription());
+					destination = loadItem(link.getDestination());
 				}
 				if (!destination.isResolved()) {
 					System.out.println("" + link + " has unresoled destination");
@@ -365,7 +392,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 			wl.addKeys(goodItem);
 		}
 		callCreatedItem();
-		loadProjectAssociation();
+		
 		commitMappingOperation();
 
 		if (this.itemsLoaded.size() != 0) {
@@ -389,35 +416,25 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 		}
 	}
 
-	protected void loadItem(IWorkingLoadingItems wl, Item goodItem, ItemDelta desc, IWorkspaceNotifier notifie,
-			IErrorCollector errorCollector) throws CadseException {
-		goodItem.loadItem(wl, desc, errorCollector);
-		goodItem.finishLoad();
-	}
-
-	protected void loadCommitItem(Item goodItem, ItemDelta desc, IWorkspaceNotifier notifie) throws CadseException {
-		if (desc.getPartParent() != null) {
-			Item parentOperation = desc.getPartParent();
-			Item goodParent = goodItem.getLogicalWorkspace().getItem(parentOperation.getId());
-			if (goodParent != null) {
-				goodItem.setParent(goodParent, desc.getPartParentLinkType());
-			}
-		}
-	}
-
 	protected void update(IWorkingLoadingItems wl, ItemDelta desc, Item i, IWorkspaceNotifier notifie) {
 		i.update(wl, desc, notifie);
 	}
 
-	private void callLoadCommitItem(RegisterWorkspanceNotififier notifie, ItemDelta addOperation) throws CadseException {
+	private void setPartParent(RegisterWorkspanceNotififier notifie, ItemDelta addOperation, Item goodItem) throws CadseException {
 		try {
-			Item goodItem = itemsAdded.get(addOperation);
-			ItemType it = goodItem.getType();
-			IItemFactory factory = it.getItemFactory();
-			if (factory == null) {
-				factory = ItemFactory.SINGLETON;
+			if (addOperation.getPartParent() != null) {
+				Item parentOperation = addOperation.getPartParent();
+				Item goodParent = goodItem.getLogicalWorkspace().getItem(parentOperation.getId());
+				if (goodParent != null) {
+					if (goodParent.isResolved()) {
+						goodItem.setParent(goodParent, addOperation.getPartParentLinkType());
+						return;
+					}
+				}
 			}
-			loadCommitItem(goodItem, addOperation, notifie);
+			if (goodItem.isPartItem() && goodItem.getPartParent() == null) {
+				addError(addOperation, "Item has no parent : " + goodItem);
+			}
 		} catch (Throwable e) {
 			e.printStackTrace();
 			addError(addOperation, "Cannot load commit item : exception : " + e.getMessage());
@@ -432,10 +449,50 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 			if (factory == null) {
 				factory = ItemFactory.SINGLETON;
 			}
-			loadItem(this, goodItem, loadedOperation, notifie, this);
+			ContentItem contentItem = null;
+			try {
+				CompactUUID idContent = CompactUUID.randomUUID();
+				ItemDelta contentDelta = loadedOperation.getOutgoingItem(CadseGCST.ITEM_lt_CONTENTS, false);
+				if (contentDelta != null)
+					idContent = contentDelta.getId();
+				
+				contentItem = (ContentItem) itemsLoaded.get(contentDelta);
+				if (contentItem == null)
+					contentItem = createContentItem(goodItem.getType(), goodItem, idContent);
+				if (contentItem == null)
+					contentItem = ContentItem.NO_CONTENT;
+				setContent(notifie, goodItem, contentItem);
+			} catch (CadseException e) {
+				addError(loadedOperation,"Cannot finish load item : exception : "+ e.getMessage());
+				e.printStackTrace();
+			}
+			
+			goodItem.loadItem(this, loadedOperation, this);
+			goodItem.finishLoad();
 		} catch (Throwable e) {
 			e.printStackTrace();
 			addError(loadedOperation, "Cannot finish load item : exception : " + e.getMessage());
+		}
+	}
+
+
+
+	private void setContent(RegisterWorkspanceNotififier notifie,
+			Item goodItem, ContentItem contentItem) throws CadseException {
+		Link l = goodItem.commitLoadCreateLink(CadseGCST.ITEM_lt_CONTENTS, contentItem);
+		if (contentItem != ContentItem.NO_CONTENT
+			&& contentItem != ContentItem.INVALID_CONTENT) {
+			if (l instanceof ReflectLink) {
+				contentItem.addIncomingLink(l, false);
+			}
+			notifie
+					.notifieChangeEvent(ChangeID.CREATE_OUTGOING_LINK,
+							l);
+			if (l.isLinkResolved()) {
+				notifie.notifieChangeEvent(
+						ChangeID.RESOLVE_INCOMING_LINK, l
+								.getResolvedDestination(), l);
+			}
 		}
 	}
 
@@ -451,7 +508,6 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 	 */
 	private void loadDeletedItem(ItemDelta item) throws CadseException {
 		Item deletedItem = itemsDeleted.get(item);
-		IItemManager im = deletedItem.getType().getItemManager();
 		//
 		// remove in workspace table
 		wl.removeItem(deletedItem);
@@ -466,7 +522,6 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 						Messages.error_cannot_delete_content, e);
 			}
 		}
-		im.deletedItem(deletedItem);
 		deletedItem.setState(ItemState.DELETED);
 	}
 
@@ -480,6 +535,8 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 			if (it == null) {
 				return null; // Cannot find type ...
 			}
+			if (it == CadseGCST.CONTENT_ITEM || CadseGCST.CONTENT_ITEM.isSuperTypeOf(it))
+				return null;
 
 			// find the item factory
 			IItemFactory factory = it.getItemFactory();
@@ -492,7 +549,6 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 				goodItem = factory.newForCommitItem(wl, it, item);
 				goodItem.setState(ItemState.NOT_IN_WORKSPACE);
 				itemsAdded.put(item, goodItem);
-				notifie.notifieChangeEvent(ChangeID.CREATE_ITEM, goodItem);
 				wl.addId(goodItem, notifie, this);
 				// add created item in visited hashset
 				visited.put(goodItem.getId(), goodItem);
@@ -547,13 +603,13 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 					visited.put(goodItem.getId(), goodItem);
 					return goodItem;
 				}
-				if (CadseRootCST.META_ITEM_TYPE.isSuperTypeOf(it)) {
+				if (CadseGCST.ITEM_TYPE.isSuperTypeOf(it)) {
 					// load du super type ...
 					findOrCreateSuperItemTypeFromItemOperation(item);
 
 				}
 				goodItem = factory.newForCommitItem(wl, it, item);
-				if (CadseRootCST.META_ITEM_TYPE.isSuperTypeOf(it)) {
+				if (CadseGCST.ITEM_TYPE.isSuperTypeOf(it)) {
 					assert goodItem instanceof ItemTypeImpl;
 					// assert si le type a s un super type
 					// il charg�� et connecter ici
@@ -602,7 +658,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 					}
 				} else {
 
-					Link linkInstanceOf = item.getOutgoingLink(CadseRootCST.ITEM_TYPE_lt_INSTANCE_OF);
+					Link linkInstanceOf = item.getOutgoingLink(CadseGCST.ITEM_lt_INSTANCE_OF);
 					if (linkInstanceOf == null) {
 						addError(item, "type not found, cannot create unresolved type, instance-of link not found");
 						return null;
@@ -627,9 +683,9 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 
 	private ItemType findOrCreateSuperItemTypeFromItemOperation(ItemDelta item) throws CadseException {
 
-		Item superItem = item.getOutgoingItem(CadseRootCST.META_ITEM_TYPE_lt_SUPER_TYPE, false);
+		Item superItem = item.getOutgoingItem(CadseGCST.ITEM_TYPE_lt_SUPER_TYPE, false);
 		if (superItem == null) {
-			return CadseRootCST.ITEM_TYPE;
+			return CadseGCST.ITEM;
 		}
 		// recupere l'id du super type de l'item
 		CompactUUID itemTypeID = superItem.getId();
@@ -675,16 +731,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 	private void callCreatedItem() throws CadseException {
 		for (ItemDelta item : itemsAdded.keySet()) {
 			Item goodItem = wl._items.get(item.getId());
-			try {
-				IItemManager im = item.getType().getItemManager();
-				// /for (Link l : goodItem.getIncomingLinks()) {
-				// l.getLinkType().getManager().createdDestinationItem(goodItem);
-				// }
-				im.createdItem(goodItem);
-			} catch (Throwable e) {
-				addError(item, e.getMessage());
-				e.printStackTrace();
-			}
+			
 			IAttributeType<?>[] attributesDefinitions = goodItem.getLocalAllAttributeTypes();
 			if (attributesDefinitions != null) {
 				for (IAttributeType<?> attributeType : attributesDefinitions) {
@@ -703,42 +750,77 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 			}
 			if (goodItem.itemHasContent()) {
 				try {
-					goodItem.loadContent();
-					ContentItem contentManager = item.getContentItem();
-					if (contentManager != null) {
-						contentManager.create();
-					}
+					ContentItem contentItem = createContentItem(goodItem.getType(), goodItem, CompactUUID.randomUUID());
+					setContent(notifie, goodItem, contentItem);
 				} catch (CadseException e) {
 					addError(item, e.getMessage());
 					e.printStackTrace();
 				}
 			}
 		}
-	}
-
-	void loadProjectAssociation() throws CadseException {
-		if (projectAssociationSet != null) {
-			for (ProjectAssociation pa : projectAssociationSet) {
-				Item item = wl._items.get(pa.getItemref());
-				if (item == null) {
-					throw new CadseException("Cannot find item form " + pa.getItemref());
+		
+		for (ItemDelta item : itemsAdded.keySet()) {
+			Item goodItem = wl._items.get(item.getId());
+			try {
+				ContentItem contentItem = goodItem.getContentItem();
+				if (contentItem != null) {
+					((ContentItemImpl)contentItem).setOwnerItem(goodItem);
+					((ContentItemImpl)contentItem).setParentContent(
+							goodItem.getType().getItemManager().getParentContentItemWherePutMyContent(contentItem));
+					contentItem.init();
+					contentItem.create();
+					wl.addId(contentItem, notifie, this);
+					notifie.notifieChangeEvent(ChangeID.CREATE_ITEM, contentItem);
 				}
-				CadseCore.setItemPersistenceID(pa.getProjectName(), item);
-				HashMap<String, URL> entries = pa.getContentEntries();
-				if (entries != null) {
-					for (Map.Entry<String, URL> e : entries.entrySet()) {
-						URL data = e.getValue();
-						String path = e.getKey();
-						CadseCore.copyResource(item, path, data);
-					}
-				}
+			} catch (CadseException e) {
+				addError(item, e.getMessage());
+				e.printStackTrace();
 			}
 		}
 	}
+	
+	
+	
+	public ContentItem createContentItem(ItemType it, Item ownerItem, CompactUUID idContent) {
+		try {
+			final IItemManager itemManager = it.getItemManager();
+			final IContentItemFactory contentItemFactory = itemManager.getContentItemFactory();
+			if (contentItemFactory == null) {
+				return ContentItem.NO_CONTENT;
+			}
+			ContentItem ret = null;
+			try {
+				ret = contentItemFactory.createContentItem(idContent);
+			} catch (CadseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if (ret == null) {
+				ret = ContentItem.INVALID_CONTENT;
+			} else if (ret != ContentItem.NO_CONTENT && ret != ContentItem.INVALID_CONTENT) {
+				if (ownerItem != null)
+					((ContentItemImpl) ret).setOwnerItem(ownerItem);
+			}
+			return ret;
+		} catch (Throwable e) {
+			wl.getCadseDomain().log(ownerItem, 0, "error", e.getMessage(), e);
+			return ContentItem.INVALID_CONTENT;
+		}
+	}
 
-	public void addError(WLWCOperationImpl id, String msg) {
-		// TODO Auto-generated method stub
-
+	void loadProjectAssociation(Item item) throws CadseException {
+		ProjectAssociation pa = projectAssociationSet.get(item.getId());
+		if (pa == null) return;
+		
+		CadseCore.setItemPersistenceID(pa.getProjectName(), item);
+		HashMap<String, URL> entries = pa.getContentEntries();
+		if (entries != null) {
+			for (Map.Entry<String, URL> e : entries.entrySet()) {
+				URL data = e.getValue();
+				String path = e.getKey();
+				CadseCore.copyResource(item, path, data);
+			}
+		}		
 	}
 
 }

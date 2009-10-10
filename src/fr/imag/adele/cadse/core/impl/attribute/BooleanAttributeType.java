@@ -19,7 +19,7 @@
 
 package fr.imag.adele.cadse.core.impl.attribute;
 
-import fr.imag.adele.cadse.core.CadseRootCST;
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
@@ -38,7 +38,7 @@ public class BooleanAttributeType extends AttributeType implements
 		fr.imag.adele.cadse.core.attribute.BooleanAttributeType {
 
 	/** The value. */
-	private boolean	value;
+	private boolean	_defaultValue;
 
 	/**
 	 * Instantiates a new boolean attribute type.
@@ -52,15 +52,14 @@ public class BooleanAttributeType extends AttributeType implements
 	 */
 	public BooleanAttributeType(CompactUUID id, int flag, String name, String value) {
 		super(id, name, flag);
-		this.value = value == null ? CadseRootCST.BOOLEAN_ATTRIBUTE_TYPE_at_DEFAULT_VALUE_ == null ? false
-				: CadseRootCST.BOOLEAN_ATTRIBUTE_TYPE_at_DEFAULT_VALUE_.getDefaultValue() : Boolean.valueOf(value);
+		this._defaultValue = value == null ? CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_ == null ? false
+				: Boolean.valueOf(CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_.getDefaultValue()) : Boolean.valueOf(value);
 	}
 
 	public BooleanAttributeType(ItemDelta item) {
 		super(item);
-		this.value = Convert.toBoolean(item.getAttribute(CadseRootCST.BOOLEAN_ATTRIBUTE_TYPE_at_DEFAULT_VALUE_),
-				CadseRootCST.BOOLEAN_ATTRIBUTE_TYPE_at_DEFAULT_VALUE_,
-				CadseRootCST.BOOLEAN_ATTRIBUTE_TYPE_at_DEFAULT_VALUE_.getDefaultValue());
+		this._defaultValue = Convert.toBoolean(item.getAttribute(CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_),
+				false);
 	}
 
 	/*
@@ -70,7 +69,7 @@ public class BooleanAttributeType extends AttributeType implements
 	 */
 	@Override
 	public Boolean getDefaultValue() {
-		return value;
+		return _defaultValue;
 	}
 
 	/*
@@ -94,23 +93,23 @@ public class BooleanAttributeType extends AttributeType implements
 
 	@Override
 	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
-		if (CadseRootCST.BOOLEAN_ATTRIBUTE_TYPE_at_DEFAULT_VALUE_ == type) {
-			return (T) (value ? Boolean.TRUE : Boolean.FALSE);
+		if (CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_ == type) {
+			return (T) (_defaultValue ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
 		}
 		return super.internalGetOwnerAttribute(type);
 	}
 
 	@Override
 	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
-		if (CadseRootCST.BOOLEAN_ATTRIBUTE_TYPE_at_DEFAULT_VALUE_ == type) {
-			value = Convert.toBoolean(value, (Boolean) type.getDefaultValue());
+		if (CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_ == type) {
+			value = Convert.toBoolean(value,  false);
 			return true;
 		}
 		return super.commitSetAttribute(type, key, value);
 	}
 
 	public ItemType getType() {
-		return CadseRootCST.BOOLEAN_ATTRIBUTE_TYPE;
+		return CadseGCST.BOOLEAN;
 	}
 
 	@Override

@@ -30,7 +30,7 @@ import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.attribute.CheckStatus;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.delta.ItemDelta;
-import fr.imag.adele.cadse.core.CadseRootCST;
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.ui.IPageController;
 
 public class DateAttributeType extends AttributeType implements fr.imag.adele.cadse.core.attribute.DateAttributeType {
@@ -54,7 +54,7 @@ public class DateAttributeType extends AttributeType implements fr.imag.adele.ca
 	}
 
 	public ItemType getType() {
-		return CadseRootCST.DATE_ATTRIBUTE_TYPE;
+		return CadseGCST.DATE;
 	}
 
 	public DateFormat getFormat() {
@@ -105,7 +105,7 @@ public class DateAttributeType extends AttributeType implements fr.imag.adele.ca
 
 	@Override
 	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
-		if (CadseRootCST.DATE_ATTRIBUTE_TYPE_at_DEFAULT_VALUE_ == type) {
+		if (CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_ == type) {
 			return (T) _defaultValue;
 		}
 		return super.internalGetOwnerAttribute(type);
@@ -117,7 +117,7 @@ public class DateAttributeType extends AttributeType implements fr.imag.adele.ca
 
 	@Override
 	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
-		if (CadseRootCST.DATE_ATTRIBUTE_TYPE_at_DEFAULT_VALUE_ == type) {
+		if (CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_ == type) {
 			setDefaultValue(convertTo(value));
 			return true;
 		}

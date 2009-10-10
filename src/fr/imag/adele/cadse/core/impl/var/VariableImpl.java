@@ -22,7 +22,7 @@ package fr.imag.adele.cadse.core.impl.var;
 import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.impl.attribute.AttributeType;
-import fr.imag.adele.cadse.core.CadseRootCST;
+import fr.imag.adele.cadse.core.CadseGCST;
 
 /**
  * The Class Variable.
@@ -71,7 +71,7 @@ public abstract class VariableImpl extends AttributeType implements fr.imag.adel
 	}
 
 	public ItemType getType() {
-		return CadseRootCST.VARIABLE_ATTRIBUTE_TYPE;
+		return null; //CadseGCST.VARIABLE_ATTRIBUTE_TYPE;
 	}
 
 	/*

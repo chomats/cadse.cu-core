@@ -25,7 +25,7 @@ import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.attribute.CheckStatus;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.delta.ItemDelta;
-import fr.imag.adele.cadse.core.CadseRootCST;
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.ui.IPageController;
 import fr.imag.adele.cadse.core.util.Convert;
 
@@ -101,15 +101,15 @@ public class StringAttributeType extends AttributeType implements fr.imag.adele.
 	}
 
 	public ItemType getType() {
-		return CadseRootCST.STRING_ATTRIBUTE_TYPE;
+		return CadseGCST.STRING;
 	}
 
 	@Override
 	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
-		if (CadseRootCST.STRING_ATTRIBUTE_TYPE_at_DEFAULT_VALUE_ == type) {
+		if (CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_ == type) {
 			return (T) value;
 		}
-		if (CadseRootCST.STRING_ATTRIBUTE_TYPE_at_NOT_EMPTY_ == type) {
+		if (CadseGCST.STRING_at_NOT_EMPTY_ == type) {
 			return (T) Boolean.valueOf(getFlag(NOT_EMPTY));
 		}
 		return super.internalGetOwnerAttribute(type);
@@ -117,11 +117,11 @@ public class StringAttributeType extends AttributeType implements fr.imag.adele.
 
 	@Override
 	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
-		if (CadseRootCST.STRING_ATTRIBUTE_TYPE_at_DEFAULT_VALUE_ == type) {
+		if (CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_ == type) {
 			setValue(Convert.toString(value));
 			return true;
 		}
-		if (CadseRootCST.STRING_ATTRIBUTE_TYPE_at_NOT_EMPTY_ == type) {
+		if (CadseGCST.STRING_at_NOT_EMPTY_ == type) {
 			setIsNotEmpty(Convert.toBoolean(value));
 			return true;
 		}

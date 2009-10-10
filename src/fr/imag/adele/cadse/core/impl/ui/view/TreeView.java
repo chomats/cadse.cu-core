@@ -22,12 +22,12 @@ import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
-import fr.imag.adele.cadse.core.CadseRootCST;
+import fr.imag.adele.cadse.core.CadseGCST;
 
 public class TreeView extends AbstractGeneratedItem {
 
 	public ItemType getType() {
-		return CadseRootCST.TREE_VIEW;
+		return CadseGCST.VIEW;
 	}
 
 	public void setParent(Item parent, LinkType lt) {

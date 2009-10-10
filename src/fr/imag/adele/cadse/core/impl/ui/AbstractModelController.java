@@ -20,9 +20,10 @@
 package fr.imag.adele.cadse.core.impl.ui;
 
 import fr.imag.adele.cadse.core.CadseException;
-import fr.imag.adele.cadse.core.CadseRootCST;
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.Item;
+import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
@@ -37,9 +38,7 @@ import fr.imag.adele.cadse.core.ui.UIField;
  */
 public abstract class AbstractModelController extends AbstractGeneratedItem implements IModelController {
 
-	/** The ui. */
-	private UIField	ui;
-
+	
 	public AbstractModelController() {
 		// TODO Auto-generated constructor stub
 	}
@@ -54,7 +53,7 @@ public abstract class AbstractModelController extends AbstractGeneratedItem impl
 	 * @see fr.imag.adele.cadse.core.ui.IModelController#getUIField()
 	 */
 	public UIField getUIField() {
-		return ui;
+		return (UIField) _parent;
 	}
 
 	/*
@@ -63,16 +62,13 @@ public abstract class AbstractModelController extends AbstractGeneratedItem impl
 	 * @see fr.imag.adele.cadse.core.ui.IModelController#setUIField(fr.imag.adele.cadse.core.ui.UIField)
 	 */
 	public void setUIField(UIField ui) {
-		this.ui = ui;
+		_parent = ui;
 	}
 
-	@Override
-	public Item getPartParent(boolean attemptToRecreate) {
-		return ui;
-	}
+	
 
 	public void setParent(Item parent, LinkType lt) {
-		this.ui = (UIField) parent;
+		_parent = (UIField) parent;
 	}
 
 	@Override
@@ -82,10 +78,10 @@ public abstract class AbstractModelController extends AbstractGeneratedItem impl
 
 	@Override
 	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
-		if (CadseRootCST.ITEM_TYPE_at_DISPLAY_NAME_ == type) {
+		if (CadseGCST.ITEM_at_DISPLAY_NAME_ == type) {
 			return (T) ("Mode controller " + (getType() == null ? "Anonymous" : getType().getDisplayName()));
 		}
-		if (CadseRootCST.ITEM_TYPE_at_NAME_ == type) {
+		if (CadseGCST.ITEM_at_NAME_ == type) {
 			return (T) "mc";
 		}
 		return super.internalGetOwnerAttribute(type);
@@ -218,8 +214,8 @@ public abstract class AbstractModelController extends AbstractGeneratedItem impl
 	 * @return the item
 	 */
 	public Item getItem() {
-		if (ui != null) {
-			return (Item) ui.getContext();
+		if (_parent != null) {
+			return (Item) ((UIField) _parent).getContext();
 		}
 		return null;
 	}
@@ -230,7 +226,7 @@ public abstract class AbstractModelController extends AbstractGeneratedItem impl
 	 * @return the key
 	 */
 	public String getAttributeName() {
-		return ui.getAttributeName();
+		return ((UIField) _parent).getAttributeName();
 	}
 
 	/** The old default short name. */
@@ -307,7 +303,7 @@ public abstract class AbstractModelController extends AbstractGeneratedItem impl
 	 * @return the uI controller
 	 */
 	public UIField getUIController(String fieldid) {
-		return ui.getParent().getField(fieldid);
+		return ((UIField) _parent).getParent().getField(fieldid);
 	}
 
 	/**
@@ -331,7 +327,7 @@ public abstract class AbstractModelController extends AbstractGeneratedItem impl
 	 *            the new message error
 	 */
 	public void setMessageError(String msg) {
-		this.ui.getPageController().setMessage(msg, IPageController.ERROR);
+		((UIField) _parent).getPageController().setMessage(msg, IPageController.ERROR);
 	}
 
 	/*

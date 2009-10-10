@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import fr.imag.adele.cadse.core.CadseException;
-import fr.imag.adele.cadse.core.CadseRootCST;
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
@@ -89,7 +89,7 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	/** The page controller. */
 	private IPageController	pageController;
 
-	private ItemType		parentItemType;
+	private ItemType		_parentItemType;
 
 	private UIListener[]	listeners	= null;
 
@@ -98,7 +98,7 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	public PageImpl(CompactUUID id, String name, ItemType parent) {
 		super(id);
 		this.shortName = name;
-		this.parentItemType = parent;
+		this._parentItemType = parent;
 	}
 
 	/**
@@ -348,7 +348,7 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	}
 
 	public ItemType getType() {
-		return CadseRootCST.PAGE_DEFINITION_TYPE;
+		return CadseGCST.PAGE;
 	}
 
 	/*
@@ -684,14 +684,14 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	 * @see fr.imag.adele.cadse.core.ui.IPage#getParentItemType()
 	 */
 	public ItemType getParentItemType() {
-		if (parentItemType == null && _pages != null) {
+		if (_parentItemType == null && _pages != null) {
 			return _pages.getParentItemType();
 		}
-		return parentItemType;
+		return _parentItemType;
 	}
 
 	public void setParent(Item parent, LinkType lt) {
-		parentItemType = (ItemType) parent;
+		_parentItemType = (ItemType) parent;
 	}
 
 	public boolean runCreationPage() {
@@ -700,14 +700,14 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 
 	@Override
 	public Link commitLoadCreateLink(LinkType lt, Item destination) throws CadseException {
-		if (lt == CadseRootCST.PAGE_DEFINITION_TYPE_lt_FIELDS && destination.isResolved()) {
+		if (lt == CadseGCST.PAGE_lt_FIELDS && destination.isResolved()) {
 			addLast((UIField) destination);
 			return new ReflectLink(lt, this, destination, this._fields.length - 1);
 		}
-		if (lt == CadseRootCST.PAGE_DEFINITION_TYPE_lt_LISTENER && destination.isResolved()) {
+		/*if (lt == CadseGCST.PAGE_lt_LISTENER && destination.isResolved()) {
 			addUIListner((UIListener) destination);
 			return new ReflectLink(lt, this, destination, this.listeners.length - 1);
-		}
+		}*/
 		return super.commitLoadCreateLink(lt, destination);
 	}
 
@@ -716,47 +716,47 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 		Item destination = link.getDestination();
 		LinkType lt = link.getLinkType();
 
-		if (lt == CadseRootCST.PAGE_DEFINITION_TYPE_lt_FIELDS && destination.isResolved()) {
+		if (lt == CadseGCST.PAGE_lt_FIELDS && destination.isResolved()) {
 			_fields = ArraysUtil.remove(UIField.class, _fields, (UIField) destination);
 			return;
 		}
-		if (lt == CadseRootCST.PAGE_DEFINITION_TYPE_lt_LISTENER && destination.isResolved()) {
+		/*if (lt == CadseGCST.PAGE_lt_LISTENER && destination.isResolved()) {
 			listeners = ArraysUtil.remove(UIListener.class, listeners, (UIListener) destination);
 			return;
-		}
+		}*/
 		super.removeOutgoingLink(link, notifie);
 	}
 
 	@Override
 	protected void collectOutgoingLinks(LinkType linkType, CollectedReflectLink ret) {
-		if (linkType == CadseRootCST.PAGE_DEFINITION_TYPE_lt_FIELDS) {
-			ret.addOutgoing(CadseRootCST.PAGE_DEFINITION_TYPE_lt_FIELDS, this._fields);
+		if (linkType == CadseGCST.PAGE_lt_FIELDS) {
+			ret.addOutgoing(CadseGCST.PAGE_lt_FIELDS, this._fields);
 		}
-		if (linkType == CadseRootCST.PAGE_DEFINITION_TYPE_lt_LISTENER) {
-			ret.addOutgoing(CadseRootCST.PAGE_DEFINITION_TYPE_lt_LISTENER, this.listeners);
-		}
+		/*if (linkType == CadseGCST.PAGE_lt_LISTENER) {
+			ret.addOutgoing(CadseGCST.PAGE_lt_LISTENER, this.listeners);
+		}*/
 		super.collectOutgoingLinks(linkType, ret);
 	}
 
 	@Override
 	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
-		if (CadseRootCST.ITEM_TYPE_at_NAME_ == type) {
+		if (CadseGCST.ITEM_at_NAME_ == type) {
 			this.shortName = Convert.toString(value);
 			return true;
 		}
-		if (CadseRootCST.PAGE_DEFINITION_TYPE_at_DESCRIPTION_ == type) {
+		if (CadseGCST.PAGE_at_DESCRIPTION_ == type) {
 			this._description = Convert.toString(value);
 			return true;
 		}
-		if (CadseRootCST.PAGE_DEFINITION_TYPE_at_HSPAN_ == type) {
+		if (CadseGCST.PAGE_at_HSPAN_ == type) {
 			this._hspan = Convert.toInt(value, type);
 			return true;
 		}
-		if (CadseRootCST.PAGE_DEFINITION_TYPE_at_TITLE_ == type) {
+		if (CadseGCST.PAGE_at_TITLE_ == type) {
 			this._title = Convert.toString(value);
 			return true;
 		}
-		if (CadseRootCST.PAGE_DEFINITION_TYPE_at_LABEL_ == type) {
+		if (CadseGCST.PAGE_at_LABEL_ == type) {
 			this._label = Convert.toString(value);
 			return true;
 		}
@@ -766,25 +766,25 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 
 	@Override
 	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
-		if (CadseRootCST.ITEM_TYPE_at_NAME_ == type) {
+		if (CadseGCST.ITEM_at_NAME_ == type) {
 			return (T) this.shortName;
 		}
-		if (CadseRootCST.ITEM_TYPE_at_DISPLAY_NAME_ == type) {
+		if (CadseGCST.ITEM_at_DISPLAY_NAME_ == type) {
 			return (T) this.shortName;
 		}
-		if (CadseRootCST.ITEM_TYPE_at_QUALIFIED_NAME_ == type) {
+		if (CadseGCST.ITEM_at_QUALIFIED_NAME_ == type) {
 			return (T) getQualifiedName();
 		}
-		if (CadseRootCST.PAGE_DEFINITION_TYPE_at_DESCRIPTION_ == type) {
+		if (CadseGCST.PAGE_at_DESCRIPTION_ == type) {
 			return (T) this._description;
 		}
-		if (CadseRootCST.PAGE_DEFINITION_TYPE_at_HSPAN_ == type) {
+		if (CadseGCST.PAGE_at_HSPAN_ == type) {
 			return (T) new Integer(this._hspan);
 		}
-		if (CadseRootCST.PAGE_DEFINITION_TYPE_at_TITLE_ == type) {
+		if (CadseGCST.PAGE_at_TITLE_ == type) {
 			return (T) this._title;
 		}
-		if (CadseRootCST.PAGE_DEFINITION_TYPE_at_LABEL_ == type) {
+		if (CadseGCST.PAGE_at_LABEL_ == type) {
 			return (T) this._label;
 		}
 		return super.internalGetOwnerAttribute(type);
@@ -792,10 +792,10 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 
 	@Override
 	public Item getPartParent(boolean attemptToRecreate) {
-		if (parentItemType == null) {
+		if (_parentItemType == null) {
 			findPartParentFromIncoming(true);
 		}
-		return parentItemType;
+		return _parentItemType;
 	}
 
 	public LogicalWorkspaceTransaction getCopy() {
@@ -817,13 +817,13 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	 * @see fr.imag.adele.cadse.core.ui.IPage#isModificationPage()
 	 */
 	public boolean isModificationPage() {
-		return getPartParentLinkType() == CadseRootCST.META_ITEM_TYPE_lt_MODIFICATION_PAGES;
+		return getPartParentLinkType() == CadseGCST.ITEM_TYPE_lt_MODIFICATION_PAGES;
 	}
 
 	@Override
 	public boolean commitMove(OrderWay kind, Link l1, Link l2) {
-		if (l1.getLinkType() == CadseRootCST.PAGE_DEFINITION_TYPE_lt_FIELDS
-				&& l2.getLinkType() == CadseRootCST.PAGE_DEFINITION_TYPE_lt_FIELDS && l1.isLinkResolved()
+		if (l1.getLinkType() == CadseGCST.PAGE_lt_FIELDS
+				&& l2.getLinkType() == CadseGCST.PAGE_lt_FIELDS && l1.isLinkResolved()
 				&& l2.isLinkResolved()) {
 			return moveField(kind, (UIField) l1.getDestination(), (UIField) l2.getDestination());
 		}
@@ -907,4 +907,8 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 		this._filterContext = filterContext;
 	}
 
+	@Override
+	public boolean isEmpty() {
+		return _fields == null || _fields.length == 0;
+	}
 }

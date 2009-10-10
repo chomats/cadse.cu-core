@@ -19,6 +19,10 @@
 
 package fr.imag.adele.cadse.core.impl.attribute;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
@@ -27,8 +31,10 @@ import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.attribute.CheckStatus;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.delta.ItemDelta;
-import fr.imag.adele.cadse.core.CadseRootCST;
+import fr.imag.adele.cadse.core.impl.CadseIllegalArgumentException;
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.ui.IPageController;
+import fr.imag.adele.cadse.core.util.Convert;
 
 /**
  * The Class EnumAttributeType.
@@ -39,7 +45,7 @@ public class EnumAttributeType<X extends Enum<X>> extends AttributeType implemen
 		fr.imag.adele.cadse.core.attribute.EnumAttributeType<X> {
 
 	/** The value. */
-	private X	defaultValue;
+	private String	defaultValue;
 
 	/** The clazz. */
 	Class<X>	clazz;
@@ -61,7 +67,7 @@ public class EnumAttributeType<X extends Enum<X>> extends AttributeType implemen
 	public EnumAttributeType(CompactUUID id, int flag, String name, Class<X> clazz, String value) {
 		super(id, name, flag);
 		assert clazz != null;
-		this.defaultValue = find(clazz.getEnumConstants(), value);
+		this.defaultValue = value;
 		this.clazz = clazz;
 	}
 
@@ -101,7 +107,9 @@ public class EnumAttributeType<X extends Enum<X>> extends AttributeType implemen
 	 */
 	@Override
 	public X getDefaultValue() {
-		return defaultValue;
+		if (clazz == null)
+			return null;
+		return toEnum(defaultValue);
 	}
 
 	/*
@@ -124,8 +132,8 @@ public class EnumAttributeType<X extends Enum<X>> extends AttributeType implemen
 	}
 
 	@Override
-	public Link commitLoadCreateLink(LinkType lt, Item destination) {
-		// if (lt == CadseRootCST.enum && destination.isResolved()) {
+	public Link commitLoadCreateLink(LinkType lt, Item destination) throws CadseException {
+		// if (lt == CadseGCST.enum && destination.isResolved()) {
 		// addLast((UIField)destination);
 		// return new ReflectLink(lt,this, destination, this._fields.length-1);
 		// }
@@ -134,31 +142,34 @@ public class EnumAttributeType<X extends Enum<X>> extends AttributeType implemen
 
 	@Override
 	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
-		if (CadseRootCST.ENUM_ATTRIBUTE_TYPE_at_DEFAULT_VALUE_ == type) {
+		if (CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_ == type) {
 			return (T) defaultValue;
 		}
-		if (CadseRootCST.ENUM_ATTRIBUTE_TYPE_at_ENUM_CLAZZ_ == type) {
+		if (CadseGCST.ENUM_at_ENUM_CLAZZ_ == type) {
 			return (T) clazz;
 		}
-		if (CadseRootCST.ENUM_ATTRIBUTE_TYPE_at_VALUES_ == type) {
-			return (T) getValues();
+		if (CadseGCST.ENUM_at_VALUES_ == type) {
+			return (T) new ArrayList<String>(Arrays.asList(getValues()));
 		}
 		return super.internalGetOwnerAttribute(type);
 	}
 
 	public void setDefaultValue(X value) {
-		this.defaultValue = value;
+		this.defaultValue = value == null ? null : value.toString();
 	}
 
 	@Override
 	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
-		if (CadseRootCST.ENUM_ATTRIBUTE_TYPE_at_DEFAULT_VALUE_ == type) {
-			setDefaultValue(toEnum(value));
+		if (CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_ == type) {
+			this.defaultValue = Convert.toString(value);
 			return true;
 		}
-		if (CadseRootCST.ENUM_ATTRIBUTE_TYPE_at_VALUES_ == type) {
+		if (CadseGCST.ENUM_at_VALUES_ == type) {
 			if (value instanceof String[]) {
 				this.values = (String[]) value;
+			}
+			if (value instanceof ArrayList) {
+				this.values = ((ArrayList<String>) value).toArray(new String[0]);
 			}
 		}
 		return super.commitSetAttribute(type, key, value);
@@ -168,6 +179,10 @@ public class EnumAttributeType<X extends Enum<X>> extends AttributeType implemen
 		if (value2 == null) {
 			return null;
 		}
+		
+		if (clazz == null)
+			throw new CadseIllegalArgumentException("Can't convert to enum clazz : clazz not defined or not loaded !!!");
+		
 		if (value2 instanceof String) {
 			return find(clazz.getEnumConstants(), (String) value2);
 		}
@@ -178,7 +193,7 @@ public class EnumAttributeType<X extends Enum<X>> extends AttributeType implemen
 	}
 
 	public ItemType getType() {
-		return CadseRootCST.ENUM_ATTRIBUTE_TYPE;
+		return CadseGCST.ENUM;
 	}
 
 	@Override

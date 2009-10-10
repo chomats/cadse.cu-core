@@ -30,7 +30,7 @@ import fr.imag.adele.cadse.core.delta.LinkDelta;
 import fr.imag.adele.cadse.core.delta.OrderOperation;
 import fr.imag.adele.cadse.core.delta.SetAttributeOperation;
 import fr.imag.adele.cadse.core.delta.WLWCOperation;
-import fr.imag.adele.cadse.core.CadseRootCST;
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.enumdef.TWDestEvol;
 import fr.imag.adele.cadse.core.enumdef.TWEvol;
 import fr.imag.adele.cadse.core.transaction.AbstractLogicalWorkspaceTransactionListener;
@@ -83,7 +83,7 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 		String attrName = attOperation.getAttributeName();
 		IAttributeType<?> attrDef = attOperation.getAttributeDefinition();
 		// TODO use raw type
-		if (CadseRootCST.ITEM_TYPE_at_REQUIRE_NEW_REV_ == attrDef) {
+		if (CadseGCST.ITEM_at_REQUIRE_NEW_REV_ == attrDef) {
 			return;
 		}
 		if (attrDef != null && !attrDef.isResolved()) {
@@ -123,24 +123,24 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 	}
 
 	private void setRevModified(Item sourceItem) throws CadseException {
-		sourceItem.setAttribute(CadseRootCST.ITEM_TYPE_at_REV_MODIFIED_, true);
+		sourceItem.setAttribute(CadseGCST.ITEM_at_REV_MODIFIED_, true);
 	}
 
 	private void setRequireNewRev(Item sourceItem) throws CadseException {
-		sourceItem.setAttribute(CadseRootCST.ITEM_TYPE_at_REQUIRE_NEW_REV_, true);
+		sourceItem.setAttribute(CadseGCST.ITEM_at_REQUIRE_NEW_REV_, true);
 	}
 
 	private TWDestEvol getDestEvol(IAttributeType attrDef) {
-		return attrDef.getAttribute(CadseRootCST.LINK_DEFINITION_ATTIBUTE_TYPE_at_TWDEST_EVOL_);
+		return attrDef.getAttribute(CadseGCST.LINK_at_TWDEST_EVOL_);
 	}
 
 	private TWEvol getEvol(IAttributeType attrDef) {
-		return attrDef.getAttribute(CadseRootCST.ATTRIBUTE_TYPE_at_TWEVOL_);
+		return attrDef.getAttribute(CadseGCST.ATTRIBUTE_at_TWEVOL_);
 	}
 
 	private boolean isRequireNewRev(Item modifiedItem) {
 		// TODO change to default value....
-		Object ret = modifiedItem.getAttribute(CadseRootCST.ITEM_TYPE_at_REQUIRE_NEW_REV_);
+		Object ret = modifiedItem.getAttribute(CadseGCST.ITEM_at_REQUIRE_NEW_REV_);
 		if (ret == null) {
 			return true;
 		}
@@ -265,10 +265,10 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 		// manage case of attribute modified attribute value
 		LinkType linkType = link.getLinkType();
 		ItemDelta modifiedItem = link.getSource();
-		if (linkType.equals(CadseRootCST.ITEM_TYPE_lt_MODIFIED_ATTRIBUTES)) {
+		if (linkType.equals(CadseGCST.ITEM_lt_MODIFIED_ATTRIBUTES)) {
 			// get attribute (link type) which has been modified
 			ItemDelta attrDef = link.getDestination();
-			TWEvol attrEvol = attrDef.getAttribute(CadseRootCST.ATTRIBUTE_TYPE_at_TWEVOL_);
+			TWEvol attrEvol = attrDef.getAttribute(CadseGCST.ATTRIBUTE_at_TWEVOL_);
 
 			if (!isRequireNewRev(modifiedItem)) {
 				if (attrEvol.equals(TWEvol.twMutable)) {
@@ -276,12 +276,12 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 				}
 
 				if (attrEvol.equals(TWEvol.twImmutable)
-						&& ((Boolean) attrDef.getAttribute(CadseRootCST.ATTRIBUTE_TYPE_at_TWREV_SPECIFIC_))) {
+						&& ((Boolean) attrDef.getAttribute(CadseGCST.ATTRIBUTE_at_TWREV_SPECIFIC_))) {
 					setRequireNewRev(modifiedItem);
 				}
 
 				if (attrEvol.equals(TWEvol.twImmutable)
-						&& (!(Boolean) attrDef.getAttribute(CadseRootCST.ATTRIBUTE_TYPE_at_TWREV_SPECIFIC_))) {
+						&& (!(Boolean) attrDef.getAttribute(CadseGCST.ATTRIBUTE_at_TWREV_SPECIFIC_))) {
 					// TODO change item id, set version to null, set item state
 					// to newRev
 
@@ -327,7 +327,7 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 		// manage case of attribute modified attribute value
 		LinkType linkType = link.getLinkType();
 		ItemDelta modifiedItem = link.getSource();
-		if (linkType.equals(CadseRootCST.ITEM_TYPE_lt_MODIFIED_ATTRIBUTES)) {
+		if (linkType.equals(CadseGCST.ITEM_lt_MODIFIED_ATTRIBUTES)) {
 			// manage case Modified -> Unmodified
 			// TODO implement it
 

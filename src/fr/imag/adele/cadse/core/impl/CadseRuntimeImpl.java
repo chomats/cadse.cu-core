@@ -21,7 +21,7 @@ package fr.imag.adele.cadse.core.impl;
 import java.net.URL;
 
 import fr.imag.adele.cadse.core.CadseException;
-import fr.imag.adele.cadse.core.CadseRootCST;
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CadseRuntime;
 import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.Item;
@@ -35,13 +35,13 @@ import fr.imag.adele.cadse.core.internal.InternalCadseRuntime;
 import fr.imag.adele.cadse.core.util.ArraysUtil;
 
 public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRuntime, InternalCadseRuntime {
-	private String			_displayName;
+	protected String			_cadseName;
 	private ItemType[]		_itemTypes;
 	private CadseRuntime[]	_requiredCadses;
 	private TreeView		_views;
-	private CompactUUID		_idCadseDefintiion;
-	private String			_name;
-	private String			_description;
+	private CompactUUID		_idCadseDefinition;
+	protected String			_name;
+	protected String			_description;
 	private String			_repoLogin;
 	private URL				_item_repos_url;
 	private URL				_defaultContentRepoURL;
@@ -50,16 +50,20 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 	boolean					_cadseroot	= false;
 
 	private String[]		_errors;
+	private String _cstClassName;
 
 	public CadseRuntimeImpl(String name, CompactUUID runtimeId, CompactUUID definitionId) {
 		super(runtimeId);
-		_idCadseDefintiion = definitionId;
-		this._name = name;
-		this._displayName = "Cadse " + name;
+		_idCadseDefinition = definitionId;
+		if (name.startsWith(CADSE_NAME_SUFFIX))
+			this._name = name.substring(CADSE_NAME_SUFFIX.length());
+		else 
+			this._name = name;
+		this._cadseName = "Cadse " + name;
 	}
 
 	public ItemType getType() {
-		return CadseRootCST.CADSE_RUNTIME;
+		return CadseGCST.CADSE_RUNTIME;
 	}
 
 	public void setParent(Item parent, LinkType lt) {
@@ -69,10 +73,15 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 	public String getName() {
 		return _name;
 	}
+	
+	@Override
+	public String getQualifiedName() {
+		return CADSE_NAME_SUFFIX+_name;
+	}
 
 	@Override
 	public String getDisplayName() {
-		return _displayName;
+		return _cadseName;
 	}
 
 	/*
@@ -96,11 +105,11 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 
 	@Override
 	protected void collectOutgoingLinks(LinkType linkType, CollectedReflectLink ret) {
-		if (linkType == CadseRootCST.CADSE_RUNTIME_lt_ITEM_TYPES) {
-			ret.addOutgoing(CadseRootCST.CADSE_RUNTIME_lt_ITEM_TYPES, _itemTypes);
+		if (linkType == CadseGCST.CADSE_RUNTIME_lt_ITEM_TYPES) {
+			ret.addOutgoing(CadseGCST.CADSE_RUNTIME_lt_ITEM_TYPES, _itemTypes);
 		}
-		if (linkType == CadseRootCST.CADSE_RUNTIME_lt_EXTENDS) {
-			ret.addOutgoing(CadseRootCST.CADSE_RUNTIME_lt_EXTENDS, _requiredCadses);
+		if (linkType == CadseGCST.CADSE_RUNTIME_lt_EXTENDS) {
+			ret.addOutgoing(CadseGCST.CADSE_RUNTIME_lt_EXTENDS, _requiredCadses);
 		}
 		super.collectOutgoingLinks(linkType, ret);
 	}
@@ -117,11 +126,11 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 		// Ne pas apeler cette methode à l'interieur de la methode commit...
 		// sinon les liens incomings vont etre creer deux fois...
 		if (extendsCadse != null) {
-			if (CadseRootCST.CADSE_RUNTIME_lt_EXTENDS == null) {
+			if (CadseGCST.CADSE_RUNTIME_lt_EXTENDS == null) {
 				throw new CadseIllegalArgumentException("Cadse root is not loaded");
 			}
 			for (CadseRuntime c : extendsCadse) {
-				c.addIncomingLink(new ReflectLink(CadseRootCST.CADSE_RUNTIME_lt_EXTENDS, this, c, -1), false);
+				c.addIncomingLink(new ReflectLink(CadseGCST.CADSE_RUNTIME_lt_EXTENDS, this, c, -1), false);
 			}
 		}
 	}
@@ -137,42 +146,51 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 
 	@Override
 	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
-		if (CadseRootCST.ITEM_TYPE_at_NAME_ == type) {
+		
+		if (CadseGCST.CADSE_RUNTIME_at_ID_DEFINITION_ == type) {
+			return (T) _idCadseDefinition.toString();
+		}
+		if (CadseGCST.ITEM_at_NAME_ == type) {
 			return (T) _name;
 		}
-		if (CadseRootCST.CADSE_RUNTIME_at_DESCRIPTION_ == type) {
+		if (CadseGCST.CADSE_RUNTIME_at_DESCRIPTION_ == type) {
 			return (T) _description;
 		}
-		if (CadseRootCST.CADSE_RUNTIME_at_ITEM_REPO_LOGIN_ == type) {
+		if (CadseGCST.CADSE_RUNTIME_at_ITEM_REPO_LOGIN_ == type) {
 			return (T) _repoLogin;
 		}
-		if (CadseRootCST.CADSE_RUNTIME_at_ITEM_REPO_URL_ == type) {
+		if (CadseGCST.CADSE_RUNTIME_at_ITEM_REPO_URL_ == type) {
 			return (T) _item_repos_url;
 		}
-		if (CadseRootCST.CADSE_RUNTIME_at_DEFAULT_CONTENT_REPO_URL_ == type) {
+		if (CadseGCST.CADSE_RUNTIME_at_DEFAULT_CONTENT_REPO_URL_ == type) {
 			return (T) _defaultContentRepoURL;
 		}
-		if (CadseRootCST.CADSE_RUNTIME_at_EXCUTED_ == type) {
+		if (CadseGCST.CADSE_RUNTIME_at_EXECUTED_ == type) {
 			return (T) Boolean.valueOf(_executed);
 		}
-		if (type == CadseRootCST.ITEM_TYPE_at_DISPLAY_NAME_) {
+		if (type == CadseGCST.ITEM_at_DISPLAY_NAME_) {
 			return (T) getDisplayName();
 		}
 
 		return super.internalGetOwnerAttribute(type);
+	}
+	
+	@Override
+	public String getQualifiedName(boolean recompute) {
+		return CADSE_NAME_SUFFIX+_name;
 	}
 
 	@Override
 	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
 
 		// TODO
-		if (CadseRootCST.CADSE_RUNTIME_at_ITEM_REPO_LOGIN_ == type) {
+		if (CadseGCST.CADSE_RUNTIME_at_ITEM_REPO_LOGIN_ == type) {
 			return false;
 		}
-		if (CadseRootCST.CADSE_RUNTIME_at_ITEM_REPO_URL_ == type) {
+		if (CadseGCST.CADSE_RUNTIME_at_ITEM_REPO_URL_ == type) {
 			return false;
 		}
-		if (CadseRootCST.CADSE_RUNTIME_at_DEFAULT_CONTENT_REPO_URL_ == type) {
+		if (CadseGCST.CADSE_RUNTIME_at_DEFAULT_CONTENT_REPO_URL_ == type) {
 			return false;
 		}
 		return super.commitSetAttribute(type, key, value);
@@ -180,11 +198,11 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 
 	@Override
 	public Link commitLoadCreateLink(LinkType lt, Item destination) throws CadseException {
-		if (lt == CadseRootCST.CADSE_RUNTIME_lt_ITEM_TYPES) {
+		if (lt == CadseGCST.CADSE_RUNTIME_lt_ITEM_TYPES) {
 			this._itemTypes = ArraysUtil.add(ItemType.class, this._itemTypes, (ItemType) destination);
 			return new ReflectLink(lt, this, destination, this._itemTypes.length - 1);
 		}
-		if (lt == CadseRootCST.CADSE_RUNTIME_lt_EXTENDS) {
+		if (lt == CadseGCST.CADSE_RUNTIME_lt_EXTENDS) {
 			this._requiredCadses = ArraysUtil.add(CadseRuntime.class, this._requiredCadses, (CadseRuntime) destination);
 			return new ReflectLink(lt, this, destination, this._requiredCadses.length - 1);
 		}
@@ -275,6 +293,23 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 		}
 		return false;
 	}
+	
+	@Override
+	public boolean canBeExecuted() {
+		if (!isResolved()) return false;
+		if (_requiredCadses == null) return true;
+		for (CadseRuntime eCr : this._requiredCadses) {
+			if (!eCr.isResolved()) {
+				return false; // this extends eCr
+			}
+		}
+		for (CadseRuntime eCr : this._requiredCadses) {
+			if (!eCr.canBeExecuted()) {
+				return false; // this extends eCr
+			}
+		}
+		return true;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -285,7 +320,26 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 		if (displayName == null) {
 			return;
 		}
-		this._displayName = displayName;
+		this._cadseName = displayName;
 	}
 
+	public CompactUUID getIdCadseDefinition() {
+		return _idCadseDefinition;
+	}
+
+	public void setIdCadseDefinition(CompactUUID idCadseDefintiion) {
+		_idCadseDefinition = idCadseDefintiion;
+	}
+
+	@Override
+	public String getCstQualifiedClassName() {
+		return _cstClassName;
+	}
+
+	@Override
+	public void setCstQualifiedClassName(String cstClass) {
+		_cstClassName = cstClass;		
+	}
+
+	
 }

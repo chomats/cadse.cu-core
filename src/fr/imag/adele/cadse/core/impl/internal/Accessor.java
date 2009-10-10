@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -259,10 +260,6 @@ public class Accessor {
 	}
 
 	public static void delete(Link l) throws CadseException {
-		if (l instanceof LinkDelta) {
-			((LinkDelta) l).delete();
-			return;
-		}
 		LogicalWorkspaceTransaction transaction = l.getSource().getLogicalWorkspace().createTransaction();
 		LinkDelta lOper = transaction.getLink(l);
 		if (lOper == null) {
@@ -295,6 +292,10 @@ public class Accessor {
 	}
 
 	public static Link removeOutgoingItem(Item source, LinkType linkType, Item destination) throws CadseException {
+		if (linkType.getMax() != 1) {
+			throw new CadseIllegalArgumentException(Messages.error_bad_link_type_max_not_equal_to_one, linkType
+					.getName());
+		}
 		Link l = source.getOutgoingLink(linkType, destination.getId());
 		if (l != null) {
 			delete(l);
@@ -526,7 +527,7 @@ public class Accessor {
 		ArrayList<Item> ret = new ArrayList<Item>();
 		for (Link l : links) {
 			// Select link has kind Containement
-			if (l.isPart()) {
+			if (l.getLinkType().isPart()) {
 				Item destination = l.getResolvedDestination();
 				// if dest not null, take this destination to return list.
 				if (destination != null) {
@@ -541,7 +542,7 @@ public class Accessor {
 		ArrayList<Item> ret = new ArrayList<Item>();
 		for (Link l : links) {
 			// Select link has kind Part and destination.
-			if (l.isPart() && l.getLinkType() == linkNameID) {
+			if (l.getLinkType().isPart() && l.getLinkType() == linkNameID) {
 				Item destination = l.getResolvedDestination();
 				// if dest not null, take this destination to return list.
 				if (destination != null) {
@@ -556,7 +557,7 @@ public class Accessor {
 		for (Link l : links) {
 			// If link has kind Containement and its destination's id is equal
 			// id parameter. Return this object destination.
-			if (l.isPart() && l.isLinkResolved() && l.getDestinationId().equals(id)) {
+			if (l.getLinkType().isPart() && l.isLinkResolved() && l.getDestinationId().equals(id)) {
 				return l.getResolvedDestination();
 			}
 		}
@@ -586,6 +587,22 @@ public class Accessor {
 			item = item.getPartParent();
 		}
 
+		return null;
+	}
+
+	/**
+	 * return the first item which name is equals to name parameter
+	 * @param list a list of item
+	 * @param name the name which search
+	 * @return the item found or null if not found
+	 */
+	public static <T extends Item> T filterName(List<T> list, String name) {
+		for (Iterator<T> incomers = list.iterator(); incomers.hasNext();) {
+			T lt = incomers.next();
+			if (lt.getName().equals(name)) {
+				return lt;
+			}
+		}
 		return null;
 	}
 

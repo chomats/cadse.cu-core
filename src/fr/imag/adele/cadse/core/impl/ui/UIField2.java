@@ -19,7 +19,7 @@
 package fr.imag.adele.cadse.core.impl.ui;
 
 import fr.imag.adele.cadse.core.CadseException;
-import fr.imag.adele.cadse.core.CadseRootCST;
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
@@ -30,6 +30,7 @@ import fr.imag.adele.cadse.core.impl.CollectedReflectLink;
 import fr.imag.adele.cadse.core.impl.ReflectLink;
 import fr.imag.adele.cadse.core.ui.EPosLabel;
 import fr.imag.adele.cadse.core.ui.IFedeFormToolkit;
+import fr.imag.adele.cadse.core.ui.IPage;
 import fr.imag.adele.cadse.core.ui.IPageController;
 import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.util.Convert;
@@ -67,6 +68,12 @@ public class UIField2 extends UIFieldImpl {
 	public void init() throws CadseException {
 		display.init();
 	}
+	
+	@Override
+	public void setPage(IPage p) {
+		super.setPage(p);
+		display.setPage(p);
+	}
 
 	@Override
 	public void init(IPageController globalController) {
@@ -96,6 +103,13 @@ public class UIField2 extends UIFieldImpl {
 	public void setEnabled(boolean v) {
 		display.setEnabled(v);
 	}
+	
+	@Override
+	public boolean setFlag(int f, boolean flag) {
+		if (f == Item.UI_RUNNING)
+			display.setFlag(f, flag);
+		return super.setFlag(f, flag);
+	}
 
 	@Override
 	public void setVisible(boolean v) {
@@ -120,20 +134,23 @@ public class UIField2 extends UIFieldImpl {
 	}
 
 	public ItemType getType() {
-		return CadseRootCST.FIELD_TYPE;
+		return CadseGCST.FIELD;
 	}
 
 	@Override
 	protected void collectOutgoingLinks(LinkType linkType, CollectedReflectLink ret) {
-		if (linkType == CadseRootCST.FIELD_TYPE_lt_DISPLAY) {
-			ret.addOutgoing(CadseRootCST.FIELD_TYPE_lt_DISPLAY, display);
+		// if (linkType == CadseGCST.FIELD_lt_ATTRIBUTE) {
+		// ret.addOutgoing(CadseGCST.FIELD_lt_ATTRIBUTE, attributeRef);
+		// }
+		if (linkType == CadseGCST.FIELD_lt_DISPLAY) {
+			ret.addOutgoing(CadseGCST.FIELD_lt_DISPLAY, display);
 		}
 		super.collectOutgoingLinks(linkType, ret);
 	}
 
 	@Override
 	public Link commitLoadCreateLink(LinkType lt, Item destination) throws CadseException {
-		if (lt == CadseRootCST.FIELD_TYPE_lt_DISPLAY) {
+		if (lt == CadseGCST.FIELD_lt_DISPLAY) {
 			this.display = (UIFieldImpl) destination;
 			return new ReflectLink(lt, this, destination, 0);
 		}
@@ -144,7 +161,7 @@ public class UIField2 extends UIFieldImpl {
 	public void removeOutgoingLink(Link link, boolean notifie) {
 		Item destination = link.getDestination();
 		LinkType lt = link.getLinkType();
-		if (lt == CadseRootCST.FIELD_TYPE_lt_DISPLAY && destination.isResolved()) {
+		if (lt == CadseGCST.FIELD_lt_DISPLAY && destination.isResolved()) {
 			display = null;
 			return;
 		}
@@ -153,16 +170,16 @@ public class UIField2 extends UIFieldImpl {
 
 	@Override
 	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
-		if (key.equals(CadseRootCST.FIELD_TYPE_at_EDITABLE)) {
+		if (key.equals(CadseGCST.FIELD_at_EDITABLE)) {
 			editable = Convert.toBoolean(value, (Boolean) type.getDefaultValue());
 			return true;
 		}
 
-		if (key.equals(CadseRootCST.FIELD_TYPE_at_LABEL)) {
+		if (key.equals(CadseGCST.FIELD_at_LABEL)) {
 			_label = (String) value;
 			return true;
 		}
-		if (key.equals(CadseRootCST.FIELD_TYPE_at_POSITION)) {
+		if (key.equals(CadseGCST.FIELD_at_POSITION)) {
 			this._posLabel = (EPosLabel) type.convertTo(value);
 			return true;
 		}
@@ -171,13 +188,13 @@ public class UIField2 extends UIFieldImpl {
 
 	@Override
 	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
-		if (CadseRootCST.FIELD_TYPE_at_EDITABLE_ == type) {
+		if (CadseGCST.FIELD_at_EDITABLE_ == type) {
 			return (T) Boolean.valueOf(editable);
 		}
-		if (CadseRootCST.FIELD_TYPE_at_LABEL_ == type) {
+		if (CadseGCST.FIELD_at_LABEL_ == type) {
 			return (T) this._label;
 		}
-		if (CadseRootCST.FIELD_TYPE_at_POSITION_ == type) {
+		if (CadseGCST.FIELD_at_POSITION_ == type) {
 			return (T) this._posLabel;
 		}
 		return super.internalGetOwnerAttribute(type);
@@ -203,18 +220,7 @@ public class UIField2 extends UIFieldImpl {
 
 	public void setVisualValue(Object visualValue, boolean sendNotification) {
 		display.setVisualValue(visualValue, sendNotification);
-	}
 
-	@Override
-	public void resetVisualValue() {
-		setFlag(UI_RUNNING, true);
-		display.resetVisualValue();
-	}
-
-	@Override
-	public void dispose() {
-		setFlag(UI_RUNNING, false);
-		display.dispose();
 	}
 
 }

@@ -3,7 +3,7 @@
 	<component immediate="true" classname="fr.imag.adele.cadse.core.impl.internal.CadseDomainImpl" factory="fr.imag.adele.cadse.core.impl.internal.CadseDomainImpl" architecture="true">
 		<callback transition="validate" method="start"/>
 		<callback transition="invalidate" method="stop"/>
-		<provides interface="fr.imag.adele.cadse.core.CadseDomain">
+		<provides specification="fr.imag.adele.cadse.core.CadseDomain">
 			<property name="sam.domain.root" value="Workspace" type="java.lang.String"/>
 		</provides>
 	</component>

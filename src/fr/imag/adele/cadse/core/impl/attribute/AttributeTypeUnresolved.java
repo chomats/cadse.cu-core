@@ -1,6 +1,6 @@
 package fr.imag.adele.cadse.core.impl.attribute;
 
-import fr.imag.adele.cadse.core.CadseRootCST;
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
@@ -19,7 +19,7 @@ public class AttributeTypeUnresolved extends AttributeType implements IAttribute
 	}
 
 	public ItemType getType() {
-		return CadseRootCST.UNRESOLVED_ATTRIBUTE_TYPE;
+		return CadseGCST.UNRESOLVED_ATTRIBUTE_TYPE;
 	}
 
 	public Class<Object> getAttributeType() {

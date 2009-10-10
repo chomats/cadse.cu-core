@@ -114,6 +114,7 @@ public class MC_AttributesItem extends AbstractModelController implements IModel
 	 */
 	public void notifieValueChanged(UIField field, Object value) {
 		Item item = getItem();
+		if (item.isReadOnly()) return;
 		// item.setAttribute(getUIField().getKey(),value);
 		IAttributeType<?> attrType = getUIField().getAttributeDefinition();
 		if (attrType != null) {
@@ -197,7 +198,7 @@ public class MC_AttributesItem extends AbstractModelController implements IModel
 		IAttributeType<?> attRef = getUIField().getAttributeDefinition();
 		if (attRef != null) {
 			if (attOperation.getAttributeDefinition() == attRef) {
-				getUIField().setVisualValue(getValue(), false);
+				getUIField().setVisualValue(attOperation.getCurrentValue(), false);
 			}
 		}
 	}

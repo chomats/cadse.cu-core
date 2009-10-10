@@ -32,6 +32,7 @@ import fr.imag.adele.cadse.core.delta.ItemDelta;
 import fr.imag.adele.cadse.core.delta.LinkDelta;
 import fr.imag.adele.cadse.core.delta.OperationTypeCst;
 import fr.imag.adele.cadse.core.delta.SetAttributeOperation;
+import fr.imag.adele.cadse.core.impl.CadseIllegalArgumentException;
 import fr.imag.adele.cadse.core.impl.internal.LinkTypeImpl;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
 import fr.imag.adele.cadse.core.util.ArraysUtil;
@@ -42,11 +43,11 @@ public final class LinkDeltaImpl extends ItemOrLinkDeltaImpl implements Link, Li
 	private String				_lt;
 
 	/** The destination. */
-	private ItemDescriptionRef	_destination;
+	private ItemDelta			_destination;
 	private int[]				_compatibleVersions	= null;
 
-	public LinkDeltaImpl(ItemDeltaImpl parent, String lt, ItemDescriptionRef destination, Link original, int index,
-			boolean loaded) throws CadseException {
+	public LinkDeltaImpl(ItemDeltaImpl parent, String lt, ItemDelta destination, Link original, int index,
+			boolean loaded)  {
 		super(OperationTypeCst.LINK_OPERATION, parent);
 		this._destination = destination;
 		this._lt = lt;
@@ -60,15 +61,6 @@ public final class LinkDeltaImpl extends ItemOrLinkDeltaImpl implements Link, Li
 			setAttribute(Item.IS_READ_ONLY_KEY, original.isReadOnly(), original.isReadOnly(), loaded);
 		}
 		this.setAttribute(Item.LINK_INDEX_KEY, index, index, loaded);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.internal.delta.LinkOperation#getDestinationDescription()
-	 */
-	public ItemDescriptionRef getDestinationDescription() {
-		return _destination;
 	}
 
 	/*
@@ -119,11 +111,14 @@ public final class LinkDeltaImpl extends ItemOrLinkDeltaImpl implements Link, Li
 		// isDelted -> nothing
 		// else -> add detele operation
 		if (this._createOperation != null) {
-			getItemOperationParent().remove(this);
+			removeInParent();
 			getWorkingCopy().notifyCancelCreatedLink(this);
 		} else if (this._deleteOperation != null) {
 			; // nothing
 		} else {
+			if (isLoaded())
+				setLoaded(false);
+			
 			DeleteOperationImpl deleteItemOperation = new DeleteOperationImpl(this, (DeleteOperationImpl) options);
 			setDeleteOperation(deleteItemOperation);
 			deleteItemOperation.addInParent();
@@ -170,7 +165,7 @@ public final class LinkDeltaImpl extends ItemOrLinkDeltaImpl implements Link, Li
 	 * @see fr.imag.adele.cadse.core.internal.delta.LinkOperation#getDestination()
 	 */
 	public ItemDelta getDestination() {
-		return getWLC().getItem(this._destination.getId(), true);
+		return this._destination;
 	}
 
 	/*
@@ -218,7 +213,7 @@ public final class LinkDeltaImpl extends ItemOrLinkDeltaImpl implements Link, Li
 	 * @see fr.imag.adele.cadse.core.internal.delta.LinkOperation#getDestinationType()
 	 */
 	public ItemType getDestinationType() {
-		return getWLC().getItemType(this._destination.getType());
+		return _destination.getType();
 	}
 
 	/*
@@ -289,6 +284,21 @@ public final class LinkDeltaImpl extends ItemOrLinkDeltaImpl implements Link, Li
 		return getSource().getId();
 	}
 
+	
+	@Override
+	public void removeInParent() {
+		super.removeInParent();
+		getSource().removeLink(this);
+		_destination.removeIncomingLink(this, false);
+	}
+	
+	@Override
+	public void addInParent()  {
+		super.addInParent();
+		getSource().addLink(this);
+		_destination.addIncomingLink(this, false);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -527,23 +537,23 @@ public final class LinkDeltaImpl extends ItemOrLinkDeltaImpl implements Link, Li
 
 		LinkType _lt_object = sourceType.getOutgoingLinkType(this._lt);
 		if (_lt_object == null) {
-			// parent
 			ItemType destType = getDestination().getType();
-			if (_lt.startsWith(LinkTypeImpl.LT_PARENT_SN_PREFIX)) {
-				String inverse_lt = _lt.substring(LinkTypeImpl.LT_PARENT_SN_PREFIX.length() + CompactUUID.STRING_LENGTH
-						+ 1);
-				CompactUUID invid = new CompactUUID(_lt.substring(LinkTypeImpl.LT_PARENT_SN_PREFIX.length(),
-						LinkTypeImpl.LT_PARENT_SN_PREFIX.length() + CompactUUID.STRING_LENGTH));
-				if (destType != null) {
-					LinkType _lt_inverse = destType.getOutgoingLinkType(inverse_lt);
-					if (_lt_inverse != null) {
-						final LinkType retLinkType = ((LinkTypeImpl) _lt_inverse).getInverse(invid);
-						// the name can be change...
-						this._lt = retLinkType.getName();
-						return retLinkType;
-					}
-				}
-			}
+//			// parent			
+//			if (_lt.startsWith(LinkTypeImpl.LT_PARENT_SN_PREFIX)) {
+//				String inverse_lt = _lt.substring(LinkTypeImpl.LT_PARENT_SN_PREFIX.length() + CompactUUID.STRING_LENGTH
+//						+ 1);
+//				CompactUUID invid = new CompactUUID(_lt.substring(LinkTypeImpl.LT_PARENT_SN_PREFIX.length(),
+//						LinkTypeImpl.LT_PARENT_SN_PREFIX.length() + CompactUUID.STRING_LENGTH));
+//				if (destType != null) {
+//					LinkType _lt_inverse = destType.getOutgoingLinkType(inverse_lt);
+//					if (_lt_inverse != null) {
+//						final LinkType retLinkType = ((LinkTypeImpl) _lt_inverse).getInverse(invid);
+//						// the name can be change...
+//						this._lt = retLinkType.getName();
+//						return retLinkType;
+//					}
+//				}
+//			}
 			return getWLC().createUnresolvedLinkType(_lt, sourceType, destType);
 			// derived ??
 		}
@@ -617,7 +627,7 @@ public final class LinkDeltaImpl extends ItemOrLinkDeltaImpl implements Link, Li
 	 * @see fr.imag.adele.cadse.core.internal.delta.LinkOperation#getDestinationOperation()
 	 */
 	public ItemDelta getDestinationOperation() throws CadseException {
-		return getWorkingCopy().getOrCreateItemOperation(this._destination.getId(), this._destination.getType());
+		return _destination;
 	}
 
 	/*
@@ -691,7 +701,6 @@ public final class LinkDeltaImpl extends ItemOrLinkDeltaImpl implements Link, Li
 	 *      java.lang.String, java.lang.Object)
 	 */
 	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
-
 		throw new UnsupportedOperationException();
 	}
 
@@ -787,6 +796,19 @@ public final class LinkDeltaImpl extends ItemOrLinkDeltaImpl implements Link, Li
 	public boolean isStatic() {
 		Link linkBase = getBaseLink();
 		return linkBase != null && linkBase.isStatic();
+	}
+
+	@Override
+	public void changeDestination(Item att) {
+		// destination is key in parent.
+		// probleme si le lien exist deja
+		LinkDelta l = getSource().getOutgoingLink(getLinkTypeName(),att.getId());
+		if (l != null) {
+			throw new CadseIllegalArgumentException("link allready exist : cannot change destination to "+att.getName(), this, l, att);
+		}
+		removeInParent();
+		_destination = getWLC().loadItem(att);
+		addInParent();
 	}
 
 }

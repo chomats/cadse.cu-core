@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 import fr.imag.adele.cadse.core.CadseException;
-import fr.imag.adele.cadse.core.CadseRootCST;
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemDescriptionRef;
@@ -308,7 +308,7 @@ public abstract class AbstractItem extends AbstractGeneratedItem implements Item
 	}
 
 	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
-		if (type == CadseRootCST.ITEM_TYPE_at_QUALIFIED_NAME_) {
+		if (type == CadseGCST.ITEM_at_QUALIFIED_NAME_) {
 			_qualifiedName = (String) value;
 		}
 		return super.commitSetAttribute(type, key, value);

@@ -19,7 +19,7 @@
 
 package fr.imag.adele.cadse.core.impl.attribute;
 
-import fr.imag.adele.cadse.core.CadseRootCST;
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
@@ -96,37 +96,39 @@ public class IntegerAttributeType extends AttributeType implements
 	}
 
 	public ItemType getType() {
-		return CadseRootCST.INTEGER_ATTRIBUTE_TYPE;
+		return CadseGCST.INTEGER;
 	}
 
 	@Override
 	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
-		if (CadseRootCST.INTEGER_ATTRIBUTE_TYPE_at_DEFAULT_VALUE_ == type) {
-			return (T) value;
+		if (CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_ == type) {
+			if (value == null)
+				return null;
+			return (T) value.toString();
 		}
-		if (CadseRootCST.INTEGER_ATTRIBUTE_TYPE_at_MIN_ == type) {
-			return (T) minValue;
-		}
-		if (CadseRootCST.INTEGER_ATTRIBUTE_TYPE_at_MAX_ == type) {
-			return (T) maxValue;
-		}
+//		if (CadseGCST.INTEGER_ATTRIBUTE_TYPE_at_MIN_ == type) {
+//			return (T) minValue;
+//		}
+//		if (CadseGCST.INTEGER_ATTRIBUTE_TYPE_at_MAX_ == type) {
+//			return (T) maxValue;
+//		}
 		return super.internalGetOwnerAttribute(type);
 	}
 
 	@Override
 	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
-		if (CadseRootCST.INTEGER_ATTRIBUTE_TYPE_at_DEFAULT_VALUE_ == type) {
+		if (CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_ == type) {
 			setValue(Convert.toInteger(value));
 			return true;
 		}
-		if (CadseRootCST.INTEGER_ATTRIBUTE_TYPE_at_MIN_ == type) {
-			setMinValue(Convert.toInteger(value));
-			return true;
-		}
-		if (CadseRootCST.INTEGER_ATTRIBUTE_TYPE_at_MAX_ == type) {
-			setMaxValue(Convert.toInteger(value));
-			return true;
-		}
+//		if (CadseGCST.INTEGER_ATTRIBUTE_TYPE_at_MIN_ == type) {
+//			setMinValue(Convert.toInteger(value));
+//			return true;
+//		}
+//		if (CadseGCST.INTEGER_ATTRIBUTE_TYPE_at_MAX_ == type) {
+//			setMaxValue(Convert.toInteger(value));
+//			return true;
+//		}
 		return super.commitSetAttribute(type, key, value);
 	}
 

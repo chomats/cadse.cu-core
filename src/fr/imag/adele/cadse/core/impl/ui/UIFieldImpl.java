@@ -20,7 +20,7 @@
 package fr.imag.adele.cadse.core.impl.ui;
 
 import fr.imag.adele.cadse.core.CadseException;
-import fr.imag.adele.cadse.core.CadseRootCST;
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.Link;
@@ -89,7 +89,7 @@ public abstract class UIFieldImpl extends AbstractGeneratedItem implements UIFie
 	/** The validators. */
 	private IValidateContributor[]		validators	= null;
 
-	IAttributeType<?>					attributeRef;
+	IAttributeType<?>					_attributeRef;
 
 	/** The cxts. */
 	ObjectMap<String, Object>			cxts		= null;
@@ -120,6 +120,10 @@ public abstract class UIFieldImpl extends AbstractGeneratedItem implements UIFie
 		this._label = label;
 		this._name = key;
 		this._posLabel = poslabel;
+	}
+
+	public UIFieldImpl(CompactUUID id) {
+		super(id);
 	}
 
 	/*
@@ -969,6 +973,7 @@ public abstract class UIFieldImpl extends AbstractGeneratedItem implements UIFie
 			_ic.dispose();
 		}
 		_filterContext = null;
+		_pages = null;
 	}
 
 	/*
@@ -1014,16 +1019,16 @@ public abstract class UIFieldImpl extends AbstractGeneratedItem implements UIFie
 
 	@Override
 	protected void collectOutgoingLinks(LinkType linkType, CollectedReflectLink ret) {
-		if (linkType == CadseRootCST.FIELD_TYPE_lt_ATTRIBUTE) {
-			ret.addOutgoing(CadseRootCST.FIELD_TYPE_lt_ATTRIBUTE, attributeRef);
+		if (linkType == CadseGCST.FIELD_lt_ATTRIBUTE) {
+			ret.addOutgoing(CadseGCST.FIELD_lt_ATTRIBUTE, _attributeRef);
 		}
 		super.collectOutgoingLinks(linkType, ret);
 	}
 
 	@Override
 	public Link commitLoadCreateLink(LinkType lt, Item destination) throws CadseException {
-		if (lt == CadseRootCST.FIELD_TYPE_lt_ATTRIBUTE) {
-			attributeRef = (IAttributeType<?>) destination;
+		if (lt == CadseGCST.FIELD_lt_ATTRIBUTE) {
+			_attributeRef = (IAttributeType<?>) destination;
 			return new ReflectLink(lt, this, destination, 0);
 		}
 
@@ -1034,8 +1039,8 @@ public abstract class UIFieldImpl extends AbstractGeneratedItem implements UIFie
 	public void removeOutgoingLink(Link link, boolean notifie) {
 		Item destination = link.getDestination();
 		LinkType lt = link.getLinkType();
-		if (lt == CadseRootCST.FIELD_TYPE_lt_ATTRIBUTE && destination.isResolved()) {
-			attributeRef = null;
+		if (lt == CadseGCST.FIELD_lt_ATTRIBUTE && destination.isResolved()) {
+			_attributeRef = null;
 			return;
 		}
 		super.removeOutgoingLink(link, notifie);
@@ -1043,7 +1048,7 @@ public abstract class UIFieldImpl extends AbstractGeneratedItem implements UIFie
 
 	@Override
 	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
-		if (key.equals(CadseRootCST.ITEM_TYPE_at_NAME)) {
+		if (key.equals(CadseGCST.ITEM_at_NAME)) {
 			this._name = Convert.toString(value);
 			return true;
 		}
@@ -1058,16 +1063,16 @@ public abstract class UIFieldImpl extends AbstractGeneratedItem implements UIFie
 	 */
 	@Override
 	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
-		if (type == CadseRootCST.FIELD_TYPE_at_EDITABLE_) {
+		if (type == CadseGCST.FIELD_at_EDITABLE_) {
 			return (T) Boolean.valueOf(editable);
 		}
-		if (type == CadseRootCST.FIELD_TYPE_at_LABEL_) {
+		if (type == CadseGCST.FIELD_at_LABEL_) {
 			return (T) this._label;
 		}
-		if (CadseRootCST.ITEM_TYPE_at_NAME_ == type) {
+		if (CadseGCST.ITEM_at_NAME_ == type) {
 			return (T) this._name;
 		}
-		if (CadseRootCST.ITEM_TYPE_at_DISPLAY_NAME_ == type) {
+		if (CadseGCST.ITEM_at_DISPLAY_NAME_ == type) {
 			return (T) this._name;
 		}
 		return super.internalGetOwnerAttribute(type);
@@ -1181,13 +1186,13 @@ public abstract class UIFieldImpl extends AbstractGeneratedItem implements UIFie
 		if (_ui != null) {
 			return _ui.getAttributeDefinition();
 		}
-		if (attributeRef == null) {
+		if (_attributeRef == null) {
 			Item item = getItem();
 			if (item != null) {
-				attributeRef = item.getLocalAttributeType(this._name);
+				_attributeRef = item.getLocalAttributeType(this._name);
 			}
 		}
-		return attributeRef;
+		return _attributeRef;
 	}
 
 	public LogicalWorkspaceTransaction getCopy() {

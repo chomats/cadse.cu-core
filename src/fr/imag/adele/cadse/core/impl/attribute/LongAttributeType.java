@@ -18,13 +18,15 @@
  */
 package fr.imag.adele.cadse.core.impl.attribute;
 
-import fr.imag.adele.cadse.core.CadseRootCST;
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.attribute.CheckStatus;
+import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.delta.ItemDelta;
 import fr.imag.adele.cadse.core.ui.IPageController;
+import fr.imag.adele.cadse.core.util.Convert;
 
 public class LongAttributeType extends AttributeType implements fr.imag.adele.cadse.core.attribute.LongAttributeType {
 	/** The value. */
@@ -46,7 +48,7 @@ public class LongAttributeType extends AttributeType implements fr.imag.adele.ca
 	}
 
 	public ItemType getType() {
-		return CadseRootCST.LONG_ATTRIBUTE_TYPE;
+		return CadseGCST.LONG;
 	}
 
 	public int getIntID() {
@@ -56,6 +58,23 @@ public class LongAttributeType extends AttributeType implements fr.imag.adele.ca
 	@Override
 	public Long getDefaultValue() {
 		return value;
+	}
+	
+	@Override
+	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
+		if (CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_ == type) {
+			return (T) Long.toString(value);
+		}
+		return super.internalGetOwnerAttribute(type);
+	}
+
+	@Override
+	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
+		if (CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_ == type) {
+			value = (Convert.toLong(value, 0));
+			return true;
+		}
+		return super.commitSetAttribute(type, key, value);
 	}
 
 	@Override

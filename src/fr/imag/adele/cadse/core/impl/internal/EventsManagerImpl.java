@@ -439,43 +439,7 @@ public class EventsManagerImpl extends Thread implements EventsManager {
 		}
 	}
 
-	static class ManagerDeltaCallNotifie implements CallNotifie {
-		IItemManager			l;
-		Item					item;
-
-		ImmutableWorkspaceDelta	delta;
-		private ListenerKind	kind;
-
-		public ManagerDeltaCallNotifie(IItemManager l, Item item, ImmutableWorkspaceDelta delta, ListenerKind kind) {
-			super();
-			this.l = l;
-			this.delta = delta;
-			this.item = item;
-			this.kind = kind;
-		}
-
-		public void notifie() throws Throwable {
-			l.notifie(item, delta);
-		}
-
-		public ListenerKind getKind() {
-			return kind;
-		}
-
-		@Override
-		public int hashCode() {
-			return l.hashCode() + item.hashCode();
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (obj instanceof ManagerDeltaCallNotifie) {
-				ManagerDeltaCallNotifie c = (ManagerDeltaCallNotifie) obj;
-				return l == c.l && c.item == item;
-			}
-			return super.equals(obj);
-		}
-	}
+	
 
 	/**
 	 * Local notify change event.
@@ -497,12 +461,12 @@ public class EventsManagerImpl extends Thread implements EventsManager {
 						add(new WSCallNotifie(l, values));
 					}
 				}
-				ItemType it = item.getType();
-				IItemManager itemManager = it.getItemManager();
-				if (itemManager.hasNotification()) {
-					mLogger.finest("[eventsManager] add call...");
-					add(new ManagerDeltaCallNotifie(itemManager, item, values, ListenerKind.BUILD));
-				}
+//				ItemType it = item.getType();
+//				IItemManager itemManager = it.getItemManager();
+//				if (itemManager.hasNotification()) {
+//					mLogger.finest("[eventsManager] add call...");
+//					add(new ManagerDeltaCallNotifie(itemManager, item, values, ListenerKind.BUILD));
+//				}
 
 			}
 

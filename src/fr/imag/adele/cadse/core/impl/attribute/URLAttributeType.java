@@ -23,7 +23,7 @@ import java.net.URL;
 import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.impl.internal.delta.ItemDeltaImpl;
-import fr.imag.adele.cadse.core.CadseRootCST;
+import fr.imag.adele.cadse.core.CadseGCST;
 
 public class URLAttributeType extends AttributeType implements fr.imag.adele.cadse.core.attribute.URLAttributeType {
 	public URLAttributeType(CompactUUID id, String name, int flag) {
@@ -39,7 +39,7 @@ public class URLAttributeType extends AttributeType implements fr.imag.adele.cad
 	}
 
 	public ItemType getType() {
-		return CadseRootCST.URLATTRIBUTE_TYPE;
+		return CadseGCST.URL;
 	}
 
 	public int getIntID() {

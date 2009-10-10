@@ -19,6 +19,7 @@
 package fr.imag.adele.cadse.core.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import fr.imag.adele.cadse.core.Item;
@@ -46,10 +47,14 @@ public class CollectedReflectLink extends ArrayList<Link> implements java.util.L
 	}
 
 	public <T extends Item> void addOutgoing(LinkType lt, T singleton) {
+		addOutgoing(lt, singleton,0);
+	}
+	
+	public <T extends Item> void addOutgoing(LinkType lt, T singleton, int flag) {
 		if (singleton == null) {
 			return;
 		}
-		add(new ReflectLink(lt, source_or_destination, singleton, 0));
+		add(new ReflectLink(lt, source_or_destination, singleton, 0, flag));
 	}
 
 	public void addIncoming(LinkType lt, Item src) {
@@ -90,6 +95,27 @@ public class CollectedReflectLink extends ArrayList<Link> implements java.util.L
 		ensureCapacity(size() + items.size());
 		for (int i = 0; i < items.size(); i++) {
 			add(new ReflectLink(lt, source_or_destination, items.get(i), i));
+		}
+	}
+	
+	public <T extends Item> void addOutgoing(LinkType lt, int flag, List<T> items) {
+		if (items == null) {
+			return;
+		}
+		ensureCapacity(size() + items.size());
+		for (int i = 0; i < items.size(); i++) {
+			add(new ReflectLink(lt, source_or_destination, items.get(i), i, flag));
+		}
+	}
+	
+	public <T extends Item> void addOutgoing(LinkType lt, Collection<T> items) {
+		if (items == null) {
+			return;
+		}
+		ensureCapacity(size() + items.size());
+		int i = 0;
+		for (T t : items) {
+			add(new ReflectLink(lt, source_or_destination, t, i++));
 		}
 	}
 }

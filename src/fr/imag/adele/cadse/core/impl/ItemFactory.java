@@ -18,7 +18,7 @@
  */
 package fr.imag.adele.cadse.core.impl;
 
-import fr.imag.adele.cadse.core.CadseRootCST;
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.IItemFactory;
 import fr.imag.adele.cadse.core.Item;
@@ -29,22 +29,18 @@ import fr.imag.adele.cadse.core.impl.attribute.BooleanAttributeType;
 import fr.imag.adele.cadse.core.impl.attribute.DateAttributeType;
 import fr.imag.adele.cadse.core.impl.attribute.DoubleAttributeType;
 import fr.imag.adele.cadse.core.impl.attribute.EnumAttributeType;
-import fr.imag.adele.cadse.core.impl.attribute.FlagIntegerAttributeType;
 import fr.imag.adele.cadse.core.impl.attribute.IntegerAttributeType;
-import fr.imag.adele.cadse.core.impl.attribute.ListAttributeType;
 import fr.imag.adele.cadse.core.impl.attribute.LongAttributeType;
-import fr.imag.adele.cadse.core.impl.attribute.MapAttributeType;
 import fr.imag.adele.cadse.core.impl.attribute.StringAttributeType;
 import fr.imag.adele.cadse.core.impl.attribute.TimeAttributeType;
 import fr.imag.adele.cadse.core.impl.attribute.URLAttributeType;
 import fr.imag.adele.cadse.core.impl.attribute.UUIDAttributeType;
-import fr.imag.adele.cadse.core.impl.code.ScriptItem;
+import fr.imag.adele.cadse.core.impl.internal.ExtItemTypeImpl;
 import fr.imag.adele.cadse.core.impl.internal.ItemImpl;
 import fr.imag.adele.cadse.core.impl.internal.ItemTypeImpl;
 import fr.imag.adele.cadse.core.impl.internal.LinkTypeImpl;
 import fr.imag.adele.cadse.core.impl.internal.ui.IPage2;
 import fr.imag.adele.cadse.core.impl.ui.UIField2;
-import fr.imag.adele.cadse.core.impl.ui.UIListenerImpl;
 
 public class ItemFactory implements IItemFactory {
 	static final public ItemFactory	SINGLETON	= new ItemFactory();
@@ -54,69 +50,71 @@ public class ItemFactory implements IItemFactory {
 	}
 
 	public Item newForCommitItem(LogicalWorkspace wl, ItemType it, ItemDelta item) {
-		if (isThisOrSubType(it, CadseRootCST.META_ITEM_TYPE)) {
+		if (isThisOrSubType(it, CadseGCST.ITEM_TYPE)) {
 			return new ItemTypeImpl(wl, it, item);
 		}
 		CompactUUID id = item.getId();
 		String shortName = item.getName();
-		if (it == CadseRootCST.BOOLEAN_ATTRIBUTE_TYPE) {
+		if (it == CadseGCST.BOOLEAN) {
 			return new BooleanAttributeType(item);
 		}
-		if (it == CadseRootCST.STRING_ATTRIBUTE_TYPE) {
+		if (it == CadseGCST.STRING) {
 			return new StringAttributeType(item);
 		}
-		if (it == CadseRootCST.DOUBLE_ATTRIBUTE_TYPE) {
+		if (it == CadseGCST.DOUBLE) {
 			return new DoubleAttributeType(item);
 		}
-		if (it == CadseRootCST.ENUM_ATTRIBUTE_TYPE) {
+		if (it == CadseGCST.ENUM) {
 			return new EnumAttributeType(item);
 		}
-		if (it == CadseRootCST.FLAG_ATTRIBUTE_TYPE) {
+		/*if (it == CadseGCST.FLAG_ATTRIBUTE_TYPE) {
 			return new FlagIntegerAttributeType(item);
-		}
-		if (it == CadseRootCST.INTEGER_ATTRIBUTE_TYPE) {
+		}*/
+		if (it == CadseGCST.INTEGER) {
 			return new IntegerAttributeType(item);
 		}
-		if (it == CadseRootCST.LINK_DEFINITION_ATTIBUTE_TYPE) {
+		if (it == CadseGCST.LINK) {
 			return new LinkTypeImpl(item);
 		}
-		if (it == CadseRootCST.LIST_ATTRIBUTE_TYPE) {
+		/*if (it == CadseGCST.LIST_ATTRIBUTE_TYPE) {
 			return new ListAttributeType(item);
 		}
-		if (it == CadseRootCST.MAP_ATTRIBUTE_TYPE) {
+		if (it == CadseGCST.MAP_ATTRIBUTE_TYPE) {
 			return new MapAttributeType(item);
 		}
-		if (it == CadseRootCST.VARIABLE_ATTRIBUTE_TYPE) {
+		if (it == CadseGCST.VARIABLE) {
 			// return new MapAttributeType(id,shortName, 0, null, null);
-		}
-		if (it == CadseRootCST.PAGE_DEFINITION_TYPE) {
+		}*/
+		if (it == CadseGCST.PAGE) {
 			return new IPage2(id, shortName, null);
 		}
-		if (it == CadseRootCST.FIELD_TYPE) {
+		if (it == CadseGCST.FIELD) {
 			return new UIField2(id, shortName);
 		}
-		if (it == CadseRootCST.UILISTENER) {
-			return new UIListenerImpl(id);
-		}
-		if (it == CadseRootCST.SCRIPT) {
-			return new ScriptItem(id, shortName);
-		}
-		if (it == CadseRootCST.UUIDATTRIBUTE_TYPE) {
+		if (it == CadseGCST.UUID) {
 			return new UUIDAttributeType(id, shortName);
 		}
-		if (it == CadseRootCST.URLATTRIBUTE_TYPE) {
+		if (it == CadseGCST.URL) {
 			return new URLAttributeType(id, shortName, 0);
 		}
-		if (it == CadseRootCST.DATE_ATTRIBUTE_TYPE) {
+		if (it == CadseGCST.DATE) {
 			return new DateAttributeType(id, shortName, 0);
 		}
-		if (it == CadseRootCST.TIME_ATTRIBUTE_TYPE) {
+		if (it == CadseGCST.TIME) {
 			return new TimeAttributeType(id, shortName, 0);
 		}
-		if (it == CadseRootCST.LONG_ATTRIBUTE_TYPE) {
+		if (it == CadseGCST.LONG) {
 			return new LongAttributeType(id, shortName, 0);
 		}
 
+		if (it == CadseGCST.EXT_ITEM_TYPE) {
+			return new ExtItemTypeImpl(wl, it, item); 
+		} 
+		
+		if (it == CadseGCST.CADSE_DEFINITION) {
+			return new CadseDefinitionImpl(item.getQualifiedName(), id, id);
+		}
+		
 		return new ItemImpl(wl, it, item);
 	}
 

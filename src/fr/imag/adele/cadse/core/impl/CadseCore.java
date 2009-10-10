@@ -44,21 +44,15 @@ import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
  */
 public class CadseCore {
 
-	/*
-	 * The Any item type.
-	 * 
-	 * @deprecated use theItemType removed le 13/01/09
-	 */
-	// static public ItemType AnyItemType = null;
-	/** The Any item type. */
-	static public ItemType	theItemType	= null;
+	/** The type of any item. */
+	static public ItemType	theItem	= null;
 
-	/** The m it. */
-	static public ItemType	mIT			= null;
+	/** The item type : the type of any item type. */
+	static public ItemType	theItemType			= null;
 
-	/** The m lt. */
-	static public LinkType	mLT			= null;
-
+	/** The link type of any link type. */
+	static public LinkType	theLinkType			= null;
+	
 	/**
 	 * Gets the name.
 	 * 
@@ -75,7 +69,7 @@ public class CadseCore {
 	 */
 	public static String getName(Item wrapper, String name, Item parent, LinkType lt) {
 		IItemManager im = wrapper.getType().getItemManager();
-		return im.computeUniqueName(wrapper, name, parent, lt);
+		return im.computeQualifiedName(wrapper, name, parent, lt);
 	}
 
 	/**
@@ -366,6 +360,14 @@ public class CadseCore {
 			}
 		}
 		return subTypes.toArray(new ItemType[subTypes.size()]);
+	}
+
+	public static boolean isStopped() {
+		return CadseDomainImpl.STOPPED;
+	}
+	
+	public static boolean isStarted() {
+		return CadseDomainImpl.STARTED;
 	}
 
 }

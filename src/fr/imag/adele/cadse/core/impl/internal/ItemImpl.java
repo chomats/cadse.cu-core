@@ -37,7 +37,7 @@ import java.util.UUID;
 
 import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
-import fr.imag.adele.cadse.core.CadseRootCST;
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.ChangeID;
 import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.DerivedLink;
@@ -247,8 +247,7 @@ public class ItemImpl extends AbstractItem implements Item {
 	/** The derived links. */
 	Set<DerivedLink>			_derivedLinks;
 
-	/** The parent. */
-	private Item				_parent		= null;
+
 
 	private boolean				_isRecomputeComponants;
 
@@ -336,18 +335,20 @@ public class ItemImpl extends AbstractItem implements Item {
 	@Override
 	public void loadItem(IWorkingLoadingItems wl, ItemDelta itemOperation, IErrorCollector errorCollector)
 			throws CadseException {
+		CadseGCST.ITEM_lt_MODIFIED_ATTRIBUTES.setIsNatif(true);
+		
 		Accessor.loadAttributes(this, itemOperation, errorCollector);
 		for (LinkDelta ldesc : itemOperation.getOutgoingLinkOperations()) {
 			try {
-
-				Item dest = wl.loadItem(ldesc.getDestinationDescription());
+				if (ldesc.isDerived() || ldesc.isDeleted()) {
+					continue;
+				}
+				Item dest = wl.loadItem(ldesc.getDestination());
 
 				if (ldesc.getLinkType() == null) {
 					errorCollector.addError(this, "Cannot load link " + ldesc);
 				}
-				if (ldesc.isDerived() || ldesc.isDeleted()) {
-					continue;
-				}
+				
 
 				LinkType lt = _type.getOutgoingLinkType(ldesc.getLinkTypeName());
 				if (lt == null) {
@@ -359,6 +360,9 @@ public class ItemImpl extends AbstractItem implements Item {
 						continue;
 					}
 				}
+				if (lt == CadseGCST.ITEM_lt_CONTENTS || lt == CadseGCST.ITEM_lt_PARENT) continue;
+				
+				
 				if (lt.isNatif() && dest.isResolved()) {
 					Link goodlink = commitLoadCreateLink(lt, dest);
 					if (goodlink != null) {
@@ -375,7 +379,7 @@ public class ItemImpl extends AbstractItem implements Item {
 						}
 						continue;
 					}
-					if (lt == CadseRootCST.ITEM_TYPE_lt_MODIFIED_ATTRIBUTES) {
+					if (lt == CadseGCST.ITEM_lt_MODIFIED_ATTRIBUTES) {
 						continue;
 					}
 					errorCollector.addError(this, lt.getSource().getName() + "::" + lt.getName()
@@ -401,27 +405,28 @@ public class ItemImpl extends AbstractItem implements Item {
 
 	@Override
 	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
-		if (type == CadseRootCST.ITEM_TYPE_at_NAME_) {
+		if (type == CadseGCST.ITEM_at_NAME_) {
 			return (T) getName();
 		}
-		if (type == CadseRootCST.ITEM_TYPE_at_QUALIFIED_NAME_) {
+		if (type == CadseGCST.ITEM_at_QUALIFIED_NAME_) {
 			return (T) getQualifiedName();
 		}
-		if (type == CadseRootCST.ITEM_TYPE_at_DISPLAY_NAME_) {
+		if (type == CadseGCST.ITEM_at_DISPLAY_NAME_) {
 			return (T) getDisplayName();
 		}
-		if (CadseRootCST.ITEM_TYPE_at_PARENT_ITEM_ID_ == type) {
-			return (T) internalGetGenericOwnerAttribute(CadseRootCST.ITEM_TYPE_at_PARENT_ITEM_ID_);
+		/*if (CadseGCST.ITEM_at_PARENT_ITEM_ID_ == type) {
+			return (T) internalGetGenericOwnerAttribute(CadseGCST.ITEM_at_PARENT_ITEM_ID_);
 		}
-		if (CadseRootCST.ITEM_TYPE_at_PARENT_ITEM_TYPE_ID_ == type) {
-			return (T) internalGetGenericOwnerAttribute(CadseRootCST.ITEM_TYPE_at_PARENT_ITEM_TYPE_ID_);
-		}
+		if (CadseGCST.ITEM_at_PARENT_ITEM_TYPE_ID_ == type) {
+			return (T) internalGetGenericOwnerAttribute(CadseGCST.ITEM_at_PARENT_ITEM_TYPE_ID_);
+		}*/
 		return super.internalGetOwnerAttribute(type);
 	}
 
 	@Override
 	public <T> T internalGetGenericOwnerAttribute(String key) {
-		IAttributeType<? extends Object> attType = getType().getAttributeType(key, true);
+		IAttributeType<? extends Object> attType = getType().getAttributeType(key, false);
+		if (attType == null) return null;
 		if (attType instanceof LinkType) {
 			return (T) getOutgoingLinks((LinkType) attType);
 		}
@@ -527,9 +532,9 @@ public class ItemImpl extends AbstractItem implements Item {
 	 */
 	@Override
 	public Link getOutgoingLink(LinkType lt) {
-		List<Link> ret = getOutgoingLinks(lt);
 		preconditions_getLink(lt);
-
+		List<Link> ret = getOutgoingLinks(lt);
+		
 		if (lt.getMax() != 1) {
 			throw new CadseIllegalArgumentException(Messages.error_maximum_cardinality_must_be_one, lt.getName());
 		}
@@ -673,14 +678,14 @@ public class ItemImpl extends AbstractItem implements Item {
 
 	@Override
 	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
-		if (CadseRootCST.ITEM_TYPE_at_NAME_ == type) {
+		if (CadseGCST.ITEM_at_NAME_ == type) {
 			if (value == null) {
 				value = NO_VALUE_STRING;
 			}
 			this._name = (String) value;
 			return true;
 		}
-		if (CadseRootCST.ITEM_TYPE_at_QUALIFIED_NAME_ == type) {
+		if (CadseGCST.ITEM_at_QUALIFIED_NAME_ == type) {
 			if (value == null) {
 				value = NO_VALUE_STRING;
 			}
@@ -1726,14 +1731,14 @@ public class ItemImpl extends AbstractItem implements Item {
 			return _parent;
 		}
 
-		parent = getParentInStorage();
+		_parent = getParentInStorage();
 
-		if (parent == null) {
+		if (_parent == null) {
 			return null;
 		}
 
 		if (lt == null) {
-			lt = Accessor.getPartParentLinkType(this, parent);
+			lt = Accessor.getPartParentLinkType(this, _parent);
 		}
 		if (lt == null) {
 			lt = getType().getIncomingPart(_parent.getType());
@@ -1817,27 +1822,29 @@ public class ItemImpl extends AbstractItem implements Item {
 		if (this._parent != null) {
 			return _parent;
 		}
-
-		Object value = getAttribute(CadseRootCST.ITEM_TYPE_at_PARENT_ITEM_ID_);
-		if (value instanceof UUID) {
-			// migration
-			value = new CompactUUID((UUID) value);
-			// try {
-			// remove this lines : use outgoing link instead
-			// setAttribute(CadseRootCST.ITEM_TYPE_at_PARENT_ITEM_ID_,
-			// value);
-			// } catch (CadseException e) {
-			// // TODO Auto-generated catch block
-			// e.printStackTrace();
-			// }
-		}
-		CompactUUID parentId = (CompactUUID) value;
-		if (parentId == null) {
-			return null;
-		}
-		Item retItem = _wl.getItem(parentId);
-		// /setAttribute(ATTR_PARENT_ITEM_ID, retItem.getId());
-		return retItem;
+		
+		return getOutgoingItem(CadseGCST.ITEM_lt_PARENT, true);
+//
+//		Object value = getAttribute(CadseGCST.ITEM_at_PARENT_ITEM_ID_);
+//		if (value instanceof UUID) {
+//			// migration
+//			value = new CompactUUID((UUID) value);
+//			// try {
+//			// remove this lines : use outgoing link instead
+//			// setAttribute(CadseGCST.ITEM_at_PARENT_ITEM_ID_,
+//			// value);
+//			// } catch (CadseException e) {
+//			// // TODO Auto-generated catch block
+//			// e.printStackTrace();
+//			// }
+//		}
+//		CompactUUID parentId = (CompactUUID) value;
+//		if (parentId == null) {
+//			return null;
+//		}
+//		Item retItem = _wl.getItem(parentId);
+//		// /setAttribute(ATTR_PARENT_ITEM_ID, retItem.getId());
+//		return retItem;
 	}
 
 	/*
@@ -2184,7 +2191,7 @@ public class ItemImpl extends AbstractItem implements Item {
 	// {
 	// _wl.renameUniqueName(this, oldValue, uniqueName);
 	// _wl.getCadseDomain().notifieChangeEvent(ChangeID.SET_ATTRIBUTE, this,
-	// CadseRootCST.ITEM_TYPE_at_QUALIFIED_NAME_, oldValue, uniqueName);
+	// CadseGCST.ITEM_at_QUALIFIED_NAME_, oldValue, uniqueName);
 	// }
 	//
 	// }
@@ -2237,7 +2244,7 @@ public class ItemImpl extends AbstractItem implements Item {
 		super.computeAttributes();
 		if (_type != null) {
 			if (_type.hasUniqueNameAttribute()) {
-				this._qualifiedName = _type.getItemManager().computeUniqueName(this, _name, getPartParent(false),
+				this._qualifiedName = _type.getItemManager().computeQualifiedName(this, _name, getPartParent(false),
 						getPartParentLinkType());
 			}
 		}
@@ -2248,6 +2255,8 @@ public class ItemImpl extends AbstractItem implements Item {
 	}
 
 	public void setParent(Item parent, LinkType lt) {
+		if (parent != null && !parent.isResolved())
+			throw new CadseIllegalArgumentException("Cannot set unresolved parent", this, parent);
 		checkCycle(parent, this);
 		this._parent = parent;
 		setModified(true);

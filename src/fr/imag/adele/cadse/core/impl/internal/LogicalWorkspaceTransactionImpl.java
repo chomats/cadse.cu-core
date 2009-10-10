@@ -35,7 +35,7 @@ import org.eclipse.core.runtime.Platform;
 
 import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
-import fr.imag.adele.cadse.core.CadseRootCST;
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CadseRuntime;
 import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.ContentChangeInfo;
@@ -89,7 +89,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 
 	private Map<CompactUUID, WLWCOperationImpl>	all_operations;
 
-	private Map<CompactUUID, ItemDelta>			operations;
+	private Map<CompactUUID, ItemDelta>			_operations;
 
 	/** The items. */
 	private Map<CompactUUID, ItemDelta>			items;
@@ -132,7 +132,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	public LogicalWorkspaceTransactionImpl(InternalLogicalWorkspace base,
 			LogicalWorkspaceTransactionListener[] workspaceLogiqueCopyListeners) {
 		this.base = base;
-		operations = new HashMap<CompactUUID, ItemDelta>();
+		_operations = new HashMap<CompactUUID, ItemDelta>();
 		this.items_deleted = new HashMap<CompactUUID, ItemDelta>();
 		this.items_by_key_deleted = new HashMap<ISpaceKey, ItemDelta>();
 		this.items_by_unique_name_deleted = new HashMap<String, ItemDelta>();
@@ -196,7 +196,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		if (!item.getType().hasUniqueNameAttribute()) {
 			return false;
 		}
-		String un = item.getType().getItemManager().computeUniqueName(item, shortName, item.getPartParent(),
+		String un = item.getType().getItemManager().computeQualifiedName(item, shortName, item.getPartParent(),
 				item.getPartParentLinkType());
 		return containsUniqueName(un);
 	}
@@ -266,7 +266,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#getItemOperation(fr.imag.adele.cadse.core.CompactUUID)
 	 */
 	public ItemDelta getItemOperation(CompactUUID id) {
-		return operations.get(id);
+		return _operations.get(id);
 	}
 
 	public ItemDelta getItem(Item item) {
@@ -280,7 +280,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	 *      boolean)
 	 */
 	public ItemDelta getItem(CompactUUID id, boolean showDeleteItem) {
-		ItemDelta oper = this.operations.get(id);
+		ItemDelta oper = this._operations.get(id);
 		if (oper != null) {
 			if (oper.isDeleted() && !showDeleteItem) {
 				return null;
@@ -318,12 +318,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		if (item == null) {
 			return null;
 		}
-		try {
-			return getOrCreateItemOperation(item);
-		} catch (CadseException e) {
-			e.printStackTrace();
-		}
-		return null;
+		return getOrCreateItemOperation(item);
 	}
 
 	public ItemDelta getItemByShortName(ItemType type, String uniqueName) {
@@ -400,23 +395,40 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		ret.setUpdate(update);
 		return ret;
 	}
+	
+	public ItemDelta loadItem(Item desc) {
+		return getOrCreateItemOperation(desc);
+	/*	ItemDelta ret = loadItem(desc.getId(), desc.getType().getId());;
+		try {
+			if (desc.getQualifiedName() != null) {
+				ret.setQualifiedName(desc.getQualifiedName(), true);
+			}
+			if (desc.getName() != null) {
+				ret.setName(desc.getName(), true);
+			}
+		} catch (CadseException e) {
+			// ignored
+		}
+
+		return ret;*/
+	}
 
 	public ItemDelta loadItem(ItemDescription desc) throws CadseException {
 		ItemDelta ret;
 		try {
 			ret = loadItem(desc.getId(), desc.getType());
 			if (desc.getQualifiedName() != null) {
-				ret.setUniqueName(desc.getQualifiedName(), true);
+				ret.setQualifiedName(desc.getQualifiedName(), true);
 			}
 			if (desc.getName() != null) {
-				ret.setShortName(desc.getName(), true);
+				ret.setName(desc.getName(), true);
 			}
 			for (Map.Entry<String, Object> entry : desc.getAttributes().entrySet()) {
 				String attributeName = entry.getKey();
 				if (attributeName.equals(ItemTypeImpl.ATTR_SHORT_NAME)
 						|| attributeName.equals(ItemTypeImpl.SHORT_NAME_KEY)
-						|| attributeName.equals(CadseRootCST.ITEM_TYPE_at_NAME)) {
-					attributeName = CadseRootCST.ITEM_TYPE_at_NAME;
+						|| attributeName.equals(CadseGCST.ITEM_at_NAME)) {
+					attributeName = CadseGCST.ITEM_at_NAME;
 					if (entry.getValue() == null || Item.NO_VALUE_STRING.equals(entry.getValue())) {
 						System.err.println("short name is overwritten in attribute");
 						continue;
@@ -436,22 +448,22 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		return ret;
 	}
 
-	public ItemDelta loadItem(ItemDescriptionRef desc) throws CadseException {
-		ItemDelta loadingItem = operations.get(desc.getId());
+	public ItemDelta loadItem(ItemDescriptionRef desc)  {
+		ItemDelta loadingItem = _operations.get(desc.getId());
 		if (loadingItem != null && loadingItem.isLoaded()) {
 			return loadingItem;
 		}
+		loadingItem = loadItem(desc.getId(), desc.getType());
 		try {
-			loadingItem = loadItem(desc.getId(), desc.getType());
 			if (desc.getQualifiedName() != null) {
-				loadingItem.setUniqueName(desc.getQualifiedName(), true);
+				loadingItem.setQualifiedName(desc.getQualifiedName(), true);
 			}
 			if (desc.getName() != null) {
-				loadingItem.setShortName(desc.getName(), true);
+				loadingItem.setName(desc.getName(), true);
 			}
 
 		} catch (CadseException e) {
-			throw new CadseException(e.getMessage(), e);
+			// ignored
 		}
 
 		return loadingItem;
@@ -534,7 +546,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 
 		if (parent != null) {
 			// set field and store in this parentItem and link part
-			ret.setParentAndLinkType(getOrCreateItemOperation(parent), lt);
+			ret.setParent(getOrCreateItemOperation(parent), lt);
 		}
 		validateCreatedItem(ret);
 		ret.addInParent();
@@ -545,7 +557,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 			// set attribute value and create link
 			ret.createPartParentLink();
 		}
-		ret.createLink(CadseRootCST.ITEM_TYPE_lt_INSTANCE_OF, ret.getType());
+		ret.createLink(CadseGCST.ITEM_lt_INSTANCE_OF, ret.getType());
 
 		if (itemDescriptionRef.getName() != null) {
 			ret.setName(itemDescriptionRef.getName());
@@ -562,7 +574,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	}
 
 	private void addItemOperation(ItemDelta ret) {
-		operations.put(ret.getId(), ret);
+		_operations.put(ret.getId(), ret);
 	}
 
 	private void echoueWC() {
@@ -680,7 +692,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	 */
 	public ItemDelta getOrCreateItemOperation(CompactUUID id, CompactUUID type, boolean add) throws CadseException,
 			CadseException {
-		ItemDelta ret = operations.get(id);
+		ItemDelta ret = _operations.get(id);
 		if (ret != null) {
 			return ret;
 		}
@@ -698,7 +710,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#getOrCreateItemOperation(fr.imag.adele.cadse.core.CompactUUID)
 	 */
 	public ItemDelta getOrCreateItemOperation(CompactUUID id) throws CadseException {
-		ItemDelta ret = operations.get(id);
+		ItemDelta ret = _operations.get(id);
 		if (ret != null) {
 			return ret;
 		}
@@ -716,8 +728,8 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	 * 
 	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#getOrCreateItemOperation(fr.imag.adele.cadse.core.Item)
 	 */
-	public ItemDelta getOrCreateItemOperation(Item itembase) throws CadseException {
-		ItemDelta ret = operations.get(itembase.getId());
+	public ItemDelta getOrCreateItemOperation(Item itembase)  {
+		ItemDelta ret = _operations.get(itembase.getId());
 		if (ret != null) {
 			return ret;
 		}
@@ -777,126 +789,10 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	 */
 	public void remove(ItemDelta itemOperation) {
 		this.items.remove(itemOperation.getId());
-		this.operations.remove(itemOperation.getId());
+		this._operations.remove(itemOperation.getId());
 		itemOperation.removeInParent();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#getIncomingLinks(fr.imag.adele.cadse.core.delta.ItemOperation,
-	 *      fr.imag.adele.cadse.core.LinkType, boolean, boolean)
-	 */
-	public List<Link> getIncomingLinks(ItemDelta itemOperation, LinkType lt, boolean acceptDelete, boolean acceptAdd) {
-		List<? extends Link> links = getIncomingLinks(itemOperation, acceptDelete, acceptAdd);
-		ArrayList<Link> ret = new ArrayList<Link>();
-		for (Link l : links) {
-			if (l.getLinkType() == lt) {
-				ret.add(l);
-			}
-		}
-		return ret;
-	}
-
-	public Link getIncomingLinks(ItemDelta itemOperation, LinkType lt, CompactUUID srcId, boolean acceptDelete,
-			boolean acceptAdd) {
-		List<LinkDelta> links = getIncomingLinks(itemOperation, acceptDelete, acceptAdd);
-		for (Link l : links) {
-			if (l.getLinkType() == lt && l.getSourceId().equals(srcId)) {
-				return l;
-			}
-		}
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#getIncomingItem(fr.imag.adele.cadse.core.delta.ItemOperation,
-	 *      fr.imag.adele.cadse.core.LinkType, boolean, boolean)
-	 */
-	public Collection<Item> getIncomingItem(ItemDelta itemOperation, LinkType lt, boolean acceptDelete,
-			boolean acceptAdd) {
-		return Accessor.getIncomingItem(getIncomingLinks(itemOperation, lt, acceptDelete, acceptAdd));
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#getIncomingItem(fr.imag.adele.cadse.core.delta.ItemOperation,
-	 *      boolean, boolean)
-	 */
-	public Collection<Item> getIncomingItem(ItemDelta itemOperation, boolean acceptDelete, boolean acceptAdd) {
-		return Accessor.getIncomingItem(getIncomingLinks(itemOperation, acceptDelete, acceptAdd));
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#getIncomingLinks(fr.imag.adele.cadse.core.delta.ItemOperation,
-	 *      boolean, boolean)
-	 */
-	public List<LinkDelta> getIncomingLinks(ItemDelta itemOperation, boolean acceptDelete, boolean acceptAdd) {
-
-		Item itembase = itemOperation.getBaseItem();
-		HashSet<LinkDelta> links = new HashSet<LinkDelta>();
-		if (itembase != null) {
-			List<? extends Link> incommingsLinks = itembase.getIncomingLinks();
-			for (Link l : incommingsLinks) {
-				if (l.isDerived()) {
-					continue;
-				}
-				try {
-					LinkDelta lo = getOrCreateItemOperation(l.getSource()).getOutgoingLinkOperation(l);
-					if (!acceptDelete && lo.isDeleted()) {
-						continue;
-					}
-					if (!acceptAdd && lo.isAdded()) {
-						continue;
-					}
-					links.add(lo);
-				} catch (CadseException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		for (ItemDelta item : this.operations.values()) {
-			List<LinkDelta> l = item.getOutgoingLinks(itemOperation.getId());
-			if (l != null) {
-				links.addAll(l);
-			}
-		}
-		return new ArrayList<LinkDelta>(links);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#getIncomingLinkOperations(fr.imag.adele.cadse.core.delta.ItemOperation)
-	 */
-	public List<LinkDelta> getIncomingLinkOperations(ItemDelta itemOperation) {
-
-		Item itembase = itemOperation.getBaseItem();
-		HashSet<LinkDelta> links = new HashSet<LinkDelta>();
-		if (itembase != null) {
-			List<? extends Link> incommingsLinks = itembase.getIncomingLinks();
-			for (Link l : incommingsLinks) {
-				try {
-					LinkDelta lo = getOrCreateItemOperation(l.getSource()).getOutgoingLinkOperation(l);
-					links.add(lo);
-				} catch (CadseException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		for (ItemDelta item : this.operations.values()) {
-			List<LinkDelta> l = item.getOutgoingLinkOperations(itemOperation.getId());
-			if (l != null) {
-				links.addAll(l);
-			}
-		}
-		return new ArrayList<LinkDelta>(links);
-	}
 
 	public void checkAll() throws CadseException {
 		// TODO Auto-generated method stub
@@ -909,7 +805,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#getItemOperations()
 	 */
 	public Collection<ItemDelta> getItemOperations() {
-		return new ArrayList<ItemDelta>(this.operations.values());
+		return new ArrayList<ItemDelta>(this._operations.values());
 	}
 
 	public Item getWithHandleIdentifier(String handleIdentifier) {
@@ -993,7 +889,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#isModified()
 	 */
 	public boolean isModified() {
-		for (ItemDelta oper : this.operations.values()) {
+		for (ItemDelta oper : this._operations.values()) {
 			if (oper.isModified()) {
 				return true;
 			}
@@ -1004,7 +900,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		for (ItemDelta oper : this.operations.values()) {
+		for (ItemDelta oper : this._operations.values()) {
 			if (oper.isModified()) {
 				oper.toString(sb, "");
 			}
@@ -1179,9 +1075,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 
 			// set parent attribute
 			// if (link_lt.isPart()) {
-			// destination.setAttribute(CadseRootCST.ITEM_TYPE_at_PARENT_ITEM_ID_,
+			// destination.setAttribute(CadseGCST.ITEM_at_PARENT_ITEM_ID_,
 			// source.getId());
-			// destination.setAttribute(CadseRootCST.ITEM_TYPE_at_PARENT_ITEM_TYPE_ID_,
+			// destination.setAttribute(CadseGCST.ITEM_at_PARENT_ITEM_TYPE_ID_,
 			// link_lt.getShortName());
 			// }
 		}
@@ -1321,10 +1217,10 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 				}
 			}
 
-			if (attOperation.getAttributeDefinition() == CadseRootCST.ITEM_TYPE_at_QUALIFIED_NAME_) {
+			if (attOperation.getAttributeDefinition() == CadseGCST.ITEM_at_QUALIFIED_NAME_) {
 				recomputeUniqueName(item);
 			}
-			if (attOperation.getAttributeDefinition() == CadseRootCST.ITEM_TYPE_at_NAME_) {
+			if (attOperation.getAttributeDefinition() == CadseGCST.ITEM_at_NAME_) {
 				if (item.getType().hasUniqueNameAttribute()) {
 					item.setQualifiedName(CadseCore.getName(item, item.getName(), item.getPartParent(), item
 							.getPartParentLinkType()));
@@ -1332,7 +1228,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 			}
 
 			try {
-				if (attOperation.getAttributeDefinition() != CadseRootCST.ITEM_TYPE_at_DISPLAY_NAME_) {
+				if (attOperation.getAttributeDefinition() != CadseGCST.ITEM_at_DISPLAY_NAME_) {
 					String dn = item.getDisplayName();
 
 					ItemType it = item.getType();
@@ -1340,7 +1236,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 						String newdn = it.getItemManager().getDisplayName(item);
 
 						if (newdn != null && !Convert.equals(dn, newdn)) {
-							item.setAttribute(CadseRootCST.ITEM_TYPE_at_DISPLAY_NAME_, newdn);
+							item.setAttribute(CadseGCST.ITEM_at_DISPLAY_NAME_, newdn);
 						}
 					}
 
@@ -1353,7 +1249,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		private void recomputeUniqueName(ItemDelta item) throws CadseException {
 			List<Link> outLinks = item.getOutgoingLinks();
 			for (Link l : outLinks) {
-				if (l.isPart() && l.isLinkResolved()) {
+				if (l.getLinkType().isPart() && l.isLinkResolved()) {
 					Item dest = l.getDestination();
 					if (dest.getType().hasUniqueNameAttribute()) {
 						dest.setQualifiedName(CadseCore.getName(dest, dest.getName(), item, l.getLinkType()));
@@ -1363,7 +1259,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 
 			List<Link> inLinks = item.getIncomingLinks();
 			for (Link l : inLinks) {
-				if (l.isAnnotation()) {
+				if (l.getLinkType().isAnnotation()) {
 					Item src = l.getSource();
 					if (src.getType().hasUniqueNameAttribute()) {
 						src.setQualifiedName(CadseCore.getName(src, src.getName(), src.getPartParent(), src
@@ -1379,18 +1275,22 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 			for (ItemDelta itemDelta : loadedItems) {
 				try {
 					if (itemDelta.getType() != null && itemDelta.getType().isPartType()) {
+						// get the parent 
+						ItemDelta partParent = itemDelta.getParentItem();
+						// get the link parent.
 						Link l = getInversePartLink(itemDelta);
 						if (l != null) {
+							if (partParent == null)
+								itemDelta.setParent(l.getDestination(), null);
 							continue;
 						}
 
 						l = getIncommingLinkParent(itemDelta);
 						if (l != null) {
 							createLinkPartToChild((ItemDelta) l.getSource(), itemDelta, l.getLinkType());
-							createLinkChildToPart((ItemDelta) l.getSource(), itemDelta, l.getLinkType());
+							createLinkChildToPart((ItemDelta) l.getSource(), itemDelta);
 							continue;
 						}
-						ItemDelta partParent = getParentInAtt(workspaceLogiqueWorkingCopy, itemDelta);
 						if (partParent != null) {
 							LinkType lt = getParentLinkTypeInStorage(itemDelta, partParent);
 							if (lt == null) {
@@ -1398,7 +1298,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 							}
 							if (lt != null && lt.isPart()) {
 								createLinkPartToChild(partParent, itemDelta, lt);
-								createLinkChildToPart(partParent, itemDelta, lt);
+								createLinkChildToPart(partParent, itemDelta);
 							}
 						}
 					}
@@ -1435,23 +1335,21 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 			return null;
 		}
 
-		void createLinkChildToPart(ItemDelta partParent, ItemDelta itemDelta, LinkType lt) {
+		void createLinkChildToPart(ItemDelta partParent, ItemDelta itemDelta) {
 			try {
-				LinkType lt_inverse = lt.getInverse();
-				Link l = itemDelta.getOutgoingLink(lt_inverse, partParent.getId());
+				Link l = itemDelta.getOutgoingLink(CadseGCST.ITEM_lt_PARENT, partParent.getId());
 				if (l != null) {
 					return;
 				} else {
-					if (lt.getMax() == 1) {
-						Link findOtherLink = itemDelta.getOutgoingLink(lt_inverse);
-						if (findOtherLink != null) {
-							// error(this, "Cannot recreate Item children
-							// alldready exist", null);
-							return;
-						}
+					Link findOtherLink = itemDelta.getOutgoingLink(CadseGCST.ITEM_lt_PARENT);
+					if (findOtherLink != null) {
+						// error(this, "Cannot recreate Item children
+						// alldready exist", null);
+						return;
 					}
+					
 					try {
-						itemDelta.createLink(lt_inverse, partParent);
+						itemDelta.createLink(CadseGCST.ITEM_lt_PARENT, partParent);
 					} catch (CadseException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -1483,39 +1381,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 			return parent.getType().getPartParentLinkType();
 		}
 
-		/**
-		 * Gets the parent in storage.
-		 * 
-		 * @return the parent in storage
-		 */
-		ItemDelta getParentInAtt(LogicalWorkspaceTransaction workspaceLogiqueWorkingCopy, ItemDelta itemDelta) {
-
-			SetAttributeOperation attParentId = itemDelta.getSetAttributeOperation(Accessor.ATTR_PARENT_ITEM_ID);
-			if (attParentId != null) {
-				Object value = attParentId.getCurrentValue();
-				if (value instanceof UUID) {
-					// migration
-					value = new CompactUUID((UUID) value);
-					// try {
-					// remove this lines : use outgoing link instead
-					// setAttribute(CadseRootCST.ITEM_TYPE_at_PARENT_ITEM_ID_,
-					// value);
-					// } catch (CadseException e) {
-					// // TODO Auto-generated catch block
-					// e.printStackTrace();
-					// }
-				}
-				CompactUUID parentId = (CompactUUID) value;
-				if (parentId != null) {
-					final ItemDelta parent = workspaceLogiqueWorkingCopy.getItem(parentId);
-					if (parent != null) {
-						return parent;
-					}
-				}
-			}
-			return null;
-
-		}
+		
 
 		private Link getIncommingLinkParent(ItemDelta itemDelta) {
 			List<Link> links;
@@ -1529,13 +1395,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		}
 
 		private Link getInversePartLink(ItemDelta itemDelta) {
-			List<Link> links = itemDelta.getOutgoingLinks();
-			for (Link l : links) {
-				if (l.getLinkType().isInversePart() && l.isLinkResolved()) {
-					return l;
-				}
-			}
-			return null;
+			return itemDelta.getOutgoingLink(CadseGCST.ITEM_lt_PARENT);
 		}
 
 	}
@@ -2223,20 +2083,22 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	public ItemType createItemType(ItemType metaType, CadseRuntime cadseName, ItemType superType, int intID,
 			CompactUUID id, String shortName, String displayName, boolean hasContent, boolean isAbstract,
 			IItemManager manager) {
-		throw new UnsupportedOperationException();
+		ItemType acc = null;
+		
+	//	ItemDelta TypeA = createItem(CadseGCST.ITEM_TYPE, dm, CadseGCST.DATA_MODEL_lt_TYPES);
+	//	TypeA.setName(static_generator.newName());
+	//	copy.commit();
+		return acc;
 	}
 
-	public ItemDelta loadItem(CompactUUID id, CompactUUID type) throws CadseException {
+	public ItemDelta loadItem(CompactUUID id, CompactUUID type) {
 
-		ItemDelta loadingItem = operations.get(id);
+		ItemDelta loadingItem = _operations.get(id);
 		if (loadingItem != null) {
-			loadingItem.setLoaded(true);
 			return loadingItem;
 		}
 
-		loadingItem = new ItemDeltaImpl(this, id, type, true);
-		loadingItem.setLoaded(true);
-		return loadingItem;
+		return new ItemDeltaImpl(this, id, type, true);
 	}
 
 	public Collection<Item> commit(boolean update, boolean forceToSave, boolean forceLoad,
@@ -2272,6 +2134,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		for (WLWCOperationImpl o : this.all_operations.values()) {
 			if (o.getOperationType() == OperationTypeCst.ITEM_OPERATION) {
 				ItemDelta itemOperation = (ItemDelta) o;
+				if (!itemOperation.isLoaded()) continue;
 				allLoadedItems.add(itemOperation);
 				ItemType it = itemOperation.getType();
 				if (it == null) {

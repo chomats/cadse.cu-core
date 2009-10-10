@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Set;
 
 import fr.imag.adele.cadse.core.CadseException;
+import fr.imag.adele.cadse.core.CadseGCST;
+import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.ContentItem;
 import fr.imag.adele.cadse.core.GenContext;
 import fr.imag.adele.cadse.core.GenStringBuilder;
@@ -40,6 +42,7 @@ import fr.imag.adele.cadse.core.build.Exporter;
 import fr.imag.adele.cadse.core.build.IBuildingContext;
 import fr.imag.adele.cadse.core.delta.ItemDelta;
 import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
+import fr.imag.adele.cadse.core.util.ArraysUtil;
 import fr.imag.adele.cadse.core.var.ContextVariable;
 
 /**
@@ -68,57 +71,40 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	static final ContentItem[]	NO_CHILDREN	= new ContentItem[0];
 
 	/** The item. */
-	private final Item			item;
+	private 	 Item			_ownerItem;
 
-	/** The _parent. */
-	private ContentItem			_parent;
 
-	private LinkType			partLinkType;
+	//private LinkType			partLinkType;
 
 	/** The composers. */
 	private Composer[]			fComposers;
 
 	/** The exporters. */
 	private Exporter[]			fExporters;
+	
+	private ContentItem[]		_children;
+	private ContentItem[]		_childrenFromParent;
+	
+	
 
-	/** The resource name. */
-	private String				resourceName;
-
+	
 	/**
 	 * Instantiates a new content manager.
 	 */
-	private ContentItemImpl() {
-		// super(CompactUUID.randomUUID(), "null",0);
-		item = null;
+	protected ContentItemImpl(CompactUUID id) {
+		super(id);
+		_ownerItem = null;
 		_parent = null;
 	}
-
-	/**
-	 * Instantiates a new content manager.
-	 * 
-	 * @param item
-	 *            the item
-	 */
-	@Deprecated
-	protected ContentItemImpl(Item item) {
-		this(null, item);
-	}
-
-	/**
-	 * Instantiates a new content manager.
-	 * 
-	 * @param parent
-	 *            the parent
-	 * @param item
-	 *            the item
-	 */
-	protected ContentItemImpl(ContentItem parent, Item item) {
-		// super(CompactUUID.randomUUID(), "#default-content",0);
-		this.item = item;
-		// if (parent == null)
-		// parent = getParentPartContentManager();
-		this._parent = parent;
-
+	
+	@Override
+	public Link commitLoadCreateLink(LinkType lt, Item destination)
+			throws CadseException {
+		if (lt == CadseGCST.CONTENT_ITEM_lt_OWNER_ITEM) {
+			_ownerItem = destination;
+			return new ReflectLink(lt, this, destination, 0);
+		}
+		return super.commitLoadCreateLink(lt, destination);
 	}
 
 	/*
@@ -126,8 +112,13 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	 * 
 	 * @see fr.imag.adele.cadse.core.ContentItem#getItem()
 	 */
+	@Deprecated
 	final public Item getItem() {
-		return item;
+		return _ownerItem;
+	}
+	
+	final public Item getOwnerItem() {
+		return _ownerItem;
 	}
 
 	/*
@@ -262,6 +253,8 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	 */
 	public abstract void delete() throws CadseException;
 
+	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -269,7 +262,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	 */
 	public ContentItem getParentPartContentManager(boolean includeContainers) {
 		if (this._parent != null) {
-			return this._parent;
+			return (ContentItem) this._parent;
 		}
 
 		ContentItem cm;
@@ -281,7 +274,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 			return parentItem.getContentItem();
 		}
 		for (Link l : getItem().getIncomingLinks()) {
-			if (l.isPart() && l.getSource().getContentItem() != null) {
+			if (l.getLinkType().isPart() && l.getSource().getContentItem() != null) {
 				return l.getSource().getContentItem();
 			}
 		}
@@ -314,7 +307,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	 * @see fr.imag.adele.cadse.core.ContentItem#commitChangeParentContent(fr.imag.adele.cadse.core.ContentItem)
 	 */
 	public void setParentContent(ContentItem newParentContentManager) {
-		this._parent = newParentContentManager;
+		setParent( newParentContentManager , null);
 	}
 
 	/**
@@ -356,12 +349,13 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	 * 
 	 * @see fr.imag.adele.cadse.core.ContentItem#getParentContentManager()
 	 */
+	@Deprecated
 	public ContentItem getParentContentManager() {
 		if (_parent == null) {
-			_parent = getParentPartContentManager();
+			setParent( getParentPartContentManager(), null);
 		}
 
-		return _parent;
+		return (ContentItem) _parent;
 	}
 
 	/*
@@ -369,6 +363,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	 * 
 	 * @see fr.imag.adele.cadse.core.ContentItem#getParentPartContentManager()
 	 */
+	@Deprecated
 	public ContentItem getParentPartContentManager() {
 		return getParentPartContentManager(true);
 	}
@@ -455,7 +450,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	public static void generateParts(Item item, GenStringBuilder sb, String type, String kind, Set<String> imports,
 			GenContext context) {
 		for (Link l : new ArrayList<Link>(item.getOutgoingLinks())) {
-			if (l.isPart() && l.isLinkResolved()) {
+			if (l.getLinkType().isPart() && l.isLinkResolved()) {
 				ContentItem cm = l.getResolvedDestination().getContentItem();
 				if (cm != null) {
 					cm.generate(sb, type, kind, imports, context);
@@ -475,7 +470,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	public void generatePart(String linkID, GenStringBuilder sb, String type, String kind, Set<String> imports,
 			GenContext context) {
 
-		Item dest = item.getOutgoingItem(linkID, false);
+		Item dest = _ownerItem.getOutgoingItem(linkID, false);
 		if (dest != null) {
 			ContentItem cm = dest.getContentItem();
 			if (cm != null) {
@@ -495,7 +490,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	 */
 	public void generateParts(String linkID, GenStringBuilder sb, String type, String kind, Set<String> imports,
 			GenContext context) {
-		Collection<Item> dests = item.getOutgoingItems(linkID, false);
+		Collection<Item> dests = _ownerItem.getOutgoingItems(linkID, false);
 		for (Item aItem : dests) {
 			ContentItem cm = aItem.getContentItem();
 			if (cm != null) {
@@ -576,8 +571,9 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	 * 
 	 * @see fr.imag.adele.cadse.core.ContentItem#getResourceName()
 	 */
+	@Deprecated
 	public String getResourceName() {
-		return resourceName;
+		return getName();
 	}
 
 	/*
@@ -585,50 +581,104 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	 * 
 	 * @see fr.imag.adele.cadse.core.ContentItem#setResourceName(java.lang.String)
 	 */
+	@Deprecated
 	public void setResourceName(String resourceName) {
-		this.resourceName = resourceName;
+		//this.resourceName = resourceName;
 	}
 
 	public ItemType getType() {
-		// TODO Auto-generated method stub
-		return null;
+		return CadseGCST.CONTENT_ITEM;
 	}
 
 	public void setParent(Item parent, LinkType lt) {
-		_parent = (ContentItem) parent;
+		if (parent instanceof ContentItem || parent == null) {
+			if (_parent != null) {
+				((ContentItem) _parent).removeChild(this);
+			}
+			_parent =  parent;
+			if (_parent != null) {
+				((ContentItem) _parent).addChild(this);
+			}
+		} else {
+			throw new IllegalArgumentException("parent not type ContentItem");
+		}
 	}
 
 	@Override
 	public ContentItem getPartParent() {
-		return getParentContentManager();
+		return (ContentItem) _parent;
+	}
+	
+	@Override
+	public ContentItem getPartParent(boolean attemptToRecreate) {
+		super.getPartParent(attemptToRecreate);
+		return getPartParent();
 	}
 
 	public Collection<ContentItem> getPartChildrenContents() {
-
 		Collection<ContentItem> ret = new ArrayList<ContentItem>();
 		for (Link l : getOutgoingLinks()) {
-			if (l.isLinkResolved() && l.isPart() && l.getDestination() instanceof ContentItem) {
+			if (l.isLinkResolved() && l.getLinkType().isPart() && l.getDestination() instanceof ContentItem) {
 				ret.add((ContentItem) l.getDestination());
 			}
 		}
 		return ret;
 	}
+	
+	@Override
+	public void addChild(ContentItem contentItem) {
+		_childrenFromParent = ArraysUtil.add(ContentItem.class, _childrenFromParent, contentItem);
+	}
+	
+	@Override
+	public void removeChild(ContentItem contentItem) {
+		_childrenFromParent = ArraysUtil.remove(ContentItem.class, _childrenFromParent, contentItem);
+	}
 
-	// /**
-	// * Compute rename change.
-	// *
-	// * @param change
-	// * the change
-	// * @param newCxt
-	// * the new cxt
-	// * @param oldCxt
-	// * the old cxt
-	// *
-	// * @return the refactoring status
-	// */
-	// //public RefactoringStatus computeRenameChange(CompositeChange change,
-	// ContextVariable newCxt, ContextVariable oldCxt) {
-	// // return new RefactoringStatus();
-	// //}
+	
+	
+	
+	@Override
+	public String getName() {
+		ItemType type = getType();
+		if (type == null ) {
+			if (_ownerItem == null)
+				return "Content of item ?? (??)";
+			else
+				return "Content of item "+_ownerItem.getDisplayName()+ " (??)";
+		}
+		else if (_ownerItem == null) {
+			return "Content of item ?? ("+type.getDisplayName()+")";
+		}
+		return "Content of item "+_ownerItem.getDisplayName()+ " ("+type.getDisplayName()+")";
+	}
+	
+	@Override
+	public String getDisplayName() {
+		return getName();
+	}
+	
+	@Override
+	public boolean isReadOnly() {
+		return true;
+	}
+	
+	public void setOwnerItem(Item ownerItem) {
+		_ownerItem = ownerItem;
+	}
+	
+	@Override
+	protected void collectOutgoingLinks(LinkType linkType,
+			CollectedReflectLink ret) {
+		if (linkType == CadseGCST.CONTENT_ITEM_lt_OWNER_ITEM) {
+			ret.addOutgoing(linkType, _ownerItem);
+		}
+		
+		if (linkType == CadseGCST.CONTENT_ITEM_lt_CHILDREN) {
+			ret.addOutgoing(linkType, _childrenFromParent);
+			ret.addOutgoing(linkType, _children);
+		}
+		super.collectOutgoingLinks(linkType, ret);
+	}
 
 }

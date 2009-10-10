@@ -22,7 +22,7 @@ package fr.imag.adele.cadse.core.impl.ui;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import fr.imag.adele.cadse.core.CadseRootCST;
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.IItemNode;
 import fr.imag.adele.cadse.core.Item;
@@ -101,15 +101,15 @@ public class ConfigurablePageFactory extends PageImpl implements IPageFactory {
 			switch (cas) {
 				case PAGE_CREATION_ITEM:
 					newPage = this.m.newInstance(item, type, lt);
-					newPage.setParent(type, CadseRootCST.META_ITEM_TYPE_lt_CREATION_PAGES);
+					newPage.setParent(type, CadseGCST.ITEM_TYPE_lt_CREATION_PAGES);
 					return newPage;
 				case PAGE_PROPERTY_ITEM:
 					newPage = this.m.newInstance(item);
-					newPage.setParent(type, CadseRootCST.META_ITEM_TYPE_lt_MODIFICATION_PAGES);
+					newPage.setParent(type, CadseGCST.ITEM_TYPE_lt_MODIFICATION_PAGES);
 					return newPage;
 				case PAGE_PROPERTY_VIEW_ITEM:
 					newPage = this.m.newInstance(item, node);
-					newPage.setParent(type, CadseRootCST.META_ITEM_TYPE_lt_MODIFICATION_PAGES);
+					newPage.setParent(type, CadseGCST.ITEM_TYPE_lt_MODIFICATION_PAGES);
 					return newPage;
 			}
 		} catch (IllegalArgumentException e) {
@@ -128,7 +128,7 @@ public class ConfigurablePageFactory extends PageImpl implements IPageFactory {
 
 	@Override
 	public ItemType getType() {
-		return CadseRootCST.PAGE_DEFINITION_TYPE;
+		return CadseGCST.PAGE;
 	}
 
 	public boolean isEmptyPage() {
@@ -137,8 +137,8 @@ public class ConfigurablePageFactory extends PageImpl implements IPageFactory {
 
 	@Override
 	protected void collectOutgoingLinks(LinkType linkType, CollectedReflectLink ret) {
-		if (linkType == CadseRootCST.PAGE_DEFINITION_TYPE_lt_FIELDS) {
-			ret.addOutgoing(CadseRootCST.PAGE_DEFINITION_TYPE_lt_FIELDS, getCachedPage().getFields());
+		if (linkType == CadseGCST.PAGE_lt_FIELDS) {
+			ret.addOutgoing(CadseGCST.PAGE_lt_FIELDS, getCachedPage().getFields());
 		}
 		super.collectOutgoingLinks(linkType, ret);
 	}

@@ -21,7 +21,7 @@ package fr.imag.adele.cadse.core.impl.attribute;
 import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.impl.internal.delta.ItemDeltaImpl;
-import fr.imag.adele.cadse.core.CadseRootCST;
+import fr.imag.adele.cadse.core.CadseGCST;
 
 public class TimeAttributeType extends LongAttributeType implements fr.imag.adele.cadse.core.attribute.TimeAttributeType {
 
@@ -35,7 +35,7 @@ public class TimeAttributeType extends LongAttributeType implements fr.imag.adel
 
 	@Override
 	public ItemType getType() {
-		return CadseRootCST.TIME_ATTRIBUTE_TYPE;
+		return CadseGCST.TIME;
 	}
 
 }

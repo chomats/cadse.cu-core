@@ -21,7 +21,7 @@ package fr.imag.adele.cadse.core.impl.attribute;
 import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.impl.internal.delta.ItemDeltaImpl;
-import fr.imag.adele.cadse.core.CadseRootCST;
+import fr.imag.adele.cadse.core.CadseGCST;
 
 public class UUIDAttributeType extends AttributeType implements fr.imag.adele.cadse.core.attribute.UUIDAttributeType {
 
@@ -44,7 +44,7 @@ public class UUIDAttributeType extends AttributeType implements fr.imag.adele.ca
 	}
 
 	public ItemType getType() {
-		return CadseRootCST.UUIDATTRIBUTE_TYPE;
+		return CadseGCST.UUID;
 	}
 
 	public int getIntID() {

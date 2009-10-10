@@ -118,7 +118,7 @@ public class AbstractLinkTypeManager implements ILinkTypeManager {
 		if (l.isAnnotation()) {
 			return Messages.error_cannot_delete_annotation_link;
 		}
-		if (l.isPart() && l.isLinkResolved()) {
+		if (l.getLinkType().isPart() && l.isLinkResolved()) {
 			return Messages.error_cannot_delete_resolved_part_link;
 		}
 		return linkType.getSource().getItemManager().canDeleteLink(l);

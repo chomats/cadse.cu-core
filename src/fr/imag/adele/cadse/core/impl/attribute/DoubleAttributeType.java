@@ -19,7 +19,7 @@
 
 package fr.imag.adele.cadse.core.impl.attribute;
 
-import fr.imag.adele.cadse.core.CadseRootCST;
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
@@ -119,37 +119,37 @@ public class DoubleAttributeType extends AttributeType implements
 
 	@Override
 	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
-		if (CadseRootCST.DOUBLE_ATTRIBUTE_TYPE_at_DEFAULT_VALUE_ == type) {
-			return (T) new Double(value);
+		if (CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_ == type) {
+			return (T) new Double(value).toString();
 		}
-		if (CadseRootCST.DOUBLE_ATTRIBUTE_TYPE_at_MIN_ == type) {
-			return (T) minValue;
-		}
-		if (CadseRootCST.DOUBLE_ATTRIBUTE_TYPE_at_MAX_ == type) {
-			return (T) maxValue;
-		}
+//		if (CadseGCST.DOUBLE_at_MIN_ == type) {
+//			return (T) minValue;
+//		}
+//		if (CadseGCST.DOUBLE_at_MAX_ == type) {
+//			return (T) maxValue;
+//		}
 		return super.internalGetOwnerAttribute(type);
 	}
 
 	@Override
 	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
-		if (CadseRootCST.DOUBLE_ATTRIBUTE_TYPE_at_DEFAULT_VALUE_ == type) {
-			setValue(Convert.toDouble(value));
+		if (CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_ == type) {
+			setValue(Convert.toDouble(value, 0));
 			return true;
 		}
-		if (CadseRootCST.DOUBLE_ATTRIBUTE_TYPE_at_MIN_ == type) {
-			setMinValue(Convert.toDouble(value));
-			return true;
-		}
-		if (CadseRootCST.DOUBLE_ATTRIBUTE_TYPE_at_MAX_ == type) {
-			setMaxValue(Convert.toDouble(value));
-			return true;
-		}
+//		if (CadseGCST.DOUBLE_at_MIN_ == type) {
+//			setMinValue(Convert.toDouble(value));
+//			return true;
+//		}
+//		if (CadseGCST.DOUBLE_at_MAX_ == type) {
+//			setMaxValue(Convert.toDouble(value));
+//			return true;
+//		}
 		return super.commitSetAttribute(type, key, value);
 	}
 
 	public ItemType getType() {
-		return CadseRootCST.DOUBLE_ATTRIBUTE_TYPE;
+		return CadseGCST.DOUBLE;
 	}
 
 	@Override

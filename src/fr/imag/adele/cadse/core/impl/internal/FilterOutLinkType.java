@@ -23,11 +23,11 @@ package fr.imag.adele.cadse.core.impl.internal;
 
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemFilter;
-import fr.imag.adele.cadse.core.CadseRootCST;
+import fr.imag.adele.cadse.core.CadseGCST;
 
 public final class FilterOutLinkType implements ItemFilter {
 	public boolean accept(Item item) {
-		return item.getType() != CadseRootCST.LINK_DEFINITION_ATTIBUTE_TYPE;
+		return item.getType() != CadseGCST.LINK;
 	}
 
 	public boolean stop() {

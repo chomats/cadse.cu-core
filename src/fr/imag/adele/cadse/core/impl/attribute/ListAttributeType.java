@@ -22,7 +22,8 @@ package fr.imag.adele.cadse.core.impl.attribute;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.imag.adele.cadse.core.CadseRootCST;
+import fr.imag.adele.cadse.core.CadseException;
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
@@ -73,7 +74,7 @@ public class ListAttributeType<X> extends AttributeType implements
 		this.max = max;
 		if (subtype != null) {
 			this.subtype = subtype;
-			this.subtype.setParent(this, CadseRootCST.LIST_ATTRIBUTE_TYPE_lt_SUB_TYPE);
+			this.subtype.setParent(this, CadseGCST.LIST_lt_SUB_TYPE);
 		}
 	}
 
@@ -177,22 +178,22 @@ public class ListAttributeType<X> extends AttributeType implements
 	}
 
 	public ItemType getType() {
-		return CadseRootCST.LIST_ATTRIBUTE_TYPE;
+		return CadseGCST.LIST;
 	}
 
 	@Override
 	protected void collectOutgoingLinks(LinkType linkType, CollectedReflectLink ret) {
-		if (CadseRootCST.LIST_ATTRIBUTE_TYPE_lt_SUB_TYPE == linkType) {
-			ret.addOutgoing(CadseRootCST.LIST_ATTRIBUTE_TYPE_lt_SUB_TYPE, subtype);
+		if (CadseGCST.LIST_lt_SUB_TYPE == linkType) {
+			ret.addOutgoing(CadseGCST.LIST_lt_SUB_TYPE, subtype);
 		}
 		super.collectOutgoingLinks(linkType, ret);
 	}
 
 	@Override
-	public Link commitLoadCreateLink(LinkType lt, Item destination) {
-		if (lt == CadseRootCST.LIST_ATTRIBUTE_TYPE_lt_SUB_TYPE) {
+	public Link commitLoadCreateLink(LinkType lt, Item destination) throws CadseException {
+		if (lt == CadseGCST.LIST_lt_SUB_TYPE) {
 			subtype = (IAttributeType<X>) destination;
-			this.subtype.setParent(this, CadseRootCST.LIST_ATTRIBUTE_TYPE_lt_SUB_TYPE);
+			this.subtype.setParent(this, CadseGCST.LIST_lt_SUB_TYPE);
 			return new ReflectLink(lt, this, destination, 0);
 		}
 		return super.commitLoadCreateLink(lt, destination);
@@ -203,7 +204,7 @@ public class ListAttributeType<X> extends AttributeType implements
 		Item destination = link.getDestination();
 		LinkType lt = link.getLinkType();
 
-		if (lt == CadseRootCST.LIST_ATTRIBUTE_TYPE_lt_SUB_TYPE && destination.isResolved()) {
+		if (lt == CadseGCST.LIST_lt_SUB_TYPE && destination.isResolved()) {
 			subtype = null;
 			return;
 		}

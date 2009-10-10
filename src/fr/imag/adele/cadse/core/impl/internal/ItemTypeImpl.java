@@ -41,8 +41,9 @@ import java.util.logging.Logger;
 
 import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
-import fr.imag.adele.cadse.core.CadseRootCST;
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CadseRuntime;
+import fr.imag.adele.cadse.core.CadseUtil;
 import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.DerivedLinkType;
 import fr.imag.adele.cadse.core.IItemFactory;
@@ -69,6 +70,7 @@ import fr.imag.adele.cadse.core.impl.ui.CreationAction;
 import fr.imag.adele.cadse.core.impl.ui.ModificationAction;
 import fr.imag.adele.cadse.core.impl.ui.PageImpl;
 import fr.imag.adele.cadse.core.internal.IWorkingLoadingItems;
+import fr.imag.adele.cadse.core.internal.ItemTypeInternal;
 import fr.imag.adele.cadse.core.key.SpaceKeyType;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransactionListener;
 import fr.imag.adele.cadse.core.ui.IActionContributor;
@@ -92,12 +94,12 @@ import fr.imag.adele.cadse.core.util.LinkPathUtil;
  * @version 2.2
  * @date 26/09/05
  */
-public class ItemTypeImpl extends ItemImpl implements ItemType {
+public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal {
 
 	/**
 	 * old string
 	 * 
-	 * @deprecated use {@link CadseRootCST#ITEM_TYPE_at_QUALIFIED_NAME_}
+	 * @deprecated use {@link CadseGCST#ITEM_TYPE_at_QUALIFIED_NAME_}
 	 */
 	@Deprecated
 	static final String							UNIQUE_NAME_KEY				= "#unique-name";
@@ -105,7 +107,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	/**
 	 * old string
 	 * 
-	 * @deprecated use {@link CadseRootCST#ITEM_TYPE_at_DISPLAY_NAME_}
+	 * @deprecated use {@link CadseGCST#ITEM_TYPE_at_DISPLAY_NAME_}
 	 */
 	@Deprecated
 	static final String							DISPLAY_NAME_KEY			= "#display-name";
@@ -113,7 +115,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	/**
 	 * old string
 	 * 
-	 * @deprecated use {@link CadseRootCST#ITEM_TYPE_at_NAME_}
+	 * @deprecated use {@link CadseGCST#ITEM_TYPE_at_NAME_}
 	 */
 	@Deprecated
 	public static final String					SHORT_NAME_KEY				= "#short-name";
@@ -134,82 +136,82 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	private final static ItemType[]				NO_SUB_TYPES				= new ItemType[0];
 
 	/** The int id. */
-	private int									intId;
+	private int									_intId;
 
 	/** The super type. */
-	ItemTypeImpl								superType;
+	ItemType									_superType 					= null;
 
 	/** The sub types. */
-	private List<ItemTypeImpl>					subTypes;
+	private List<ItemType>	  					_subTypes;
 
-	IAttributeType<?>[]							attributesDefinitions		= null;
+	IAttributeType<?>[]							_attributesDefinitions		= null;
 
 	/** The attribute types. */
 	private Map<String, IAttributeType<?>>		__cache_attributeTypes		= null;
 
 	/** The outgoings lt. */
-	private LinkType[]							outgoingsLT;
+	private LinkType[]							_outgoingsLT;
 
 	/** The incomings lt. */
-	private LinkType[]							incomingsLT;
+	private LinkType[]							_incomingsLT;
 
 	/** The has content. */
-	private boolean								fHasContent;												// contenu
+	private boolean								_hasContent;												// contenu
 
 	/** The kind. */
-	private int									kind;
+	private int									_kind;
 
 	/** The item manager. */
-	private IItemManager						itemManager					= null;
+	private IItemManager						_itemManager					= null;
 
 	/** The space keytype. */
-	private SpaceKeyType						spaceKeytype				= null;
+	private SpaceKeyType						_spaceKeytype				= null;
 
 	/** The display name. */
-	private String								displayName;
+	private String								_displayName;
 
 	/** The action contributors. */
-	IActionContributor[]						actionContributors			= null;
+	IActionContributor[]						_actionContributors			= null;
 	// cache
 	/** The __action contributors. */
 	IActionContributor[]						__actionContributors		= null;
 
 	/** The creation pages. */
-	IPageFactory[]								creationPagesFactories		= null;
+	IPageFactory[]								_creationPagesFactories		= null;
 
 	/** The modification pages. */
-	IPageFactory[]								modificationPagesFactories	= null;
+	IPageFactory[]								_modificationPagesFactories	= null;
 	// cache
 	/** The __creation pages. */
 	IPageFactory[]								__creationPages				= null;
 
 	// IPage[] pages = null;
-	IPage2[]									creationPages				= null;
-	IPage2[]									modificationPages			= null;
+	IPage2[]									_creationPages				= null;
+	IPage2[]									_modificationPages			= null;
 
 	// // cache
 	/** The __modification pages. */
 	IPageFactory[]								__modificationPages			= null;
 
 	/** The icon. */
-	private URL									icon;
+	private URL									_icon;
 
 	/** The clazz action. */
-	private Class<? extends IActionPage>		clazzAction;
+	private Class<? extends IActionPage>		_clazzAction;
 
 	/** The default short name action. */
-	private String								defaultShortNameAction;
+	private String								_defaultShortNameAction;
 
-	private String								cadseName					= NO_VALUE_STRING;
+	private String								_cadseName					= NO_VALUE_STRING;
 
-	private String								packageName					= NO_VALUE_STRING;
+	private String								_packageName					= NO_VALUE_STRING;
 
-	private IItemFactory						itemFactory;
+	private IItemFactory						_itemFactory;
 
 	/**
 	 * implementation of extension ...
 	 */
-	private ItemTypeImpl[]						extendedBy;
+	private ItemType[]							_extendedBy;
 
 	/*
 	 * (non-Javadoc)
@@ -218,10 +220,10 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 */
 	@Override
 	public String getDisplayName() {
-		if (displayName == null) {
+		if (_displayName == null) {
 			return super.getDisplayName();
 		}
-		return displayName;
+		return _displayName;
 	}
 
 	/**
@@ -251,21 +253,21 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 			throw new CadseIllegalArgumentException(Messages.error_id_is_null);
 		}
 
-		this.superType = superType;
+		this._superType = superType == null ? CadseGCST.ITEM : superType;
 		this.__cache_attributeTypes = null;
-		this.incomingsLT = null;
-		this.outgoingsLT = null;
-		this.fHasContent = hasContent;
-		this.kind = 0;
-		this.displayName = displayName == null ? shortname : displayName;
-		this.kind = 0;
+		this._incomingsLT = null;
+		this._outgoingsLT = null;
+		this._hasContent = hasContent;
+		this._kind = 0;
+		this._displayName = displayName == null ? shortname : displayName;
+		this._kind = 0;
 		if (isAbstract) {
-			kind |= ItemType.ABSTRACT;
+			_kind |= ItemType.ABSTRACT;
 		}
-		this.intId = intId;
-		subTypes = null;
-		if (this.superType != null) {
-			this.superType.addSubItemType(this);
+		this._intId = intId;
+		_subTypes = null;
+		if (this._superType != null) {
+			this._superType.addSubItemType(this);
 		}
 		this._state = ItemState.CREATED;
 		setHasShortNameAttribute(true);
@@ -275,39 +277,50 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	public ItemTypeImpl(LogicalWorkspace wl, ItemType it, ItemDelta desc) {
 		super(wl, it, desc);
 		this.__cache_attributeTypes = null;
-		this.incomingsLT = null;
-		this.outgoingsLT = null;
-		this.kind = 0;
+		this._incomingsLT = null;
+		this._outgoingsLT = null;
+		this._kind = 0;
 
-		subTypes = null;
-		superType = null;
+		_subTypes = null;
+		_superType = null;
 
-		Item superTypeLoaded = desc.getOutgoingItem(CadseRootCST.META_ITEM_TYPE_lt_SUPER_TYPE, true);
-		if (superTypeLoaded != null) {
-			superTypeLoaded = wl.getItem(superTypeLoaded.getId());
-			if (superTypeLoaded instanceof ItemTypeImpl) {
-				this.superType = (ItemTypeImpl) superTypeLoaded;
-				if (superType != null) {
-					superType.addSubItemType(this);
-				}
-			}
-		}
+		//remove set super type from here, because super type can be not loaded at this time.
+		// move this at commitLoadCreateLink and a finishLoad
 	}
 
 	@Override
 	public void loadItem(IWorkingLoadingItems wl, ItemDelta itemOperation, IErrorCollector errorCollector)
 			throws CadseException {
+		//correct link type Attributes is natif 
+		//TODO correct in model
+		if (CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES != null)
+			CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES.setIsNatif(true);
+		else {
+			//
+			System.out.println("NOT GO HERE");
+		}
+		CadseGCST.ITEM_TYPE_lt_SUPER_TYPE.setIsNatif(true);
 		super.loadItem(wl, itemOperation, errorCollector);
 
-		this.fHasContent = itemOperation.getBooleanAttribut(CadseRootCST.META_ITEM_TYPE_at_HAS_CONTENT_, false);
-		this.displayName = itemOperation.getStringAttribut(CadseRootCST.ITEM_TYPE_at_DISPLAY_NAME_, null);
+		this._hasContent = itemOperation.getBooleanAttribut(CadseGCST.ITEM_TYPE_at_HAS_CONTENT_, false);
+		this._displayName = itemOperation.getStringAttribut(CadseGCST.ITEM_at_DISPLAY_NAME_, null);
 		try {
-			this.icon = itemOperation.getAttribute(CadseRootCST.META_ITEM_TYPE_at_ICON);
+			this._icon = itemOperation.getAttribute(CadseGCST.ITEM_TYPE_at_ICON);
 		} catch (Throwable e) {
 			errorCollector.addError(itemOperation.getId(), "Cannot load the url attribute "
-					+ itemOperation.getAttribute(CadseRootCST.META_ITEM_TYPE_at_ICON_));
+					+ itemOperation.getAttribute(CadseGCST.ITEM_TYPE_at_ICON_));
+		}
+		
+		if (this.getId().equals(CadseDomain.EXT_ITEM_ID) || this.getId().equals(CadseDomain.ITEM_ID)) {
+			_superType = null;
+		} else {
+			if (_superType == null) {
+				_superType = CadseGCST.ITEM;
+			}
 		}
 	}
+	
+	
 
 	/**
 	 * Adds the sub item type.
@@ -315,11 +328,11 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 * @param sType
 	 *            the sub item type
 	 */
-	void addSubItemType(ItemTypeImpl sType) {
-		if (subTypes == null) {
-			subTypes = new ArrayList<ItemTypeImpl>();
+	public void addSubItemType(ItemType sType) {
+		if (_subTypes == null) {
+			_subTypes = new ArrayList<ItemType>();
 		}
-		subTypes.add(sType);
+		_subTypes.add(sType);
 	}
 
 	/**
@@ -328,11 +341,11 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 * @param sType
 	 *            the s type
 	 */
-	void removeSubItemType(ItemTypeImpl sType) {
-		if (subTypes == null) {
+	public void removeSubItemType(ItemType sType) {
+		if (_subTypes == null) {
 			return;
 		}
-		subTypes.remove(sType);
+		_subTypes.remove(sType);
 	}
 
 	/**
@@ -341,7 +354,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 * @return the int id
 	 */
 	public int getIntID() {
-		return intId;
+		return _intId;
 	}
 
 	/*
@@ -350,13 +363,13 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 * @see fr.imag.adele.cadse.core.ItemType#getItemManager()
 	 */
 	public IItemManager getItemManager() {
-		if (itemManager == null && superType != null) {
-			return superType.getItemManager();
+		if (_itemManager == null && _superType != null) {
+			return _superType.getItemManager();
 		}
-		if (itemManager == null && this != CadseRootCST.ITEM_TYPE) {
-			return CadseRootCST.ITEM_TYPE.getItemManager();
+		if (_itemManager == null && this != CadseGCST.ITEM) {
+			return CadseGCST.ITEM.getItemManager();
 		}
-		return itemManager;
+		return _itemManager;
 	}
 
 	/**
@@ -366,16 +379,16 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 *            the new item manager
 	 */
 	public void setItemManager(IItemManager itemManager) {
-		this.itemManager = itemManager;
+		this._itemManager = itemManager;
 	}
 
 	@Override
 	public Link commitLoadCreateLink(LinkType lt, Item destination) throws CadseException {
-		if (lt == CadseRootCST.META_ITEM_TYPE_lt_ATTRIBUTES_DEFINITION) {
-			if (destination.getType() == CadseRootCST.UNRESOLVED_ATTRIBUTE_TYPE) {
+		if (lt == CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES) {
+			if (destination.getType() == CadseGCST.UNRESOLVED_ATTRIBUTE_TYPE) {
 				return null;
 			}
-			if (destination.getType() == CadseRootCST.LINK_DEFINITION_ATTIBUTE_TYPE) {
+			if (destination.getType() == CadseGCST.LINK) {
 				if (!(destination instanceof LinkType)) {
 					throw new CadseException("Destination is not a LinkType : {0}", destination
 							.getQualifiedDisplayName());
@@ -385,7 +398,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 					this.m_outgoings.add(atlt);
 				}
 				if (lt.isComposition()) {
-					this.kind |= COMPOSITE;
+					this._kind |= COMPOSITE;
 				}
 				resetOutgoingLinkType();
 			}
@@ -396,35 +409,39 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 			}
 			return _addAttributeType((IAttributeType<?>) destination);
 		}
-		if (lt == CadseRootCST.META_ITEM_TYPE_lt_SUPER_TYPE) {
-			if (isStatic() && superType != null) {
+		if (lt == CadseGCST.ITEM_TYPE_lt_SUPER_TYPE) {
+			if (isStatic() && _superType != null) {
 				throw new CadseException("Read only");
 			}
-			if (LinkPathUtil.checkNonCicular(destination, this, CadseRootCST.META_ITEM_TYPE_lt_SUPER_TYPE)) {
+			if (LinkPathUtil.checkNonCicular(destination, this, CadseGCST.ITEM_TYPE_lt_SUPER_TYPE)) {
 				throw new CadseException("Circular link");
 			}
-			// allready set in constructor
-			// superType = (ItemTypeImpl) destination;
-			// if (superType != null) {
-			// superType.addSubItemType(this);
-			// }
+			_superType = (ItemType) destination;
+			if (_superType != null) {
+				_superType.addSubItemType(this);
+			}
 			return new ReflectLink(lt, this, destination, 0);
 		}
-		if (lt == CadseRootCST.META_ITEM_TYPE_lt_CREATION_PAGES) {
-			this.creationPages = ArraysUtil.add(IPage2.class, this.creationPages, (IPage2) destination);
+		if (lt == CadseGCST.ITEM_TYPE_lt_CREATION_PAGES) {
+			this._creationPages = ArraysUtil.add(IPage2.class, this._creationPages, (IPage2) destination);
 			resetCreationPages();
-			return new ReflectLink(lt, this, destination, this.creationPages.length - 1);
+			return new ReflectLink(lt, this, destination, this._creationPages.length - 1);
 		}
-		if (lt == CadseRootCST.META_ITEM_TYPE_lt_MODIFICATION_PAGES) {
-			this.modificationPages = ArraysUtil.add(IPage2.class, this.modificationPages, (IPage2) destination);
+		if (lt == CadseGCST.ITEM_TYPE_lt_MODIFICATION_PAGES) {
+			this._modificationPages = ArraysUtil.add(IPage2.class, this._modificationPages, (IPage2) destination);
 			resetModificationPages();
-			return new ReflectLink(lt, this, destination, this.modificationPages.length - 1);
+			return new ReflectLink(lt, this, destination, this._modificationPages.length - 1);
 		}
-		if (lt == CadseRootCST.META_ITEM_TYPE_lt_SUB_TYPES) {
+		if (lt == CadseGCST.ITEM_TYPE_lt_SUB_TYPES) {
 		}
 
-		if (lt == CadseRootCST.META_ITEM_TYPE_lt_META_LINK_TYPE) {
+		if (lt == CadseGCST.ITEM_TYPE_lt_LINK_TYPE) {
 
+		}
+		if (lt == CadseGCST.ITEM_TYPE_lt_CADSE_RUNTIME) {
+			_cadseName = destination.getQualifiedName();
+			// _cadseRuntime = destination
+			return new ReflectLink(lt, this, destination, 0, Item.IS_HIDDEN);
 		}
 
 		return super.commitLoadCreateLink(lt, destination);
@@ -435,54 +452,54 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 		LinkType lt = link.getLinkType();
 		Item destination = link.getDestination();
 
-		if (lt == CadseRootCST.META_ITEM_TYPE_lt_ATTRIBUTES_DEFINITION && destination.isResolved()) {
+		if (lt == CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES && destination.isResolved()) {
 			removeAttributeType((IAttributeType<?>) destination);
-			if (destination.getType() == CadseRootCST.LINK_DEFINITION_ATTIBUTE_TYPE) {
+			if (destination.getType() == CadseGCST.LINK) {
 				LinkType atlt = (LinkType) destination;
 				this.m_outgoings.remove(atlt);
 				resetOutgoingLinkType();
 				if (atlt.isComposition()) {
-					for (LinkType outgoing_lt : getOugoingLinkTypes()) {
+					for (LinkType outgoing_lt : getOutgoingLinkTypes()) {
 						if (outgoing_lt.isComposite()) {
 							return;
 						}
 					}
-					this.kind &= ~COMPOSITE;
+					this._kind &= ~COMPOSITE;
 				}
 			}
 			return;
 		}
-		if (lt == CadseRootCST.META_ITEM_TYPE_lt_SUPER_TYPE && destination.isResolved()) {
-			if (isStatic() && superType != null) {
+		if (lt == CadseGCST.ITEM_TYPE_lt_SUPER_TYPE && destination.isResolved()) {
+			if (isStatic() && _superType != null) {
 				throw new CadseIllegalArgumentException("Read only");
 			}
-			if (LinkPathUtil.checkNonCicular(destination, this, CadseRootCST.META_ITEM_TYPE_lt_SUPER_TYPE)) {
+			if (LinkPathUtil.checkNonCicular(destination, this, CadseGCST.ITEM_TYPE_lt_SUPER_TYPE)) {
 				throw new CadseIllegalArgumentException("Circular link");
 			}
 
-			if (destination == superType) {
-				if (superType != null) {
-					superType.removeSubItemType(this);
+			if (destination == _superType) {
+				if (_superType != null) {
+					_superType.removeSubItemType(this);
 				}
-				superType = null;
+				_superType = null;
 			}
 			return;
 		}
-		if (lt == CadseRootCST.META_ITEM_TYPE_lt_CREATION_PAGES && destination.isResolved()) {
-			this.creationPages = ArraysUtil.remove(IPage2.class, this.creationPages, (IPage2) destination);
+		if (lt == CadseGCST.ITEM_TYPE_lt_CREATION_PAGES && destination.isResolved()) {
+			this._creationPages = ArraysUtil.remove(IPage2.class, this._creationPages, (IPage2) destination);
 			resetCreationPages();
 			return;
 		}
-		if (lt == CadseRootCST.META_ITEM_TYPE_lt_MODIFICATION_PAGES && destination.isResolved()) {
-			this.modificationPages = ArraysUtil.remove(IPage2.class, this.modificationPages, (IPage2) destination);
+		if (lt == CadseGCST.ITEM_TYPE_lt_MODIFICATION_PAGES && destination.isResolved()) {
+			this._modificationPages = ArraysUtil.remove(IPage2.class, this._modificationPages, (IPage2) destination);
 			resetModificationPages();
 			return;
 		}
-		if (lt == CadseRootCST.META_ITEM_TYPE_lt_SUB_TYPES) {
+		if (lt == CadseGCST.ITEM_TYPE_lt_SUB_TYPES) {
 			return;
 		}
 
-		if (lt == CadseRootCST.META_ITEM_TYPE_lt_META_LINK_TYPE) {
+		if (lt == CadseGCST.ITEM_TYPE_lt_LINK_TYPE) {
 			removeOutgoingLinkType((LinkType) link);
 		}
 
@@ -537,13 +554,13 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	public LinkType createLinkType(CompactUUID uuid, int intID, String name, int _kind, int min, int max,
 			String selection, ItemType destination) {
 		LinkType ret = null;
-		if (superType != null) {
-			ret = (LinkType) superType.getAttributeType(name, false);
+		if (_superType != null) {
+			ret = (LinkType) _superType.getAttributeType(name, false);
 			if (ret != null) {
 				// this.outgoingsLT.add(ret);
 				// addAttributeType(ret);
 				if (ret.isComposition()) {
-					this.kind |= COMPOSITE;
+					this._kind |= COMPOSITE;
 				}
 				return ret;
 			}
@@ -667,13 +684,13 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 		this.m_outgoings.add(ret);
 		Link l = addAttributeType(ret);
 		if (ret.isComposition()) {
-			this.kind |= COMPOSITE;
+			this._kind |= COMPOSITE;
 		}
 		resetOutgoingLinkType();
 
-		addInconmmingLink(ret, ret.getDestination(), CadseRootCST.LINK_DEFINITION_ATTIBUTE_TYPE_lt_DESTINATION);
-		addInconmmingLink(ret, ret.getInverse(), CadseRootCST.LINK_DEFINITION_ATTIBUTE_TYPE_lt_INVERSE);
-		addInconmmingLink(ret, ret.getSource(), CadseRootCST.LINK_DEFINITION_ATTIBUTE_TYPE_lt_SOURCE);
+		//addInconmmingLink(ret, ret.getDestination(), CadseGCST.LINK_lt_DESTINATION);
+		//addInconmmingLink(ret, ret.getInverse(), CadseGCST.LINK_lt_INVERSE_LINK);
+		//addInconmmingLink(ret, ret.getSource(), CadseGCST.LINK_lt_SOURCE);
 		return l;
 	}
 
@@ -693,13 +710,13 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 		removeAttributeType(ret);
 		resetOutgoingLinkType();
 		if (ret.isComposition()) {
-			for (LinkType lt : getOugoingLinkTypes()) {
+			for (LinkType lt : getOutgoingLinkTypes()) {
 				if (lt.isComposite()) {
 					return;
 				}
 			}
 
-			this.kind &= ~COMPOSITE;
+			this._kind &= ~COMPOSITE;
 		}
 	}
 
@@ -710,7 +727,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 */
 	@Override
 	public synchronized void addIncomingLink(Link link, boolean notifie) {
-		if (link.getLinkType() == CadseCore.mLT) {
+		if (link.getLinkType() == CadseCore.theLinkType) {
 			resetIncomingLinkType();
 		}
 		super.addIncomingLink(link, notifie);
@@ -718,7 +735,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 
 	@Override
 	public synchronized void removeIncomingLink(Link link, boolean notifie) {
-		if (link.getLinkType() == CadseCore.mLT) {
+		if (link.getLinkType() == CadseCore.theLinkType) {
 			resetIncomingLinkType();
 		}
 
@@ -734,18 +751,16 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 * @return a link type if found; null if not found.
 	 */
 	public LinkType getOutgoingLinkType(String name) {
-		IAttributeType<? extends Object> a = getAttributeType(name, false);
+		return _getOutgoingLinkType(this, name);
+	}
+	
+	static public LinkType _getOutgoingLinkType(ItemType _this, String name) {
+		IAttributeType<? extends Object> a = _this.getAttributeType(name, false);
 		if (a instanceof LinkType) {
 			return (LinkType) a;
 		}
-		for (Iterator<LinkType> outgoers = getOutgoingLinkTypes().iterator(); outgoers.hasNext();) {
-			LinkType lt = outgoers.next();
-			if (lt.getName().equals(name)) {
-				return lt;
-			}
-		}
 
-		return null;
+		return Accessor.filterName(_this.getOutgoingLinkTypes(), name);
 	}
 
 	/*
@@ -755,7 +770,11 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 *      java.lang.String)
 	 */
 	public LinkType getOutgoingLinkType(ItemType destination, String name) {
-		Iterator<LinkType> iter = getOutgoingLinkTypes().iterator();
+		return _getOutgoingLinkType(this, destination, name);
+	}
+	
+	static public LinkType _getOutgoingLinkType(ItemType _this, ItemType destination, String name) {
+		Iterator<LinkType> iter = _this.getOutgoingLinkTypes().iterator();
 		while (iter.hasNext()) {
 			LinkType lt = iter.next();
 			if (lt.getDestination().equals(destination) && (lt.getName().equals(name))) {
@@ -773,7 +792,11 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 *      int)
 	 */
 	public LinkType getOutgoingLinkType(ItemType dest, int kind) {
-		Iterator<LinkType> iter = getOutgoingLinkTypes().iterator();
+		return _getOutgoingLinkType(this, dest, kind);
+	}
+
+	static public LinkType _getOutgoingLinkType(ItemType _this, ItemType dest, int kind) {
+		Iterator<LinkType> iter = _this.getOutgoingLinkTypes().iterator();
 		while (iter.hasNext()) {
 			LinkType lt = iter.next();
 			if (lt.getDestination().equals(dest) && (lt.getKind() == kind)) {
@@ -781,10 +804,6 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 			}
 		}
 		return null;
-	}
-
-	public List<LinkType> getOugoingLinkTypes() {
-		return getOutgoingLinkTypes();
 	}
 
 	public List<LinkType> getOwnerOugoingLinkTypes() {
@@ -800,14 +819,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 * @return a link type if found; null if not found.
 	 */
 	public LinkType getIncomingLinkType(String name) {
-		for (Iterator incomers = getIncomingLinkTypes().iterator(); incomers.hasNext();) {
-			LinkType lt = (LinkType) incomers.next();
-			if (lt.getName().equals(name)) {
-				return lt;
-			}
-		}
-
-		return null;
+		return Accessor.filterName(getIncomingLinkTypes(), name);
 	}
 
 	/**
@@ -816,10 +828,10 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 * @return an unmodifiable list all outgoing link types.
 	 */
 	public List<LinkType> getOutgoingLinkTypes() {
-		if (outgoingsLT == null) {
+		if (_outgoingsLT == null) {
 			computeOutgoingLinkTypes();
 		}
-		return Arrays.asList(outgoingsLT);
+		return Arrays.asList(_outgoingsLT);
 	}
 
 	/**
@@ -831,7 +843,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 		List<LinkType> ret = new ArrayList<LinkType>();
 
 		for (Link l : this.m_outgoings) {
-			if (l.getLinkType() == CadseCore.mLT) {
+			if (l.getLinkType() == CadseCore.theLinkType) {
 				ret.add((LinkType) l);
 			}
 		}
@@ -843,15 +855,15 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 */
 	private void computeOutgoingLinkTypes() {
 		List<LinkType> ret = new ArrayList<LinkType>();
-		if (superType != null) {
-			ret.addAll(superType.getOutgoingLinkTypes());
+		if (_superType != null) {
+			ret.addAll(_superType.getOutgoingLinkTypes());
 		}
 		for (Link l : this.m_outgoings) {
-			if (l.getLinkType() == CadseCore.mLT) {
+			if (l.getLinkType() == CadseCore.theLinkType) {
 				ret.add((LinkType) l);
 			}
 		}
-		this.outgoingsLT = ret.toArray(new LinkType[ret.size()]);
+		this._outgoingsLT = ret.toArray(new LinkType[ret.size()]);
 	}
 
 	/**
@@ -860,10 +872,10 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 * @return an unmodifiable list all incoming link types.
 	 */
 	public List<LinkType> getIncomingLinkTypes() {
-		if (incomingsLT == null) {
+		if (_incomingsLT == null) {
 			computeIncomingLinkTypes();
 		}
-		return Arrays.asList(incomingsLT);
+		return Arrays.asList(_incomingsLT);
 	}
 
 	/**
@@ -871,15 +883,15 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 */
 	private void computeIncomingLinkTypes() {
 		List<LinkType> ret = new ArrayList<LinkType>();
-		if (superType != null) {
-			ret.addAll(superType.getIncomingLinkTypes());
+		if (_superType != null) {
+			ret.addAll(_superType.getIncomingLinkTypes());
 		}
 		for (Link l : this._incomings) {
-			if (l.getLinkType() == CadseCore.mLT) {
+			if (l.getLinkType() == CadseCore.theLinkType) {
 				ret.add((LinkType) l);
 			}
 		}
-		this.incomingsLT = ret.toArray(new LinkType[ret.size()]);
+		this._incomingsLT = ret.toArray(new LinkType[ret.size()]);
 	}
 
 	/*
@@ -888,7 +900,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 * @see fr.imag.adele.cadse.core.ItemType#hasContent()
 	 */
 	public boolean hasContent() {
-		return fHasContent;
+		return _hasContent;
 	}
 
 	/**
@@ -930,7 +942,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 */
 	@Override
 	public String toString() {
-		return getId() + " " + getName() + (fHasContent ? (Messages.has_content) : Messages.no_content);
+		return getId() + " " + getName() + (_hasContent ? (Messages.has_content) : Messages.no_content);
 	}
 
 	// -------------------------------------------------//
@@ -995,7 +1007,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 		}
 
 		// 4. pre: self.to->forAll(rt | rt.name <> id)
-		for (Iterator outgoers = getOugoingLinkTypes().iterator(); outgoers.hasNext();) {
+		for (Iterator outgoers = getOutgoingLinkTypes().iterator(); outgoers.hasNext();) {
 			LinkType lt = (LinkType) outgoers.next();
 			if (lt.getName().equals(name)) {
 				throw new CadseIllegalArgumentException(Messages.error_linktype_id_already_exits, name, getId());
@@ -1036,9 +1048,9 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 */
 	public void setHasUniqueNameAttribute(boolean val) {
 		if (val) {
-			kind |= UNIQUE_NAME;
+			_kind |= UNIQUE_NAME;
 		} else {
-			kind &= ~UNIQUE_NAME;
+			_kind &= ~UNIQUE_NAME;
 		}
 	}
 
@@ -1049,7 +1061,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 */
 	@Override
 	public boolean hasUniqueNameAttribute() {
-		return (kind & UNIQUE_NAME) != 0;
+		return (_kind & UNIQUE_NAME) != 0;
 	}
 
 	/*
@@ -1059,9 +1071,9 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 */
 	public void setHasShortNameAttribute(boolean val) {
 		if (val) {
-			kind |= SHORT_NAME;
+			_kind |= SHORT_NAME;
 		} else {
-			kind &= ~SHORT_NAME;
+			_kind &= ~SHORT_NAME;
 		}
 	}
 
@@ -1071,7 +1083,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 * @see fr.imag.adele.cadse.core.ItemType#hasShortNameAttribute()
 	 */
 	public boolean hasShortNameAttribute() {
-		return (kind & SHORT_NAME) != 0;
+		return (_kind & SHORT_NAME) != 0;
 	}
 
 	/*
@@ -1081,9 +1093,9 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 */
 	public void setRootElement(boolean val) {
 		if (val) {
-			kind |= ROOT_ELEMENT;
+			_kind |= ROOT_ELEMENT;
 		} else {
-			kind &= ~ROOT_ELEMENT;
+			_kind &= ~ROOT_ELEMENT;
 		}
 	}
 
@@ -1093,7 +1105,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 * @see fr.imag.adele.cadse.core.ItemType#isRootElement()
 	 */
 	public boolean isRootElement() {
-		return (kind & ROOT_ELEMENT) != 0;
+		return (_kind & ROOT_ELEMENT) != 0;
 	}
 
 	/*
@@ -1103,12 +1115,12 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 */
 	@Override
 	public boolean isComposite() {
-		if ((kind & COMPOSITE) != 0) {
+		if ((_kind & COMPOSITE) != 0) {
 			return true;
 		}
-		if (superType != null) {
-			if (superType.isComposite()) {
-				this.kind |= COMPOSITE;
+		if (_superType != null) {
+			if (_superType.isComposite()) {
+				this._kind |= COMPOSITE;
 				return true;
 			}
 		}
@@ -1121,7 +1133,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 * @see fr.imag.adele.cadse.core.ItemType#isAbstract()
 	 */
 	public boolean isAbstract() {
-		return (kind & ItemType.ABSTRACT) != 0;
+		return (_kind & ItemType.ABSTRACT) != 0;
 	}
 
 	/*
@@ -1130,8 +1142,11 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 * @see fr.imag.adele.cadse.core.ItemType#isPartType()
 	 */
 	public boolean isPartType() {
+		return _isPartType(this);
+	}
 
-		for (LinkType lt : getIncomingLinkTypes()) {
+	static public boolean _isPartType(ItemType _this) {
+		for (LinkType lt : _this.getIncomingLinkTypes()) {
 			if (lt.isPart()) {
 				return true;
 			}
@@ -1168,7 +1183,9 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 				if (found == null) {
 					found = lt;
 				} else {
-					throw new CadseException(Messages.error_linktype_more_one_link_found, typeParent.getId(), getId());
+					return null;
+					
+					//throw new CadseException(Messages.error_linktype_more_one_link_found, typeParent.getId(), getId());
 				}
 			}
 		}
@@ -1210,7 +1227,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 * @see fr.imag.adele.cadse.core.ItemType#getSubTypes()
 	 */
 	public ItemType[] getSubTypes() {
-		return subTypes == null ? NO_SUB_TYPES : subTypes.toArray(new ItemType[subTypes.size()]);
+		return _subTypes == null ? NO_SUB_TYPES : _subTypes.toArray(new ItemType[_subTypes.size()]);
 	}
 
 	/*
@@ -1219,7 +1236,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 * @see fr.imag.adele.cadse.core.ItemType#getSuperType()
 	 */
 	public ItemType getSuperType() {
-		return this.superType;
+		return this._superType;
 	}
 
 	/**
@@ -1230,12 +1247,16 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 * @see fr.imag.adele.cadse.core.ItemType#isSuperTypeOf(fr.imag.adele.cadse.core.ItemType)
 	 */
 	public boolean isSuperTypeOf(ItemType it) {
+		return _isSuperTypeOf(this, it);
+	}
+
+	static public boolean _isSuperTypeOf(ItemType _this, ItemType it) {
 		if (it == null) {
 			return false;
 		}
 		ItemType super_it = it;
 		while ((super_it = super_it.getSuperType()) != null) {
-			if (super_it == this) {
+			if (super_it == _this) {
 				return true;
 			}
 		}
@@ -1244,90 +1265,67 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 
 	@Override
 	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
-		if (CadseRootCST.ITEM_TYPE_at_DISPLAY_NAME_ == type) {
-			return (T) displayName;
+		if (CadseGCST.ITEM_at_DISPLAY_NAME_ == type) {
+			return (T) _displayName;
 		}
-		if (CadseRootCST.META_ITEM_TYPE_at_CADSE_NAME_ == type) {
+		/*if (CadseGCST.ITEM_TYPE_at_CADSE_NAME_ == type) {
 			return (T) getCadseName();
+		}*/
+		if (CadseGCST.ITEM_TYPE_at_HAS_CONTENT_ == type) {
+			return (T) Boolean.valueOf(this._hasContent);
 		}
-		if (CadseRootCST.META_ITEM_TYPE_at_HAS_CONTENT_ == type) {
-			return (T) Boolean.valueOf(this.fHasContent);
+		if (CadseGCST.ITEM_TYPE_at_IS_ROOT_ELEMENT_ == type) {
+			return (T) Boolean.valueOf((this._kind & ItemType.ROOT_ELEMENT) != 0);
 		}
-		if (CadseRootCST.META_ITEM_TYPE_at_ROOT_ELEMENT_ == type) {
-			return (T) Boolean.valueOf((this.kind & ItemType.ROOT_ELEMENT) != 0);
+		if (CadseGCST.ITEM_TYPE_at_ICON_ == type) {
+			if (_icon == null) return null;
+			return (T) _icon.getPath();
 		}
-		if (CadseRootCST.META_ITEM_TYPE_at_ICON_ == type) {
-			return (T) icon;
+		if (CadseGCST.ITEM_TYPE_at_ITEM_FACTORY_ == type) {
+			if (_itemFactory == null)
+				return null;
+			return (T) _itemFactory.getClass().getName();
 		}
-		if (CadseRootCST.META_ITEM_TYPE_at_ITEM_FACTORY_ == type) {
-			return (T) itemFactory;
-		}
-		if (CadseRootCST.META_ITEM_TYPE_at_ITEM_MANAGER_ == type) {
-			return (T) itemManager;
+		if (CadseGCST.ITEM_TYPE_at_ITEM_MANAGER_ == type) {
+			if (_itemManager == null)
+				return null;
+			return (T) _itemManager.getClass().getName();
 		}
 
-		if (CadseRootCST.META_ITEM_TYPE_at_PACKAGE_NAME_ == type) {
-			return (T) packageName;
+		if (CadseGCST.ITEM_TYPE_at_PACKAGE_NAME_ == type) {
+			return (T) _packageName;
+		}
+		
+		if (CadseGCST.ABSTRACT_ITEM_TYPE_at_ID_RUNTIME_ == type) {
+			if (isRuntime())
+				return (T) getId().toString();
+			
+				
 		}
 		return super.internalGetOwnerAttribute(type);
 	}
 
-	// /**
-	// * Get an attribute value by key.
-	// *
-	// * @param key :
-	// * key of attribute we want search.
-	// *
-	// * @return attribute value.
-	// */
-	// @SuppressWarnings("unchecked")
-	// public <T> T getAttributeH(String key, boolean fromSuperIfNull) {
-	//
-	// if (CadseRootCST.ITEM_TYPE_at_DISPLAY_NAME.equals(key)) {
-	// return (T) displayName;
-	// }
-	// if (CadseRootCST.META_ITEM_TYPE_at_CADSE_NAME.equals(key)) {
-	// return (T) getCadseName();
-	// }
-	// if (CadseRootCST.META_ITEM_TYPE_at_HAS_CONTENT.equals(key)) {
-	// return (T) Boolean.valueOf(this.fHasContent);
-	// }
-	// if (CadseRootCST.META_ITEM_TYPE_at_ROOT_ELEMENT.equals(key)) {
-	// return (T) Boolean.valueOf((this.kind & ItemType.ROOT_ELEMENT) != 0);
-	// }
-	// if (CadseRootCST.META_ITEM_TYPE_at_ICON.equals(key)) {
-	// if (icon != null)
-	// return (T) icon;
-	// }
-	// if (CadseRootCST.META_ITEM_TYPE_at_ITEM_FACTORY.equals(key)) {
-	// if (itemFactory != null)
-	// return (T) itemFactory;
-	// }
-	// if (CadseRootCST.META_ITEM_TYPE_at_ITEM_MANAGER.equals(key)) {
-	// return (T) itemManager;
-	// }
-	//
-	// if (CadseRootCST.META_ITEM_TYPE_at_PACKAGE_NAME.equals(key)) {
-	// return (T) packageName;
-	// }
-	// T ret = (T) super.getAttributeH(key, fromSuperIfNull);
-	// if (fromSuperIfNull && ret == null && superType != null)
-	// return (T) superType.getAttributeH(key, fromSuperIfNull);
-	// return ret;
-	// }
+	
+	public boolean isRuntime() {
+		CadseRuntime cr = getCadseRuntime();
+		if (cr == null) return false;
+		return cr.getType() == CadseGCST.CADSE_RUNTIME;
+	}
 
 	@Override
 	public Iterator<Item> propagateValue(IAttributeType<?> type) {
-		if (superType != null) {
-			return Collections.singletonList((Item) superType).iterator();
+		if (type == CadseGCST.ITEM_at_DISPLAY_NAME_)
+			return null;
+		if (_superType != null) {
+			return Collections.singletonList((Item) _superType).iterator();
 		}
 		return null;
 	}
 
 	@Override
 	public Iterator<Item> propagateValue(String key) {
-		if (superType != null) {
-			return Collections.singletonList((Item) superType).iterator();
+		if (_superType != null) {
+			return Collections.singletonList((Item) _superType).iterator();
 		}
 		return null;
 	}
@@ -1341,58 +1339,51 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 
 	@Override
 	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
-		if (CadseRootCST.ITEM_TYPE_at_DISPLAY_NAME.equals(key)) {
-			displayName = Convert.toString(value);
+		if (CadseGCST.ITEM_at_DISPLAY_NAME.equals(key)) {
+			_displayName = Convert.toString(value);
 			return true;
 		}
-		if (CadseRootCST.META_ITEM_TYPE_at_CADSE_NAME.equals(key)) {
-			if (value == null) {
-				value = NO_VALUE_STRING;
-			}
-			cadseName = Convert.toString(value);
+		if (CadseGCST.ITEM_TYPE_at_HAS_CONTENT.equals(key)) {
+			this._hasContent = Convert.toBoolean(value);
 			return true;
 		}
-		if (CadseRootCST.META_ITEM_TYPE_at_HAS_CONTENT.equals(key)) {
-			this.fHasContent = Convert.toBoolean(value);
-			return true;
-		}
-		if (CadseRootCST.META_ITEM_TYPE_at_ROOT_ELEMENT.equals(key)) {
+		if (CadseGCST.ITEM_TYPE_at_IS_ROOT_ELEMENT_ == type) {
 			if (value == null) {
 				value = type.getDefaultValue();
 			}
 			setRootElement(Convert.toBoolean(value));
 			return true;
 		}
-		if (CadseRootCST.META_ITEM_TYPE_at_PACKAGE_NAME.equals(key)) {
+		if (CadseGCST.ITEM_TYPE_at_PACKAGE_NAME_ == type) {
 			if (value == null) {
 				value = NO_VALUE_STRING;
 			}
 			setPackageName(Convert.toString(value));
 			return true;
 		}
-		if (CadseRootCST.META_ITEM_TYPE_at_ICON.equals(key)) {
+		if (CadseGCST.ITEM_TYPE_at_ICON_ == type) {
 			try {
-				icon = Convert.toURL(value);
+				_icon = Convert.toURL(value);
 				return true;
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		if (CadseRootCST.META_ITEM_TYPE_at_ITEM_FACTORY.equals(key)) {
+		if (CadseGCST.ITEM_TYPE_at_ITEM_FACTORY.equals(key)) {
 			if (value instanceof String) {
 				// && (value.toString().length() == 0) {
 				return false;
 			}
-			itemFactory = (IItemFactory) value;
+			_itemFactory = (IItemFactory) value;
 			return true;
 		}
-		if (CadseRootCST.META_ITEM_TYPE_at_ITEM_MANAGER.equals(key)) {
+		if (CadseGCST.ITEM_TYPE_at_ITEM_MANAGER.equals(key)) {
 			if (value instanceof String) {
 				// && (value.toString().length() == 0) {
 				return false;
 			}
-			itemManager = (IItemManager) value;
+			_itemManager = (IItemManager) value;
 			return true;
 		}
 
@@ -1414,19 +1405,23 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 * @see fr.imag.adele.cadse.core.IAttributableType#addAttributeType(fr.imag.adele.cadse.core.IAttributeType)
 	 */
 	public <T> Link _addAttributeType(IAttributeType<T> type) {
-		int index = ArraysUtil.indexOf(attributesDefinitions, type);
+		int index = ArraysUtil.indexOf(_attributesDefinitions, type);
 		if (index != -1) {
-			return new ReflectLink(CadseRootCST.META_ITEM_TYPE_lt_ATTRIBUTES_DEFINITION, this, type, index);
+			_wl._wd.log(getDisplayName(), "Cannot add "+type, null);
+			return null;
 		}
-		;
-		attributesDefinitions = ArraysUtil.add(IAttributeType.class, attributesDefinitions, type);
-		type.setParent(this, CadseRootCST.META_ITEM_TYPE_lt_ATTRIBUTES_DEFINITION);
-		index = attributesDefinitions.length - 1;
-		if (CadseRootCST.META_ITEM_TYPE_lt_ATTRIBUTES_DEFINITION == null) {
+		
+		_attributesDefinitions = ArraysUtil.add(IAttributeType.class, _attributesDefinitions, type);
+		type.setParent(this, CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES);
+		index = _attributesDefinitions.length - 1;
+		
+		if (CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES == null) {
 			// le model root n'est pas encore charg�.
 			return null;
 		}
-		return new ReflectLink(CadseRootCST.META_ITEM_TYPE_lt_ATTRIBUTES_DEFINITION, this, type, index);
+		
+		
+		return new ReflectLink(CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES, this, type, index);
 	}
 
 	/*
@@ -1435,11 +1430,11 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 * @see fr.imag.adele.cadse.core.IAttributableType#addAttributeType(fr.imag.adele.cadse.core.IAttributeType)
 	 */
 	public <T> int removeAttributeType(IAttributeType<T> type) {
-		int index = ArraysUtil.indexOf(attributesDefinitions, type);
+		int index = ArraysUtil.indexOf(_attributesDefinitions, type);
 		if (index == -1) {
 			return index;
 		}
-		attributesDefinitions = ArraysUtil.remove(IAttributeType.class, attributesDefinitions, index);
+		_attributesDefinitions = ArraysUtil.remove(IAttributeType.class, _attributesDefinitions, index);
 		// Pose un probleme lors de la destruction d'un lien
 		// type.setParent(null); (note 22)
 		return index;
@@ -1457,14 +1452,14 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	}
 
 	public void getAllAttributeTypes(List<IAttributeType<?>> all, ItemFilter filter) {
-		if (superType != null) {
-			superType.getAllAttributeTypes(all, filter);
+		if (_superType != null) {
+			_superType.getAllAttributeTypes(all, filter);
 		}
-		if (attributesDefinitions != null) {
+		if (_attributesDefinitions != null) {
 			if (filter == null) {
-				all.addAll(Arrays.asList(attributesDefinitions));
+				all.addAll(Arrays.asList(_attributesDefinitions));
 			} else {
-				for (IAttributeType<?> at : attributesDefinitions) {
+				for (IAttributeType<?> at : _attributesDefinitions) {
 					if (filter.accept(at)) {
 						all.add(at);
 					}
@@ -1478,8 +1473,8 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	}
 
 	public void getAllAttributeTypes(Map<String, IAttributeType<?>> all, boolean keepLastAttribute, ItemFilter filter) {
-		if (attributesDefinitions != null) {
-			for (IAttributeType<?> att : attributesDefinitions) {
+		if (_attributesDefinitions != null) {
+			for (IAttributeType<?> att : _attributesDefinitions) {
 				if (keepLastAttribute && all.containsKey(att.getName())) {
 					continue;
 				}
@@ -1489,22 +1484,22 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 			}
 		}
 
-		if (superType != null) {
-			superType.getAllAttributeTypes(all, keepLastAttribute, filter);
+		if (_superType != null) {
+			_superType.getAllAttributeTypes(all, keepLastAttribute, filter);
 		}
 	}
 
 	public void getAllAttributeTypesKeys(Set<String> all, ItemFilter filter) {
-		if (attributesDefinitions != null) {
-			for (IAttributeType<?> att : attributesDefinitions) {
+		if (_attributesDefinitions != null) {
+			for (IAttributeType<?> att : _attributesDefinitions) {
 				if (filter == null || filter.accept(att)) {
 					all.add(att.getName());
 				}
 			}
 		}
 
-		if (superType != null) {
-			superType.getAllAttributeTypesKeys(all, filter);
+		if (_superType != null) {
+			_superType.getAllAttributeTypesKeys(all, filter);
 		}
 	}
 
@@ -1520,16 +1515,24 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 
 	public IAttributeType<?> getAttributeType(String name, boolean createUnresolvedDefinition) {
 		if (SHORT_NAME_KEY.equals(name) || ATTR_SHORT_NAME.equals(name)) {
-			return CadseRootCST.ITEM_TYPE_at_NAME_;
+			return CadseGCST.ITEM_at_NAME_;
 		}
 		if (UNIQUE_NAME_KEY.equals(name) || Item.ATTR_LONG_NAME.equals(name)) {
-			return CadseRootCST.ITEM_TYPE_at_QUALIFIED_NAME_;
+			return CadseGCST.ITEM_at_QUALIFIED_NAME_;
 		}
 		if (Item.IS_READ_ONLY_KEY.equals(name)) {
-			return CadseRootCST.ITEM_TYPE_at_READ_ONLY_;
+			return CadseGCST.ITEM_at_ITEM_READONLY_;
 		}
 		if (DISPLAY_NAME_KEY.equals(name)) {
-			return CadseRootCST.ITEM_TYPE_at_DISPLAY_NAME_;
+			return CadseGCST.ITEM_at_DISPLAY_NAME_;
+		}
+		if ("UUID_ATTRIBUTE".equals(name)) {
+			if (this == CadseGCST.CADSE_DEFINITION)
+				return CadseGCST.CADSE_DEFINITION_at_ID_RUNTIME_;
+			if (this == CadseGCST.ATTRIBUTE)
+				return CadseGCST.ATTRIBUTE_at_ID_RUNTIME_;
+			if (this == CadseGCST.ABSTRACT_ITEM_TYPE)
+				return CadseGCST.ABSTRACT_ITEM_TYPE_at_ID_RUNTIME_;
 		}
 
 		IAttributeType<?> ret = null;
@@ -1540,8 +1543,8 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 			}
 		}
 
-		if (attributesDefinitions != null) {
-			for (IAttributeType<?> att : attributesDefinitions) {
+		if (_attributesDefinitions != null) {
+			for (IAttributeType<?> att : _attributesDefinitions) {
 				if (att.getName().equals(name)) {
 					if (__cache_attributeTypes == null) {
 						__cache_attributeTypes = new HashMap<String, IAttributeType<?>>();
@@ -1551,8 +1554,8 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 				}
 			}
 		}
-		if (ret == null && superType != null) {
-			ret = superType.getAttributeType(name, false);
+		if (ret == null && _superType != null) {
+			ret = _superType.getAttributeType(name, false);
 			if (ret != null) {
 				if (__cache_attributeTypes == null) {
 					__cache_attributeTypes = new HashMap<String, IAttributeType<?>>();
@@ -1567,10 +1570,15 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	}
 
 	public CadseRuntime getCadseRuntime() {
-		if (getPartParent() instanceof CadseRuntime) {
-			return (CadseRuntime) getPartParent();
+		Item parent = _parent;
+		while (parent != null) {
+			if (parent.isInstanceOf(CadseGCST.CADSE_RUNTIME) && parent instanceof CadseRuntime)
+				return (CadseRuntime) parent;
+			parent = parent.getPartParent();
 		}
-		return _wl.getCadseRuntime(getCadseName());
+		if (_cadseName != null)
+			return _wl.getCadseRuntime(_cadseName);
+		return null;
 	}
 
 	/*
@@ -1591,7 +1599,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 *            the contributor
 	 */
 	public synchronized void addActionContributeur(IActionContributor contributor) {
-		actionContributors = ArraysUtil.add(IActionContributor.class, actionContributors, contributor);
+		_actionContributors = ArraysUtil.add(IActionContributor.class, _actionContributors, contributor);
 		resetContributions();
 	}
 
@@ -1605,8 +1613,8 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 		if (creationPages == null || creationPages.size() == 0) {
 			return; // todo nothing
 		}
-		this.creationPagesFactories = ArraysUtil
-				.addList(IPageFactory.class, this.creationPagesFactories, creationPages);
+		this._creationPagesFactories = ArraysUtil
+				.addList(IPageFactory.class, this._creationPagesFactories, creationPages);
 		resetCreationPages();
 	}
 
@@ -1620,7 +1628,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 		if (modificationPages == null || modificationPages.size() == 0) {
 			return; // todo nothing
 		}
-		this.modificationPagesFactories = ArraysUtil.addList(IPageFactory.class, this.modificationPagesFactories,
+		this._modificationPagesFactories = ArraysUtil.addList(IPageFactory.class, this._modificationPagesFactories,
 				modificationPages);
 		resetModificationPages();
 	}
@@ -1628,12 +1636,11 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	/**
 	 * reset du cache de modification de pages.
 	 */
-	private void resetModificationPages() {
+	public void resetModificationPages() {
 		__modificationPages = null;
-		if (subTypes != null) {
-			for (ItemTypeImpl subT : subTypes) {
+		if (_subTypes != null) {
+			for (ItemType subT : _subTypes) {
 				subT.resetModificationPages();
-
 			}
 		}
 	}
@@ -1641,13 +1648,13 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	/**
 	 * reset du cache de outgoing link type.
 	 */
-	private void resetOutgoingLinkType() {
-		if (outgoingsLT == null) {
+	public void resetOutgoingLinkType() {
+		if (_outgoingsLT == null) {
 			return;
 		}
-		outgoingsLT = null;
-		if (subTypes != null) {
-			for (ItemTypeImpl subT : subTypes) {
+		_outgoingsLT = null;
+		if (_subTypes != null) {
+			for (ItemType subT : _subTypes) {
 				subT.resetOutgoingLinkType();
 
 			}
@@ -1657,13 +1664,13 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	/**
 	 * reset du cache de incoming link type.
 	 */
-	private void resetIncomingLinkType() {
-		if (incomingsLT == null) {
+	public void resetIncomingLinkType() {
+		if (_incomingsLT == null) {
 			return;
 		}
-		incomingsLT = null;
-		if (subTypes != null) {
-			for (ItemTypeImpl subT : subTypes) {
+		_incomingsLT = null;
+		if (_subTypes != null) {
+			for (ItemType subT : _subTypes) {
 				subT.resetIncomingLinkType();
 
 			}
@@ -1673,10 +1680,10 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	/**
 	 * reset du cache des pages de creation.
 	 */
-	private void resetCreationPages() {
+	public void resetCreationPages() {
 		__creationPages = null;
-		if (subTypes != null) {
-			for (ItemTypeImpl subT : subTypes) {
+		if (_subTypes != null) {
+			for (ItemType subT : _subTypes) {
 				subT.resetCreationPages();
 
 			}
@@ -1686,13 +1693,13 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	/**
 	 * reset du cache des contributions.
 	 */
-	private void resetContributions() {
+	public void resetContributions() {
 		if (__actionContributors == null) {
 			return;
 		}
 		__actionContributors = null;
-		if (subTypes != null) {
-			for (ItemTypeImpl subT : subTypes) {
+		if (_subTypes != null) {
+			for (ItemType subT : _subTypes) {
 				subT.resetContributions();
 
 			}
@@ -1709,8 +1716,8 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 *            the default short name
 	 */
 	public void setCreationAction(Class<? extends IActionPage> clazz, String defaultShortName) {
-		this.clazzAction = clazz;
-		this.defaultShortNameAction = defaultShortName;
+		this._clazzAction = clazz;
+		this._defaultShortNameAction = defaultShortName;
 	}
 
 	/**
@@ -1720,7 +1727,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 * @return the action contribution
 	 */
 	public IActionContributor[] getActionContribution() {
-		return actionContributors == null ? EMPTY_ACTION_CONTRIBUTORS : actionContributors;
+		return _actionContributors == null ? EMPTY_ACTION_CONTRIBUTORS : _actionContributors;
 	}
 
 	/**
@@ -1730,15 +1737,15 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 */
 	public IActionContributor[] getAllActionContribution() {
 		if (__actionContributors == null) {
-			if (superType != null) {
-				if (actionContributors == null || actionContributors.length == 0) {
-					__actionContributors = superType.getAllActionContribution();
+			if (_superType != null) {
+				if (_actionContributors == null || _actionContributors.length == 0) {
+					__actionContributors = _superType.getAllActionContribution();
 				} else {
-					IActionContributor[] super_a = superType.getAllActionContribution();
+					IActionContributor[] super_a = _superType.getAllActionContribution();
 					if (super_a.length == 0) {
 						__actionContributors = getActionContribution();
 					} else {
-						__actionContributors = ArraysUtil.merge(IActionContributor.class, super_a, actionContributors);
+						__actionContributors = ArraysUtil.merge(IActionContributor.class, super_a, _actionContributors);
 					}
 				}
 			} else {
@@ -1754,7 +1761,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 * @see fr.imag.adele.cadse.core.ItemType#getCreationPage()
 	 */
 	public IPageFactory[] getCreationPage() {
-		return this.creationPagesFactories == null ? EMPTY_PAGE_FACTORIES : this.creationPagesFactories;
+		return this._creationPagesFactories == null ? EMPTY_PAGE_FACTORIES : this._creationPagesFactories;
 	}
 
 	/**
@@ -1798,12 +1805,12 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 * @param list
 	 *            the list
 	 */
-	void computegetGoodCreationPage(Map<String, IPageFactory> map, List<IPageFactory> list) {
-		if (superType != null) {
-			superType.computegetGoodCreationPage(map, list);
+	public void computegetGoodCreationPage(Map<String, IPageFactory> map, List<IPageFactory> list) {
+		if (_superType != null) {
+			_superType.computegetGoodCreationPage(map, list);
 		}
-		if (creationPagesFactories != null) {
-			for (IPageFactory f : creationPagesFactories) {
+		if (_creationPagesFactories != null) {
+			for (IPageFactory f : _creationPagesFactories) {
 				IPageFactory oldF = null;
 				if ((oldF = map.get(f.getName())) != null) {
 					for (int i = 0; i < list.size(); i++) {
@@ -1820,8 +1827,8 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 				}
 			}
 		}
-		if (this.creationPages != null) {
-			for (IPageFactory f : creationPages) {
+		if (this._creationPages != null) {
+			for (IPageFactory f : _creationPages) {
 				IPageFactory oldF = null;
 				if ((oldF = map.get(f.getName())) != null) {
 					for (int i = 0; i < list.size(); i++) {
@@ -1849,11 +1856,11 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 *            the list
 	 */
 	void computeGoodModificationPage(Map<String, IPageFactory> map, List<IPageFactory> list) {
-		if (superType != null) {
-			superType.computeGoodModificationPage(map, list);
+		if (_superType != null) {
+			((ItemTypeImpl) _superType).computeGoodModificationPage(map, list);
 		}
-		if (modificationPagesFactories != null) {
-			for (IPageFactory f : modificationPagesFactories) {
+		if (_modificationPagesFactories != null) {
+			for (IPageFactory f : _modificationPagesFactories) {
 				IPageFactory oldF = null;
 				if ((oldF = map.get(f.getName())) != null) {
 					for (int i = 0; i < list.size(); i++) {
@@ -1870,8 +1877,8 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 				}
 			}
 		}
-		if (this.modificationPages != null) {
-			for (IPageFactory f : modificationPages) {
+		if (this._modificationPages != null) {
+			for (IPageFactory f : _modificationPages) {
 				IPageFactory oldF = null;
 				if ((oldF = map.get(f.getName())) != null) {
 					for (int i = 0; i < list.size(); i++) {
@@ -1937,7 +1944,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 * @see fr.imag.adele.cadse.core.ItemType#getModificationPage()
 	 */
 	public IPageFactory[] getModificationPage() {
-		return this.modificationPagesFactories == null ? EMPTY_PAGE_FACTORIES : this.modificationPagesFactories;
+		return this._modificationPagesFactories == null ? EMPTY_PAGE_FACTORIES : this._modificationPagesFactories;
 	}
 
 	/*
@@ -1995,15 +2002,15 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 		for (int i = 0; i < pf.length; i++) {
 			try {
 				IPage createdPage = pf[i].createPage(cas, null, item, node, type, lt);
-				if (createdPage != null) {
-					createdPage.setParent(type, CadseRootCST.META_ITEM_TYPE_lt_ATTRIBUTES_DEFINITION);
+				if (createdPage != null && !createdPage.isEmpty()) {
+					createdPage.setParent(type, CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES);
 					ret.add(createdPage);
 				}
 			} catch (Throwable e) {
 				_wl.getCadseDomain().log("error", "Cannot create page " + pf[i], e);
 			}
 		}
-		return ret.toArray(new PageImpl[ret.size()]);
+		return ret.toArray(new IPage[ret.size()]);
 	}
 
 	/**
@@ -2022,52 +2029,52 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 *             the melusine exception
 	 */
 	protected IActionPage createDefaultCreationAction(Item parent, ItemType type, LinkType lt) throws CadseException {
-		if (clazzAction == null) {
-			if (defaultShortNameAction == null) {
+		if (_clazzAction == null) {
+			if (_defaultShortNameAction == null) {
 				return new CreationAction(parent, type, lt);
 			} else {
-				return new CreationAction(parent, type, lt, defaultShortNameAction);
+				return new CreationAction(parent, type, lt, _defaultShortNameAction);
 			}
 		}
 		Constructor<?> c = null;
-		if (defaultShortNameAction != null) {
+		if (_defaultShortNameAction != null) {
 			try {
-				c = clazzAction.getConstructor(Item.class, ItemType.class, LinkType.class, String.class);
-				return (IActionPage) c.newInstance(parent, type, lt, defaultShortNameAction);
+				c = _clazzAction.getConstructor(Item.class, ItemType.class, LinkType.class, String.class);
+				return (IActionPage) c.newInstance(parent, type, lt, _defaultShortNameAction);
 			} catch (NoSuchMethodException e) {
 
 			} catch (IllegalArgumentException e) {
-				throw new CadseException("Cannot create creation action {1} : {0}.", e, clazzAction, c);
+				throw new CadseException("Cannot create creation action {1} : {0}.", e, _clazzAction, c);
 			} catch (InstantiationException e) {
-				throw new CadseException("Cannot create creation action {1} : {0}.", e, clazzAction, c);
+				throw new CadseException("Cannot create creation action {1} : {0}.", e, _clazzAction, c);
 			} catch (IllegalAccessException e) {
-				throw new CadseException("Cannot create creation action {1} : {0}.", e, clazzAction, c);
+				throw new CadseException("Cannot create creation action {1} : {0}.", e, _clazzAction, c);
 			} catch (InvocationTargetException e) {
-				throw new CadseException("Cannot create creation action {1} : {0}.", e, clazzAction, c);
+				throw new CadseException("Cannot create creation action {1} : {0}.", e, _clazzAction, c);
 			}
 		}
-		if (defaultShortNameAction == null) {
+		if (_defaultShortNameAction == null) {
 			try {
-				c = clazzAction.getConstructor(Item.class, ItemType.class, LinkType.class);
+				c = _clazzAction.getConstructor(Item.class, ItemType.class, LinkType.class);
 				return (IActionPage) c.newInstance(parent, type, lt);
 			} catch (NoSuchMethodException e) {
 
 			} catch (IllegalArgumentException e) {
-				throw new CadseException("Cannot create creation action {1} : {0}.", e, clazzAction, c);
+				throw new CadseException("Cannot create creation action {1} : {0}.", e, _clazzAction, c);
 			} catch (InstantiationException e) {
-				throw new CadseException("Cannot create creation action {1} : {0}.", e, clazzAction, c);
+				throw new CadseException("Cannot create creation action {1} : {0}.", e, _clazzAction, c);
 			} catch (IllegalAccessException e) {
-				throw new CadseException("Cannot create creation action {1} : {0}.", e, clazzAction, c);
+				throw new CadseException("Cannot create creation action {1} : {0}.", e, _clazzAction, c);
 			} catch (InvocationTargetException e) {
-				throw new CadseException("Cannot create creation action {1} : {0}.", e, clazzAction, c);
+				throw new CadseException("Cannot create creation action {1} : {0}.", e, _clazzAction, c);
 			}
 		}
 		try {
-			return clazzAction.newInstance();
+			return _clazzAction.newInstance();
 		} catch (InstantiationException e) {
-			throw new CadseException("Cannot create creation action {1} with default constructor.", e, clazzAction);
+			throw new CadseException("Cannot create creation action {1} with default constructor.", e, _clazzAction);
 		} catch (IllegalAccessException e) {
-			throw new CadseException("Cannot create creation action {1} with default constructor.", e, clazzAction);
+			throw new CadseException("Cannot create creation action {1} with default constructor.", e, _clazzAction);
 		}
 	}
 
@@ -2123,10 +2130,10 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 * @see fr.imag.adele.cadse.core.ItemType#getIcon()
 	 */
 	public URL getImage() {
-		if (icon == null && superType != null) {
-			return superType.getImage();
+		if (_icon == null && _superType != null) {
+			return _superType.getImage();
 		}
-		return icon;
+		return _icon;
 	}
 
 	/*
@@ -2135,7 +2142,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 * @see fr.imag.adele.cadse.core.ItemType#setIcon(java.net.URL)
 	 */
 	public void setIcon(URL url) {
-		icon = url;
+		_icon = url;
 		Logger.getLogger("icon").log(Level.INFO, "set icon to " + url + " of ItemType " + getDisplayName());
 	}
 
@@ -2145,7 +2152,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 * @see fr.imag.adele.cadse.core.ItemType#setSpaceKeyType(fr.imag.adele.cadse.core.key.SpaceKeyType)
 	 */
 	public void setSpaceKeyType(SpaceKeyType spaceKeytype) {
-		this.spaceKeytype = spaceKeytype;
+		this._spaceKeytype = spaceKeytype;
 	}
 
 	/*
@@ -2154,100 +2161,97 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	 * @see fr.imag.adele.cadse.core.ItemType#getSpaceKeyType()
 	 */
 	public SpaceKeyType getSpaceKeyType() {
-		if (this.spaceKeytype == null && superType != null) {
-			return superType.getSpaceKeyType();
+		if (this._spaceKeytype == null && _superType != null) {
+			return _superType.getSpaceKeyType();
 		}
-		return spaceKeytype;
+		return _spaceKeytype;
 	}
 
-	public <T> T getApdapterManager(Class<T> clazz) {
-		// TODO Auto-generated method stub
+	public <T> T getApdapter(Item instance, Class<T> clazz) {
 		return null;
 	}
 
 	public String getCadseName() {
-		if (getPartParent() == null) {
-			return cadseName;
+		CadseRuntime cr = getCadseRuntime();
+		if (cr != null) {
+			_cadseName = cr.getQualifiedName();
+			return cr.getQualifiedName();
 		}
-		return getPartParent().getName();
+		return _cadseName;
 	}
 
 	public void setCadseName(String cadseName) {
-		if (getPartParent() != null) {
-			return;
+		CadseRuntime cr = getCadseRuntime();
+		if (cr != null) {
+			_cadseName = cr.getQualifiedName();
 		}
-
-		if (cadseName == null) {
-			this.cadseName = NO_VALUE_STRING;
-		} else {
-			this.cadseName = cadseName;
-		}
+		this._cadseName = cadseName;		
 	}
 
 	@Override
 	protected void collectOutgoingLinks(LinkType linkType, CollectedReflectLink ret) {
-		if (linkType == CadseRootCST.META_ITEM_TYPE_lt_SUPER_TYPE) {
-			ret.addOutgoing(CadseRootCST.META_ITEM_TYPE_lt_SUPER_TYPE, getSuperType());
+		if (linkType == CadseGCST.ITEM_TYPE_lt_SUPER_TYPE) {
+			ret.addOutgoing(CadseGCST.ITEM_TYPE_lt_SUPER_TYPE, getSuperType());
 		}
-		if (linkType == CadseRootCST.META_ITEM_TYPE_lt_CADSE_RUNTIME) {
-			ret.addOutgoing(CadseRootCST.META_ITEM_TYPE_lt_CADSE_RUNTIME, getPartParent());
+		if (linkType == CadseGCST.ITEM_TYPE_lt_CADSE_RUNTIME) {
+			ret.addOutgoing(CadseGCST.ITEM_TYPE_lt_CADSE_RUNTIME, getCadseRuntime(), Item.IS_HIDDEN);
 		}
-		if (linkType == CadseRootCST.META_ITEM_TYPE_lt_SUB_TYPES) {
-			ret.addOutgoing(CadseRootCST.META_ITEM_TYPE_lt_SUB_TYPES, this.subTypes);
+		if (linkType == CadseGCST.ITEM_TYPE_lt_SUB_TYPES) {
+			ret.addOutgoing(CadseGCST.ITEM_TYPE_lt_SUB_TYPES, Item.IS_HIDDEN, this._subTypes);
 		}
-		if (linkType == CadseRootCST.META_ITEM_TYPE_lt_ATTRIBUTES_DEFINITION) {
-			ret.addOutgoing(CadseRootCST.META_ITEM_TYPE_lt_ATTRIBUTES_DEFINITION, attributesDefinitions);
+		if (linkType == CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES) {
+			ret.addOutgoing(CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES, _attributesDefinitions);
 		}
-		if (linkType == CadseRootCST.META_ITEM_TYPE_lt_CREATION_PAGES) {
-			ret.addOutgoing(CadseRootCST.META_ITEM_TYPE_lt_CREATION_PAGES, creationPages);
+		if (linkType == CadseGCST.ITEM_TYPE_lt_CREATION_PAGES) {
+			ret.addOutgoing(CadseGCST.ITEM_TYPE_lt_CREATION_PAGES, Item.IS_HIDDEN, _creationPages);
 		}
-		if (linkType == CadseRootCST.META_ITEM_TYPE_lt_MODIFICATION_PAGES) {
-			ret.addOutgoing(CadseRootCST.META_ITEM_TYPE_lt_MODIFICATION_PAGES, modificationPages);
+		if (linkType == CadseGCST.ITEM_TYPE_lt_MODIFICATION_PAGES) {
+			ret.addOutgoing(CadseGCST.ITEM_TYPE_lt_MODIFICATION_PAGES,Item.IS_HIDDEN, _modificationPages);
 		}
 		super.collectOutgoingLinks(linkType, ret);
 	}
 
 	public IItemFactory getItemFactory() {
-		if (itemFactory == null && this.itemManager instanceof IItemFactory) {
-			itemFactory = (IItemFactory) itemManager;
+		if (_itemFactory == null && this._itemManager instanceof IItemFactory) {
+			_itemFactory = (IItemFactory) _itemManager;
 		}
-		if (itemFactory == null && superType != null) {
-			return superType.getItemFactory();
+		if (_itemFactory == null && _superType != null) {
+			return _superType.getItemFactory();
 		}
-		if (itemFactory == null) {
+		if (_itemFactory == null) {
 			return ItemFactory.SINGLETON;
 		}
-		return itemFactory;
+		return _itemFactory;
 	}
 
 	public void setItemFactory(IItemFactory factory) {
-		itemFactory = factory;
+		_itemFactory = factory;
 	}
 
 	public PageImpl getFirstCreatedPage() {
-		if (creationPages == null || creationPages.length == 0) {
+		if (_creationPages == null || _creationPages.length == 0) {
 			return null;
 		}
-		return creationPages[0];
+		return _creationPages[0];
 	}
 
 	public PageImpl getFirstModificationPage() {
-		if (modificationPages == null || modificationPages.length == 0) {
+		if (_modificationPages == null || _modificationPages.length == 0) {
 			return null;
 		}
-		return modificationPages[0];
+		return _modificationPages[0];
 	}
 
 	public void setPackageName(String packageName) {
 		if (packageName == null) {
-			this.packageName = NO_VALUE_STRING;
+			this._packageName = NO_VALUE_STRING;
 		} else {
-			this.packageName = packageName;
+			this._packageName = packageName;
 		}
 	}
 
 	public String getPackageName() {
-		return packageName;
+		return _packageName;
 	}
 
 	private LogicalWorkspaceTransactionListener[]	workspaceLogiqueCopyListeners;
@@ -2263,16 +2267,22 @@ public class ItemTypeImpl extends ItemImpl implements ItemType {
 	}
 
 	public LogicalWorkspaceTransactionListener[] getLogicalWorkspaceTransactionListener() {
-		ItemTypeImpl localSuperIT = this.superType;
+		ItemTypeImpl localSuperIT = (ItemTypeImpl) this._superType;
 		LogicalWorkspaceTransactionListener[] ret = workspaceLogiqueCopyListeners;
 		while (localSuperIT != null) {
 			if (localSuperIT.workspaceLogiqueCopyListeners != null) {
 				ret = ArraysUtil.addList(LogicalWorkspaceTransactionListener.class, ret,
 						localSuperIT.workspaceLogiqueCopyListeners);
 			}
-			localSuperIT = localSuperIT.superType;
+			localSuperIT = (ItemTypeImpl) localSuperIT._superType;
 		}
 		return ret;
 
+	}
+
+	@Override
+	public void setSuperType(ItemType it) {
+		_superType = (ItemTypeImpl) it;
+		((ItemTypeImpl) it).addSubItemType(this);
 	}
 }
