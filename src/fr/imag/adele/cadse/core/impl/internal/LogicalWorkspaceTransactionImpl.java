@@ -81,6 +81,7 @@ import fr.imag.adele.cadse.core.util.ComputeElementOrder;
 import fr.imag.adele.cadse.core.util.Convert;
 import fr.imag.adele.cadse.core.util.ElementsOrder;
 import fr.imag.adele.cadse.core.util.HashList;
+import fr.imag.adele.cadse.core.util.NLS;
 import fr.imag.adele.cadse.core.var.ContextVariable;
 
 public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransaction, InternalLogicalWorkspace {
@@ -2497,12 +2498,44 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	public ItemDelta createItemIfNeed(String uniqueName, String shortname, ItemType it, Item parent, LinkType lt,
 			Object... attributes) throws CadseException {
 
-		ItemDelta newItem = createItem(it, parent, lt);
-
+		
 		// create item already and compute the unique name.
 		if (!it.hasShortNameAttribute()) {
 			shortname = Item.NO_VALUE_STRING;
 		}
+		SpaceKeyType keyType = it.getSpaceKeyType();
+		if (keyType != null) {
+			IAttributeType<?>[] attribuesDefintions = keyType
+					.getAttributeTypes();
+			Object[] keyvaluse = new Object[attribuesDefintions.length];
+			for (int i = 0; i < keyvaluse.length; i++) {
+				if (attribuesDefintions[i] == CadseGCST.ITEM_at_NAME_) {
+					keyvaluse[i] = shortname;
+					continue;
+				}
+				for (int j = 0; j < attributes.length;) {
+					Object key = attributes[j++];
+					Object value = attributes[j++];
+					if (attribuesDefintions[i] == key
+							|| attribuesDefintions[i].getName().equals(key)) {
+						keyvaluse[i] = value;
+						break;
+					}
+				}
+				if (keyvaluse[i] == null)
+					throw new CadseException(
+							NLS
+									.bind(
+											"Cannot find the value for the attribute definition {0} ({1}).",
+											attribuesDefintions[i].getName(),
+											attribuesDefintions[i].getCSTName()));
+			}
+			ISpaceKey key = keyType.computeKey(shortname, parent, keyvaluse);
+			ItemDelta newItem = getItem(key);
+			if (newItem != null)
+				return newItem;
+		}
+		ItemDelta newItem = createItem(it, parent, lt);
 		newItem.setName(shortname);
 
 		for (int i = 0; i < attributes.length;) {
