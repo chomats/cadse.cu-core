@@ -168,13 +168,13 @@ public class ListAttributeType<X> extends AttributeType implements
 			for (Object o : (List) value) {
 				CheckStatus error = subtype.check(item, o);
 				if (error != null) {
-					return new CheckStatus(error._type, "Element " + i + ": " + error._message);
+					return new CheckStatus(error.getType(), "In element {0} : {1}", i, error);
 				}
 				i++;
 			}
 			return null; // no error
 		}
-		return new CheckStatus(IPageController.ERROR, "Must be a list of " + subtype.getClass().getSimpleName());
+		return new CheckStatus(IPageController.ERROR, "Must be a list of {0}", subtype.getClass().getSimpleName());
 	}
 
 	public ItemType getType() {

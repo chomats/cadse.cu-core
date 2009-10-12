@@ -132,7 +132,7 @@ public class BooleanAttributeType extends AttributeType implements
 			value = Boolean.parseBoolean((String) value);
 		}
 		if (!(value instanceof Boolean)) {
-			return new CheckStatus(IPageController.ERROR, "Must be a boolean");
+			return new CheckStatus(IPageController.ERROR, Messages.must_be_a_boolean);
 		}
 		return null;
 	}

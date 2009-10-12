@@ -142,12 +142,12 @@ public class MC_AttributesItem extends AbstractModelController implements IModel
 			Object value = convertToModelValue(visualValue);
 			CheckStatus status = attRef.check(getItem(), value);
 			if (status != null) {
-				if (status._type == IPageController.ERROR) {
-					setMessageError(attRef.getName() + ": " + status._message);
+				if (status.getType() == IPageController.ERROR) {
+					setMessageError(attRef.getName() + ": " + status.getFormatedMessage());
 					return true;
 				} else {
 					getUIField().getPageController()
-							.setMessage(attRef.getName() + ": " + status._message, status._type);
+							.setMessage(attRef.getName() + ": " + status.getFormatedMessage(), status.getType());
 				}
 			}
 		}

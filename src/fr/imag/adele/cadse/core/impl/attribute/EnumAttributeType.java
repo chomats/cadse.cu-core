@@ -35,6 +35,7 @@ import fr.imag.adele.cadse.core.impl.CadseIllegalArgumentException;
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.ui.IPageController;
 import fr.imag.adele.cadse.core.util.Convert;
+import fr.imag.adele.cadse.core.util.NLS;
 
 /**
  * The Class EnumAttributeType.
@@ -181,7 +182,7 @@ public class EnumAttributeType<X extends Enum<X>> extends AttributeType implemen
 		}
 		
 		if (clazz == null)
-			throw new CadseIllegalArgumentException("Can't convert to enum clazz : clazz not defined or not loaded !!!");
+			throw new CadseIllegalArgumentException(Messages.cannot_connvert_to_enum_clazz);
 		
 		if (value2 instanceof String) {
 			return find(clazz.getEnumConstants(), (String) value2);
@@ -189,7 +190,7 @@ public class EnumAttributeType<X extends Enum<X>> extends AttributeType implemen
 		if (clazz.isInstance(value2)) {
 			return (X) value2;
 		}
-		throw new ClassCastException("Can't convert to " + clazz + " from " + value2.getClass());
+		throw new ClassCastException(NLS.bind(Messages.cannot_convert_to_from, clazz, value2.getClass()));
 	}
 
 	public ItemType getType() {
@@ -199,7 +200,7 @@ public class EnumAttributeType<X extends Enum<X>> extends AttributeType implemen
 	@Override
 	public CheckStatus check(Item item, Object value) {
 		if (!getFlag(CAN_BE_UNDEFINED) && value == null) {
-			return new CheckStatus(IPageController.ERROR, "Cannot be null");
+			return new CheckStatus(IPageController.ERROR, Messages.cannot_be_undefined);
 		}
 		if (value == null) {
 			return null;
@@ -208,11 +209,11 @@ public class EnumAttributeType<X extends Enum<X>> extends AttributeType implemen
 		if (value instanceof String) {
 			value = find(clazz.getEnumConstants(), (String) value);
 			if (value == null) {
-				return new CheckStatus(IPageController.ERROR, "Unkown value : " + value);
+				return new CheckStatus(IPageController.ERROR, Messages.unkown_value, value);
 			}
 		}
 		if (!clazz.isInstance(value)) {
-			return new CheckStatus(IPageController.ERROR, "Bad type : " + value.getClass());
+			return new CheckStatus(IPageController.ERROR, Messages.bad_type, value.getClass());
 		}
 
 		return null;

@@ -27,6 +27,7 @@ import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.delta.ItemDelta;
 import fr.imag.adele.cadse.core.ui.IPageController;
 import fr.imag.adele.cadse.core.util.Convert;
+import fr.imag.adele.cadse.core.util.NLS;
 
 public class LongAttributeType extends AttributeType implements fr.imag.adele.cadse.core.attribute.LongAttributeType {
 	/** The value. */
@@ -79,14 +80,14 @@ public class LongAttributeType extends AttributeType implements fr.imag.adele.ca
 
 	@Override
 	public CheckStatus check(Item item, Object value) {
-		if (!getFlag(CAN_BE_UNDEFINED) && (value == null || value.toString().length() == 0 || value.equals("null"))) {
-			return new CheckStatus(IPageController.ERROR, "Cannot be null or empty");
+		if (!getFlag(CAN_BE_UNDEFINED) && (value == null || value.toString().length() == 0 || value.equals("null"))) { //$NON-NLS-1$
+			return new CheckStatus(IPageController.ERROR, Messages.cannot_be_undefined);
 		}
 		if (value == null) {
 			return null;
 		}
 		if (value instanceof String) {
-			if ("null".equals(value) || "unbounded".equals(value) || "".equals(value)) {
+			if ("null".equals(value) || "unbounded".equals(value) || "".equals(value)) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				return null;
 			}
 
@@ -97,17 +98,17 @@ public class LongAttributeType extends AttributeType implements fr.imag.adele.ca
 			}
 		}
 		if (!(value instanceof Long)) {
-			return new CheckStatus(IPageController.ERROR, "Must be a integer");
+			return new CheckStatus(IPageController.ERROR, Messages.must_be_a_long);
 		}
 		long v = ((Long) value).longValue();
 		if (minValue != null) {
 			if (v < minValue.longValue()) {
-				return new CheckStatus(IPageController.ERROR, "Value must be > " + minValue.intValue());
+				return new CheckStatus(IPageController.ERROR, Messages.value_must_be_upper , minValue.intValue());
 			}
 		}
 		if (maxValue != null) {
 			if (v > maxValue.longValue()) {
-				return new CheckStatus(IPageController.ERROR, "Value must be < " + maxValue.intValue());
+				return new CheckStatus(IPageController.ERROR, Messages.value_must_be_lower, maxValue.intValue());
 			}
 		}
 
@@ -116,7 +117,7 @@ public class LongAttributeType extends AttributeType implements fr.imag.adele.ca
 
 	@Override
 	public Object convertTo(Object v) {
-		if (v == null || "".equals(v) || "null".equals(v)) {
+		if (v == null || "".equals(v) || "null".equals(v)) { //$NON-NLS-1$ //$NON-NLS-2$
 			return null;
 		}
 		if (v instanceof String) {
@@ -125,6 +126,6 @@ public class LongAttributeType extends AttributeType implements fr.imag.adele.ca
 		if (v instanceof Long) {
 			return v;
 		}
-		throw new ClassCastException("Can't convert to primive long value the type " + v.getClass());
+		throw new ClassCastException(NLS.bind(Messages.cannot_convert_to_long, v.getClass()));
 	}
 }

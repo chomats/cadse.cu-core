@@ -258,7 +258,7 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 
 	public CheckStatus check(Item item, Object value) {
 		if (!getFlag(CAN_BE_UNDEFINED) && value == null) {
-			return new CheckStatus(IPageController.ERROR, "Cannot be undefined");
+			return new CheckStatus(IPageController.ERROR, Messages.cannot_be_undefined);
 		}
 
 		return null;

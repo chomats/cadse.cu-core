@@ -148,11 +148,10 @@ public class DateAttributeType extends AttributeType implements fr.imag.adele.ca
 				getFormat().parse((String) value);
 				return null;
 			} catch (ParseException e) {
-				new CheckStatus(IPageController.ERROR, "Date attribute '" + getName() + "' : " + e.getMessage());
+				new CheckStatus(IPageController.ERROR, "Date attribute ''{0}'' : {1}" , getName(), e.getMessage());
 			}
 		}
-		return new CheckStatus(IPageController.ERROR, "Date attribute '" + getName() + "' : invalid value '"
-				+ value + "'");
+		return new CheckStatus(IPageController.ERROR, "Date attribute ''{0}'' : invalid value ''{1}''" , getName(), value);
 
 	}
 
