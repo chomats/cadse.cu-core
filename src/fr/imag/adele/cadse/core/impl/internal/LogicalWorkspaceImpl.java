@@ -743,7 +743,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 
 		if (!(lt.getDestination().isSuperTypeOf(it)) && !lt.getDestination().equals(it)) {
 			throw new CadseIllegalArgumentException(Messages.error_cannot_create_an_item_bad_destination, parent
-					.getName(), lt.getName(), lt.getDestination().getId(), it.getId());
+					.getName(), lt.getName(), lt.getDestination().getName(), lt.getDestination().getId(), it.getName(), it.getId());
 		}
 
 	}

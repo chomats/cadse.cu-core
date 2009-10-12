@@ -585,7 +585,14 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		if (itemDescriptionRef.getQualifiedName() != null) {
 			ret.setQualifiedName(itemDescriptionRef.getQualifiedName());
 		}
-
+		
+		IAttributeType<?>[] attributes = ret.getType().getAllAttributeTypes();
+		for (IAttributeType<?> attributeType : attributes) {
+			Object v = attributeType.getDefaultValue();
+			if (v == null) continue;
+			ret.setAttribute(attributeType, v);
+		}
+		
 		if (log != null) {
 			log.actionAddItem(itemDescriptionRef);
 		}
@@ -1044,7 +1051,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 
 				if (!item.isInstanceOf(lt.getDestination())) {
 					throw new CadseException(Messages.error_cannot_create_an_item_bad_destination, parent.getName(), lt
-							.getName(), lt.getDestination().getId(), it.getId());
+							.getName(), lt.getDestination().getName(), lt.getDestination().getId(), it.getName(), it.getId());
 				}
 			}
 		}
@@ -2507,6 +2514,17 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 				items_by_key.put(newkey, itemDeltaImpl);
 			}
 		}
+	}
+
+	public void changeQualifiedName(ItemDeltaImpl itemDeltaImpl, String qName) {
+		if (itemDeltaImpl.isAdded()) {
+			items_by_unique_name.put(qName, itemDeltaImpl);
+		} else if (itemDeltaImpl.isDeleted()) {
+			items_by_unique_name_deleted.put(qName, itemDeltaImpl);
+		} else {
+			items_by_unique_name.put(qName, itemDeltaImpl);
+		}
+		
 	}
 
 }

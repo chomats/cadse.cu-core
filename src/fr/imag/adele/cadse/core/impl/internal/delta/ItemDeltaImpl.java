@@ -3425,9 +3425,10 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * 
 	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#setUniqueName(java.lang.String)
 	 */
-	public void setQualifiedName(String uniqueName) throws CadseException {
-		setAttribute(CadseGCST.ITEM_at_QUALIFIED_NAME_, CadseGCST.ITEM_at_QUALIFIED_NAME, uniqueName,
+	public void setQualifiedName(String qName) throws CadseException {
+		setAttribute(CadseGCST.ITEM_at_QUALIFIED_NAME_, CadseGCST.ITEM_at_QUALIFIED_NAME, qName,
 				false);
+		_copy.changeQualifiedName(this, qName);
 	}
 
 	/*

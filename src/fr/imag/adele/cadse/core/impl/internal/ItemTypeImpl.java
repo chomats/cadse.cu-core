@@ -270,8 +270,8 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 			this._superType.addSubItemType(this);
 		}
 		this._state = ItemState.CREATED;
-		setHasShortNameAttribute(true);
-		setHasUniqueNameAttribute(true);
+		setHasNameAttribute(true);
+		setHasQualifiedNameAttribute(true);
 	}
 
 	public ItemTypeImpl(LogicalWorkspace wl, ItemType it, ItemDelta desc) {
@@ -1046,7 +1046,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	 * 
 	 * @see fr.imag.adele.cadse.core.ItemType#setHasUniqueNameAttribute(boolean)
 	 */
-	public void setHasUniqueNameAttribute(boolean val) {
+	public void setHasQualifiedNameAttribute(boolean val) {
 		if (val) {
 			_kind |= UNIQUE_NAME;
 		} else {
@@ -1069,7 +1069,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	 * 
 	 * @see fr.imag.adele.cadse.core.ItemType#setHasShortNameAttribute(boolean)
 	 */
-	public void setHasShortNameAttribute(boolean val) {
+	public void setHasNameAttribute(boolean val) {
 		if (val) {
 			_kind |= SHORT_NAME;
 		} else {

@@ -372,13 +372,13 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 	}
 
 	@Override
-	public void setHasShortNameAttribute(boolean val) {
+	public void setHasNameAttribute(boolean val) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setHasUniqueNameAttribute(boolean val) {
+	public void setHasQualifiedNameAttribute(boolean val) {
 		// TODO Auto-generated method stub
 
 	}
