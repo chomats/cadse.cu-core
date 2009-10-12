@@ -1025,7 +1025,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 					if (link.getSource().getPartParent() == null) {
 						throw new CadseException(Messages.parent_must_be_set, link);
 					}
-					if (!link.getSource().isDeleted() && link.getSource().getPartParent().equals(link.getDestination())) {
+					if (link.getDestination().isDeleted() || link.getSource().isDeleted())
+						return;
+					if (link.getSource().getPartParent().equals(link.getDestination())) {
 						throw new CadseException(Messages.parent_must_be_set, link);
 					}
 				}
