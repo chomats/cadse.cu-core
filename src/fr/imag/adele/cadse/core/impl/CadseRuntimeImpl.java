@@ -33,6 +33,7 @@ import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
 import fr.imag.adele.cadse.core.impl.ui.view.TreeView;
 import fr.imag.adele.cadse.core.internal.InternalCadseRuntime;
 import fr.imag.adele.cadse.core.util.ArraysUtil;
+import fr.imag.adele.cadse.core.util.Convert;
 
 public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRuntime, InternalCadseRuntime {
 	protected String			_cadseName;
@@ -182,7 +183,10 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 
 	@Override
 	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
-
+		if (CadseGCST.ITEM_at_NAME_ == type) {
+			_name = Convert.toString(value);
+			return true;
+		}
 		// TODO
 		if (CadseGCST.CADSE_RUNTIME_at_ITEM_REPO_LOGIN_ == type) {
 			return false;

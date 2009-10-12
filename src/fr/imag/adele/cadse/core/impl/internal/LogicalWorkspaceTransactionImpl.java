@@ -167,10 +167,6 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		check_write();
 		ItemDelta ret = actionAddItem(new ItemDescriptionRef(CompactUUID.randomUUID(), it.getId(), null, null),
 				parent == null ? null : parent.getId(), lt);
-		// if (parent != null) { //deja fait
-		// parent = getOrCreateItemOperation(parent.getId());
-		// ret.setParentAndLinkType(parent, lt);
-		// }
 		return ret;
 	}
 
@@ -1104,6 +1100,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 				SpaceKeyType keyType = item.getType().getSpaceKeyType();
 				ISpaceKey newK = keyType.computeKey(item);
 				item.setKey(newK);
+				
 			}
 		}
 
@@ -1111,7 +1108,6 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		public void notifyDeletedItem(LogicalWorkspaceTransaction wc, ItemDelta item) throws CadseException,
 				CadseException {
 			if (item.getType() != null && item.getType().getSpaceKeyType() != null) {
-				ISpaceKey oldK = item.getBaseItem().getKey();
 				item.setKey(null);
 			}
 
@@ -1157,7 +1153,6 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 			}
 
 			/* delete mapping if option is set */
-
 			if (link.isMappingLink() && deleteOperation.isDeleteMapping() && !link.getDestination().isDeleted()) {
 				link.getDestination().delete(deleteOperation, 0);
 			}
@@ -1175,41 +1170,49 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 
 			if (item.getType() != null && item.getType().getSpaceKeyType() != null) {
 				SpaceKeyType keyType = item.getType().getSpaceKeyType();
-				KEY_ADD: if (item.isAdded()) {
-					ISpaceKey key = item.getKey();
-					if (key == null) {
-						break KEY_ADD;
-					}
-					IAttributeType<?>[] attKeys = keyType.getAttributeTypes();
-					if (attKeys == null) {
-						break KEY_ADD;
-					}
-					for (int i = 0; i < attKeys.length; i++) {
-						if (attKeys[i] == attOperation.getAttributeDefinition()) {
-							// Attribute of the key has changed
-							ISpaceKey newK = keyType.computeKey(item);
-							item.setKey(newK);
-							break;
-						}
-					}
-				} else if (item.isDeleted()) {
-				} else {
-					KEY_CHANGE: if (!(item.isLoaded())) {
-						// item is modified
-						Item baseItem = item.getBaseItem();
-						ISpaceKey key = baseItem.getKey();
+				KEY: { 
+					if (item.isAdded()) {
+						ISpaceKey key = item.getKey();
 						if (key == null) {
-							break KEY_CHANGE;
+							break KEY;
 						}
 						IAttributeType<?>[] attKeys = keyType.getAttributeTypes();
 						if (attKeys == null) {
-							break KEY_CHANGE;
+							break KEY;
 						}
 						for (int i = 0; i < attKeys.length; i++) {
 							if (attKeys[i] == attOperation.getAttributeDefinition()) {
 								// Attribute of the key has changed
 								ISpaceKey newK = keyType.computeKey(item);
-								item.setKey(newK);
+								if (!key.equals(newK)) 
+									item.setKey(newK);
+								break KEY;
+							}
+						}
+						break KEY;
+					} 
+					if (item.isDeleted()) {
+						break KEY;
+					} 
+					// item is modified
+					Item baseItem = item.getBaseItem();
+					if (baseItem != null) {
+						ISpaceKey key = baseItem.getKey();
+						if (key == null) {
+							break KEY;
+						}
+						IAttributeType<?>[] attKeys = keyType
+								.getAttributeTypes();
+						if (attKeys == null) {
+							break KEY;
+						}
+						for (int i = 0; i < attKeys.length; i++) {
+							if (attKeys[i] == attOperation
+									.getAttributeDefinition()) {
+								// Attribute of the key has changed
+								ISpaceKey newK = keyType.computeKey(item);
+								if (!key.equals(newK)) 
+									item.setKey(newK);
 								break;
 							}
 						}
@@ -2342,9 +2345,13 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		ISpaceKey key = newItem.getKey();
 		if (key != null) {
 			findItem = getItem(key);
+			if (findItem == newItem)
+				findItem = null;
 		}
 		if (findItem == null && it.hasUniqueNameAttribute()) {
 			findItem = getItem(uniqueName);
+			if (findItem == newItem)
+				findItem = null;
 		}
 
 		if (findItem == null && parent != null && lt != null) {
@@ -2448,8 +2455,34 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 
 	}
 
-	public void changeKey(ItemDeltaImpl itemDeltaImpl, ISpaceKey _key, ISpaceKey newkey) {
-		// TODO
+	public void changeKey(ItemDeltaImpl itemDeltaImpl, ISpaceKey oldkey, ISpaceKey newkey) {
+		if (itemDeltaImpl.isAdded()) {
+			if (oldkey != null) {
+				items_by_key.remove(oldkey);
+			}
+			items_by_key.put(newkey, itemDeltaImpl);
+		} else if (itemDeltaImpl.isDeleted()) {
+			items_by_key.remove(oldkey);
+			items_by_key_deleted.put(oldkey, itemDeltaImpl);
+		} else {
+			if (itemDeltaImpl.getBaseItem() == null) {
+				if (oldkey != null) {
+					items_by_key.remove(oldkey);
+					items_by_key_deleted.remove(oldkey);
+				}
+				items_by_key.remove(newkey);
+				items_by_key_deleted.remove(newkey);
+			} else {
+				if (oldkey != null) {
+					items_by_key.remove(oldkey);
+				}
+				ISpaceKey baseKey = itemDeltaImpl.getBaseItem().getKey();
+				if (baseKey != null) {
+					items_by_key_deleted.put(baseKey, itemDeltaImpl);
+				}
+				items_by_key.put(newkey, itemDeltaImpl);
+			}
+		}
 	}
 
 }

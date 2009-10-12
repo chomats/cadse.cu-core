@@ -2847,6 +2847,8 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#recomputeKey(fr.imag.adele.cadse.core.key.ISpaceKey)
 	 */
 	public void setKey(ISpaceKey newkey) {
+		if (_key == null && getBaseItem() != null)
+			_key = getBaseItem().getKey();
 		this._copy.changeKey(this, _key, newkey);
 		if (_keyDelta == null) {
 			_keyDelta = new SpaceKeyDeltaImpl(this);
