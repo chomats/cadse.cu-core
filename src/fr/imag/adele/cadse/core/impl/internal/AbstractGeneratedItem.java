@@ -1658,9 +1658,6 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	public void loadItem(IWorkingLoadingItems wl, ItemDelta itemOperation,
 			IErrorCollector errorCollector) throws CadseException {
 		// find the parent
-
-		LinkDelta linkParent = itemOperation
-				.getOutgoingLink(CadseGCST.ITEM_lt_PARENT);
 		
 		ItemType type = Accessor.loadAttributes(this, itemOperation,
 				errorCollector);
@@ -1668,6 +1665,9 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		for (LinkDelta ldesc : itemOperation.getOutgoingLinkOperations()) {
 			try {
 				if (ldesc.isDerived() || ldesc.isDeleted()) {
+					continue;
+				}
+				if (!ldesc.isLoaded() && !ldesc.isAdded()) {
 					continue;
 				}
 				LinkType lt = ldesc.getLinkType();

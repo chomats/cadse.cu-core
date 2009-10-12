@@ -578,5 +578,17 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 		return _delta.getAttribute(CadseGCST.ITEM_TYPE_at_MANAGER_CLASS_);
 	}
 
+	@Override
+	public String getCSTName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setCSTName(String cst) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }

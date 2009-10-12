@@ -1311,4 +1311,16 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements Li
 
 	}
 
+	@Override
+	public String getCSTName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setCSTName(String cst) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

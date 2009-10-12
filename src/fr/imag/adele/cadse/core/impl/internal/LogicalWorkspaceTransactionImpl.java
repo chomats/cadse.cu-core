@@ -567,7 +567,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		ret.addInParent();
 		if (parent != null) {
 			// set field and store in this parentItem and link part
-			ret.setParent(getOrCreateItemOperation(parent), lt);
+			ret.setParent(getOrCreateItemOperation(parent), lt, true, true);
 		}
 		validateCreatedItem(ret);
 

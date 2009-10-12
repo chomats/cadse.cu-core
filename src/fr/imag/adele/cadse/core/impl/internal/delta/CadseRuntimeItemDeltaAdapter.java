@@ -142,6 +142,12 @@ public class CadseRuntimeItemDeltaAdapter extends ItemItemDeltaAdapter implement
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public String getCSTName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 	
 }

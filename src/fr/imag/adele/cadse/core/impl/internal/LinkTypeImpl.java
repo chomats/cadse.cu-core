@@ -94,7 +94,8 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	private String				_displayName;
 
 	TWDestEvol					_twdestEvol			= TWDestEvol.immutable;
-
+	
+	
 	// TWCoupled is a flag
 
 	/**
@@ -1066,5 +1067,8 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 		}
 		super.setParent(parent, lt);
 	}
+
+	
+	
 
 }

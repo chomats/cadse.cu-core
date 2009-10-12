@@ -584,6 +584,9 @@ public final class LinkDeltaImpl extends ItemOrLinkDeltaImpl implements Link, Li
 		if (isAdded()) {
 			sb.append("Added ");
 		}
+		if (isLoaded()) {
+			sb.append("Loaded ");
+		}
 		sb.append("Link ");
 		sb.append("(").append(getSource().getId()).append(",").append(_lt).append(",");
 		sb.append(getDestinationName()).append("-");

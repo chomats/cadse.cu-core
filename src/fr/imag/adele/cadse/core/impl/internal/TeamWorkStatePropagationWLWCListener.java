@@ -162,7 +162,7 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 	private void computeAndSetAttrModified(WLWCOperation attOperation, ItemDelta modifiedItem,
 			IAttributeType attrDef) throws CadseException {
 		// manage old cadse
-		if (attrDef == null) {
+		if (attrDef == null || !attrDef.isResolved()) {
 			return;
 		}
 
@@ -329,8 +329,6 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 		ItemDelta modifiedItem = link.getSource();
 		if (linkType.equals(CadseGCST.ITEM_lt_MODIFIED_ATTRIBUTES)) {
 			// manage case Modified -> Unmodified
-			// TODO implement it
-
 			return;
 		}
 

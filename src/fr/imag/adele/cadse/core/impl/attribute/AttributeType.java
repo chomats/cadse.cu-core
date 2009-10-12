@@ -39,6 +39,7 @@ import fr.imag.adele.cadse.core.util.Convert;
 public abstract class AttributeType extends AbstractGeneratedItem implements IInternalTWAttribute {
 
 	private String			_name;
+	String 						_cstName;
 	private TWEvol			_evol			= TWEvol.twImmutable;
 	private boolean			_TWRevSpecific	= true;
 	private TWCommitKind	_TWCommitKind	= TWCommitKind.conflict;
@@ -322,6 +323,14 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 
 	public boolean mustBeCreateNewValueAtCreationTimeOfItem() {
 		return false;
+	}
+	
+	public String getCSTName() {
+		return _cstName;
+	}
+	
+	public void setCSTName(String cst) {
+		_cstName = cst;
 	}
 
 }

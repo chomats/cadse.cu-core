@@ -3288,7 +3288,11 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		if (parent == null)
 			throw new CadseIllegalArgumentException(Messages.cannot_set_parent_to_null, this, lt);
 		
-		setParent(_copy.getItem(parent), lt, true, true);	
+		try {
+			setParent(_copy.getItem(parent), lt, true, true);
+		} catch (CadseException e) {
+			e.printStackTrace();
+		}	
 	}
 	/*
 	 * (non-Javadoc)
@@ -3296,12 +3300,12 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#setParent(fr.imag.adele.cadse.core.Item,
 	 *      fr.imag.adele.cadse.core.LinkType)
 	 */
-	public void setParent(ItemDelta parent, LinkType lt, boolean createLinkIfNeed, boolean notify) {
+	public void setParent(ItemDelta parent, LinkType lt, boolean createLinkIfNeed, boolean notify) throws CadseException {
 		if (parent != null) {
 			if (parent == _parentItem)
 				return;
 			
-			try {
+			
 				if (_parentItem != null && _oldParentItem == null) {
 					_oldParentItem = _parentItem;
 				}
@@ -3339,10 +3343,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 					}
 				}
 				
-			} catch (CadseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			
 		}
 	}
 

@@ -2265,6 +2265,8 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 
 	private LogicalWorkspaceTransactionListener[]	workspaceLogiqueCopyListeners;
 
+	private String _cstName;
+
 	public void addLogicalWorkspaceTransactionListener(LogicalWorkspaceTransactionListener l) {
 		workspaceLogiqueCopyListeners = ArraysUtil.add(LogicalWorkspaceTransactionListener.class,
 				workspaceLogiqueCopyListeners, l);
@@ -2301,5 +2303,13 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 			_managerClass = getItemManager().getClass().getName();
 			
 		return _managerClass;
+	}
+	
+	public String getCSTName() {
+		return _cstName;
+	}
+	
+	public void setCSTName(String cst) {
+		_cstName = cst;
 	}
 }

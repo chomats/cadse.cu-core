@@ -343,6 +343,9 @@ public class ItemImpl extends AbstractItem implements Item {
 				if (ldesc.isDerived() || ldesc.isDeleted()) {
 					continue;
 				}
+				if (!ldesc.isLoaded() && !ldesc.isAdded()) {
+					continue;
+				}
 				Item dest = wl.loadItem(ldesc.getDestination());
 
 				if (ldesc.getLinkType() == null) {

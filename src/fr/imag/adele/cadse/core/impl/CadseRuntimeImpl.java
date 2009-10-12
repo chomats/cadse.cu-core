@@ -345,5 +345,11 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 		_cstClassName = cstClass;		
 	}
 
+	@Override
+	public String getCSTName() {
+		int index = _cstClassName.lastIndexOf('.');
+		if (index == -1) return _cstClassName;
+		return _cstClassName.substring(index+1);
+	}
 	
 }
