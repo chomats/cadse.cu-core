@@ -2298,7 +2298,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	@Override
 	public String getItemManagerClass() {
 		if (_managerClass == null && getItemManager() != null)
-			_managerClass = getItemManagerClass().getClass().getName();
+			_managerClass = getItemManager().getClass().getName();
 			
 		return _managerClass;
 	}
