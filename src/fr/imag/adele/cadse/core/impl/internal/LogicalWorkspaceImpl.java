@@ -76,6 +76,7 @@ import fr.imag.adele.cadse.core.key.SpaceKeyType;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransactionListener;
 import fr.imag.adele.cadse.core.util.ArraysUtil;
+import fr.imag.adele.cadse.core.var.ContextVariable;
 
 /**
  * The Class WorkspaceLogique.
@@ -2187,5 +2188,10 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 			_crUnresolvedItemType.setFlag(Item.UNRESOLVED, true);
 		}
 		return this._crUnresolvedItemType;
+	}
+
+	@Override
+	public ContextVariable getContext() {
+		return new ContextVariable();
 	}
 }
