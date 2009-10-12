@@ -1296,7 +1296,6 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 				return null;
 			return (T) _itemManager.getClass().getName();
 		}
-
 		if (CadseGCST.ITEM_TYPE_at_PACKAGE_NAME_ == type) {
 			return (T) _packageName;
 		}
@@ -1360,6 +1359,8 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 			return true;
 		}
 		if (CadseGCST.ITEM_TYPE_at_MANAGER_CLASS_ == type) {
+			if ("".equals(value)) return false;
+			if (isRuntime()) return false;
 			_managerClass = Convert.toString(value);
 			return true;
 		}
