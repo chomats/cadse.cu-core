@@ -288,6 +288,9 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 
 				}
 			}
+			if (goodItem == null) {
+				continue;
+			}
 			for (LinkDelta link : item.getOutgoingLinkOperations()) {
 				if (!link.isModified()) {
 					continue;

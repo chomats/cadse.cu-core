@@ -2669,7 +2669,6 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	@Override
 	public ContextVariable getContext() {
 		return getNewContext();
-		
 	}
 
 }

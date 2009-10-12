@@ -355,7 +355,6 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 
 	@Override
 	public boolean isRuntime() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

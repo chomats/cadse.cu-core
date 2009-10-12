@@ -352,7 +352,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	@Deprecated
 	public ContentItem getParentContentManager() {
 		if (_parent == null) {
-			setParent( getParentPartContentManager(), null);
+			setParent( getParentPartContentManager(true), null);
 		}
 
 		return (ContentItem) _parent;
