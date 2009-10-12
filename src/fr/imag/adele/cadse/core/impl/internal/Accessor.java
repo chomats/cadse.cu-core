@@ -416,6 +416,14 @@ public class Accessor {
 		}
 		return ret;
 	}
+	
+	public static Collection<ItemDelta> getIncomingItemDelta(List<? extends LinkDelta> incomings) {
+		ArrayList<ItemDelta> ret = new ArrayList<ItemDelta>();
+		for (LinkDelta l : incomings) {
+			ret.add(l.getSource());
+		}
+		return ret;
+	}
 
 	public static ArrayList<Item> getOutgoingItems(List<Link> links, LinkType lt, boolean resovledOnly) {
 		ArrayList<Item> ret = new ArrayList<Item>();
@@ -426,6 +434,21 @@ public class Accessor {
 				Item item = l.getDestination(resovledOnly);
 				if (item != null) {
 					ret.add(item);
+				}
+			}
+		}
+		return ret;
+	}
+	
+	public static ArrayList<ItemDelta> getOutgoingItemDeltas(List<LinkDelta> links, LinkType lt, boolean resovledOnly) {
+		ArrayList<ItemDelta> ret = new ArrayList<ItemDelta>();
+		for (Link l : links) {
+			// Select link which linktype is equal to linkNameID and is
+			// resolved.
+			if (l.getLinkType() == lt) {
+				Item item = l.getDestination(resovledOnly);
+				if (item != null) {
+					ret.add((ItemDelta) item);
 				}
 			}
 		}
@@ -443,6 +466,18 @@ public class Accessor {
 		}
 		return ret;
 	}
+	
+	public static ArrayList<ItemDelta> getOutgoingItemDeltas(List<LinkDelta> links, boolean resovledOnly) {
+		ArrayList<ItemDelta> ret = new ArrayList<ItemDelta>();
+		for (Link l : links) {
+			// resolved.
+			ItemDelta item = (ItemDelta) l.getDestination(resovledOnly);
+			if (item != null) {
+				ret.add(item);
+			}
+		}
+		return ret;
+	}
 
 	public static ArrayList<Item> getOutgoingItems(List<Link> links, String linkType, boolean resovledOnly) {
 		ArrayList<Item> ret = new ArrayList<Item>();
@@ -451,6 +486,21 @@ public class Accessor {
 			// resolved.
 			if (l.getLinkType().getName().equals(linkType)) {
 				Item item = l.getDestination(resovledOnly);
+				if (item != null) {
+					ret.add(item);
+				}
+			}
+		}
+		return ret;
+	}
+	
+	public static ArrayList<ItemDelta> getOutgoingItemDeltas(List<LinkDelta> links, String linkType, boolean resovledOnly) {
+		ArrayList<ItemDelta> ret = new ArrayList<ItemDelta>();
+		for (Link l : links) {
+			// Select link which linktype is equal to linkNameID and is
+			// resolved.
+			if (l.getLinkType().getName().equals(linkType)) {
+				ItemDelta item = (ItemDelta) l.getDestination(resovledOnly);
 				if (item != null) {
 					ret.add(item);
 				}

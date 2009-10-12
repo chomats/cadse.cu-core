@@ -985,8 +985,8 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getIncomingItem(boolean,
 	 *      boolean)
 	 */
-	public Collection<Item> getIncomingItems(boolean acceptDelete, boolean acceptAdd) {
-		return Accessor.getIncomingItem(getIncomingLinks(acceptDelete, acceptAdd));
+	public Collection<ItemDelta> getIncomingItems(boolean acceptDelete, boolean acceptAdd) {
+		return Accessor.getIncomingItemDelta(getIncomingLinks(acceptDelete, acceptAdd));
 	}
 
 	/*
@@ -1009,11 +1009,28 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#getIncomingLinks(fr.imag.adele.cadse.core.delta.ItemOperation,
+	 *      fr.imag.adele.cadse.core.LinkType, boolean, boolean)
+	 */
+	public List<LinkDelta> getIncomingLinkDeltas(LinkType lt, boolean acceptDelete, boolean acceptAdd) {
+		List<? extends Link> links = getIncomingLinks(acceptDelete, acceptAdd);
+		ArrayList<LinkDelta> ret = new ArrayList<LinkDelta>();
+		for (Link l : links) {
+			if (l.getLinkType() == lt) {
+				ret.add((LinkDelta) l);
+			}
+		}
+		return ret;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getIncomingItem(fr.imag.adele.cadse.core.LinkType,
 	 *      boolean, boolean)
 	 */
-	public Collection<Item> getIncomingItems(LinkType lt, boolean acceptDelete, boolean acceptAdd) {
-		return Accessor.getIncomingItem(getIncomingLinks(lt, acceptDelete, acceptAdd));
+	public Collection<ItemDelta> getIncomingItems(LinkType lt, boolean acceptDelete, boolean acceptAdd) {
+		return Accessor.getIncomingItemDelta(getIncomingLinkDeltas(lt, acceptDelete, acceptAdd));
 	}
 	
 	/*
@@ -1476,8 +1493,8 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingItems(boolean,
 	 *      boolean)
 	 */
-	public Collection<Item> getOutgoingItems(boolean acceptDeletedLink, boolean resovledOnly) {
-		return Accessor.getOutgoingItems(getOutgoingLinks(acceptDeletedLink), resovledOnly);
+	public Collection<ItemDelta> getOutgoingItems(boolean acceptDeletedLink, boolean resovledOnly) {
+		return Accessor.getOutgoingItemDeltas(getOutgoingLinks(acceptDeletedLink), resovledOnly);
 	}
 
 	/*
@@ -1486,8 +1503,8 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingItems(boolean,
 	 *      fr.imag.adele.cadse.core.LinkType, boolean)
 	 */
-	public Collection<Item> getOutgoingItems(boolean acceptDeletedLink, LinkType lt, boolean resovledOnly) {
-		return Accessor.getOutgoingItems(getOutgoingLinks(acceptDeletedLink), lt, resovledOnly);
+	public Collection<ItemDelta> getOutgoingItems(boolean acceptDeletedLink, LinkType lt, boolean resovledOnly) {
+		return Accessor.getOutgoingItemDeltas(getOutgoingLinks(acceptDeletedLink), lt, resovledOnly);
 	}
 
 	/*
@@ -1496,8 +1513,8 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingItems(boolean,
 	 *      java.lang.String, boolean)
 	 */
-	public Collection<Item> getOutgoingItems(boolean acceptDeletedLink, String linkType, boolean resovledOnly) {
-		return Accessor.getOutgoingItems(getOutgoingLinks(acceptDeletedLink), linkType, resovledOnly);
+	public Collection<ItemDelta> getOutgoingItems(boolean acceptDeletedLink, String linkType, boolean resovledOnly) {
+		return Accessor.getOutgoingItemDeltas(getOutgoingLinks(acceptDeletedLink), linkType, resovledOnly);
 	}
 
 	/*
@@ -1769,7 +1786,18 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingLinks()
 	 */
 	public List<Link> getOutgoingLinks() {
-		return getOutgoingLinks(false);
+		syncOutgoingLinks();
+		if (_orders == null) {
+			return Collections.emptyList();
+		}
+		ArrayList<Link> ret = new ArrayList<Link>();
+		for (LinkDelta lo : _orders) {
+			if (!false && lo.isDeleted()) {
+				continue;
+			}
+			ret.add(lo);
+		}
+		return ret;
 	}
 
 	/*
@@ -1777,12 +1805,12 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * 
 	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingLinks(boolean)
 	 */
-	public List<Link> getOutgoingLinks(boolean acceptDeleted) {
+	public List<LinkDelta> getOutgoingLinks(boolean acceptDeleted) {
 		syncOutgoingLinks();
 		if (_orders == null) {
 			return Collections.emptyList();
 		}
-		ArrayList<Link> ret = new ArrayList<Link>();
+		ArrayList<LinkDelta> ret = new ArrayList<LinkDelta>();
 		for (LinkDelta lo : _orders) {
 			if (!acceptDeleted && lo.isDeleted()) {
 				continue;
