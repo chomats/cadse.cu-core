@@ -173,6 +173,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		this._itemType = original.getType();
 		this._itemTypeId = original.getType().getId();
 		this._baseItem =  original;
+		Item partParent = original.getPartParent();
+		if (partParent != null)
+			this._parentItem = copy.getItem(partParent);
 		if (add) {
 			addInParent();
 		}
@@ -3282,7 +3285,10 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 
 	@Override
 	public void setParent(Item parent, LinkType lt) {
-		setParent((ItemDelta) parent, lt, true, true);	
+		if (parent == null)
+			throw new CadseIllegalArgumentException(Messages.cannot_set_parent_to_null, this, lt);
+		
+		setParent(_copy.getItem(parent), lt, true, true);	
 	}
 	/*
 	 * (non-Javadoc)
@@ -3300,15 +3306,6 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 					_oldParentItem = _parentItem;
 				}
 				this._parentItem = (ItemDelta) parent;
-				if (createLinkIfNeed) {
-					LinkDelta l = getOutgoingLink(CadseGCST.ITEM_lt_PARENT);
-					if (l == null)
-						createLink(CadseGCST.ITEM_lt_PARENT, _parentItem, notify);
-					else if (l.getDestination() != parent) {
-						l.delete();
-						createLink(CadseGCST.ITEM_lt_PARENT, _parentItem, notify);
-					}
-				}
 				if (lt == null) {
 					lt = _itemType.getIncomingPart(parent.getType());
 				}
@@ -3319,6 +3316,29 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 				if (lt != null) {
 					this._parentLinkType = lt;
 				}
+				
+				if (createLinkIfNeed) {
+					
+					LinkDelta l = getOutgoingLink(CadseGCST.ITEM_lt_PARENT);
+					if (l == null)
+						createLink(CadseGCST.ITEM_lt_PARENT, _parentItem, notify);
+					else if (l.getDestination() != parent) {
+						l.delete();
+						createLink(CadseGCST.ITEM_lt_PARENT, _parentItem, notify);
+					}
+					
+					if(lt != null) {
+						if (_oldParentItem != null) {
+							LinkDelta ltoparent = _oldParentItem.getOutgoingLink(lt, getId());
+							if (ltoparent != null)
+								ltoparent.delete(new DeleteOperationImpl(null, null, 0));
+						}
+						l = _parentItem.getOutgoingLink(CadseGCST.ITEM_lt_PARENT, getId());
+						if (l == null)
+							_parentItem.createLink(lt, this);
+					}
+				}
+				
 			} catch (CadseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

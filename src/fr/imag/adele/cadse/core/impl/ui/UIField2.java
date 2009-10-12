@@ -201,6 +201,11 @@ public class UIField2 extends UIFieldImpl {
 	}
 
 	@Override
+	public Item getPartParent() {
+		return getPage();
+	}
+	
+	@Override
 	public Item getPartParent(boolean attemptToRecreate) {
 		return this.getPage();
 	}

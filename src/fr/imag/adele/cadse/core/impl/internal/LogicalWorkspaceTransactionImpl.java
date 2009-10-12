@@ -564,19 +564,19 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		ret.setCreateOperation(createOperation);
 		createOperation.addInParent();
 
+		ret.addInParent();
 		if (parent != null) {
 			// set field and store in this parentItem and link part
 			ret.setParent(getOrCreateItemOperation(parent), lt);
 		}
 		validateCreatedItem(ret);
-		ret.addInParent();
 
 		// notify create after the set parent ..
 		notifyCreatedItem(ret);
-		if (ret.getParentItem() != null) {
-			// set attribute value and create link
-			ret.createPartParentLink();
-		}
+		//if (ret.getParentItem() != null) { deja fait dans setParent
+		//	// set attribute value and create link
+		//	ret.createPartParentLink();
+		//}
 		ret.createLink(CadseGCST.ITEM_lt_INSTANCE_OF, ret.getType());
 
 		if (itemDescriptionRef.getName() != null) {
@@ -1016,6 +1016,24 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 
 	private static class WoLProWCListener extends AbstractLogicalWorkspaceTransactionListener {
 
+		
+		@Override
+		public void validateDeletedLink(LogicalWorkspaceTransaction wc,
+				LinkDelta link) throws CadseException {
+			if (link.getLinkType() == CadseGCST.ITEM_lt_PARENT) {
+				if (link.getSource().getType().isPartType()) {
+					if (link.getSource().getPartParent() == null) {
+						throw new CadseException(Messages.parent_must_be_set, link);
+					}
+					if (!link.getSource().isDeleted() && link.getSource().getPartParent().equals(link.getDestination())) {
+						throw new CadseException(Messages.parent_must_be_set, link);
+					}
+				}
+					
+			}
+		}
+		
+		
 		@Override
 		public void validateCreatedItem(LogicalWorkspaceTransaction wc, ItemDelta item) throws CadseException,
 				CadseException {
@@ -1205,6 +1223,18 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 			}
 
 			DeleteOperation deleteOperation = item.getDeleteOperation();
+			
+			/*
+			 * Suppresion de tous les liens outgoings sauf ceux qui sont déjà
+			 * détruit Il sont toujours détruit car il ne peuvent exister sans
+			 * la source
+			 */
+			for (LinkDelta l : item.getOutgoingLinkOperations()) {
+				if (!l.isDeleted()) {
+					l.delete(deleteOperation);
+				}
+			}
+			
 			/*
 			 * Suppresion des liens incomings si l'option "delete incoming link"
 			 * est a true ou si la source doit est detruite (ex: une annotation
@@ -1218,16 +1248,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 				}
 			}
 
-			/*
-			 * Suppresion de tous les liens outgoings sauf ceux qui sont déjà
-			 * détruit Il sont toujours détruit car il ne peuvent exister sans
-			 * la source
-			 */
-			for (LinkDelta l : item.getOutgoingLinkOperations()) {
-				if (!l.isDeleted()) {
-					l.delete(deleteOperation);
-				}
-			}
+			
 		}
 
 		@Override
@@ -2038,6 +2059,24 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 			if (listener.size() > 0) {
 				for (LogicalWorkspaceTransactionListener list : listener) {
 					list.validateCreatedLink(this, link);
+				}
+			}
+		}
+	}
+	
+	public void validateDeleteLink(LinkDelta link)
+	throws CadseException {
+		if (_logicalWorkspaceTransactionListeners != null) {
+			for (int i = 0; i < _logicalWorkspaceTransactionListeners.length; i++) {
+				_logicalWorkspaceTransactionListeners[i].validateDeletedLink(this, link);
+			}
+		}
+		LinkType lt = link.getLinkType();
+		if (lt != null) {
+			HashSet<LogicalWorkspaceTransactionListener> listener = computeLtListener(lt);
+			if (listener.size() > 0) {
+				for (LogicalWorkspaceTransactionListener list : listener) {
+					list.validateDeletedLink(this, link);
 				}
 			}
 		}

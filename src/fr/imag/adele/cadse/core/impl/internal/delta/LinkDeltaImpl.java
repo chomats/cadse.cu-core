@@ -107,6 +107,7 @@ public final class LinkDeltaImpl extends ItemOrLinkDeltaImpl implements Link, Li
 	 */
 	public void delete(DeleteOperation options) throws CadseException {
 		getWorkingCopy().check_write();
+		getWorkingCopy().validateDeleteLink(this);
 		// isCreated -> remove,
 		// isDelted -> nothing
 		// else -> add detele operation
@@ -134,11 +135,7 @@ public final class LinkDeltaImpl extends ItemOrLinkDeltaImpl implements Link, Li
 	 * @see fr.imag.adele.cadse.core.internal.delta.LinkOperation#delete()
 	 */
 	public void delete() throws CadseException {
-		try {
-			delete(null);
-		} catch (CadseException e) {
-			throw new CadseException(e.getMessage(), e);
-		}
+		delete(null);
 	}
 
 	/*
