@@ -2727,7 +2727,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		if (linkType.equals(CadseGCST.ITEM_lt_PARENT.getName()) 
 				|| linkType.startsWith("#inverse-part")  //$NON-NLS-1$
 				|| linkType.startsWith("#invert_part")) { //$NON-NLS-1$
-			setParent(destItem, null);
+			setParent(destItem, null, false, false);
 		} else {
 			ItemType it = getType();
 			if (it != null) {
