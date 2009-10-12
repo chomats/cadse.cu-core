@@ -574,5 +574,10 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 		return null;
 	}
 
+	@Override
+	public String getItemManagerClass() {
+		return _delta.getAttribute(CadseGCST.ITEM_TYPE_at_MANAGER_CLASS_);
+	}
+
 
 }

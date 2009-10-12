@@ -212,7 +212,9 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	 * implementation of extension ...
 	 */
 	private ItemType[]							_extendedBy;
-
+	
+	private String								_managerClass;
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1268,6 +1270,9 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 		if (CadseGCST.ITEM_at_DISPLAY_NAME_ == type) {
 			return (T) _displayName;
 		}
+		if (CadseGCST.ITEM_TYPE_at_MANAGER_CLASS_ == type) {
+			return (T) _managerClass;
+		}
 		/*if (CadseGCST.ITEM_TYPE_at_CADSE_NAME_ == type) {
 			return (T) getCadseName();
 		}*/
@@ -1352,6 +1357,10 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 				value = type.getDefaultValue();
 			}
 			setRootElement(Convert.toBoolean(value));
+			return true;
+		}
+		if (CadseGCST.ITEM_TYPE_at_MANAGER_CLASS_ == type) {
+			_managerClass = Convert.toString(value);
 			return true;
 		}
 		if (CadseGCST.ITEM_TYPE_at_PACKAGE_NAME_ == type) {
@@ -2284,5 +2293,13 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	public void setSuperType(ItemType it) {
 		_superType = (ItemTypeImpl) it;
 		((ItemTypeImpl) it).addSubItemType(this);
+	}
+
+	@Override
+	public String getItemManagerClass() {
+		if (_managerClass == null && getItemManager() != null)
+			_managerClass = getItemManagerClass().getClass().getName();
+			
+		return _managerClass;
 	}
 }
