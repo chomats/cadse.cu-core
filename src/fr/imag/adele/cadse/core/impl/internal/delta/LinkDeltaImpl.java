@@ -535,24 +535,7 @@ public final class LinkDeltaImpl extends ItemOrLinkDeltaImpl implements Link, Li
 		LinkType _lt_object = sourceType.getOutgoingLinkType(this._lt);
 		if (_lt_object == null) {
 			ItemType destType = getDestination().getType();
-//			// parent			
-//			if (_lt.startsWith(LinkTypeImpl.LT_PARENT_SN_PREFIX)) {
-//				String inverse_lt = _lt.substring(LinkTypeImpl.LT_PARENT_SN_PREFIX.length() + CompactUUID.STRING_LENGTH
-//						+ 1);
-//				CompactUUID invid = new CompactUUID(_lt.substring(LinkTypeImpl.LT_PARENT_SN_PREFIX.length(),
-//						LinkTypeImpl.LT_PARENT_SN_PREFIX.length() + CompactUUID.STRING_LENGTH));
-//				if (destType != null) {
-//					LinkType _lt_inverse = destType.getOutgoingLinkType(inverse_lt);
-//					if (_lt_inverse != null) {
-//						final LinkType retLinkType = ((LinkTypeImpl) _lt_inverse).getInverse(invid);
-//						// the name can be change...
-//						this._lt = retLinkType.getName();
-//						return retLinkType;
-//					}
-//				}
-//			}
 			return getWLC().createUnresolvedLinkType(_lt, sourceType, destType);
-			// derived ??
 		}
 		return _lt_object;
 	}

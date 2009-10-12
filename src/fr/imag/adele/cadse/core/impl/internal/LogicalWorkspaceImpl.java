@@ -2140,7 +2140,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 			LinkTypeImpl linkTypeImpl = new LinkTypeImpl(unresolvedid, 0, sourcetype, linktypeName, 0, -1, null,
 					desttype);
 			linkTypeImpl.setFlag(Item.UNRESOLVED, true);
-			((ItemTypeImpl) sourcetype).addOutgoingLinkType(linkTypeImpl);
+			sourcetype.addOutgoingLinkType(linkTypeImpl);
 			if (getItem(unresolvedid) == null) {
 				throw new IllegalStateException("Cannot found the inresolved link");
 			}

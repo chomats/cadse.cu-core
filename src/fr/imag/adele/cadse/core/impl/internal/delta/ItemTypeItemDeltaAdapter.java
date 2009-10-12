@@ -590,5 +590,16 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 		
 	}
 
+	@Override
+	public Link addOutgoingLinkType(LinkType ret) {
+		try {
+			return _delta.createLink(CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES, ret);
+		} catch (CadseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 
 }

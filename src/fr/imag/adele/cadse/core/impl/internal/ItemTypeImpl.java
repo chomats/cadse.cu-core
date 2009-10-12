@@ -682,7 +682,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	 * @param ret
 	 *            the ret
 	 */
-	Link addOutgoingLinkType(LinkType ret) {
+	public Link addOutgoingLinkType(LinkType ret) {
 		this.m_outgoings.add(ret);
 		Link l = addAttributeType(ret);
 		if (ret.isComposition()) {
