@@ -59,6 +59,8 @@ public final class PagesImpl implements Pages {
 	private LogicalWorkspaceTransaction	copy;
 
 	private FilterContext				_filterContext;
+	
+	boolean 							_ismodificationpage = false;
 
 	/**
 	 * Instantiates a new pages.
@@ -68,12 +70,13 @@ public final class PagesImpl implements Pages {
 	 * @param pages
 	 *            the pages
 	 */
-	public PagesImpl(IActionPage action, IPage... pages) {
+	public PagesImpl(boolean ismodificationpage, IActionPage action, IPage... pages) {
 		this._pages = pages;
 		for (IPage p : pages) {
 			p.setPages(this);
 		}
 		this.action = action;
+		this._ismodificationpage = ismodificationpage;
 	}
 
 	/*
@@ -218,7 +221,7 @@ public final class PagesImpl implements Pages {
 	 * @see fr.imag.adele.cadse.core.ui.Pages#initLocal(fr.imag.adele.cadse.core.ui.IPageController)
 	 */
 	public void initLocal(IPageController pageController) throws CadseException {
-		if (copy == null) {
+		if (!isModificationPages() && copy == null) {
 			copy = CadseCore.getLogicalWorkspace().createTransaction();
 		}
 		if (action != null) {
@@ -233,7 +236,7 @@ public final class PagesImpl implements Pages {
 	 * @see fr.imag.adele.cadse.core.ui.Pages#init(fr.imag.adele.cadse.core.ui.IPageController)
 	 */
 	public void init(IPageController pageController) throws CadseException {
-		if (copy == null) {
+		if (!isModificationPages() && copy == null) {
 			copy = CadseCore.getLogicalWorkspace().createTransaction();
 		}
 
@@ -504,4 +507,8 @@ public final class PagesImpl implements Pages {
 		return _filterContext;
 	}
 
+	@Override
+	public boolean isModificationPages() {
+		return _ismodificationpage;
+	}
 }

@@ -1985,7 +1985,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	protected Pages createCreationPage(Item parent, ItemType type, LinkType lt) throws CadseException {
 		IPageFactory[] pf = getGoodCreationPage_();
 		IPage[] p = createPages(IPageFactory.PAGE_CREATION_ITEM, parent, null, type, lt, pf);
-		return new PagesImpl(createDefaultCreationAction(parent, type, lt), p);
+		return new PagesImpl(false, createDefaultCreationAction(parent, type, lt), p);
 	}
 
 	/**
@@ -2119,7 +2119,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	public Pages getGoodModificationPage(Item selected) {
 		IPageFactory[] pf = getGoodModificationPage_();
 		IPage[] p = createPages(IPageFactory.PAGE_PROPERTY_ITEM, selected, null, this, null, pf);
-		return new PagesImpl(createDefaultModificationAction(this, selected), p);
+		return new PagesImpl(true, createDefaultModificationAction(this, selected), p);
 	}
 
 	/*
@@ -2130,7 +2130,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	public Pages getGoodModificationPage(IItemNode node) {
 		IPageFactory[] pf = getGoodModificationPage_();
 		IPage[] p = createPages(IPageFactory.PAGE_PROPERTY_VIEW_ITEM, node.getItem(), node, this, null, pf);
-		return new PagesImpl(createDefaultModificationAction(this, node), p);
+		return new PagesImpl(true, createDefaultModificationAction(this, node), p);
 	}
 
 	/*
