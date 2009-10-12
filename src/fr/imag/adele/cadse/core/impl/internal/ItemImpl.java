@@ -533,11 +533,12 @@ public class ItemImpl extends AbstractItem implements Item {
 	@Override
 	public Link getOutgoingLink(LinkType lt) {
 		preconditions_getLink(lt);
-		List<Link> ret = getOutgoingLinks(lt);
-		
 		if (lt.getMax() != 1) {
 			throw new CadseIllegalArgumentException(Messages.error_maximum_cardinality_must_be_one, lt.getName());
 		}
+		
+		List<Link> ret = getOutgoingLinks(lt);
+		
 		if (ret.size() >= 1) {
 			return ret.get(0);
 		}

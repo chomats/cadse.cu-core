@@ -37,6 +37,7 @@ import java.util.UUID;
 import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
+import fr.imag.adele.cadse.core.CadseRuntime;
 import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.ContentChangeInfo;
 import fr.imag.adele.cadse.core.ContentItem;
@@ -89,6 +90,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	static {
 		_registerAdapter.put(ItemType.class, new ItemTypeItemDeltaAdapterFactory());
 		_registerAdapter.put(LinkType.class, new LinkTypeItemDeltaAdapterFactory());
+		_registerAdapter.put(CadseRuntime.class, new CadseRuntimeItemDeltaAdapterFactory());
 	}
 	
 	public static void aRefx(MappingOperation a, MappingOperation x) {
