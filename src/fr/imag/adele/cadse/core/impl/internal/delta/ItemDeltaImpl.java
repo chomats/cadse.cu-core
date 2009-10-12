@@ -428,10 +428,10 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		if (isDeleted()) {
 			throw new CadseException(Messages.cannot_create_link_from_deleted_source, this, destiDelta);
 		}
-		if (!destiDelta.exist()) {
+		if (!destiDelta.exists()) {
 			throw new CadseException(Messages.cannot_create_link_to_unexisting_destination, this, destiDelta);
 		}
-		if (!exist()) {
+		if (!exists()) {
 			throw new CadseException(Messages.cannot_create_link_from_unexisting_source, this, destiDelta);
 		}
 		try {
@@ -465,8 +465,8 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		return linkOperation;
 	}
 
-	public boolean exist() {
-		return isAdded() || isLoaded() || (getBaseItem() != null &&  getBaseItem().exist());
+	public boolean exists() {
+		return isAdded() || isLoaded() || (getBaseItem() != null &&  getBaseItem().exists());
 	}
 
 	/*

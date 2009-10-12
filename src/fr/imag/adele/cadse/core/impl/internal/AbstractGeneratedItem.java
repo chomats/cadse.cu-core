@@ -195,7 +195,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	}
 	
 	@Override
-	public boolean exist() {
+	public boolean exists() {
 		return _wl.getItem(_id) == this;
 	}
 

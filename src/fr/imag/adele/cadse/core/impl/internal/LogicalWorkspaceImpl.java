@@ -186,7 +186,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	private Map<ISpaceKey, Item>			_items_by_key;
 
 	/** The items_by_unique_name. */
-	private Map<String, Item>				_items_by_unique_name;
+	private Map<String, Item>				_items_by_qualified_name;
 
 	/** The wd. */
 	CadseDomain								_wd;
@@ -307,7 +307,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	public LogicalWorkspaceImpl(CadseDomain wd) {
 		this._items = new HashMap<CompactUUID, Item>();
 		this._items_by_key = new HashMap<ISpaceKey, Item>();
-		this._items_by_unique_name = new HashMap<String, Item>();
+		this._items_by_qualified_name = new HashMap<String, Item>();
 		this._wd = wd;
 		_itemTypes = new ArrayList<ItemType>();
 		addListener(new WorkspaceLogigueWorkspaceListener(), ChangeID.toFilter(ChangeID.REMOVE_COMPONENT,
@@ -497,7 +497,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 * @return the item
 	 */
 	public Item getItem(String uniqueName) {
-		Item i = _items_by_unique_name.get(uniqueName);
+		Item i = _items_by_qualified_name.get(uniqueName);
 		if (i != null && i.isResolved()) {
 			return i;
 		}
@@ -586,7 +586,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 			this._items_by_key.remove(item.getKey());
 		}
 		if (item.getQualifiedName() != null) {
-			this._items_by_unique_name.remove(item.getQualifiedName());
+			this._items_by_qualified_name.remove(item.getQualifiedName());
 		}
 		if (item instanceof ItemType) {
 			this._itemTypes.remove(item);
@@ -605,7 +605,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 			this._items_by_key.put(key, aNewItem);
 		}
 		if (aNewItem.getQualifiedName() != null) {
-			this._items_by_unique_name.put(aNewItem.getQualifiedName(), aNewItem);
+			this._items_by_qualified_name.put(aNewItem.getQualifiedName(), aNewItem);
 		}
 	}
 
@@ -615,7 +615,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 			this._items_by_key.remove(key);
 		}
 		if (anItem.getQualifiedName() != null) {
-			this._items_by_unique_name.remove(anItem.getQualifiedName());
+			this._items_by_qualified_name.remove(anItem.getQualifiedName());
 		}
 	}
 
@@ -807,8 +807,8 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 			check(i, THIS);
 		}
 
-		if (THIS.getType().hasUniqueNameAttribute() && uniqueName != null && uniqueName != Item.NO_VALUE_STRING) {
-			Item i = _items_by_unique_name.get(uniqueName);
+		if (THIS.getType().hasQualifiedNameAttribute() && uniqueName != null && uniqueName != Item.NO_VALUE_STRING) {
+			Item i = _items_by_qualified_name.get(uniqueName);
 			check(i, THIS);
 		}
 	}
@@ -933,19 +933,27 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 */
 	public boolean existsItem(Item item) {
 		ISpaceKey key = getKeyItem(item, null, _logger);
-		
-		Item foundItem = this._items_by_key.get(key);
-		if (foundItem == null || foundItem == item)
-			return false;
 		if (key != null) {
-			return containsSpaceKey(key);
+			Item foundItem = this._items_by_key.get(key);
+			if (foundItem == null || foundItem == item)
+				return false;
+		
+			return true;
 		}
-		if (!item.getType().hasUniqueNameAttribute()) {
+		if (!item.getType().hasQualifiedNameAttribute()) {
 			return false;
 		}
 
-		String un = item.getQualifiedName();
-		return containsUniqueName(un);
+		String qname = item.getQualifiedName();
+		if (qname == null || qname == Item.NO_VALUE_STRING) {
+			return true;
+		}
+		
+		Item foundItem = _items_by_qualified_name.get(qname);
+		if (foundItem == null || foundItem == item)
+			return false;
+	
+		return true;
 	}
 
 	/**
@@ -985,7 +993,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		if (key != null) {
 			return containsSpaceKey(key);
 		}
-		if (!item.getType().hasUniqueNameAttribute()) {
+		if (!item.getType().hasQualifiedNameAttribute()) {
 			return false;
 		}
 		String un = item.getType().getItemManager().computeQualifiedName(item, shortName, item.getPartParent(false),
@@ -998,7 +1006,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		if (key == null || key == Item.NO_VALUE_STRING) {
 			return true;
 		}
-		return this._items_by_unique_name.containsKey(key);
+		return this._items_by_qualified_name.containsKey(key);
 	}
 
 	public boolean containsSpaceKey(ISpaceKey key) {
@@ -1177,10 +1185,10 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 */
 	public void renameUniqueName(Item impl, String oldValue, String newValue) {
 		if (oldValue != null) {
-			this._items_by_unique_name.remove(oldValue);
+			this._items_by_qualified_name.remove(oldValue);
 		}
 		if (newValue != null) {
-			this._items_by_unique_name.put(newValue, impl);
+			this._items_by_qualified_name.put(newValue, impl);
 		}
 	}
 

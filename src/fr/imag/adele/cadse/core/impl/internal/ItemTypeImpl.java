@@ -1060,7 +1060,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	 * @see fr.imag.adele.cadse.core.ItemType#hasUniqueNameAttribute()
 	 */
 	@Override
-	public boolean hasUniqueNameAttribute() {
+	public boolean hasQualifiedNameAttribute() {
 		return (_kind & UNIQUE_NAME) != 0;
 	}
 

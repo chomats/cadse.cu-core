@@ -93,7 +93,7 @@ public abstract class AbstractItem extends AbstractGeneratedItem implements Item
 		this._type = type;
 		this._incomings = new ArrayList<Link>();
 
-		if (type == null || type.hasUniqueNameAttribute()) {
+		if (type == null || type.hasQualifiedNameAttribute()) {
 			this._qualifiedName = uniqueName == null ? NO_VALUE_STRING : uniqueName;
 		} else {
 			this._qualifiedName = Item.NO_VALUE_STRING;
@@ -119,7 +119,7 @@ public abstract class AbstractItem extends AbstractGeneratedItem implements Item
 		super(wl, desc.getId());
 		this._type = type;
 		this._incomings = new ArrayList<Link>();
-		if (type.hasUniqueNameAttribute()) {
+		if (type.hasQualifiedNameAttribute()) {
 			this._qualifiedName = desc.getQualifiedName();
 		} else {
 			this._qualifiedName = Item.NO_VALUE_STRING;
@@ -136,7 +136,7 @@ public abstract class AbstractItem extends AbstractGeneratedItem implements Item
 		this._id = desc.getId();
 		this._type = type;
 		this._incomings = new ArrayList<Link>();
-		if (type.hasUniqueNameAttribute()) {
+		if (type.hasQualifiedNameAttribute()) {
 			this._qualifiedName = desc.getQualifiedName();
 		} else {
 			this._qualifiedName = Item.NO_VALUE_STRING;

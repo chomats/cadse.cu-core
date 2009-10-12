@@ -2244,15 +2244,15 @@ public class ItemImpl extends AbstractItem implements Item {
 	public void computeAttributes() {
 		super.computeAttributes();
 		if (_type != null) {
-			if (_type.hasUniqueNameAttribute()) {
+			if (_type.hasQualifiedNameAttribute()) {
 				this._qualifiedName = _type.getItemManager().computeQualifiedName(this, _name, getPartParent(false),
 						getPartParentLinkType());
 			}
 		}
 	}
 
-	public boolean hasUniqueNameAttribute() {
-		return _type.hasUniqueNameAttribute();
+	public boolean hasQualifiedNameAttribute() {
+		return _type.hasQualifiedNameAttribute();
 	}
 
 	public void setParent(Item parent, LinkType lt) {

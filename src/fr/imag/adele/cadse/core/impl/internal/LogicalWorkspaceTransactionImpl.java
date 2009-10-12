@@ -187,9 +187,13 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	public boolean existsItem(Item item, String shortName) {
 		ISpaceKey key = LogicalWorkspaceImpl.getKeyItem(item, shortName, _logger);
 		if (key != null) {
-			return containsSpaceKey(key);
+			Item foundItem = getItem(key);
+			if (foundItem == null || foundItem == item)
+				return false;
+		
+			return true;
 		}
-		if (!item.getType().hasUniqueNameAttribute()) {
+		if (!item.getType().hasQualifiedNameAttribute()) {
 			return false;
 		}
 		String un = item.getType().getItemManager().computeQualifiedName(item, shortName, item.getPartParent(),
@@ -234,14 +238,21 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	public boolean existsItem(Item item) {
 		ISpaceKey key = LogicalWorkspaceImpl.getKeyItem(item, null, _logger);
 		if (key != null) {
-			return containsSpaceKey(key);
+			Item foundItem = getItem(key);
+			if (foundItem == null || foundItem == item)
+				return false;
+		
+			return true;
 		}
-		if (!item.getType().hasUniqueNameAttribute()) {
+		if (!item.getType().hasQualifiedNameAttribute()) {
 			return false;
 		}
 
 		String un = item.getQualifiedName();
-		return un == null || un == Item.NO_VALUE_STRING || containsUniqueName(un);
+		if ( un == null || un == Item.NO_VALUE_STRING ) 
+			return true;
+		Item foundItem = getItem(un);
+		return foundItem != null && foundItem != item;
 	}
 
 	public String[] getCadseName() {
@@ -296,18 +307,31 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	}
 
 	public ItemDelta getItem(ISpaceKey key) {
-		if (this.items_by_key_deleted.containsKey(key)) {
-			return null;
-		}
+		
 		ItemDelta ret = null;
 		if ((ret = this.items_by_key.get(key)) != null) {
 			return ret;
 		}
+		if (this.items_by_key_deleted.containsKey(key)) {
+			return null;
+		}
 		return oper(base.getItem(key));
 	}
 
-	public ItemDelta getItem(String uniqueName) {
-		return oper(base.getItem(uniqueName));
+	public ItemDelta getItem(String qualifiedName) {
+		if (qualifiedName == null || qualifiedName == Item.NO_VALUE_STRING) {
+			return null;
+		}
+		ItemDelta ret = this.items_by_unique_name.get(qualifiedName);
+		
+		if (ret != null) {
+			return ret;
+		}
+		if (this.items_by_unique_name_deleted.containsKey(qualifiedName)) {
+			return null;
+		}
+
+		return oper(base.getItem(qualifiedName));
 	}
 
 	private ItemDelta oper(Item item) {
@@ -1224,7 +1248,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 				recomputeUniqueName(item);
 			}
 			if (attOperation.getAttributeDefinition() == CadseGCST.ITEM_at_NAME_) {
-				if (item.getType().hasUniqueNameAttribute()) {
+				if (item.getType().hasQualifiedNameAttribute()) {
 					item.setQualifiedName(CadseCore.getName(item, item.getName(), item.getPartParent(), item
 							.getPartParentLinkType()));
 				}
@@ -1254,7 +1278,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 			for (Link l : outLinks) {
 				if (l.getLinkType().isPart() && l.isLinkResolved()) {
 					Item dest = l.getDestination();
-					if (dest.getType().hasUniqueNameAttribute()) {
+					if (dest.getType().hasQualifiedNameAttribute()) {
 						dest.setQualifiedName(CadseCore.getName(dest, dest.getName(), item, l.getLinkType()));
 					}
 				}
@@ -1264,7 +1288,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 			for (Link l : inLinks) {
 				if (l.getLinkType().isAnnotation()) {
 					Item src = l.getSource();
-					if (src.getType().hasUniqueNameAttribute()) {
+					if (src.getType().hasQualifiedNameAttribute()) {
 						src.setQualifiedName(CadseCore.getName(src, src.getName(), src.getPartParent(), src
 								.getPartParentLinkType()));
 					}
@@ -2233,7 +2257,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 			}
 		}
 
-		if (!itemType.hasUniqueNameAttribute()) {
+		if (!itemType.hasQualifiedNameAttribute()) {
 			uniqueName = Item.NO_VALUE_STRING;
 		} else
 		// compute unique name at the end because can depend of some attribute
@@ -2246,7 +2270,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		if (key != null) {
 			findItem = getItem(key);
 		}
-		if (findItem == null && itemType.hasUniqueNameAttribute()) {
+		if (findItem == null && itemType.hasQualifiedNameAttribute()) {
 			findItem = getItem(uniqueName);
 		}
 
@@ -2333,7 +2357,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 			}
 		}
 
-		if (!it.hasUniqueNameAttribute()) {
+		if (!it.hasQualifiedNameAttribute()) {
 			uniqueName = Item.NO_VALUE_STRING;
 		} else
 		// compute unique name at the end because can depend of some attribute
@@ -2348,7 +2372,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 			if (findItem == newItem)
 				findItem = null;
 		}
-		if (findItem == null && it.hasUniqueNameAttribute()) {
+		if (findItem == null && it.hasQualifiedNameAttribute()) {
 			findItem = getItem(uniqueName);
 			if (findItem == newItem)
 				findItem = null;

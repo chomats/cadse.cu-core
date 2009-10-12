@@ -331,7 +331,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 	}
 
 	@Override
-	public boolean hasUniqueNameAttribute() {
+	public boolean hasQualifiedNameAttribute() {
 		// TODO Auto-generated method stub
 		return false;
 	}

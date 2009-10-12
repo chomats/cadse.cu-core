@@ -94,7 +94,7 @@ public class CadseCore {
 	public static void setName(Item wrapper, String shortName, Item parent, LinkType lt)
 			throws CadseIllegalArgumentException, CadseException {
 		wrapper.setName(shortName);
-		if (wrapper.getType().hasUniqueNameAttribute()) {
+		if (wrapper.getType().hasQualifiedNameAttribute()) {
 			String uniqueName = getName(wrapper, shortName, parent, lt);
 			wrapper.setQualifiedName(uniqueName);
 		}
@@ -151,7 +151,7 @@ public class CadseCore {
 			throws CadseException {
 
 		LogicalWorkspace wl = getLogicalWorkspace();
-		if (it.hasUniqueNameAttribute() == false) {
+		if (it.hasQualifiedNameAttribute() == false) {
 			throw new CadseException(
 					"Cannot get an item from unique name when itemtype {0} has no unique name attribute", it.getName());
 		}

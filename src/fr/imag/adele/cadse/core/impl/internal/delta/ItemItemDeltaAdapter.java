@@ -136,8 +136,8 @@ public class ItemItemDeltaAdapter implements Item {
 		_delta.delete(deleteContent);
 	}
 
-	public boolean exist() {
-		return _delta.exist();
+	public boolean exists() {
+		return _delta.exists();
 	}
 
 	public List<WorkspaceListener> filter(int eventFilter,
