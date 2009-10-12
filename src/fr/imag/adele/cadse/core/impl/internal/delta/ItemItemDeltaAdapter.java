@@ -604,7 +604,7 @@ public class ItemItemDeltaAdapter implements Item {
 		_delta.setIsStatic(isStatic);
 	}
 
-	public void setKey(ISpaceKey newkey) {
+	public void setKey(ISpaceKey newkey) throws CadseException {
 		_delta.setKey(newkey);
 	}
 

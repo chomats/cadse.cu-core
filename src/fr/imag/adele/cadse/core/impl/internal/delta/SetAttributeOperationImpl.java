@@ -29,18 +29,39 @@ import fr.imag.adele.cadse.core.internal.delta.InternalSetAttributeOperation;
 public final class SetAttributeOperationImpl extends WLWCOperationImpl implements SetAttributeOperation,
 		InternalSetAttributeOperation {
 
+	private final IAttributeType<?>	_attribute;
 	private final String	_attributeName;
 	private Object			_currentValue;
 	private final Object	_oldValue;
 	private Object			_precValue;
 
+	
 	public SetAttributeOperationImpl(ItemOrLinkDelta parent, String key, Object value, Object oldValue)
+	throws CadseException {
+		this(parent, key, value, oldValue, true);
+	}
+	public SetAttributeOperationImpl(ItemOrLinkDelta parent, String key, Object value, Object oldValue, boolean add)
 			throws CadseException {
 		super(OperationTypeCst.SET_ATTRIBUTE_OPERATION, parent);
 		this._attributeName = key;
 		this._currentValue = value;
 		this._precValue = this._oldValue = oldValue;
-		addInParent();
+		_attribute = null;
+		if (add) addInParent();
+	}
+	
+	public SetAttributeOperationImpl(ItemOrLinkDelta parent, IAttributeType<?> key, Object value, Object oldValue)
+	throws CadseException {
+		this(parent, key, value, oldValue, true);
+	}
+	public SetAttributeOperationImpl(ItemOrLinkDelta parent, IAttributeType<?> key, Object value, Object oldValue, boolean add)
+			throws CadseException {
+		super(OperationTypeCst.SET_ATTRIBUTE_OPERATION, parent);
+		this._attributeName = key.getName();
+		this._attribute = key;
+		this._currentValue = value;
+		this._precValue = this._oldValue = oldValue;
+		if (add) addInParent();
 	}
 
 	/*
@@ -140,6 +161,8 @@ public final class SetAttributeOperationImpl extends WLWCOperationImpl implement
 	 * @see fr.imag.adele.cadse.core.internal.delta.SetAttributeOperation2#getAttributeDefinition()
 	 */
 	public IAttributeType<?> getAttributeDefinition() {
+		if (_attribute != null)
+			return _attribute;
 		return getType();
 	}
 

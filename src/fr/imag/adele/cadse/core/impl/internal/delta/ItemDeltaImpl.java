@@ -77,6 +77,7 @@ import fr.imag.adele.cadse.core.impl.internal.LogicalWorkspaceTransactionImpl;
 import fr.imag.adele.cadse.core.internal.IWorkingLoadingItems;
 import fr.imag.adele.cadse.core.internal.IWorkspaceNotifier;
 import fr.imag.adele.cadse.core.key.ISpaceKey;
+import fr.imag.adele.cadse.core.key.SpaceKey;
 import fr.imag.adele.cadse.core.key.SpaceKeyType;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
 import fr.imag.adele.cadse.core.util.ArraysUtil;
@@ -132,6 +133,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	private ISpaceKey								_key;
 	private SpaceKeyDeltaImpl						_keyDelta;
 	private Item _baseItem;
+	private ISpaceKey _nextKey;
 
 	public ItemDeltaImpl(LogicalWorkspaceTransactionImpl copy, CompactUUID id, CompactUUID type, boolean add)
 			 {
@@ -434,34 +436,34 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		if (!exists()) {
 			throw new CadseException(Messages.cannot_create_link_from_unexisting_source, this, destiDelta);
 		}
-		try {
-			linkOperation = getOrCreateLinkOperation(lt.getName(), destiDelta, null, -1, false);
-			if (linkOperation.isAdded()) {
-				return linkOperation;
-			}
-			LogicalWorkspaceImpl.constraints_SourceItem(linkOperation, lt, this);
-			
-			// synchronize _parentItem attribute
-			if (lt == CadseGCST.ITEM_lt_PARENT 
-					|| linkOperation.getLinkTypeName().startsWith("#inverse-part")  //$NON-NLS-1$
-					|| linkOperation.getLinkTypeName().startsWith("#invert_part")) { //$NON-NLS-1$
-				setParent(destiDelta, null);
-			}
-			if (linkOperation.isDeleted()) {
-				linkOperation.getDeleteOperation().removeInParent();
-				linkOperation.setDeleteOperation(null);
-				getWorkingCopy().notifyCancelCreatedLink(linkOperation);
-				linkOperation.removeInParent();
-				return linkOperation;
-			}
-			CreateOperationImpl createOperation = new CreateOperationImpl(linkOperation);
-			linkOperation.setCreateOperation(createOperation);
-			createOperation.addInParent();
-			if (notify) 
-				getWorkingCopy().notifyCreatedLink(linkOperation);
-		} catch (CadseException e) {
-			throw new CadseException(e.getMessage(), e);
+		
+		linkOperation = getOrCreateLinkOperation(lt.getName(), destiDelta, null, -1, false);
+		if (linkOperation.isAdded()) {
+			return linkOperation;
 		}
+		LogicalWorkspaceImpl.constraints_SourceItem(linkOperation, lt, this);
+			
+		_copy.validateCreatedLink(linkOperation);
+			
+		// synchronize _parentItem attribute
+		if (lt == CadseGCST.ITEM_lt_PARENT 
+				|| linkOperation.getLinkTypeName().startsWith("#inverse-part")  //$NON-NLS-1$
+				|| linkOperation.getLinkTypeName().startsWith("#invert_part")) { //$NON-NLS-1$
+			setParent(destiDelta, null);
+		}
+		if (linkOperation.isDeleted()) {
+			linkOperation.getDeleteOperation().removeInParent();
+			linkOperation.setDeleteOperation(null);
+			getWorkingCopy().notifyCancelCreatedLink(linkOperation);
+			linkOperation.removeInParent();
+			return linkOperation;
+		}
+		CreateOperationImpl createOperation = new CreateOperationImpl(linkOperation);
+		linkOperation.setCreateOperation(createOperation);
+		createOperation.addInParent();
+		if (notify) 
+			getWorkingCopy().notifyCreatedLink(linkOperation);
+	
 		return linkOperation;
 	}
 
@@ -510,7 +512,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 
 				// cancel create operation
 				_copy.remove(this);
-				getWorkingCopy().notifyCancelCreatedItem(this);
+				_copy.notifyCancelCreatedItem(this);
 				if (_orders != null) {
 					// cancel all create link pointed to this
 					for (LinkDelta l : _orders) {
@@ -533,6 +535,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 						incomingLink.delete(operation);
 					}
 				}
+				_copy.changeKey(this, getKey(), null);
 				return;
 			}
 			if (isLoaded())
@@ -2160,6 +2163,43 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		}
 		return ret;
 	}
+	
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getSetAttributeOperation(java.lang.String)
+	 */
+	public SetAttributeOperation getSetAttributeOperation(IAttributeType<?> key) {
+		return getSetAttributeOperation(key, true);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getSetAttributeOperation(java.lang.String,
+	 *      boolean)
+	 */
+	public SetAttributeOperation getSetAttributeOperation(IAttributeType<?>  key, boolean create) {
+		SetAttributeOperation ret = super.getSetAttributeOperation(key.getName());
+		if (create && ret == null) {
+			Item t = getBaseItem();
+
+			Object value;
+			if (t != null && t.isResolved()) {
+				value = t.getAttribute(key);
+				if (value != null) {
+					try {
+						ret = new SetAttributeOperationImpl(this, key, value, value);
+						add(ret, false);
+					} catch (CadseException e) {
+					}
+
+				}
+			}
+		}
+		return ret;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -2841,12 +2881,34 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		throw new UnsupportedOperationException();
 	}
 
+	
+	@Override
+	public void setNextKey(ISpaceKey newK) throws CadseException {
+		if (newK == null) {
+			this._nextKey = null;
+			return;
+		}
+		if (newK == SpaceKey.INVALID)
+			return;
+		
+		if (_key == null && getBaseItem() != null)
+			_key = getBaseItem().getKey();
+		this._copy.checkKey(this, _key, newK);
+		this._nextKey = newK;
+	}
+	
+	@Override
+	public ISpaceKey getNextKey() {
+		return _nextKey;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#recomputeKey(fr.imag.adele.cadse.core.key.ISpaceKey)
 	 */
-	public void setKey(ISpaceKey newkey) {
+	public void setKey(ISpaceKey newkey) throws CadseException {
+		if (newkey == SpaceKey.INVALID) return;
 		if (_key == null && getBaseItem() != null)
 			_key = getBaseItem().getKey();
 		this._copy.changeKey(this, _key, newkey);
@@ -3024,37 +3086,49 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 			key = CadseGCST.ITEM_at_NAME_;
 		}
 		if (!loaded && isStatic()) {
-			addError(Messages.cannot_set_attribute_not_modifiable + attributeName + " = " + newCurrentValue + " : item is not modifiable"); //$NON-NLS-2$ //$NON-NLS-3$
+			addError(Messages.cannot_set_attribute_not_modifiable , attributeName , newCurrentValue ); //$NON-NLS-2$ //$NON-NLS-3$
 		}
+		if (attributeName.equals(Accessor.ATTR_PARENT_ITEM_ID)) {
+			setParentFromAtt(newCurrentValue);
+			return;
+		}
+		
+		SetAttributeOperation setAtt = null;
+		if (key == null)
+			setAtt = getSetAttributeOperation(attributeName);
+		else 
+			setAtt = getSetAttributeOperation(key);
+		
+		Object oldValue = null;
+		if (setAtt != null) {
+			// compare the currentValue with the precedent value (newValue
+			// here)
+			// if equals, no modification, no send event ...
+			// it's important, avoid stack over flow happening
+			Object currentValue = setAtt.getCurrentValue();
+			if (key != null) {
+				if (!key.isValueModified(currentValue, newCurrentValue)) {
+					return;
+				}
+			} else {
+				if (Convert.equals(currentValue, newCurrentValue)) {
+					return;
+				}
+			}
+			oldValue = setAtt.getOldValue();
+			
+			setAtt.setPrecCurrentValue(setAtt.getCurrentValue());
+			setAtt.setCurrentValue(newCurrentValue);
+		} else {
+			if (key == null)
+				setAtt = new SetAttributeOperationImpl(this, attributeName, newCurrentValue, oldValue);
+			else 
+				setAtt = new SetAttributeOperationImpl(this, key, newCurrentValue, oldValue);
+			add(setAtt);
+		}
+		_copy.validateChangeAttribute(this, setAtt);
 		try {
 			
-			if (attributeName.equals(Accessor.ATTR_PARENT_ITEM_ID)) {
-				setParentFromAtt(newCurrentValue);
-			}
-			SetAttributeOperation setAtt = getSetAttributeOperation(attributeName);
-
-			Object oldValue = null;
-			if (setAtt != null) {
-				// compare the currentValue with the precedent value (newValue
-				// here)
-				// if equals, no modification, no send event ...
-				// it's important, avoid stack over flow happening
-				Object currentValue = setAtt.getCurrentValue();
-				if (key != null) {
-					if (!key.isValueModified(currentValue, newCurrentValue)) {
-						return;
-					}
-				} else {
-					if (Convert.equals(currentValue, newCurrentValue)) {
-						return;
-					}
-				}
-				setAtt.setPrecCurrentValue(currentValue);
-				setAtt.setCurrentValue(newCurrentValue);
-			} else {
-				setAtt = new SetAttributeOperationImpl(this, attributeName, newCurrentValue, oldValue);
-				add(setAtt);
-			}
 			setAtt.setLoaded(loaded);
 			if (!loaded) {
 				getWorkingCopy().notifyChangeAttribute(this, setAtt);
