@@ -482,8 +482,10 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 		if (_action != null) {
 			_action.dispose();
 		}
-		for (UIField f : _fields) {
-			f.dispose();
+		if (_fields != null) {
+			for (UIField f : _fields) {
+				f.dispose();
+			}
 		}
 		if (this.listeners != null) {
 			for (UIListener l : this.listeners) {
