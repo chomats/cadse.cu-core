@@ -1498,6 +1498,9 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 			setReadOnly(_local_b);
 			return true;
 		}
+		if (CadseGCST.ITEM_at_DISPLAY_NAME_ == type) {
+			return false;
+		}
 
 		return commitGenericSetAttribute(type, key, value);
 	}

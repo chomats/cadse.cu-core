@@ -42,6 +42,7 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 	private TreeView		_views;
 	private CompactUUID		_idCadseDefinition;
 	protected String			_name;
+	protected String			_qname;
 	protected String			_description;
 	private String			_repoLogin;
 	private URL				_item_repos_url;
@@ -56,11 +57,21 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 	public CadseRuntimeImpl(String name, CompactUUID runtimeId, CompactUUID definitionId) {
 		super(runtimeId);
 		_idCadseDefinition = definitionId;
-		if (name.startsWith(CADSE_NAME_SUFFIX))
-			this._name = name.substring(CADSE_NAME_SUFFIX.length());
-		else 
-			this._name = name;
+		internalSetName(name);
 		this._cadseName = "Cadse " + name;
+	}
+
+	private void internalSetName(String name) {
+		if (name.startsWith(CADSE_NAME_SUFFIX)) {
+			this._name = name.substring(CADSE_NAME_SUFFIX.length());
+			this._qname = name;
+		} else if (name.contains(".")) {
+			this._name = name;
+			this._qname = name;
+		} else {
+			this._name = name;
+			this._qname = CADSE_NAME_SUFFIX+name;
+		}
 	}
 
 	public ItemType getType() {
@@ -77,7 +88,7 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 	
 	@Override
 	public String getQualifiedName() {
-		return CADSE_NAME_SUFFIX+_name;
+		return _qname;
 	}
 
 	@Override
@@ -154,6 +165,9 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 		if (CadseGCST.ITEM_at_NAME_ == type) {
 			return (T) _name;
 		}
+		if (CadseGCST.ITEM_at_QUALIFIED_NAME_ == type) {
+			return (T) _qname;
+		}
 		if (CadseGCST.CADSE_RUNTIME_at_DESCRIPTION_ == type) {
 			return (T) _description;
 		}
@@ -178,13 +192,18 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 	
 	@Override
 	public String getQualifiedName(boolean recompute) {
-		return CADSE_NAME_SUFFIX+_name;
+		return getQualifiedName();
 	}
 
 	@Override
 	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
 		if (CadseGCST.ITEM_at_NAME_ == type) {
-			_name = Convert.toString(value);
+			_name =  Convert.toString(value);
+			return true;
+		}
+		
+		if (CadseGCST.ITEM_at_QUALIFIED_NAME_ == type) {
+			_qname =  Convert.toString(value);
 			return true;
 		}
 		// TODO
