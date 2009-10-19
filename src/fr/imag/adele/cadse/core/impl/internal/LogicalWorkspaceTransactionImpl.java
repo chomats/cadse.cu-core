@@ -2535,6 +2535,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 			if (newItem != null)
 				return newItem;
 		}
+		ItemDelta parentDelta = parent == null ? null : getItem(parent.getId());
 		ItemDelta newItem = createItem(it, parent, lt);
 		newItem.setName(shortname);
 
@@ -2572,8 +2573,8 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 				findItem = null;
 		}
 
-		if (findItem == null && parent != null && lt != null) {
-			Collection<Item> findItems = parent.getOutgoingItems(lt, false);
+		if (findItem == null && parentDelta != null && lt != null) {
+			Collection<Item> findItems = parentDelta.getOutgoingItems(lt, false);
 			for (Item f : findItems) {
 				if (f == newItem) {
 					continue; // find other
