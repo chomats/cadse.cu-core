@@ -2396,17 +2396,50 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	}
 
 	public ItemDelta createItemIfNeed(ItemType itemType, Item parent, LinkType partLinkType, String uniqueName,
-			String shortName, SetAttrVal<?>[] attributes) throws CadseException {
-		ItemDelta newItem = createItem(itemType, parent, partLinkType);
-
+			String shortName, SetAttrVal<?>... attributes) throws CadseException {
+		
 		// create item already and compute the unique name.
 		if (!itemType.hasShortNameAttribute()) {
 			shortName = Item.NO_VALUE_STRING;
 		}
+		ItemDelta newItem = null;
+		ItemDelta parentDelta = parent == null ? null : getItem(parent.getId());
+		SpaceKeyType keyType = itemType.getSpaceKeyType();
+		if (keyType != null) {
+			IAttributeType<?>[] attribuesDefintions = keyType
+					.getAttributeTypes();
+			Object[] keyvaluse = new Object[attribuesDefintions.length];
+			for (int i = 0; i < keyvaluse.length; i++) {
+				if (attribuesDefintions[i] == CadseGCST.ITEM_at_NAME_) {
+					keyvaluse[i] = shortName;
+					continue;
+				}
+				for (int j = 0; j < attributes.length;) {
+					SetAttrVal<?> v = attributes[j++];
+					if (attribuesDefintions[i] == v.getAttrDef()
+							|| attribuesDefintions[i].getName().equals(v.getAttrName())) {
+						keyvaluse[i] = v.getValue();
+						break;
+					}
+				}
+				if (keyvaluse[i] == null)
+					throw new CadseException(
+							NLS
+									.bind(
+											"Cannot find the value for the attribute definition {0} ({1}).",
+											attribuesDefintions[i].getName(),
+											attribuesDefintions[i].getCSTName()));
+			}
+			ISpaceKey key = keyType.computeKey(shortName, parentDelta, keyvaluse);
+			newItem = getItem(key);
+			if (newItem != null)
+				return newItem;
+		}
+		newItem = createItem(itemType, parentDelta, partLinkType);
 		newItem.setName(shortName);
 
 		for (int i = 0; i < attributes.length;) {
-			SetAttrVal setAttr = attributes[i];
+			SetAttrVal<?> setAttr = attributes[i];
 
 			if (setAttr.getAttrDef() instanceof LinkType) {
 				newItem.createLink((LinkType) setAttr.getAttrDef(), (Item) setAttr.getValue());
@@ -2424,7 +2457,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		} else
 		// compute unique name at the end because can depend of some attribute
 		if (uniqueName == null) {
-			uniqueName = CadseCore.getName(newItem, shortName, parent, partLinkType);
+			uniqueName = CadseCore.getName(newItem, shortName, parentDelta, partLinkType);
 		}
 		ItemDelta findItem = null;
 
@@ -2436,8 +2469,8 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 			findItem = getItem(uniqueName);
 		}
 
-		if (findItem == null && parent != null && partLinkType != null) {
-			Collection<Item> findItems = parent.getOutgoingItems(partLinkType, false);
+		if (findItem == null && parentDelta != null && partLinkType != null) {
+			Collection<Item> findItems = parentDelta.getOutgoingItems(partLinkType, false);
 			for (Item f : findItems) {
 				if (f == newItem) {
 					continue; // find other
@@ -2462,8 +2495,8 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 				}
 			}
 			newItem = findItem;
-			if (parent != null) {
-				createLinkIfNeed(getItem(parent.getId()), findItem, partLinkType);
+			if (parentDelta != null) {
+				createLinkIfNeed(parentDelta, findItem, partLinkType);
 			}
 		}
 
@@ -2503,6 +2536,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		if (!it.hasShortNameAttribute()) {
 			shortname = Item.NO_VALUE_STRING;
 		}
+		ItemDelta parentDelta = parent == null ? null : getItem(parent.getId());
 		SpaceKeyType keyType = it.getSpaceKeyType();
 		if (keyType != null) {
 			IAttributeType<?>[] attribuesDefintions = keyType
@@ -2530,13 +2564,12 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 											attribuesDefintions[i].getName(),
 											attribuesDefintions[i].getCSTName()));
 			}
-			ISpaceKey key = keyType.computeKey(shortname, parent, keyvaluse);
+			ISpaceKey key = keyType.computeKey(shortname, parentDelta, keyvaluse);
 			ItemDelta newItem = getItem(key);
 			if (newItem != null)
 				return newItem;
 		}
-		ItemDelta parentDelta = parent == null ? null : getItem(parent.getId());
-		ItemDelta newItem = createItem(it, parent, lt);
+		ItemDelta newItem = createItem(it, parentDelta, lt);
 		newItem.setName(shortname);
 
 		for (int i = 0; i < attributes.length;) {
@@ -2557,7 +2590,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		} else
 		// compute unique name at the end because can depend of some attribute
 		if (uniqueName == null) {
-			uniqueName = CadseCore.getName(newItem, shortname, parent, lt);
+			uniqueName = CadseCore.getName(newItem, shortname, parentDelta, lt);
 		}
 		ItemDelta findItem = null;
 
@@ -2599,8 +2632,8 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 				}
 			}
 			newItem = findItem;
-			if (parent != null) {
-				createLinkIfNeed(getItem(parent.getId()), findItem, lt);
+			if (parentDelta != null) {
+				createLinkIfNeed(parentDelta, findItem, lt);
 			}
 		}
 
