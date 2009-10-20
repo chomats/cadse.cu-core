@@ -243,7 +243,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 						}
 
 						// creation des liens d�rived.
-						createDerivedLinkFromLink(link);
+						//createDerivedLinkFromLink(link);
 						break;
 
 					case CREATE_ITEM:
@@ -258,13 +258,13 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 							// complete.
 							// Elle se completera au fure et � mesure.
 							((ItemImpl) item)._composants = ((ItemImpl) item).computeComponents(true);
-							((ItemImpl) item).reComputeDerivedLink(false);
+							//((ItemImpl) item).reComputeDerivedLink(false);
 
 						}
 						break;
 					case DELETE_OUTGOING_LINK:
 						link = (Link) wse.getOperationArgs()[0];
-						if (link.isComposition()) {
+						if (link.getLinkType().isComposition()) {
 							// il faut surment enlever un composant.
 							removeComponent((ItemImpl) link.getSource());
 						}
@@ -276,7 +276,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 						// parent...
 						item = (Item) wse.getOperationArgs()[0];
 						for (Link l : item.getIncomingLinks()) {
-							if (l.isComposition()) {
+							if (l.getLinkType().isComposition()) {
 								addComponent((ItemImpl) l.getSource(), (List<Item>) wse.getOperationArgs()[1]);
 							}
 						}
@@ -284,7 +284,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 					case REMOVE_COMPONENT:
 						item = (Item) wse.getOperationArgs()[0];
 						for (Link l : item.getIncomingLinks()) {
-							if (l.isComposition()) {
+							if (l.getLinkType().isComposition()) {
 								removeComponent((ItemImpl) l.getSource());
 							}
 						}
@@ -1091,39 +1091,39 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		}
 	}
 
-	/**
-	 * Creates the derived link from link.
-	 * 
-	 * @param link
-	 *            the link
-	 */
-	private void createDerivedLinkFromLink(Link link) {
-		if (link.isComposition()) {
-			// un lien de composition est cr��.
-			// la source du lien est le composite auquel on cherche � rajouter
-			// des liens d�riv�s ou � en enlever.
-			// Il est pr�f�rable de recalculer les lien d�riv�es.
-			((ItemImpl) link.getSource()).reComputeDerivedLink(false);
-		} else {
-			// deuxi�me cas un lien non composite a �t� cre�,
-			// il faut int�grer ce lien � tout les composite �ventuelle auquel
-			// appartiendrai la source du lien.
-			for (Link cl : link.getSource().getIncomingLinks()) {
-				if (cl.isComposition()) {
-					ItemImpl source = (ItemImpl) cl.getSource();
-					if (!source.containsComponent(link.getDestinationId())) {
-						if (source._derivedLinks == null) {
-							source._derivedLinks = new HashSet<DerivedLink>();
-						}
-						DerivedLink dl = source.createOneDerivedLink(link);
-						if (source._derivedLinks.add(dl)) {
-
-						}
-					}
-				}
-			}
-		}
-	}
+//	/**
+//	 * Creates the derived link from link.
+//	 * 
+//	 * @param link
+//	 *            the link
+//	 */
+//	private void createDerivedLinkFromLink(Link link) {
+//		if (link.getLinkType().isComposition()) {
+//			// un lien de composition est cr��.
+//			// la source du lien est le composite auquel on cherche � rajouter
+//			// des liens d�riv�s ou � en enlever.
+//			// Il est pr�f�rable de recalculer les lien d�riv�es.
+//			((ItemImpl) link.getSource()).reComputeDerivedLink(false);
+//		} else {
+//			// deuxi�me cas un lien non composite a �t� cre�,
+//			// il faut int�grer ce lien � tout les composite �ventuelle auquel
+//			// appartiendrai la source du lien.
+//			for (Link cl : link.getSource().getIncomingLinks()) {
+//				if (cl.getLinkType().isComposition()) {
+//					ItemImpl source = (ItemImpl) cl.getSource();
+//					if (!source.containsComponent(link.getDestinationId())) {
+//						if (source._derivedLinks == null) {
+//							source._derivedLinks = new HashSet<DerivedLink>();
+//						}
+//						DerivedLink dl = source.createOneDerivedLink(link);
+//						if (source._derivedLinks.add(dl)) {
+//
+//						}
+//					}
+//				}
+//			}
+//		}
+//	}
 
 	/*
 	 * (non-Javadoc)

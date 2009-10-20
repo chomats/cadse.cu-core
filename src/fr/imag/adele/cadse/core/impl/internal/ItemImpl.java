@@ -33,7 +33,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
@@ -41,10 +40,7 @@ import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.ChangeID;
 import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.DerivedLink;
-import fr.imag.adele.cadse.core.DerivedLinkDescription;
-import fr.imag.adele.cadse.core.DerivedLinkType;
 import fr.imag.adele.cadse.core.Item;
-import fr.imag.adele.cadse.core.ItemDescription;
 import fr.imag.adele.cadse.core.ItemDescriptionRef;
 import fr.imag.adele.cadse.core.ItemState;
 import fr.imag.adele.cadse.core.ItemType;
@@ -52,13 +48,11 @@ import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.Messages;
-import fr.imag.adele.cadse.core.WSModelState;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.delta.ItemDelta;
 import fr.imag.adele.cadse.core.delta.LinkDelta;
 import fr.imag.adele.cadse.core.impl.CadseIllegalArgumentException;
 import fr.imag.adele.cadse.core.impl.CollectedReflectLink;
-import fr.imag.adele.cadse.core.impl.ReflectLink;
 import fr.imag.adele.cadse.core.internal.IWorkingLoadingItems;
 import fr.imag.adele.cadse.core.util.IErrorCollector;
 import fr.imag.adele.cadse.core.util.OrderWay;
@@ -244,8 +238,8 @@ public class ItemImpl extends AbstractItem implements Item {
 	/** The composants. */
 	Map<CompactUUID, Item>		_composants	= null;
 
-	/** The derived links. */
-	Set<DerivedLink>			_derivedLinks;
+	///** The derived links. */
+	//Set<DerivedLink>			_derivedLinks;
 
 
 
@@ -874,161 +868,161 @@ public class ItemImpl extends AbstractItem implements Item {
 		}
 	}
 
-	/**
-	 * instantiate an unresolved link. No notification if the state of item is
-	 * new or modifing or if the the of the model is not run
-	 * 
-	 * @param lt :
-	 *            link type.
-	 * @param destination :
-	 *            new link's destination.
-	 * @param computeInverse
-	 *            the compute inverse
-	 * @param notification
-	 *            the notification
-	 * 
-	 * @return new link l.
-	 * 
-	 * @throws CadseException
-	 *             the melusine exception
-	 */
-	@Deprecated
-	private Link newLinkWithNotification(LinkType lt, Item destination, boolean computeInverse, boolean notification)
-			throws CadseException {
-
-		Link l = null;
-		Link inverseLink = null;
-
-		// find a good destination.
-		Item good_destination = this._wl.getItem(destination.getId());
-		if (good_destination == null) {
-			good_destination = destination;
-		}
-
-		boolean addInIncomming = _state != ItemState.NOT_IN_WORKSPACE && _state != ItemState.MODIFING;
-
-		// est-ce qu'il faut creer le lien inverse ?
-		// Par d�faut non
-		computeInverse = computeInverse && addInIncomming;
-
-		LinkType inverseLt = lt.getInverse();
-		boolean createInverseLink = false;
-
-		l = primitifCreateLink(lt, good_destination, addInIncomming);
-
-		if (computeInverse && inverseLt != null && good_destination.isResolved()) {
-			Link findInverseLink = good_destination.getOutgoingLink(inverseLt, this.getId());
-			if (findInverseLink == null) {
-				// OUI
-				createInverseLink = true;
-			}
-		}
-
-		if (createInverseLink) {
-			inverseLink = primitifCreateInverseLink(good_destination, addInIncomming, inverseLt);
-		}
-
-		// add link l into the list "outgoings" of source "this".
-		if (!(l instanceof ReflectLink)) {
-			m_outgoings.add(l);
-		}
-		if (createInverseLink && (!(inverseLink instanceof ReflectLink))) {
-			((ItemImpl) good_destination).m_outgoings.add(inverseLink);
-		}
-
-		if (!notification) {
-			return l;
-		}
-
-		if (getState() == ItemState.NOT_IN_WORKSPACE || getState() == ItemState.MODIFING) {
-			return l;
-		}
-		if (getLogicalWorkspace().getState() != WSModelState.RUN) {
-			return l;
-		}
-
-		_wl.getCadseDomain().notifieChangeEvent(ChangeID.CREATE_OUTGOING_LINK, l);
-		if (l.isLinkResolved()) {
-			_wl.getCadseDomain().notifieChangeEvent(ChangeID.RESOLVE_INCOMING_LINK, l.getResolvedDestination(), l);
-		}
-		if (createInverseLink) {
-			_wl.getCadseDomain().notifieChangeEvent(ChangeID.CREATE_OUTGOING_LINK, inverseLink);
-			if (inverseLink.isLinkResolved()) {
-				_wl.getCadseDomain().notifieChangeEvent(ChangeID.RESOLVE_INCOMING_LINK,
-						inverseLink.getResolvedDestination(), inverseLink);
-			}
-		}
-		return l;
-	}
-
-	protected Link primitifCreateInverseLink(Item good_destination, boolean addInIncomming, LinkType inverseLt) {
-		Link inverseLink;
-		if (inverseLt.isDerived()) {
-			inverseLink = new DerivedLinkImpl(good_destination, (DerivedLinkType) inverseLt, this, addInIncomming);
-		} else {
-			inverseLink = new LinkImpl(good_destination, inverseLt, this, addInIncomming);
-		}
-		return inverseLink;
-	}
-
-	protected Link primitifCreateLink(LinkType lt, Item destination, boolean addInIncomming) throws CadseException {
-
-		if (lt.isNatif() && destination.isResolved()) {
-			return null;
-		}
-		Link l;
-		// create a new link l whom source is object "this"
-		// and destination is parameter "destination".
-		// set the default destination type...
-
-		if (lt.isDerived()) {
-			l = new DerivedLinkImpl(this, (DerivedLinkType) lt, destination, addInIncomming);
-		} else {
-			l = new LinkImpl(this, lt, destination, addInIncomming);
-		}
-		return l;
-	}
-
-	/**
-	 * Create a new link and .
-	 * 
-	 * @param lt :
-	 *            the type of the link
-	 * @param destination :
-	 *            new link's destination id.
-	 * 
-	 * @return new link l.
-	 * 
-	 * @throws no. *
-	 * @throws CadseException
-	 *             the melusine exception
-	 */
-
-	@Override
-	protected Link createDefaultLink(LinkType lt, Item destination) throws CadseException {
-		if (lt.isNatif() && destination.isResolved()) {
-			return null;
-		}
-		Link l;
-		// create a new link l whom source is object "this"
-		// and destination is parameter "destination".
-		// set the default destination type...
-
-		if (lt.isDerived()) {
-			l = new DerivedLinkImpl(this, (DerivedLinkType) lt, (AbstractItem) destination, true);
-		} else {
-			l = new LinkImpl(this, lt, destination, true);
-		}
-
-		// add link l into the list "outgoings" of source "this".
-		if (l != null && !(l instanceof ReflectLink)) {
-			if (m_outgoings.contains(l)) {
-				return l;
-			}
-			m_outgoings.add(l);
-		}
-		return l;
-	}
+//	/**
+//	 * instantiate an unresolved link. No notification if the state of item is
+//	 * new or modifing or if the the of the model is not run
+//	 * 
+//	 * @param lt :
+//	 *            link type.
+//	 * @param destination :
+//	 *            new link's destination.
+//	 * @param computeInverse
+//	 *            the compute inverse
+//	 * @param notification
+//	 *            the notification
+//	 * 
+//	 * @return new link l.
+//	 * 
+//	 * @throws CadseException
+//	 *             the melusine exception
+//	 */
+//	@Deprecated
+//	private Link newLinkWithNotification(LinkType lt, Item destination, boolean computeInverse, boolean notification)
+//			throws CadseException {
+//
+//		Link l = null;
+//		Link inverseLink = null;
+//
+//		// find a good destination.
+//		Item good_destination = this._wl.getItem(destination.getId());
+//		if (good_destination == null) {
+//			good_destination = destination;
+//		}
+//
+//		boolean addInIncomming = _state != ItemState.NOT_IN_WORKSPACE && _state != ItemState.MODIFING;
+//
+//		// est-ce qu'il faut creer le lien inverse ?
+//		// Par d�faut non
+//		computeInverse = computeInverse && addInIncomming;
+//
+//		LinkType inverseLt = lt.getInverse();
+//		boolean createInverseLink = false;
+//
+//		l = primitifCreateLink(lt, good_destination, addInIncomming);
+//
+//		if (computeInverse && inverseLt != null && good_destination.isResolved()) {
+//			Link findInverseLink = good_destination.getOutgoingLink(inverseLt, this.getId());
+//			if (findInverseLink == null) {
+//				// OUI
+//				createInverseLink = true;
+//			}
+//		}
+//
+//		if (createInverseLink) {
+//			inverseLink = primitifCreateInverseLink(good_destination, addInIncomming, inverseLt);
+//		}
+//
+//		// add link l into the list "outgoings" of source "this".
+//		if (!(l instanceof ReflectLink)) {
+//			m_outgoings.add(l);
+//		}
+//		if (createInverseLink && (!(inverseLink instanceof ReflectLink))) {
+//			((ItemImpl) good_destination).m_outgoings.add(inverseLink);
+//		}
+//
+//		if (!notification) {
+//			return l;
+//		}
+//
+//		if (getState() == ItemState.NOT_IN_WORKSPACE || getState() == ItemState.MODIFING) {
+//			return l;
+//		}
+//		if (getLogicalWorkspace().getState() != WSModelState.RUN) {
+//			return l;
+//		}
+//
+//		_wl.getCadseDomain().notifieChangeEvent(ChangeID.CREATE_OUTGOING_LINK, l);
+//		if (l.isLinkResolved()) {
+//			_wl.getCadseDomain().notifieChangeEvent(ChangeID.RESOLVE_INCOMING_LINK, l.getResolvedDestination(), l);
+//		}
+//		if (createInverseLink) {
+//			_wl.getCadseDomain().notifieChangeEvent(ChangeID.CREATE_OUTGOING_LINK, inverseLink);
+//			if (inverseLink.isLinkResolved()) {
+//				_wl.getCadseDomain().notifieChangeEvent(ChangeID.RESOLVE_INCOMING_LINK,
+//						inverseLink.getResolvedDestination(), inverseLink);
+//			}
+//		}
+//		return l;
+//	}
+//
+//	protected Link primitifCreateInverseLink(Item good_destination, boolean addInIncomming, LinkType inverseLt) {
+//		Link inverseLink;
+//		if (inverseLt.isDerived()) {
+//			inverseLink = new DerivedLinkImpl(good_destination, (DerivedLinkType) inverseLt, this, addInIncomming);
+//		} else {
+//			inverseLink = new LinkImpl(good_destination, inverseLt, this, addInIncomming);
+//		}
+//		return inverseLink;
+//	}
+//
+//	protected Link primitifCreateLink(LinkType lt, Item destination, boolean addInIncomming) throws CadseException {
+//
+//		if (lt.isNatif() && destination.isResolved()) {
+//			return null;
+//		}
+//		Link l;
+//		// create a new link l whom source is object "this"
+//		// and destination is parameter "destination".
+//		// set the default destination type...
+//
+//		if (lt.isDerived()) {
+//			l = new DerivedLinkImpl(this, (DerivedLinkType) lt, destination, addInIncomming);
+//		} else {
+//			l = new LinkImpl(this, lt, destination, addInIncomming);
+//		}
+//		return l;
+//	}
+//
+//	/**
+//	 * Create a new link and .
+//	 * 
+//	 * @param lt :
+//	 *            the type of the link
+//	 * @param destination :
+//	 *            new link's destination id.
+//	 * 
+//	 * @return new link l.
+//	 * 
+//	 * @throws no. *
+//	 * @throws CadseException
+//	 *             the melusine exception
+//	 */
+//
+//	@Override
+//	protected Link createDefaultLink(LinkType lt, Item destination) throws CadseException {
+//		if (lt.isNatif() && destination.isResolved()) {
+//			return null;
+//		}
+//		Link l;
+//		// create a new link l whom source is object "this"
+//		// and destination is parameter "destination".
+//		// set the default destination type...
+//
+//		if (lt.isDerived()) {
+//			l = new DerivedLinkImpl(this, (DerivedLinkType) lt, (AbstractItem) destination, true);
+//		} else {
+//			l = new LinkImpl(this, lt, destination, true);
+//		}
+//
+//		// add link l into the list "outgoings" of source "this".
+//		if (l != null && !(l instanceof ReflectLink)) {
+//			if (m_outgoings.contains(l)) {
+//				return l;
+//			}
+//			m_outgoings.add(l);
+//		}
+//		return l;
+//	}
 
 	// // TODO key
 	// /*
@@ -1235,64 +1229,64 @@ public class ItemImpl extends AbstractItem implements Item {
 	public List<Link> getCompositionLink() {
 		List<Link> links = new ArrayList<Link>();
 		for (Link link : getOutgoingLinks()) {
-			if (link.isComposition()) {
+			if (link.getLinkType().isComposition()) {
 				links.add(link);
 			}
 		}
 		return links;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.Item#getDerivedLinks()
-	 */
-	@Override
-	public Set<DerivedLink> getDerivedLinks() {
-		if (_derivedLinks == null) {
-			return Collections.emptySet();
-		}
-		return this._derivedLinks;
-	}
+//	/*
+//	 * (non-Javadoc)
+//	 * 
+//	 * @see fr.imag.adele.cadse.core.Item#getDerivedLinks()
+//	 */
+//	@Override
+//	public Set<DerivedLink> getDerivedLinks() {
+//		if (_derivedLinks == null) {
+//			return Collections.emptySet();
+//		}
+//		return this._derivedLinks;
+//	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.Item#setDerivedLinks(java.util.Set)
-	 */
-	@Override
-	public void setDerivedLinks(Set<DerivedLinkDescription> derivedLinks) {
-		if (derivedLinks == null || derivedLinks.size() == 0) {
-			return;
-		}
+//	/*
+//	 * (non-Javadoc)
+//	 * 
+//	 * @see fr.imag.adele.cadse.core.Item#setDerivedLinks(java.util.Set)
+//	 */
+//	@Override
+//	public void setDerivedLinks(Set<DerivedLinkDescription> derivedLinks) {
+//		if (derivedLinks == null || derivedLinks.size() == 0) {
+//			return;
+//		}
+//
+//		this._derivedLinks = new HashSet<DerivedLink>();
+//		for (DerivedLinkDescription idl : derivedLinks) {
+//			createOneDerivedLink(idl);
+//		}
+//	}
 
-		this._derivedLinks = new HashSet<DerivedLink>();
-		for (DerivedLinkDescription idl : derivedLinks) {
-			createOneDerivedLink(idl);
-		}
-	}
-
-	/**
-	 * Creates the derived link type.
-	 * 
-	 * @param level
-	 *            the level
-	 * @param derivedLinks
-	 *            the derived links
-	 * 
-	 * @return true, if successful
-	 */
-	public boolean createDerivedLinkType(int level, Set<DerivedLinkDescription> derivedLinks) {
-		boolean ret = false;
-		for (DerivedLinkDescription idl : derivedLinks) {
-			int idl_level = idl.getType().lastIndexOf('#') + 1;
-			if (level == idl_level) {
-				createDerivedLinkTypeIfNeed(idl);
-				ret = true;
-			}
-		}
-		return ret;
-	}
+//	/**
+//	 * Creates the derived link type.
+//	 * 
+//	 * @param level
+//	 *            the level
+//	 * @param derivedLinks
+//	 *            the derived links
+//	 * 
+//	 * @return true, if successful
+//	 */
+//	public boolean createDerivedLinkType(int level, Set<DerivedLinkDescription> derivedLinks) {
+//		boolean ret = false;
+//		for (DerivedLinkDescription idl : derivedLinks) {
+//			int idl_level = idl.getType().lastIndexOf('#') + 1;
+//			if (level == idl_level) {
+//				createDerivedLinkTypeIfNeed(idl);
+//				ret = true;
+//			}
+//		}
+//		return ret;
+//	}
 
 	/**
 	 * Compute composants.
@@ -1316,7 +1310,7 @@ public class ItemImpl extends AbstractItem implements Item {
 		HashMap<CompactUUID, Item> ret = new HashMap<CompactUUID, Item>();
 
 		for (Link link : getOutgoingLinks()) {
-			if (link.isComposition()) {
+			if (link.getLinkType().isComposition()) {
 				Item dest = link.getDestination();
 				ret.put(dest.getId(), dest);
 				if (!dest.isResolved()) {
@@ -1336,86 +1330,84 @@ public class ItemImpl extends AbstractItem implements Item {
 		return ret;
 	}
 
-	/**
-	 * Compute derived links.
-	 * 
-	 * @return the set< derived link>
-	 */
-	Set<DerivedLink> computeDerivedLinks() {
-		HashSet<DerivedLink> derivedLinks = new HashSet<DerivedLink>();
-		for (Link el : new ArrayList<Link>(getOutgoingLinks())) {
-			if (!el.isComposition()) {
-				continue;
-			}
+//	/**
+//	 * Compute derived links.
+//	 * 
+//	 * @return the set< derived link>
+//	 */
+//	void computeDerivedLinks() {
+//		LogicalWorkspaceTransaction logicalWorkspaceTransaction = getLogicalWorkspace().createTransaction();
+//		for (Link el : new ArrayList<Link>(getOutgoingLinks())) {
+//			if (!el.getLinkType().isComposition()) {
+//				continue;
+//			}
+//
+//			Item comp = el.getResolvedDestination();
+//			if (comp == null) {
+//				continue;
+//			}
+//			
+//			
+//
+//			// traiter outgoing links
+//			for (Link outgoing : comp.getOutgoingLinks()) {
+//				// composites entities are considered to be part of the
+//				// composite.
+//				// and if the destination is in the composants set.
+//				if (outgoing.getLinkType().isComposition() || containsComponent(outgoing.getDestinationId())) {
+//					continue;
+//				}
+//				createOneDerivedLink(logicalWorkspaceTransaction, outgoing);
+//			}
+//		}
+//		logicalWorkspaceTransaction.commit();
+//	}
 
-			Item comp = el.getResolvedDestination();
-			if (comp == null) {
-				continue;
-			}
-
-			// traiter outgoing links
-			for (Link outgoing : comp.getOutgoingLinks()) {
-				// composites entities are considered to be part of the
-				// composite.
-				// and if the destination is in the composants set.
-				if (outgoing.isComposition() || containsComponent(outgoing.getDestinationId())) {
-					continue;
-				}
-				DerivedLink createOneDerivedLink = createOneDerivedLink((outgoing));
-				if (createOneDerivedLink != null) {
-					derivedLinks.add(createOneDerivedLink);
-				}
-			}
-		}
-
-		return derivedLinks;
-	}
-
-	/**
-	 * Re compute derived link.
-	 * 
-	 * @param rec
-	 *            the rec
-	 */
-	void reComputeDerivedLink(boolean rec) {
-		if (this.isClosed()) {
-			throw new CadseIllegalArgumentException(Messages.error_internal_connot_call_closed_method, getId());
-		}
-
-		// garde une copy pour voir ceux qui ont �t� supprim�s.
-		Set<DerivedLink> copy = this._derivedLinks;
-		if (copy == null) {
-			copy = new HashSet<DerivedLink>();
-		}
-
-		if (rec) { // algo recurcif au chargement et quand on force le recalcul
-			// si possible.
-			for (Link el : new ArrayList<Link>(getOutgoingLinks())) {
-				if (!el.isComposition()) {
-					continue;
-				}
-
-				Item comp = el.getResolvedDestination();
-				if (comp == null) {
-					continue;
-				}
-				ItemImpl compImpl = (ItemImpl) comp;
-
-				if (compImpl._derivedLinks == null) {
-					compImpl.reComputeDerivedLink(true);
-				}
-			}
-		}
-		this._derivedLinks = this.computeDerivedLinks();
-
-		// remove the bad link.
-		copy.removeAll(this._derivedLinks);
-		for (Link idl : copy) {
-			// remove the found link.
-			(idl.getDestination()).removeIncomingLink(idl, true);
-			this.removeOutgoingLink(idl);
-		}
-	}
+//	/**
+//	 * Re compute derived link.
+//	 * 
+//	 * @param rec
+//	 *            the rec
+//	 */
+//	void reComputeDerivedLink(boolean rec) {
+//		if (this.isClosed()) {
+//			throw new CadseIllegalArgumentException(Messages.error_internal_connot_call_closed_method, getId());
+//		}
+//
+//		// garde une copy pour voir ceux qui ont �t� supprim�s.
+//		Set<DerivedLink> copy = this._derivedLinks;
+//		if (copy == null) {
+//			copy = new HashSet<DerivedLink>();
+//		}
+//
+//		if (rec) { // algo recurcif au chargement et quand on force le recalcul
+//			// si possible.
+//			for (Link el : new ArrayList<Link>(getOutgoingLinks())) {
+//				if (!el.getLinkType().isComposition()) {
+//					continue;
+//				}
+//
+//				Item comp = el.getResolvedDestination();
+//				if (comp == null) {
+//					continue;
+//				}
+//				ItemImpl compImpl = (ItemImpl) comp;
+//
+//				if (compImpl._derivedLinks == null) {
+//					compImpl.reComputeDerivedLink(true);
+//				}
+//			}
+//		}
+//		this._derivedLinks = this.computeDerivedLinks();
+//
+//		// remove the bad link.
+//		copy.removeAll(this._derivedLinks);
+//		for (Link idl : copy) {
+//			// remove the found link.
+//			(idl.getDestination()).removeIncomingLink(idl, true);
+//			this.removeOutgoingLink(idl);
+//		}
+//	}
 
 	/**
 	 * Restore item.
@@ -1445,72 +1437,69 @@ public class ItemImpl extends AbstractItem implements Item {
 		throw new UnsupportedOperationException();
 	}
 
-	/**
-	 * Creates the one derived link.
-	 * 
-	 * @param link
-	 *            the link
-	 * 
-	 * @return the link
-	 */
-	Link createOneDerivedLink(DerivedLinkDescription link) {
-		try {
-			// find the link type of the derived link and create it if need.
-			// create derived link with origin root, name #L, destination
-			// destId, and char of L.
-			// If link type does not exist create it.
-			LinkType lt = createDerivedLinkTypeIfNeed(link);
-			if (lt == null) {
-				return null;
-			}
-
-			Item destination = _wl.loadItem(link.getDestination());
-
-			Link ret = null;
-			// create the derived link if need.
-			if ((ret = findDerivedLink(lt, destination)) == null) {
-				ret = newLinkWithNotification(lt, destination, false, true);
-			}
-			return ret;
-		} catch (CadseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	/**
-	 * Creates the one derived link.
-	 * 
-	 * @param link
-	 *            the link
-	 * 
-	 * @return the derived link
-	 */
-	DerivedLink createOneDerivedLink(Link link) {
-		try {
-			// find the link type of the derived link and create it if need.
-			// create derived link with origin root, name #L, destination
-			// destId, and char of L.
-			// If link type does not exist create it.
-			LinkType lt = createDerivedLinkTypeIfNeed(link.getLinkType());
-			if (lt == null) {
-				return null;
-			}
-
-			DerivedLink ret = null;
-			Item destination = link.getDestination();
-			// create the derived link if need.
-			if ((ret = findDerivedLink(lt, destination)) == null) {
-				ret = (DerivedLink) newLinkWithNotification(lt, destination, false, true);
-			}
-			return ret;
-		} catch (CadseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
-	}
+//	/**
+//	 * Creates the one derived link.
+//	 * 
+//	 * @param link
+//	 *            the link
+//	 * 
+//	 * @return the link
+//	 */
+//	Link createOneDerivedLink(DerivedLinkDescription link) {
+//		try {
+//			// find the link type of the derived link and create it if need.
+//			// create derived link with origin root, name #L, destination
+//			// destId, and char of L.
+//			// If link type does not exist create it.
+//			LinkType lt = createDerivedLinkTypeIfNeed(link);
+//			if (lt == null) {
+//				return null;
+//			}
+//
+//			Item destination = _wl.loadItem(link.getDestination());
+//
+//			Link ret = null;
+//			// create the derived link if need.
+//			if ((ret = findDerivedLink(lt, destination)) == null) {
+//				ret = newLinkWithNotification(lt, destination, false, true);
+//			}
+//			return ret;
+//		} catch (CadseException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//			return null;
+//		}
+//	}
+//
+//	/**
+//	 * Creates the one derived link.
+//	 * 
+//	 * @param link
+//	 *            the link
+//	 * 
+//	 * @return the derived link
+//	 */
+//	void createOneDerivedLink(LogicalWorkspaceTransaction logicalWorkspaceTransaction, Link link) {
+//		try {
+//			// find the link type of the derived link and create it if need.
+//			// create derived link with origin root, name #L, destination
+//			// destId, and char of L.
+//			// If link type does not exist create it.
+//			LinkType lt = createDerivedLinkTypeIfNeed(link.getLinkType());
+//			if (lt == null) {
+//				return ;
+//			}
+//
+//			Item destination = link.getDestination();
+//			// create the derived link if need.
+//			if ((findDerivedLink(lt, destination)) == null) {
+//				logicalWorkspaceTransaction.getItem(getId()).createLink(lt, destination);
+//			}
+//		} catch (CadseException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
 
 	// DerivedLink createOneDerivedLinkLoad(Link link) {
 	//
@@ -1534,101 +1523,101 @@ public class ItemImpl extends AbstractItem implements Item {
 	//
 	// }
 
-	/**
-	 * Return the name of derived link Type.<br/> The name begin with '#' next
-	 * the item type of the source and '_' and the name of orignal link type
-	 * name. The number of '#' indique la profondeur.
-	 * 
-	 * @param lt
-	 *            the lt
-	 * 
-	 * @return The name of the derived link type
-	 */
-	static private String getDerivedType(LinkType lt) {
-		String ln = lt.getName();
-		if (lt.isDerived()) {
-			return "#" + ln; //$NON-NLS-1$
-		}
-		return "#" + lt.getSource().getName() + "_" + ln; //$NON-NLS-1$ //$NON-NLS-2$
-	}
+//	/**
+//	 * Return the name of derived link Type.<br/> The name begin with '#' next
+//	 * the item type of the source and '_' and the name of orignal link type
+//	 * name. The number of '#' indique la profondeur.
+//	 * 
+//	 * @param lt
+//	 *            the lt
+//	 * 
+//	 * @return The name of the derived link type
+//	 */
+//	static private String getDerivedType(LinkType lt) {
+//		String ln = lt.getName();
+//		if (lt.isDerived()) {
+//			return "#" + ln; //$NON-NLS-1$
+//		}
+//		return "#" + lt.getSource().getName() + "_" + ln; //$NON-NLS-1$ //$NON-NLS-2$
+//	}
 
-	/**
-	 * Cette methode cre� un LinkType en fonction d'un autre LinkType. Il est
-	 * possible de recup�rer l'ItemType source, l'itemType destination, et le
-	 * LinkType du lien qui provoque ce lien d�riv�.<br>
-	 * <code>
-	 * ItemType destType = getModel().getModelType().getItemType(link.getDestTypeName());<br>
-	 * ItemType sourceType = getModel().getModelType().getItemType(link.getTypeSourceName());<br>
-	 * LinkType sourceLinkType = sourceType.getOutgoingLinkType(link.getLinkName());<br>
-	 * </code>
-	 * 
-	 * @param link
-	 *            Le lien deriv� interne � partir du quel doit etre creer le
-	 *            type de lien deriv�
-	 * 
-	 * @return le type de lien deriv�
-	 */
-	protected DerivedLinkType createDerivedLinkTypeIfNeed(LinkType link) {
-		ItemType destType = link.getDestination();
+//	/**
+//	 * Cette methode cre� un LinkType en fonction d'un autre LinkType. Il est
+//	 * possible de recup�rer l'ItemType source, l'itemType destination, et le
+//	 * LinkType du lien qui provoque ce lien d�riv�.<br>
+//	 * <code>
+//	 * ItemType destType = getModel().getModelType().getItemType(link.getDestTypeName());<br>
+//	 * ItemType sourceType = getModel().getModelType().getItemType(link.getTypeSourceName());<br>
+//	 * LinkType sourceLinkType = sourceType.getOutgoingLinkType(link.getLinkName());<br>
+//	 * </code>
+//	 * 
+//	 * @param link
+//	 *            Le lien deriv� interne � partir du quel doit etre creer le
+//	 *            type de lien deriv�
+//	 * 
+//	 * @return le type de lien deriv�
+//	 */
+//	private DerivedLinkType createDerivedLinkTypeIfNeed(LinkType link) {
+//		ItemType destType = link.getDestination();
+//
+//		String derivedTypeName = getDerivedType(link);
+//
+//		LinkType lt = getType().getOutgoingLinkType(destType, derivedTypeName);
+//
+//		if (lt != null) {
+//			return (DerivedLinkType) lt;
+//		}
+//
+//		int kindLinkType = LinkType.DERIVED;
+//		if (link.isAggregation()) {
+//			kindLinkType |= LinkType.AGGREGATION;
+//		}
+//		if (link.isRequire()) {
+//			kindLinkType |= LinkType.REQUIRE;
+//		}
+//
+//		// TODO
+//		// lt = getType().getOutgoingLinkType(derivedTypeName);
+//		// if (lt != null) {
+//		// if (destType.isSuperTypeOf(lt.getDestination())) {
+//		// lt.setDestinationType(destType);
+//		// return (DerivedLinkType) lt;
+//		// }
+//		// return null;
+//		// }
+//		try {
+//			lt = ((ItemTypeImpl) _type).createDerivedLinkType(null, -3, derivedTypeName, kindLinkType, 0, -1, null,
+//					link);
+//		} catch (CadseIllegalArgumentException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//			return null;
+//		}
+//
+//		return (DerivedLinkType) lt;
+//	}
 
-		String derivedTypeName = getDerivedType(link);
-
-		LinkType lt = getType().getOutgoingLinkType(destType, derivedTypeName);
-
-		if (lt != null) {
-			return (DerivedLinkType) lt;
-		}
-
-		int kindLinkType = LinkType.DERIVED;
-		if (link.isAggregation()) {
-			kindLinkType |= LinkType.AGGREGATION;
-		}
-		if (link.isRequire()) {
-			kindLinkType |= LinkType.REQUIRE;
-		}
-
-		// TODO
-		// lt = getType().getOutgoingLinkType(derivedTypeName);
-		// if (lt != null) {
-		// if (destType.isSuperTypeOf(lt.getDestination())) {
-		// lt.setDestinationType(destType);
-		// return (DerivedLinkType) lt;
-		// }
-		// return null;
-		// }
-		try {
-			lt = ((ItemTypeImpl) _type).createDerivedLinkType(null, -3, derivedTypeName, kindLinkType, 0, -1, null,
-					link);
-		} catch (CadseIllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
-
-		return (DerivedLinkType) lt;
-	}
-
-	/**
-	 * Cette methode cre� un derived LinkType � partir d'un
-	 * DerivedLinkDescription.
-	 * 
-	 * @param link
-	 *            La description d'un lien deriv�
-	 * 
-	 * @return le type de lien deriv�
-	 */
-	protected DerivedLinkType createDerivedLinkTypeIfNeed(DerivedLinkDescription link) {
-
-		ItemType originSourceType = _wl.getItemType(link.getOriginLinkSourceTypeID());
-		if (originSourceType == null) {
-			return null;
-		}
-		LinkType originLinkType = originSourceType.getOutgoingLinkType(link.getOriginLinkTypeID());
-		if (originLinkType == null) {
-			return null;
-		}
-		return createDerivedLinkTypeIfNeed(originLinkType);
-	}
+//	/**
+//	 * Cette methode cre� un derived LinkType � partir d'un
+//	 * DerivedLinkDescription.
+//	 * 
+//	 * @param link
+//	 *            La description d'un lien deriv�
+//	 * 
+//	 * @return le type de lien deriv�
+//	 */
+//	private DerivedLinkType createDerivedLinkTypeIfNeed(DerivedLinkDescription link) {
+//
+//		ItemType originSourceType = _wl.getItemType(link.getOriginLinkSourceTypeID());
+//		if (originSourceType == null) {
+//			return null;
+//		}
+//		LinkType originLinkType = originSourceType.getOutgoingLinkType(link.getOriginLinkTypeID());
+//		if (originLinkType == null) {
+//			return null;
+//		}
+//		return createDerivedLinkTypeIfNeed(originLinkType);
+//	}
 
 	// /**
 	// * (non-Javadoc) mise en cache + shadow
@@ -2046,7 +2035,7 @@ public class ItemImpl extends AbstractItem implements Item {
 
 	private boolean hasCompositionLinks() {
 		for (Link l : this.m_outgoings) {
-			if (l.isComposition()) {
+			if (l.getLinkType().isComposition()) {
 				return true;
 			}
 		}
@@ -2200,31 +2189,31 @@ public class ItemImpl extends AbstractItem implements Item {
 	//
 	// }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.Item#getDerivedLinkDescriptions(fr.imag.adele.cadse.core.ItemDescription)
-	 */
-	@Override
-	public Set<DerivedLinkDescription> getDerivedLinkDescriptions(ItemDescription source) {
-		HashSet<DerivedLinkDescription> ret = new HashSet<DerivedLinkDescription>();
-		if (_derivedLinks != null) {
-			for (DerivedLink dl : _derivedLinks) {
-				ret.add(new DerivedLinkDescription(source, dl));
-			}
-		}
+//	/*
+//	 * (non-Javadoc)
+//	 * 
+//	 * @see fr.imag.adele.cadse.core.Item#getDerivedLinkDescriptions(fr.imag.adele.cadse.core.ItemDescription)
+//	 */
+//	@Override
+//	public Set<DerivedLinkDescription> getDerivedLinkDescriptions(ItemDescription source) {
+//		HashSet<DerivedLinkDescription> ret = new HashSet<DerivedLinkDescription>();
+//		if (_derivedLinks != null) {
+//			for (DerivedLink dl : _derivedLinks) {
+//				ret.add(new DerivedLinkDescription(source, dl));
+//			}
+//		}
+//
+//		return ret;
+//	}
 
-		return ret;
-	}
-
-	/**
-	 * Resetderivedlink.
-	 */
-	public void resetderivedlink() {
-		if (_derivedLinks == null) {
-			reComputeDerivedLink(true);
-		}
-	}
+//	/**
+//	 * Resetderivedlink.
+//	 */
+//	public void resetderivedlink() {
+//		if (_derivedLinks == null) {
+//			reComputeDerivedLink(true);
+//		}
+//	}
 
 	/**
 	 * Resolve component.

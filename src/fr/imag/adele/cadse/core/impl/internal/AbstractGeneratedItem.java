@@ -480,11 +480,13 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		return _contentitem;
 	}
 
+	@Deprecated
 	public Set<DerivedLinkDescription> getDerivedLinkDescriptions(
 			ItemDescription source) {
 		return Collections.emptySet();
 	}
 
+	@Deprecated
 	public Set<DerivedLink> getDerivedLinks() {
 		return Collections.emptySet();
 	}
@@ -1116,13 +1118,12 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 
 	}
 
+	@Deprecated
 	public void setDerivedLinks(Set<DerivedLinkDescription> derivedLinks) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void setModified(boolean flag) {
-		setflag(flag, IS_MODIFIED);
+		setFlag(IS_MODIFIED, flag);
 	}
 
 	public Collection<Link> setOutgoingItems(LinkType lt, Collection<Item> value)
@@ -1853,5 +1854,30 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		if (parent != null && !parent.isResolved())
 			throw new CadseIllegalArgumentException("Cannot set unresolved parent", this, parent);
 		_parent = parent;
+	}
+	
+	@Override
+	public boolean isGroup() {
+		return false;
+	}
+	
+	@Override
+	public boolean isMember() {
+		return false;
+	}
+	
+	@Override
+	public boolean isMemberOf(Item item) {
+		return false;
+	}
+	
+	@Override
+	public Item getGroup() {
+		return null;
+	}
+	
+	@Override
+	public List<Item> getMembers() {
+		return Collections.emptyList();
 	}
 }
