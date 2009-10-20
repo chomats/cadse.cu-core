@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
@@ -35,6 +37,7 @@ import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.delta.ItemDelta;
+import fr.imag.adele.cadse.core.impl.CadseCore;
 import fr.imag.adele.cadse.core.key.ISpaceKey;
 import fr.imag.adele.cadse.core.util.OrderWay;
 
@@ -233,6 +236,9 @@ public abstract class AbstractItem extends AbstractGeneratedItem implements Item
 	 */
 	@Override
 	public synchronized void addIncomingLink(Link link, boolean notifie) {
+		if (link.getLinkType() == CadseCore.theLinkType && !(link instanceof LinkType)) {
+			Logger.getLogger("fr.imag.adele.cadse.runtime.lw").log(Level.SEVERE, "add bad incomming : not instance of link type", new CadseException());
+		}
 		_incomings.add(link);
 	}
 
