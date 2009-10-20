@@ -889,7 +889,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 			ret.addAll(_superType.getIncomingLinkTypes());
 		}
 		for (Link l : this._incomings) {
-			if (l.getLinkType() == CadseCore.theLinkType) {
+			if (l.getLinkType() == CadseCore.theLinkType && l instanceof LinkType) {
 				ret.add((LinkType) l);
 			}
 		}
