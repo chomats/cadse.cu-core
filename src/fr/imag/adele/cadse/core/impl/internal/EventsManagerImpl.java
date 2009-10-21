@@ -33,10 +33,8 @@ import java.util.logging.Logger;
 
 import fr.imag.adele.cadse.core.ChangeID;
 import fr.imag.adele.cadse.core.EventsManager;
-import fr.imag.adele.cadse.core.IItemManager;
 import fr.imag.adele.cadse.core.IWorkspaceOperation;
 import fr.imag.adele.cadse.core.Item;
-import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.WSEvent;
 import fr.imag.adele.cadse.core.WorkspaceListener;
 import fr.imag.adele.cadse.core.WorkspaceListener.ListenerKind;
@@ -213,8 +211,9 @@ public class EventsManagerImpl extends Thread implements EventsManager {
 		/*
 		 * (non-Javadoc)
 		 * 
-		 * @see fr.imag.adele.cadse.core.internal.IWorkspaceOperation#notifieChangeEvent(fr.imag.adele.cadse.core.ChangeID,
-		 *      java.lang.Object)
+		 * @see
+		 * fr.imag.adele.cadse.core.internal.IWorkspaceOperation#notifieChangeEvent
+		 * (fr.imag.adele.cadse.core.ChangeID, java.lang.Object)
 		 */
 		public void notifieChangeEvent(final ChangeID id, final Object... values) {
 			WSEvent e = new WSEvent(newVersion(), id, values);
@@ -358,7 +357,7 @@ public class EventsManagerImpl extends Thread implements EventsManager {
 						}
 					}
 					// mLogger.debug("[eventsManager] sleep...");
-					Thread.sleep(10);
+					// Thread.sleep(10);
 				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -439,8 +438,6 @@ public class EventsManagerImpl extends Thread implements EventsManager {
 		}
 	}
 
-	
-
 	/**
 	 * Local notify change event.
 	 * 
@@ -461,13 +458,6 @@ public class EventsManagerImpl extends Thread implements EventsManager {
 						add(new WSCallNotifie(l, values));
 					}
 				}
-//				ItemType it = item.getType();
-//				IItemManager itemManager = it.getItemManager();
-//				if (itemManager.hasNotification()) {
-//					mLogger.finest("[eventsManager] add call...");
-//					add(new ManagerDeltaCallNotifie(itemManager, item, values, ListenerKind.BUILD));
-//				}
-
 			}
 
 			List<WorkspaceListener> listeners2 = this.domain.getLogicalWorkspace().filter(values.getFilters(), values);
