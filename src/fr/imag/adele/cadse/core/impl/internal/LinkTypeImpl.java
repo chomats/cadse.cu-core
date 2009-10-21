@@ -786,7 +786,21 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 			}
 		}
 	}
+	
+	@Override
+	public void setIsGroup(boolean b) {
+		if (b) {
+			_kind |= LinkType.GROUP;
+		} else {
+			_kind &= ~LinkType.GROUP;
+		}		
+	}
 
+	@Override
+	public boolean isGroup() {
+		return (_kind & LinkType.GROUP) != 0;
+	}
+	
 	/**
 	 * Checks if is hidden.
 	 * 
@@ -841,27 +855,6 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 		}
 		return false;
 	}
-
-	// /**
-	// * Unresolve a link.
-	// */
-	// private void unresolve() {
-	// if (getSource().isOrphan()) {
-	// return;
-	// }
-	//
-	// try {
-	// _destination = (ItemType) ((LogicalWorkspaceImpl)
-	// getLogicalWorkspace()).getItem(_destination.getId(),
-	// _destination.getType(), _destination.getQualifiedName(),
-	// _destination.getName());
-	// } catch (CadseException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	//
-	// _destination.addIncomingLink(this, false);
-	// }
 
 	/**
 	 * Recompute destination.
@@ -938,34 +931,6 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	public String getDestinationName() {
 		return _destination.getName();
 	}
-
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see
-	// fr.imag.adele.cadse.core.Link#moveAfter(fr.imag.adele.cadse.core.Link)
-	// */
-	// public void moveAfter(Link link) {
-	// if (getSource() != link.getSource()) {
-	// throw new IllegalArgumentException("not same source");
-	// }
-	//
-	// ((ItemImpl) this.getSource()).moveAfter(this, link);
-	// }
-	//
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see
-	// fr.imag.adele.cadse.core.Link#moveBefore(fr.imag.adele.cadse.core.Link)
-	// */
-	// public void moveBefore(Link link) {
-	// if (getSource() != link.getSource()) {
-	// throw new IllegalArgumentException("not same source");
-	// }
-	//
-	// ((ItemImpl) this.getSource()).moveBefore(this, link);
-	// }
 
 	/*
 	 * (non-Javadoc)
@@ -1052,5 +1017,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 		}
 		super.setParent(parent, lt);
 	}
+	
+	
 
 }
