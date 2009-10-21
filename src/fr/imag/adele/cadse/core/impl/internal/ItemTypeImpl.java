@@ -438,7 +438,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 		}
 
 		if (lt == CadseGCST.ITEM_TYPE_lt_LINK_TYPE) {
-
+			return null;
 		}
 		if (lt == CadseGCST.ITEM_TYPE_lt_CADSE_RUNTIME) {
 			_cadseName = destination.getQualifiedName();
