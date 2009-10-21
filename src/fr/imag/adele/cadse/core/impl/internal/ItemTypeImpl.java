@@ -43,7 +43,6 @@ import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CadseRuntime;
-import fr.imag.adele.cadse.core.CadseUtil;
 import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.DerivedLinkType;
 import fr.imag.adele.cadse.core.IItemFactory;
@@ -139,10 +138,10 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	private int									_intId;
 
 	/** The super type. */
-	ItemType									_superType 					= null;
+	ItemType									_superType					= null;
 
 	/** The sub types. */
-	private List<ItemType>	  					_subTypes;
+	private List<ItemType>						_subTypes;
 
 	IAttributeType<?>[]							_attributesDefinitions		= null;
 
@@ -162,7 +161,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	private int									_kind;
 
 	/** The item manager. */
-	private IItemManager						_itemManager					= null;
+	private IItemManager						_itemManager				= null;
 
 	/** The space keytype. */
 	private SpaceKeyType						_spaceKeytype				= null;
@@ -204,7 +203,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 
 	private String								_cadseName					= NO_VALUE_STRING;
 
-	private String								_packageName					= NO_VALUE_STRING;
+	private String								_packageName				= NO_VALUE_STRING;
 
 	private IItemFactory						_itemFactory;
 
@@ -212,9 +211,9 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	 * implementation of extension ...
 	 */
 	private ItemType[]							_extendedBy;
-	
+
 	private String								_managerClass;
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -286,15 +285,16 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 		_subTypes = null;
 		_superType = null;
 
-		//remove set super type from here, because super type can be not loaded at this time.
+		// remove set super type from here, because super type can be not loaded
+		// at this time.
 		// move this at commitLoadCreateLink and a finishLoad
 	}
 
 	@Override
 	public void loadItem(IWorkingLoadingItems wl, ItemDelta itemOperation, IErrorCollector errorCollector)
 			throws CadseException {
-		//correct link type Attributes is natif 
-		//TODO correct in model
+		// correct link type Attributes is natif
+		// TODO correct in model
 		if (CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES != null)
 			CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES.setIsNatif(true);
 		else {
@@ -312,7 +312,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 			errorCollector.addError(itemOperation.getId(), "Cannot load the url attribute "
 					+ itemOperation.getAttribute(CadseGCST.ITEM_TYPE_at_ICON_));
 		}
-		
+
 		if (this.getId().equals(CadseDomain.EXT_ITEM_ID) || this.getId().equals(CadseDomain.ITEM_ID)) {
 			_superType = null;
 		} else {
@@ -321,8 +321,6 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 			}
 		}
 	}
-	
-	
 
 	/**
 	 * Adds the sub item type.
@@ -509,28 +507,32 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	}
 
 	/**
-	 * Create a link type. <br/> <br/>
+	 * Create a link type. <br/>
+	 * <br/>
 	 * 
-	 * Pr�conditions: <br/> - 1. <tt>name</tt> cannot be null.<br/> - 2.
-	 * <tt>name</tt> cannot be empty. - 3. <tt>destination</tt> cannot be
-	 * null.<br/> - 4. <tt>name</tt> muqt be unique.<br/> - 5.
-	 * <tt>destination</tt> cannot be type workspace.<br/> - 6. <tt>min</tt>
-	 * must greater or equal 0; <tt>max</tt> either equal -1 (means the
-	 * instance's number of this link type is undefined), or either greater than
-	 * <tt>min</tt>.
+	 * Pr�conditions: <br/>
+	 * - 1. <tt>name</tt> cannot be null.<br/>
+	 * - 2. <tt>name</tt> cannot be empty. - 3. <tt>destination</tt> cannot be
+	 * null.<br/>
+	 * - 4. <tt>name</tt> muqt be unique.<br/>
+	 * - 5. <tt>destination</tt> cannot be type workspace.<br/>
+	 * - 6. <tt>min</tt> must greater or equal 0; <tt>max</tt> either equal -1
+	 * (means the instance's number of this link type is undefined), or either
+	 * greater than <tt>min</tt>.
 	 * 
 	 * @param intID
 	 *            the int id
-	 * @param min :
-	 *            the minimum instances of this link type that we want create.
-	 * @param max :
-	 *            the maximum instances of this link type that we want create.
+	 * @param min
+	 *            : the minimum instances of this link type that we want create.
+	 * @param max
+	 *            : the maximum instances of this link type that we want create.
 	 * @param selection
 	 *            the selection
-	 * @param destination :
-	 *            link type's destination.<br/> <br/>
-	 * @param name :
-	 *            name of link type to create.
+	 * @param destination
+	 *            : link type's destination.<br/>
+	 * <br/>
+	 * @param name
+	 *            : name of link type to create.
 	 * @param _kind
 	 *            the _kind
 	 * 
@@ -540,8 +542,8 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	 *       self.to->forAll(rt | rt.name <> id) -- id must be unique. pre: not
 	 *       destination.oclIsTypeOf(WorkspaceType) -- destination cannot be a
 	 *       Workspace Type. pre: ((max>=min)||(max==-1))&&(min>=0)) <br/>
-	 * @exception IllegalArgumentException:
-	 *                Invalid assignment, <tt>name</tt> can not be null.<br/>
+	 * @exception IllegalArgumentException
+	 *                : Invalid assignment, <tt>name</tt> can not be null.<br/>
 	 *                IllegalArgumentException: Invalid assignment,
 	 *                <tt>name</tt> can not be empty.<br/>
 	 *                IllegalArgumentException: Invalid assignment, item type
@@ -550,8 +552,10 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	 *                type <tt>destination</tt> already exist.<br/>
 	 *                IllegalArgumentException: Invalid assignment, you can not
 	 *                create a link type whose destination is an object of
-	 *                WorkspaceType.<br/> IllegalArgumentException: Invalid
-	 *                assignment, verify the values min and max.<br/> <br/>
+	 *                WorkspaceType.<br/>
+	 *                IllegalArgumentException: Invalid assignment, verify the
+	 *                values min and max.<br/>
+	 * <br/>
 	 */
 	public LinkType createLinkType(CompactUUID uuid, int intID, String name, int _kind, int min, int max,
 			String selection, ItemType destination) {
@@ -610,8 +614,8 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	 * (non-Javadoc)
 	 * 
 	 * @see fr.imag.adele.cadse.core.ItemType#createLinkType(int,
-	 *      java.lang.String, int, int, int, java.lang.String,
-	 *      fr.imag.adele.cadse.core.LinkType)
+	 * java.lang.String, int, int, int, java.lang.String,
+	 * fr.imag.adele.cadse.core.LinkType)
 	 */
 	public LinkType createLinkType(CompactUUID uuid, int intID, String id, int kind, int min, int max,
 			String selection, LinkType inverse) throws CadseException {
@@ -690,9 +694,11 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 		}
 		resetOutgoingLinkType();
 
-		//addInconmmingLink(ret, ret.getDestination(), CadseGCST.LINK_lt_DESTINATION);
-		//addInconmmingLink(ret, ret.getInverse(), CadseGCST.LINK_lt_INVERSE_LINK);
-		//addInconmmingLink(ret, ret.getSource(), CadseGCST.LINK_lt_SOURCE);
+		// addInconmmingLink(ret, ret.getDestination(),
+		// CadseGCST.LINK_lt_DESTINATION);
+		// addInconmmingLink(ret, ret.getInverse(),
+		// CadseGCST.LINK_lt_INVERSE_LINK);
+		// addInconmmingLink(ret, ret.getSource(), CadseGCST.LINK_lt_SOURCE);
 		return l;
 	}
 
@@ -725,7 +731,9 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.ItemImpl#addIncomingLink(fr.imag.adele.cadse.core.Link)
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.ItemImpl#addIncomingLink(fr.imag.adele
+	 * .cadse.core.Link)
 	 */
 	@Override
 	public synchronized void addIncomingLink(Link link, boolean notifie) {
@@ -755,7 +763,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	public LinkType getOutgoingLinkType(String name) {
 		return _getOutgoingLinkType(this, name);
 	}
-	
+
 	static public LinkType _getOutgoingLinkType(ItemType _this, String name) {
 		IAttributeType<? extends Object> a = _this.getAttributeType(name, false);
 		if (a instanceof LinkType) {
@@ -768,13 +776,14 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ItemType#getOutgoingLinkType(fr.imag.adele.cadse.core.ItemType,
-	 *      java.lang.String)
+	 * @see
+	 * fr.imag.adele.cadse.core.ItemType#getOutgoingLinkType(fr.imag.adele.cadse
+	 * .core.ItemType, java.lang.String)
 	 */
 	public LinkType getOutgoingLinkType(ItemType destination, String name) {
 		return _getOutgoingLinkType(this, destination, name);
 	}
-	
+
 	static public LinkType _getOutgoingLinkType(ItemType _this, ItemType destination, String name) {
 		Iterator<LinkType> iter = _this.getOutgoingLinkTypes().iterator();
 		while (iter.hasNext()) {
@@ -790,8 +799,9 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ItemType#getOutgoingLinkType(fr.imag.adele.cadse.core.ItemType,
-	 *      int)
+	 * @see
+	 * fr.imag.adele.cadse.core.ItemType#getOutgoingLinkType(fr.imag.adele.cadse
+	 * .core.ItemType, int)
 	 */
 	public LinkType getOutgoingLinkType(ItemType dest, int kind) {
 		return _getOutgoingLinkType(this, dest, kind);
@@ -952,34 +962,38 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	/* PRIVATE METHODS */
 
 	/**
-	 * Test preconditions before creating a link type.<br/><br/>
+	 * Test preconditions before creating a link type.<br/>
+	 * <br/>
 	 * 
-	 * Preconditions: <br/> - 1. <tt>name</tt> cannot be null.<br/> - 2.
-	 * <tt>name</tt> cannot be empty. - 3. <tt>destination</tt> cannot be
-	 * null.<br/> - 4. <tt>name</tt> muqt be unique.<br/> - 5.
-	 * <tt>destination</tt> cannot be type workspace.<br/> - 6. <tt>min</tt>
-	 * must greater or equal 0; <tt>max</tt> either equal -1 (means the
-	 * instance's number of this link type is undefined), or either greater than
-	 * <tt>min</tt>.
+	 * Preconditions: <br/>
+	 * - 1. <tt>name</tt> cannot be null.<br/>
+	 * - 2. <tt>name</tt> cannot be empty. - 3. <tt>destination</tt> cannot be
+	 * null.<br/>
+	 * - 4. <tt>name</tt> muqt be unique.<br/>
+	 * - 5. <tt>destination</tt> cannot be type workspace.<br/>
+	 * - 6. <tt>min</tt> must greater or equal 0; <tt>max</tt> either equal -1
+	 * (means the instance's number of this link type is undefined), or either
+	 * greater than <tt>min</tt>.
 	 * 
-	 * @param name :
-	 *            name of link type to create.
-	 * @param kind :
-	 *            kind of link type, can be a Aggregation, or a Contaiment, or
+	 * @param name
+	 *            : name of link type to create.
+	 * @param kind
+	 *            : kind of link type, can be a Aggregation, or a Contaiment, or
 	 *            Other.
-	 * @param min :
-	 *            the minimum instances of this link type that we want create.
-	 * @param max :
-	 *            the maximum instances of this link type that we want create.
-	 * @param destination :
-	 *            link type's destination.<br/> <br/>
+	 * @param min
+	 *            : the minimum instances of this link type that we want create.
+	 * @param max
+	 *            : the maximum instances of this link type that we want create.
+	 * @param destination
+	 *            : link type's destination.<br/>
+	 * <br/>
 	 * 
 	 * @OCL: pre: name <> null pre: id <> '' pre: destination <> null pre:
 	 *       self.to->forAll(rt | rt.name <> id) -- id must be unique. pre: not
 	 *       destination.oclIsTypeOf(WorkspaceType) -- destination cannot be a
 	 *       Workspace Type. pre: ((max>=min)||(max==-1))&&(min>=0))
-	 * @exception IllegalArgumentException:
-	 *                Invalid assignment, <tt>name</tt> can not be null.<br/>
+	 * @exception IllegalArgumentException
+	 *                : Invalid assignment, <tt>name</tt> can not be null.<br/>
 	 *                IllegalArgumentException: Invalid assignment,
 	 *                <tt>name</tt> can not be empty.<br/>
 	 *                IllegalArgumentException: Invalid assignment, item type
@@ -988,8 +1002,9 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	 *                type <tt>destination</tt> already exist.<br/>
 	 *                IllegalArgumentException: Invalid assignment, you can not
 	 *                create a link type whose destination is an object of
-	 *                WorkspaceType.<br/> IllegalArgumentException: Invalid
-	 *                assignment, verify the values min and max.<br/>
+	 *                WorkspaceType.<br/>
+	 *                IllegalArgumentException: Invalid assignment, verify the
+	 *                values min and max.<br/>
 	 */
 	private void preconditions_createLinkType(String name, int kind, int min, int max, ItemType destination) {
 
@@ -1160,7 +1175,9 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ItemType#getIncomingPart(fr.imag.adele.cadse.core.ItemType)
+	 * @see
+	 * fr.imag.adele.cadse.core.ItemType#getIncomingPart(fr.imag.adele.cadse
+	 * .core.ItemType)
 	 */
 	public LinkType getIncomingPart(ItemType typeParent) {
 
@@ -1176,7 +1193,9 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ItemType#getIncomingOne(fr.imag.adele.cadse.core.ItemType)
+	 * @see
+	 * fr.imag.adele.cadse.core.ItemType#getIncomingOne(fr.imag.adele.cadse.
+	 * core.ItemType)
 	 */
 	public LinkType getIncomingOne(ItemType typeParent) throws CadseException {
 		LinkType found = null;
@@ -1186,8 +1205,10 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 					found = lt;
 				} else {
 					return null;
-					
-					//throw new CadseException(Messages.error_linktype_more_one_link_found, typeParent.getId(), getId());
+
+					// throw new
+					// CadseException(Messages.error_linktype_more_one_link_found,
+					// typeParent.getId(), getId());
 				}
 			}
 		}
@@ -1273,9 +1294,10 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 		if (CadseGCST.ITEM_TYPE_at_MANAGER_CLASS_ == type) {
 			return (T) _managerClass;
 		}
-		/*if (CadseGCST.ITEM_TYPE_at_CADSE_NAME_ == type) {
-			return (T) getCadseName();
-		}*/
+		/*
+		 * if (CadseGCST.ITEM_TYPE_at_CADSE_NAME_ == type) { return (T)
+		 * getCadseName(); }
+		 */
 		if (CadseGCST.ITEM_TYPE_at_HAS_CONTENT_ == type) {
 			return (T) Boolean.valueOf(this._hasContent);
 		}
@@ -1283,7 +1305,8 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 			return (T) Boolean.valueOf((this._kind & ItemType.ROOT_ELEMENT) != 0);
 		}
 		if (CadseGCST.ITEM_TYPE_at_ICON_ == type) {
-			if (_icon == null) return null;
+			if (_icon == null)
+				return null;
 			return (T) _icon.getPath();
 		}
 		if (CadseGCST.ITEM_TYPE_at_ITEM_FACTORY_ == type) {
@@ -1299,20 +1322,19 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 		if (CadseGCST.ITEM_TYPE_at_PACKAGE_NAME_ == type) {
 			return (T) _packageName;
 		}
-		
+
 		if (CadseGCST.ABSTRACT_ITEM_TYPE_at_ID_RUNTIME_ == type) {
 			if (isRuntime())
 				return (T) getId().toString();
-			
-				
+
 		}
 		return super.internalGetOwnerAttribute(type);
 	}
 
-	
 	public boolean isRuntime() {
 		CadseRuntime cr = getCadseRuntime();
-		if (cr == null) return false;
+		if (cr == null)
+			return false;
 		return cr.getType() == CadseGCST.CADSE_RUNTIME;
 	}
 
@@ -1337,8 +1359,9 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.ItemImpl#setAttribute(java.lang.String,
-	 *      java.lang.Object)
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.ItemImpl#setAttribute(java.lang.String,
+	 * java.lang.Object)
 	 */
 
 	@Override
@@ -1359,8 +1382,10 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 			return true;
 		}
 		if (CadseGCST.ITEM_TYPE_at_MANAGER_CLASS_ == type) {
-			if ("".equals(value)) return false;
-			if (isRuntime()) return false;
+			if ("".equals(value))
+				return false;
+			if (isRuntime())
+				return false;
 			_managerClass = Convert.toString(value);
 			return true;
 		}
@@ -1412,32 +1437,35 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.IAttributableType#addAttributeType(fr.imag.adele.cadse.core.IAttributeType)
+	 * @see
+	 * fr.imag.adele.cadse.core.IAttributableType#addAttributeType(fr.imag.adele
+	 * .cadse.core.IAttributeType)
 	 */
 	public <T> Link _addAttributeType(IAttributeType<T> type) {
 		int index = ArraysUtil.indexOf(_attributesDefinitions, type);
 		if (index != -1) {
-			_wl._wd.log(getDisplayName(), "Cannot add "+type, null);
+			_wl._wd.log(getDisplayName(), "Cannot add " + type, null);
 			return null;
 		}
-		
+
 		_attributesDefinitions = ArraysUtil.add(IAttributeType.class, _attributesDefinitions, type);
 		type.setParent(this, CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES);
 		index = _attributesDefinitions.length - 1;
-		
+
 		if (CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES == null) {
 			// le model root n'est pas encore charg�.
 			return null;
 		}
-		
-		
+
 		return new ReflectLink(CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES, this, type, index);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.IAttributableType#addAttributeType(fr.imag.adele.cadse.core.IAttributeType)
+	 * @see
+	 * fr.imag.adele.cadse.core.IAttributableType#addAttributeType(fr.imag.adele
+	 * .cadse.core.IAttributeType)
 	 */
 	public <T> int removeAttributeType(IAttributeType<T> type) {
 		int index = ArraysUtil.indexOf(_attributesDefinitions, type);
@@ -1516,7 +1544,9 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.IAttributableType#getAttributeType(java.lang.String)
+	 * @see
+	 * fr.imag.adele.cadse.core.IAttributableType#getAttributeType(java.lang
+	 * .String)
 	 */
 
 	public IAttributeType<?> getAttributeType(String name) {
@@ -1536,14 +1566,14 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 		if (DISPLAY_NAME_KEY.equals(name)) {
 			return CadseGCST.ITEM_at_DISPLAY_NAME_;
 		}
-		if ("UUID_ATTRIBUTE".equals(name)) {
-			if (this == CadseGCST.CADSE_DEFINITION)
-				return CadseGCST.CADSE_DEFINITION_at_ID_RUNTIME_;
-			if (this == CadseGCST.ATTRIBUTE)
-				return CadseGCST.ATTRIBUTE_at_ID_RUNTIME_;
-			if (this == CadseGCST.ABSTRACT_ITEM_TYPE)
-				return CadseGCST.ABSTRACT_ITEM_TYPE_at_ID_RUNTIME_;
-		}
+		// if ("UUID_ATTRIBUTE".equals(name)) {
+		// if (this == CadseGCST.CADSE_DEFINITION)
+		// return CadseGCST.CADSE_DEFINITION_at_ID_RUNTIME_;
+		// if (this == CadseGCST.ATTRIBUTE)
+		// return CadseGCST.ATTRIBUTE_at_ID_RUNTIME_;
+		// if (this == CadseGCST.ABSTRACT_ITEM_TYPE)
+		// return CadseGCST.ABSTRACT_ITEM_TYPE_at_ID_RUNTIME_;
+		// }
 
 		IAttributeType<?> ret = null;
 		if (__cache_attributeTypes != null) {
@@ -1623,8 +1653,8 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 		if (creationPages == null || creationPages.size() == 0) {
 			return; // todo nothing
 		}
-		this._creationPagesFactories = ArraysUtil
-				.addList(IPageFactory.class, this._creationPagesFactories, creationPages);
+		this._creationPagesFactories = ArraysUtil.addList(IPageFactory.class, this._creationPagesFactories,
+				creationPages);
 		resetCreationPages();
 	}
 
@@ -1960,9 +1990,10 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ItemType#getGoodCreationPage(fr.imag.adele.cadse.core.Item,
-	 *      fr.imag.adele.cadse.core.ItemType,
-	 *      fr.imag.adele.cadse.core.LinkType)
+	 * @see
+	 * fr.imag.adele.cadse.core.ItemType#getGoodCreationPage(fr.imag.adele.cadse
+	 * .core.Item, fr.imag.adele.cadse.core.ItemType,
+	 * fr.imag.adele.cadse.core.LinkType)
 	 */
 	public Pages getGoodCreationPage(Item parent, ItemType type, LinkType lt) throws CadseException {
 		return createCreationPage(parent, type, lt);
@@ -2115,7 +2146,9 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ItemType#getGoodModificationPage(fr.imag.adele.cadse.core.Item)
+	 * @see
+	 * fr.imag.adele.cadse.core.ItemType#getGoodModificationPage(fr.imag.adele
+	 * .cadse.core.Item)
 	 */
 	public Pages getGoodModificationPage(Item selected) {
 		IPageFactory[] pf = getGoodModificationPage_();
@@ -2126,7 +2159,9 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ItemType#getGoodModificationPage(fr.imag.adele.cadse.core.IItemNode)
+	 * @see
+	 * fr.imag.adele.cadse.core.ItemType#getGoodModificationPage(fr.imag.adele
+	 * .cadse.core.IItemNode)
 	 */
 	public Pages getGoodModificationPage(IItemNode node) {
 		IPageFactory[] pf = getGoodModificationPage_();
@@ -2159,7 +2194,9 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ItemType#setSpaceKeyType(fr.imag.adele.cadse.core.key.SpaceKeyType)
+	 * @see
+	 * fr.imag.adele.cadse.core.ItemType#setSpaceKeyType(fr.imag.adele.cadse
+	 * .core.key.SpaceKeyType)
 	 */
 	public void setSpaceKeyType(SpaceKeyType spaceKeytype) {
 		this._spaceKeytype = spaceKeytype;
@@ -2195,7 +2232,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 		if (cr != null) {
 			_cadseName = cr.getQualifiedName();
 		}
-		this._cadseName = cadseName;		
+		this._cadseName = cadseName;
 	}
 
 	@Override
@@ -2216,7 +2253,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 			ret.addOutgoing(CadseGCST.ITEM_TYPE_lt_CREATION_PAGES, Item.IS_HIDDEN, _creationPages);
 		}
 		if (linkType == CadseGCST.ITEM_TYPE_lt_MODIFICATION_PAGES) {
-			ret.addOutgoing(CadseGCST.ITEM_TYPE_lt_MODIFICATION_PAGES,Item.IS_HIDDEN, _modificationPages);
+			ret.addOutgoing(CadseGCST.ITEM_TYPE_lt_MODIFICATION_PAGES, Item.IS_HIDDEN, _modificationPages);
 		}
 		super.collectOutgoingLinks(linkType, ret);
 	}
@@ -2266,7 +2303,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 
 	private LogicalWorkspaceTransactionListener[]	workspaceLogiqueCopyListeners;
 
-	private String _cstName;
+	private String									_cstName;
 
 	public void addLogicalWorkspaceTransactionListener(LogicalWorkspaceTransactionListener l) {
 		workspaceLogiqueCopyListeners = ArraysUtil.add(LogicalWorkspaceTransactionListener.class,
@@ -2302,14 +2339,14 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	public String getItemManagerClass() {
 		if (_managerClass == null && getItemManager() != null)
 			_managerClass = getItemManager().getClass().getName();
-			
+
 		return _managerClass;
 	}
-	
+
 	public String getCSTName() {
 		return _cstName;
 	}
-	
+
 	public void setCSTName(String cst) {
 		_cstName = cst;
 	}
