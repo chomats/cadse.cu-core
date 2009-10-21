@@ -87,13 +87,13 @@ import fr.imag.adele.cadse.core.util.IErrorCollector;
 import fr.imag.adele.cadse.core.util.OrderWay;
 
 public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
-	static Map<Class<?>, ItemDeltaAdapterFactory<?>> _registerAdapter = new HashMap<Class<?>, ItemDeltaAdapterFactory<?>>();
+	static Map<Class<?>, ItemDeltaAdapterFactory<?>>	_registerAdapter	= new HashMap<Class<?>, ItemDeltaAdapterFactory<?>>();
 	static {
 		_registerAdapter.put(ItemType.class, new ItemTypeItemDeltaAdapterFactory());
 		_registerAdapter.put(LinkType.class, new LinkTypeItemDeltaAdapterFactory());
 		_registerAdapter.put(CadseRuntime.class, new CadseRuntimeItemDeltaAdapterFactory());
 	}
-	
+
 	public static void aRefx(MappingOperation a, MappingOperation x) {
 		if (a == null) {
 			return;
@@ -109,7 +109,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	}
 
 	private Map<LinkKey, LinkDelta>					_links				= null;
-	private LinkDelta[]								_incomingLinks 		= null;
+	private LinkDelta[]								_incomingLinks		= null;
 	private List<LinkDelta>							_orders				= null;
 	private List<OrderOperation>					_ordersOperation	= null;
 	private MappingOperation[]						_mappings			= null;
@@ -132,11 +132,10 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	private boolean									_doubleClick;
 	private ISpaceKey								_key;
 	private SpaceKeyDeltaImpl						_keyDelta;
-	private Item _baseItem;
-	private ISpaceKey _nextKey;
+	private Item									_baseItem;
+	private ISpaceKey								_nextKey;
 
-	public ItemDeltaImpl(LogicalWorkspaceTransactionImpl copy, CompactUUID id, CompactUUID type, boolean add)
-			 {
+	public ItemDeltaImpl(LogicalWorkspaceTransactionImpl copy, CompactUUID id, CompactUUID type, boolean add) {
 		super(OperationTypeCst.ITEM_OPERATION, null);
 		Assert.isNotNull(id);
 		Assert.isNotNull(type);
@@ -172,7 +171,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		this._id = original.getId();
 		this._itemType = original.getType();
 		this._itemTypeId = original.getType().getId();
-		this._baseItem =  original;
+		this._baseItem = original;
 		Item partParent = original.getPartParent();
 		if (partParent != null)
 			this._parentItem = copy.getItem(partParent);
@@ -184,8 +183,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#addIncomingLink(fr.imag.adele.cadse.core.Link,
-	 *      boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#addIncomingLink(fr.imag
+	 * .adele.cadse.core.Link, boolean)
 	 */
 	public void addIncomingLink(Link linkImpl, boolean notifie) {
 		_incomingLinks = ArraysUtil.add(LinkDelta.class, _incomingLinks, (LinkDelta) linkImpl);
@@ -197,15 +197,16 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#addInParent()
 	 */
 	@Override
-	public void addInParent()  {
+	public void addInParent() {
 		_copy.actionAddOperation(this);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#addListener(fr.imag.adele.cadse.core.WorkspaceListener,
-	 *      fr.imag.adele.cadse.core.EventFilter)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#addListener(fr.imag.adele
+	 * .cadse.core.WorkspaceListener, fr.imag.adele.cadse.core.EventFilter)
 	 */
 	public void addListener(WorkspaceListener l, EventFilter eventFilter) {
 	}
@@ -213,8 +214,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#addListener(fr.imag.adele.cadse.core.WorkspaceListener,
-	 *      int)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#addListener(fr.imag.adele
+	 * .cadse.core.WorkspaceListener, int)
 	 */
 	public void addListener(WorkspaceListener l, int eventFilter) {
 	}
@@ -222,7 +224,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#addMappingOperaion(fr.imag.adele.cadse.core.delta.MappingOperation)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#addMappingOperaion(fr
+	 * .imag.adele.cadse.core.delta.MappingOperation)
 	 */
 	public void addMappingOperaion(MappingOperation mappingOperation) throws CadseException {
 		this._mappings = ArraysUtil.add(MappingOperation.class, this._mappings, mappingOperation);
@@ -233,8 +237,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#addOutgoingItem(fr.imag.adele.cadse.core.LinkType,
-	 *      fr.imag.adele.cadse.core.Item)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#addOutgoingItem(fr.imag
+	 * .adele.cadse.core.LinkType, fr.imag.adele.cadse.core.Item)
 	 */
 	public LinkDelta addOutgoingItem(LinkType lt, Item destination) throws CadseException {
 		getWorkingCopy().check_write();
@@ -254,8 +259,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#canCreateLink(fr.imag.adele.cadse.core.LinkType,
-	 *      fr.imag.adele.cadse.core.CompactUUID)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#canCreateLink(fr.imag
+	 * .adele.cadse.core.LinkType, fr.imag.adele.cadse.core.CompactUUID)
 	 */
 	public boolean canCreateLink(LinkType lt, CompactUUID destination) {
 		return true;
@@ -264,7 +270,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#canEditeContent(java.lang.String)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#canEditeContent(java.
+	 * lang.String)
 	 */
 	public boolean canEditContent(String slashedPath) {
 		return true;
@@ -273,8 +281,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#canSetAttribute(java.lang.String,
-	 *      java.lang.Object)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#canSetAttribute(java.
+	 * lang.String, java.lang.Object)
 	 */
 	public boolean canSetAttribute(String key, Object value) {
 		return true;
@@ -285,27 +294,29 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 			throw new CadseIllegalArgumentException(Messages.parameter_link_one_is_null);
 		}
 		if (linkTwo == null) {
-			throw new CadseIllegalArgumentException(Messages.parameter_link_two_is_null , linkTwo_);
+			throw new CadseIllegalArgumentException(Messages.parameter_link_two_is_null, linkTwo_);
 		}
 		if (linkOne.isDeleted()) {
-			throw new CadseIllegalArgumentException(Messages.parameter_link_one_is_deleted , linkOne);
+			throw new CadseIllegalArgumentException(Messages.parameter_link_one_is_deleted, linkOne);
 		}
 		if (linkTwo.isDeleted()) {
-			throw new CadseIllegalArgumentException(Messages.parameter_link_two_id_deleted , linkTwo);
+			throw new CadseIllegalArgumentException(Messages.parameter_link_two_id_deleted, linkTwo);
 		}
 		if (linkOne.getSource() != linkTwo.getSource()) {
 			throw new CadseIllegalArgumentException(Messages.link_has_not_same_source);
 		}
 		if (linkOne.getLinkType() != null && linkTwo.getLinkType() != linkOne.getLinkType()) {
-			throw new CadseIllegalArgumentException(Messages.link_has_not_same_link_type_or_null, linkOne.getLinkType(), linkTwo.getLinkType());
+			throw new CadseIllegalArgumentException(Messages.link_has_not_same_link_type_or_null,
+					linkOne.getLinkType(), linkTwo.getLinkType());
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#commitLoadCreateLink(fr.imag.adele.cadse.core.LinkType,
-	 *      fr.imag.adele.cadse.core.Item)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#commitLoadCreateLink(
+	 * fr.imag.adele.cadse.core.LinkType, fr.imag.adele.cadse.core.Item)
 	 */
 	public Link commitLoadCreateLink(LinkType lt, Item destination) {
 		throw new UnsupportedOperationException();
@@ -314,8 +325,10 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#commitMove(fr.imag.adele.cadse.core.util.OrderWay,
-	 *      fr.imag.adele.cadse.core.Link, fr.imag.adele.cadse.core.Link)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#commitMove(fr.imag.adele
+	 * .cadse.core.util.OrderWay, fr.imag.adele.cadse.core.Link,
+	 * fr.imag.adele.cadse.core.Link)
 	 */
 	public boolean commitMove(OrderWay kind, Link l1, Link l2) throws CadseException {
 		if (kind == OrderWay.move_after) {
@@ -330,8 +343,10 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#commitSetAttribute(fr.imag.adele.cadse.core.attribute.IAttributeType,
-	 *      java.lang.String, java.lang.Object)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#commitSetAttribute(fr
+	 * .imag.adele.cadse.core.attribute.IAttributeType, java.lang.String,
+	 * java.lang.Object)
 	 */
 	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
 		throw new UnsupportedOperationException();
@@ -340,8 +355,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#computeAttribute(java.lang.String,
-	 *      java.lang.Object, java.lang.Object, java.lang.Object)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#computeAttribute(java
+	 * .lang.String, java.lang.Object, java.lang.Object, java.lang.Object)
 	 */
 	public void computeAttribute(String attributeName, Object theirsValue, Object baseValue, Object mineValue) {
 		throw new UnsupportedOperationException();
@@ -359,7 +375,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#containsComponent(fr.imag.adele.cadse.core.CompactUUID)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#containsComponent(fr.
+	 * imag.adele.cadse.core.CompactUUID)
 	 */
 	@Deprecated
 	public boolean containsComponent(CompactUUID id) {
@@ -367,20 +385,25 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		// throw new UnsupportedOperationException();
 		/*
 		 * TODO implements java.lang.UnsupportedOperationException at
-		 * fr.imag.adele.cadse.core.delta.ItemOperation.containsComponent(ItemOperation.java:236)
-		 * at
-		 * fr.imag.adele.cadse.core.internal.WorkspaceLogique.constraints_DestItem(WorkspaceLogique.java:2270)
-		 * at
-		 * fr.imag.adele.cadse.core.internal.WorkspaceLogique.preconditions_createLink(WorkspaceLogique.java:2080)
-		 * at
-		 * fr.imag.adele.cadse.core.internal.WorkspaceLogique.commit(WorkspaceLogique.java:2371)
+		 * fr.imag.adele
+		 * .cadse.core.delta.ItemOperation.containsComponent(ItemOperation
+		 * .java:236) at
+		 * fr.imag.adele.cadse.core.internal.WorkspaceLogique.constraints_DestItem
+		 * (WorkspaceLogique.java:2270) at
+		 * fr.imag.adele.cadse.core.internal.WorkspaceLogique
+		 * .preconditions_createLink(WorkspaceLogique.java:2080) at
+		 * fr.imag.adele
+		 * .cadse.core.internal.WorkspaceLogique.commit(WorkspaceLogique
+		 * .java:2371)
 		 */
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#containsPart(fr.imag.adele.cadse.core.Item)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#containsPart(fr.imag.
+	 * adele.cadse.core.Item)
 	 */
 	public boolean containsPartChild(Item item) {
 		throw new UnsupportedOperationException();
@@ -408,19 +431,21 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	public LinkDelta createLink(LinkType lt, Item destination) throws CadseException {
 		return createLink(lt, destination, true);
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#createLink(fr.imag.adele.cadse.core.LinkType,
-	 *      fr.imag.adele.cadse.core.Item)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#createLink(fr.imag.adele
+	 * .cadse.core.LinkType, fr.imag.adele.cadse.core.Item)
 	 */
 	public LinkDelta createLink(LinkType lt, Item destination, boolean notify) throws CadseException {
 		// 2. Type of destination must be the same type as item type destination
 		// defined in lt
 		if (!destination.isInstanceOf(lt.getDestination())) {
-			throw new CadseException(Messages.cannot_create_link_bad_link_type,
-					getId(), getQualifiedName(), destination.getId(), destination.getQualifiedName(), lt.getName(), lt
-							.getDestination().getName(), destination.getType().getName());
+			throw new CadseException(Messages.cannot_create_link_bad_link_type, getId(), getQualifiedName(),
+					destination.getId(), destination.getQualifiedName(), lt.getName(), lt.getDestination().getName(),
+					destination.getType().getName());
 		}
 
 		getWorkingCopy().check_write();
@@ -439,18 +464,17 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		if (!exists()) {
 			throw new CadseException(Messages.cannot_create_link_from_unexisting_source, this, destiDelta);
 		}
-		
+
 		linkOperation = getOrCreateLinkOperation(lt.getName(), destiDelta, null, -1, false);
 		if (linkOperation.isAdded()) {
 			return linkOperation;
 		}
 		LogicalWorkspaceImpl.constraints_SourceItem(linkOperation, lt, this);
-			
+
 		_copy.validateCreatedLink(linkOperation);
-			
+
 		// synchronize _parentItem attribute
-		if (lt == CadseGCST.ITEM_lt_PARENT 
-				|| linkOperation.getLinkTypeName().startsWith("#inverse-part")  //$NON-NLS-1$
+		if (lt == CadseGCST.ITEM_lt_PARENT || linkOperation.getLinkTypeName().startsWith("#inverse-part") //$NON-NLS-1$
 				|| linkOperation.getLinkTypeName().startsWith("#invert_part")) { //$NON-NLS-1$
 			setParent(destiDelta, null);
 		}
@@ -464,20 +488,21 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		CreateOperationImpl createOperation = new CreateOperationImpl(linkOperation);
 		linkOperation.setCreateOperation(createOperation);
 		createOperation.addInParent();
-		if (notify) 
+		if (notify)
 			getWorkingCopy().notifyCreatedLink(linkOperation);
-	
+
 		return linkOperation;
 	}
 
 	public boolean exists() {
-		return isAdded() || isLoaded() || (getBaseItem() != null &&  getBaseItem().exists());
+		return isAdded() || isLoaded() || (getBaseItem() != null && getBaseItem().exists());
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#createPartParentLink()
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#createPartParentLink()
 	 */
 	public void createPartParentLink() throws CadseException {
 		if (_parentItem != null && _parentLinkType != null) {
@@ -501,8 +526,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#delete(fr.imag.adele.cadse.core.delta.DeleteOperation,
-	 *      int)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#delete(fr.imag.adele.
+	 * cadse.core.delta.DeleteOperation, int)
 	 */
 	public void delete(DeleteOperation operation, int flag) throws CadseException {
 		getWorkingCopy().check_write();
@@ -543,7 +569,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 			}
 			if (isLoaded())
 				setLoaded(false);
-			
+
 			if (getBaseItem() == null || !getBaseItem().isResolved()) {
 				// /the item doesn't exist in workspace logique
 				return;
@@ -563,7 +589,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 					itemOfType.delete(operation, flag);
 				}
 			}
-			
+
 			// add deleted operation
 
 			DeleteOperationImpl deleteOperation = new DeleteOperationImpl(this, (DeleteOperationImpl) operation);
@@ -609,7 +635,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#forceState(fr.imag.adele.cadse.core.ItemState)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#forceState(fr.imag.adele
+	 * .cadse.core.ItemState)
 	 */
 	public void forceState(ItemState state) {
 		throw new UnsupportedOperationException();
@@ -645,7 +673,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getAndCreateContentManager()
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getAndCreateContentManager
+	 * ()
 	 */
 	public ContentItem getAndCreateContentManager() {
 		return getContentItem();
@@ -699,7 +729,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getAttribute(fr.imag.adele.cadse.core.attribute.IAttributeType)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getAttribute(fr.imag.
+	 * adele.cadse.core.attribute.IAttributeType)
 	 */
 	public <T> T getAttribute(IAttributeType<T> att) {
 		return getAttribute(att, true);
@@ -708,7 +740,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getAttribute(java.lang.String)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getAttribute(java.lang
+	 * .String)
 	 */
 	@Override
 	@Deprecated
@@ -750,8 +784,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getAttributeH(java.lang.String,
-	 *      boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getAttributeH(java.lang
+	 * .String, boolean)
 	 */
 	@Deprecated
 	public <T> T getAttributeH(String key, boolean fromSuperIfNull) {
@@ -786,7 +821,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getAttributeOwner(fr.imag.adele.cadse.core.attribute.IAttributeType)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getAttributeOwner(fr.
+	 * imag.adele.cadse.core.attribute.IAttributeType)
 	 */
 	public <T> T getAttributeOwner(IAttributeType<T> att) {
 		return getAttribute(att);
@@ -795,7 +832,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getAttributeType(fr.imag.adele.cadse.core.delta.SetAttributeOperation)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getAttributeType(fr.imag
+	 * .adele.cadse.core.delta.SetAttributeOperation)
 	 */
 	@Override
 	public IAttributeType<?> getAttributeType(SetAttributeOperation setAttributeOperation) {
@@ -806,8 +845,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getAttributeWithDefaultValue(fr.imag.adele.cadse.core.attribute.IAttributeType,
-	 *      T)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getAttributeWithDefaultValue
+	 * (fr.imag.adele.cadse.core.attribute.IAttributeType, T)
 	 */
 	public <T> T getAttributeWithDefaultValue(IAttributeType<T> att, T defaultValue) {
 		T v = getAttribute(att);
@@ -820,8 +860,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getAttributeWithDefaultValue(java.lang.String,
-	 *      T)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getAttributeWithDefaultValue
+	 * (java.lang.String, T)
 	 */
 	@Deprecated
 	public <T> T getAttributeWithDefaultValue(String key, T defaultValue) {
@@ -846,8 +887,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getBooleanAttribut(fr.imag.adele.cadse.core.attribute.BooleanAttributeType,
-	 *      boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getBooleanAttribut(fr
+	 * .imag.adele.cadse.core.attribute.BooleanAttributeType, boolean)
 	 */
 	public boolean getBooleanAttribut(BooleanAttributeType key, boolean defaultValue) {
 		if (_attributes != null) {
@@ -862,7 +904,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getComponentInfo(fr.imag.adele.cadse.core.CompactUUID)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getComponentInfo(fr.imag
+	 * .adele.cadse.core.CompactUUID)
 	 */
 	public Item getComponentInfo(CompactUUID id) {
 		// TODO Auto-generated method stub
@@ -899,7 +943,8 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getContentChangeInfo()
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getContentChangeInfo()
 	 */
 	public ContentChangeInfo[] getContentChangeInfo() {
 		throw new UnsupportedOperationException();
@@ -939,7 +984,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getDerivedLinkDescriptions(fr.imag.adele.cadse.core.ItemDescription)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getDerivedLinkDescriptions
+	 * (fr.imag.adele.cadse.core.ItemDescription)
 	 */
 	public Set<DerivedLinkDescription> getDerivedLinkDescriptions(ItemDescription source) {
 		throw new UnsupportedOperationException();
@@ -968,8 +1015,6 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		return displayName;
 	}
 
-	
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -982,8 +1027,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getIncomingItem(boolean,
-	 *      boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getIncomingItem(boolean,
+	 * boolean)
 	 */
 	public Collection<ItemDelta> getIncomingItems(boolean acceptDelete, boolean acceptAdd) {
 		return Accessor.getIncomingItemDelta(getIncomingLinks(acceptDelete, acceptAdd));
@@ -992,8 +1038,10 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#getIncomingLinks(fr.imag.adele.cadse.core.delta.ItemOperation,
-	 *      fr.imag.adele.cadse.core.LinkType, boolean, boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #getIncomingLinks(fr.imag.adele.cadse.core.delta.ItemOperation,
+	 * fr.imag.adele.cadse.core.LinkType, boolean, boolean)
 	 */
 	public List<Link> getIncomingLinks(LinkType lt, boolean acceptDelete, boolean acceptAdd) {
 		List<? extends Link> links = getIncomingLinks(acceptDelete, acceptAdd);
@@ -1005,12 +1053,14 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		}
 		return ret;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#getIncomingLinks(fr.imag.adele.cadse.core.delta.ItemOperation,
-	 *      fr.imag.adele.cadse.core.LinkType, boolean, boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #getIncomingLinks(fr.imag.adele.cadse.core.delta.ItemOperation,
+	 * fr.imag.adele.cadse.core.LinkType, boolean, boolean)
 	 */
 	public List<LinkDelta> getIncomingLinkDeltas(LinkType lt, boolean acceptDelete, boolean acceptAdd) {
 		List<? extends Link> links = getIncomingLinks(acceptDelete, acceptAdd);
@@ -1022,27 +1072,29 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		}
 		return ret;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getIncomingItem(fr.imag.adele.cadse.core.LinkType,
-	 *      boolean, boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getIncomingItem(fr.imag
+	 * .adele.cadse.core.LinkType, boolean, boolean)
 	 */
 	public Collection<ItemDelta> getIncomingItems(LinkType lt, boolean acceptDelete, boolean acceptAdd) {
 		return Accessor.getIncomingItemDelta(getIncomingLinkDeltas(lt, acceptDelete, acceptAdd));
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#getIncomingItem(fr.imag.adele.cadse.core.delta.ItemOperation,
-	 *      boolean, boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #getIncomingItem(fr.imag.adele.cadse.core.delta.ItemOperation, boolean,
+	 * boolean)
 	 */
 	public Collection<Item> getIncomingItem(boolean acceptDelete, boolean acceptAdd) {
 		return Accessor.getIncomingItem(getIncomingLinks(acceptDelete, acceptAdd));
 	}
-
 
 	/*
 	 * (non-Javadoc)
@@ -1056,7 +1108,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getIncomingItem(fr.imag.adele.cadse.core.LinkType)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getIncomingItem(fr.imag
+	 * .adele.cadse.core.LinkType)
 	 */
 	public Collection<Item> getIncomingItems(LinkType lt) {
 		return Accessor.getIncomingItem(getIncomingLinks(lt, false, true));
@@ -1065,19 +1119,22 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getIncomingItemOne(fr.imag.adele.cadse.core.LinkType)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getIncomingItemOne(fr
+	 * .imag.adele.cadse.core.LinkType)
 	 */
 	public Item getIncomingItem(LinkType lt) {
 		Collection<Item> incomingItem = getIncomingItems(lt);
-		Item ret = incomingItem.size() == 1 ? incomingItem.iterator().next()
-				: null;
+		Item ret = incomingItem.size() == 1 ? incomingItem.iterator().next() : null;
 		return ret;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getIncomingLinkOperations()
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getIncomingLinkOperations
+	 * ()
 	 */
 	public List<LinkDelta> getIncomingLinkOperations() {
 		return getIncomingLinks(true, true);
@@ -1095,8 +1152,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getIncomingLinks(boolean,
-	 *      boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getIncomingLinks(boolean,
+	 * boolean)
 	 */
 	public List<LinkDelta> getIncomingLinks(boolean acceptDelete, boolean acceptAdd) {
 		Item itembase = getBaseItem();
@@ -1111,7 +1169,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 				}
 				links.add(lo);
 			}
-		
+
 		if (itembase != null) {
 			List<? extends Link> incommingsLinks = itembase.getIncomingLinks();
 			for (Link l : incommingsLinks) {
@@ -1138,10 +1196,12 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getIncomingLinks(fr.imag.adele.cadse.core.LinkType)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getIncomingLinks(fr.imag
+	 * .adele.cadse.core.LinkType)
 	 */
 	public List<Link> getIncomingLinks(LinkType lt) {
-		return getIncomingLinks( lt, false, true);
+		return getIncomingLinks(lt, false, true);
 	}
 
 	public Link getIncomingLink(LinkType lt, CompactUUID srcId) {
@@ -1154,13 +1214,12 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		return null;
 	}
 
-	
-
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getIntAttribut(fr.imag.adele.cadse.core.attribute.IntegerAttributeType,
-	 *      int)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getIntAttribut(fr.imag
+	 * .adele.cadse.core.attribute.IntegerAttributeType, int)
 	 */
 	public int getIntAttribut(IntegerAttributeType key, int defaultValue) {
 		if (_attributes != null) {
@@ -1171,7 +1230,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		}
 		if (key.getDefaultValue() != null)
 			return key.getDefaultValue();
-		
+
 		return defaultValue;
 	}
 
@@ -1231,7 +1290,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getLocalAllAttributeTypes()
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getLocalAllAttributeTypes
+	 * ()
 	 */
 	public IAttributeType<?>[] getLocalAllAttributeTypes() {
 		// TODO Auto-generated method stub
@@ -1241,7 +1302,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getLocalAllAttributeTypes(java.util.List)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getLocalAllAttributeTypes
+	 * (java.util.List)
 	 */
 	public void getLocalAllAttributeTypes(List<IAttributeType<?>> all) {
 		_itemType.getAllAttributeTypes(all);
@@ -1250,8 +1313,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getLocalAllAttributeTypes(java.util.List,
-	 *      fr.imag.adele.cadse.core.ItemFilter)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getLocalAllAttributeTypes
+	 * (java.util.List, fr.imag.adele.cadse.core.ItemFilter)
 	 */
 	public void getLocalAllAttributeTypes(List<IAttributeType<?>> all, ItemFilter filter) {
 		_itemType.getAllAttributeTypes(all, filter);
@@ -1260,8 +1324,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getLocalAllAttributeTypes(java.util.Map,
-	 *      boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getLocalAllAttributeTypes
+	 * (java.util.Map, boolean)
 	 */
 	public void getLocalAllAttributeTypes(Map<String, IAttributeType<?>> all, boolean keepLastAttribute) {
 		_itemType.getAllAttributeTypes(all, keepLastAttribute);
@@ -1270,8 +1335,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getLocalAllAttributeTypes(java.util.Map,
-	 *      boolean, fr.imag.adele.cadse.core.ItemFilter)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getLocalAllAttributeTypes
+	 * (java.util.Map, boolean, fr.imag.adele.cadse.core.ItemFilter)
 	 */
 	public void getLocalAllAttributeTypes(Map<String, IAttributeType<?>> all, boolean keepLastAttribute,
 			ItemFilter filter) {
@@ -1281,8 +1347,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getLocalAllAttributeTypesKeys(java.util.Set,
-	 *      fr.imag.adele.cadse.core.ItemFilter)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getLocalAllAttributeTypesKeys
+	 * (java.util.Set, fr.imag.adele.cadse.core.ItemFilter)
 	 */
 	public void getLocalAllAttributeTypesKeys(Set<String> all, ItemFilter filter) {
 		_itemType.getAllAttributeTypesKeys(all, filter);
@@ -1291,7 +1358,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getLocalAttributeType(java.lang.String)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getLocalAttributeType
+	 * (java.lang.String)
 	 */
 	public IAttributeType<?> getLocalAttributeType(String shortname) {
 		return _itemType.getAttributeType(shortname);
@@ -1310,7 +1379,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getMainMappingContent(java.lang.Class)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getMainMappingContent
+	 * (java.lang.Class)
 	 */
 	public <T> T getMainMappingContent(Class<T> clazz) {
 		// TODO Auto-generated method stub
@@ -1330,7 +1401,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getMappingOperation(java.lang.Class)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getMappingOperation(java
+	 * .lang.Class)
 	 */
 	public <T extends MappingOperation> T getMappingOperation(Class<T> clazz) {
 		T ret = null;
@@ -1366,7 +1439,8 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getOpenCompositeParent()
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getOpenCompositeParent()
 	 */
 	public List<Item> getOpenCompositeParent() {
 		// TODO Auto-generated method stub
@@ -1381,9 +1455,8 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 			return null;
 		}
 		ItemDelta destiDelta = getWorkingCopy().loadItem(l.getDestination());
-		
-		return getOrCreateLinkOperation(l.getLinkType().getName(), destiDelta, l,
-				index, true);
+
+		return getOrCreateLinkOperation(l.getLinkType().getName(), destiDelta, l, index, true);
 	}
 
 	/**
@@ -1395,8 +1468,8 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 *            la description (id, nom) de la destination
 	 * @return un link sur le quel on peut appliquer des operations futur
 	 */
-	protected LinkDelta getOrCreateLinkOperation(String type, ItemDelta destination, Link lOriginal,
-			int index, boolean loaded) {
+	protected LinkDelta getOrCreateLinkOperation(String type, ItemDelta destination, Link lOriginal, int index,
+			boolean loaded) {
 		if (this._links == null) {
 			this._links = new HashMap<LinkKey, LinkDelta>();
 		}
@@ -1423,7 +1496,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		l = new LinkDeltaImpl(this, type, destination, lOriginal, index, loaded);
 		return l;
 	}
-	
+
 	public void addLink(LinkDeltaImpl l) {
 		LinkKey key = new LinkKey(l.getLinkTypeName(), l.getDestinationId());
 		_links.put(key, l);
@@ -1433,7 +1506,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getorCreateMappingOperation(java.lang.Class)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getorCreateMappingOperation
+	 * (java.lang.Class)
 	 */
 	public <T extends MappingOperation> T getorCreateMappingOperation(Class<T> clazz) {
 		T ret = getMappingOperation(clazz);
@@ -1472,7 +1547,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getOrdersOperation(fr.imag.adele.cadse.core.LinkType)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getOrdersOperation(fr
+	 * .imag.adele.cadse.core.LinkType)
 	 */
 	public List<OrderOperation> getOrdersOperation(LinkType lt) {
 		if (_ordersOperation == null) {
@@ -1490,8 +1567,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingItems(boolean,
-	 *      boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingItems(boolean,
+	 * boolean)
 	 */
 	public Collection<ItemDelta> getOutgoingItems(boolean acceptDeletedLink, boolean resovledOnly) {
 		return Accessor.getOutgoingItemDeltas(getOutgoingLinks(acceptDeletedLink), resovledOnly);
@@ -1500,8 +1578,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingItems(boolean,
-	 *      fr.imag.adele.cadse.core.LinkType, boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingItems(boolean,
+	 * fr.imag.adele.cadse.core.LinkType, boolean)
 	 */
 	public Collection<ItemDelta> getOutgoingItems(boolean acceptDeletedLink, LinkType lt, boolean resovledOnly) {
 		return Accessor.getOutgoingItemDeltas(getOutgoingLinks(acceptDeletedLink), lt, resovledOnly);
@@ -1510,8 +1589,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingItems(boolean,
-	 *      java.lang.String, boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingItems(boolean,
+	 * java.lang.String, boolean)
 	 */
 	public Collection<ItemDelta> getOutgoingItems(boolean acceptDeletedLink, String linkType, boolean resovledOnly) {
 		return Accessor.getOutgoingItemDeltas(getOutgoingLinks(acceptDeletedLink), linkType, resovledOnly);
@@ -1520,7 +1600,8 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingItems(boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingItems(boolean)
 	 */
 	public Collection<Item> getOutgoingItems(boolean resovledOnly) {
 		return Accessor.getOutgoingItems(getOutgoingLinks(), resovledOnly);
@@ -1529,8 +1610,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingItems(fr.imag.adele.cadse.core.LinkType,
-	 *      boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingItems(fr.imag
+	 * .adele.cadse.core.LinkType, boolean)
 	 */
 	public Collection<Item> getOutgoingItems(LinkType lt, boolean resovledOnly) {
 		return Accessor.getOutgoingItems(getOutgoingLinks(), lt, resovledOnly);
@@ -1539,8 +1621,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingItems(java.lang.String,
-	 *      boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingItems(java
+	 * .lang.String, boolean)
 	 */
 	public Collection<Item> getOutgoingItems(String linkType, boolean resovledOnly) {
 		return Accessor.getOutgoingItems(getOutgoingLinks(), linkType, resovledOnly);
@@ -1549,8 +1632,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingItems(java.lang.String,
-	 *      fr.imag.adele.cadse.core.CompactUUID, boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingItems(java
+	 * .lang.String, fr.imag.adele.cadse.core.CompactUUID, boolean)
 	 */
 	public Item getOutgoingItem(String linkname, CompactUUID itemId, boolean resovledOnly) {
 		Link l = getOutgoingLink(linkname, itemId);
@@ -1563,14 +1647,16 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.Item#getOutgoingItem(fr.imag.adele.cadse.core.LinkType,
-	 *      boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.Item#getOutgoingItem(fr.imag.adele.cadse.core
+	 * .LinkType, boolean)
 	 */
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingItem(fr.imag.adele.cadse.core.LinkType,
-	 *      boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingItem(fr.imag
+	 * .adele.cadse.core.LinkType, boolean)
 	 */
 	public ItemDelta getOutgoingItem(LinkType lt, boolean resovledOnly) {
 		syncOutgoingLinks();
@@ -1589,13 +1675,14 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * (non-Javadoc)
 	 * 
 	 * @see fr.imag.adele.cadse.core.Item#getOutgoingItem(java.lang.String,
-	 *      boolean)
+	 * boolean)
 	 */
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingItem(java.lang.String,
-	 *      boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingItem(java.
+	 * lang.String, boolean)
 	 */
 	public ItemDelta getOutgoingItem(String linkNameID, boolean resovledOnly) {
 		syncOutgoingLinks();
@@ -1613,12 +1700,16 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.Item#getOutgoingLink(fr.imag.adele.cadse.core.Item)
+	 * @see
+	 * fr.imag.adele.cadse.core.Item#getOutgoingLink(fr.imag.adele.cadse.core
+	 * .Item)
 	 */
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingLink(fr.imag.adele.cadse.core.Item)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingLink(fr.imag
+	 * .adele.cadse.core.Item)
 	 */
 	public LinkDelta getOutgoingLink(Item item) {
 		List<Link> links = getOutgoingLinks();
@@ -1633,7 +1724,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingLink(fr.imag.adele.cadse.core.LinkType)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingLink(fr.imag
+	 * .adele.cadse.core.LinkType)
 	 */
 	public LinkDelta getOutgoingLink(LinkType linkType) {
 		return (LinkDelta) Accessor.getOutgoingLink(getOutgoingLinks(), linkType);
@@ -1642,8 +1735,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingLink(fr.imag.adele.cadse.core.LinkType,
-	 *      fr.imag.adele.cadse.core.CompactUUID)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingLink(fr.imag
+	 * .adele.cadse.core.LinkType, fr.imag.adele.cadse.core.CompactUUID)
 	 */
 	public LinkDelta getOutgoingLink(LinkType lt, CompactUUID destId) {
 		syncOutgoingLinks();
@@ -1661,8 +1755,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingLink(java.lang.String,
-	 *      fr.imag.adele.cadse.core.CompactUUID)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingLink(java.
+	 * lang.String, fr.imag.adele.cadse.core.CompactUUID)
 	 */
 	public LinkDelta getOutgoingLink(String lt, CompactUUID destId) {
 		syncOutgoingLinks();
@@ -1680,7 +1775,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingLinkOperation(fr.imag.adele.cadse.core.Link)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingLinkOperation
+	 * (fr.imag.adele.cadse.core.Link)
 	 */
 	public LinkDelta getOutgoingLinkOperation(Link l) throws CadseException {
 		if (!isAdded() && this._links == null) {
@@ -1699,8 +1796,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingLinkOperation(java.lang.String,
-	 *      fr.imag.adele.cadse.core.ItemDescriptionRef)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingLinkOperation
+	 * (java.lang.String, fr.imag.adele.cadse.core.ItemDescriptionRef)
 	 */
 	public LinkDelta getOutgoingLinkOperation(String type, ItemDescriptionRef destination) {
 		if (!isAdded() && this._links == null) {
@@ -1714,14 +1812,16 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 			return _links.get(key);
 		}
 		ItemDelta destiDelta = getWorkingCopy().loadItem(destination);
-		
+
 		return getOrCreateLinkOperation(type, destiDelta, null, -1, true);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingLinkOperations()
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingLinkOperations
+	 * ()
 	 */
 	public Collection<LinkDelta> getOutgoingLinkOperations() {
 		// return all link opertion
@@ -1743,7 +1843,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingLinkOperations(fr.imag.adele.cadse.core.CompactUUID)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingLinkOperations
+	 * (fr.imag.adele.cadse.core.CompactUUID)
 	 */
 	public List<LinkDelta> getOutgoingLinkOperations(CompactUUID destId) {
 		syncOutgoingLinks();
@@ -1763,7 +1865,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingLinkOperations(fr.imag.adele.cadse.core.LinkType)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingLinkOperations
+	 * (fr.imag.adele.cadse.core.LinkType)
 	 */
 	public List<LinkDelta> getOutgoingLinkOperations(LinkType linkType) {
 		syncOutgoingLinks();
@@ -1803,7 +1907,8 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingLinks(boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingLinks(boolean)
 	 */
 	public List<LinkDelta> getOutgoingLinks(boolean acceptDeleted) {
 		syncOutgoingLinks();
@@ -1823,7 +1928,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingLinks(fr.imag.adele.cadse.core.CompactUUID)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingLinks(fr.imag
+	 * .adele.cadse.core.CompactUUID)
 	 */
 	public List<LinkDelta> getOutgoingLinks(CompactUUID destId) {
 		syncOutgoingLinks();
@@ -1846,7 +1953,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingLinks(fr.imag.adele.cadse.core.LinkType)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingLinks(fr.imag
+	 * .adele.cadse.core.LinkType)
 	 */
 	public List<Link> getOutgoingLinks(LinkType linkType) {
 		syncOutgoingLinks();
@@ -1902,7 +2011,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getParentInStorage(fr.imag.adele.cadse.core.LinkType)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getParentInStorage(fr
+	 * .imag.adele.cadse.core.LinkType)
 	 */
 	public ItemDelta getParentInStorage(LinkType lt) {
 		// lt A -> B
@@ -1914,7 +2025,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getParentLinkTypeInStorage(fr.imag.adele.cadse.core.Item)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getParentLinkTypeInStorage
+	 * (fr.imag.adele.cadse.core.Item)
 	 */
 	public LinkType getParentLinkTypeInStorage(Item parent) {
 		if (_parentLinkType != null) {
@@ -1933,7 +2046,8 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getPart(java.lang.String)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getPart(java.lang.String)
 	 */
 	public Item getPartChild(CompactUUID id) {
 		return Accessor.getParts(getOutgoingLinks(), id);
@@ -1942,8 +2056,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getPartLinkParent(boolean,
-	 *      boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getPartLinkParent(boolean
+	 * , boolean)
 	 */
 	public Link getPartLinkParent(boolean acceptDelete, boolean acceptAdd) {
 		for (Link l : getIncomingLinks(acceptDelete, acceptAdd)) {
@@ -1966,7 +2081,8 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getPartParent(boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getPartParent(boolean)
 	 */
 	public ItemDelta getPartParent(boolean attemptToRecreate) {
 		return getPartParent(true, false);
@@ -1975,20 +2091,21 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getPartParent(boolean,
-	 *      boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getPartParent(boolean,
+	 * boolean)
 	 */
 	public ItemDelta getPartParent(boolean attemptToRecreate, boolean acceptDeleted) {
 		if (_parentItem != null) {
 			return _parentItem;
 		}
-		
+
 		Item baseitem = getBaseItem();
 		if (baseitem != null) {
 			Item baseParentItem = baseitem.getPartParent();
 			if (baseParentItem != null) {
 				_parentItem = _copy.getOrCreateItemOperation(baseParentItem);
-				return _parentItem;				
+				return _parentItem;
 			}
 		}
 
@@ -2064,7 +2181,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getPartParent(fr.imag.adele.cadse.core.ItemType)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getPartParent(fr.imag
+	 * .adele.cadse.core.ItemType)
 	 */
 	public Item getPartParent(ItemType typeID) {
 		return Accessor.getPartParent(getPartParent(), typeID);
@@ -2073,7 +2192,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getPartParent(fr.imag.adele.cadse.core.LinkType)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getPartParent(fr.imag
+	 * .adele.cadse.core.LinkType)
 	 */
 	public ItemDelta getPartParent(LinkType lt) {
 		return getPartParent(lt, false);
@@ -2082,8 +2203,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getPartParent(fr.imag.adele.cadse.core.LinkType,
-	 *      boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getPartParent(fr.imag
+	 * .adele.cadse.core.LinkType, boolean)
 	 */
 	public ItemDelta getPartParent(LinkType lt, boolean attemptToRecreate) {
 		// if (parentItem != null)
@@ -2106,7 +2228,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getPartParentByName(java.lang.String)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getPartParentByName(java
+	 * .lang.String)
 	 */
 	public Item getPartParentByName(String typeName) {
 		return Accessor.getPartParentByName(getPartParent(), typeName);
@@ -2125,7 +2249,8 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getPartParentLinkType()
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getPartParentLinkType()
 	 */
 	public LinkType getPartParentLinkType() {
 		return _parentLinkType;
@@ -2143,7 +2268,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getParts(fr.imag.adele.cadse.core.LinkType)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getParts(fr.imag.adele
+	 * .cadse.core.LinkType)
 	 */
 	public Collection<Item> getPartChildren(LinkType linkTypeName) {
 		return Accessor.getParts(getOutgoingLinks(), linkTypeName);
@@ -2152,7 +2279,8 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getQualifiedDisplayName()
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getQualifiedDisplayName()
 	 */
 	public String getQualifiedDisplayName() {
 		return getAttributeWithDefaultValue(CadseGCST.ITEM_at_DISPLAY_NAME_, getName());
@@ -2161,7 +2289,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getSetAttributeOperation(java.lang.String)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getSetAttributeOperation
+	 * (java.lang.String)
 	 */
 	@Override
 	public SetAttributeOperation getSetAttributeOperation(String key) {
@@ -2171,8 +2301,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getSetAttributeOperation(java.lang.String,
-	 *      boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getSetAttributeOperation
+	 * (java.lang.String, boolean)
 	 */
 	public SetAttributeOperation getSetAttributeOperation(String key, boolean create) {
 		SetAttributeOperation ret = super.getSetAttributeOperation(key);
@@ -2194,12 +2325,13 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		}
 		return ret;
 	}
-	
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getSetAttributeOperation(java.lang.String)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getSetAttributeOperation
+	 * (java.lang.String)
 	 */
 	public SetAttributeOperation getSetAttributeOperation(IAttributeType<?> key) {
 		return getSetAttributeOperation(key, true);
@@ -2208,10 +2340,11 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getSetAttributeOperation(java.lang.String,
-	 *      boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getSetAttributeOperation
+	 * (java.lang.String, boolean)
 	 */
-	public SetAttributeOperation getSetAttributeOperation(IAttributeType<?>  key, boolean create) {
+	public SetAttributeOperation getSetAttributeOperation(IAttributeType<?> key, boolean create) {
 		SetAttributeOperation ret = super.getSetAttributeOperation(key.getName());
 		if (create && ret == null) {
 			Item t = getBaseItem();
@@ -2258,8 +2391,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getStringAttribut(fr.imag.adele.cadse.core.attribute.StringAttributeType,
-	 *      java.lang.String)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getStringAttribut(fr.
+	 * imag.adele.cadse.core.attribute.StringAttributeType, java.lang.String)
 	 */
 	public String getStringAttribut(StringAttributeType key, String defaultValue) {
 		if (_attributes != null) {
@@ -2280,7 +2414,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		if (_itemType == null) {
 			_itemType = getWorkingCopy().getItemType(_itemTypeId);
 		}
-		
+
 		if (_itemType == null) {
 			ItemDelta d = getWorkingCopy().getItem(_itemTypeId);
 			if (d == null) {
@@ -2318,7 +2452,8 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getUniqueName(boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getUniqueName(boolean)
 	 */
 	public String getQualifiedName(boolean recompute) throws CadseException {
 		String value = getQualifiedName();
@@ -2343,7 +2478,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getURLAttribut(fr.imag.adele.cadse.core.attribute.URLAttributeType)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getURLAttribut(fr.imag
+	 * .adele.cadse.core.attribute.URLAttributeType)
 	 */
 	public URL getURLAttribut(URLAttributeType key) throws MalformedURLException {
 		if (_attributes != null) {
@@ -2395,7 +2532,8 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getWorkspaceLogique()
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getWorkspaceLogique()
 	 */
 	public LogicalWorkspace getLogicalWorkspace() {
 		return this._copy;
@@ -2404,7 +2542,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#indexOf(fr.imag.adele.cadse.core.Link)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#indexOf(fr.imag.adele
+	 * .cadse.core.Link)
 	 */
 	public int indexOf(Link link) {
 		try {
@@ -2419,7 +2559,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#internalGetGenericOwnerAttribute(fr.imag.adele.cadse.core.attribute.IAttributeType)
+	 * @seefr.imag.adele.cadse.core.delta.ItemOperationItf#
+	 * internalGetGenericOwnerAttribute
+	 * (fr.imag.adele.cadse.core.attribute.IAttributeType)
 	 */
 	public <T> T internalGetGenericOwnerAttribute(IAttributeType<T> type) {
 		throw new UnsupportedOperationException();
@@ -2428,7 +2570,8 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#internalGetGenericOwnerAttribute(java.lang.String)
+	 * @seefr.imag.adele.cadse.core.delta.ItemOperationItf#
+	 * internalGetGenericOwnerAttribute(java.lang.String)
 	 */
 	public <T> T internalGetGenericOwnerAttribute(String key) {
 		throw new UnsupportedOperationException();
@@ -2437,7 +2580,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#internalGetOwnerAttribute(fr.imag.adele.cadse.core.attribute.IAttributeType)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#internalGetOwnerAttribute
+	 * (fr.imag.adele.cadse.core.attribute.IAttributeType)
 	 */
 	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
 		throw new UnsupportedOperationException();
@@ -2446,7 +2591,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#internalGetOwnerAttribute(java.lang.String)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#internalGetOwnerAttribute
+	 * (java.lang.String)
 	 */
 	public <T> T internalGetOwnerAttribute(String key) {
 		throw new UnsupportedOperationException();
@@ -2464,7 +2611,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#isAncestorOf(fr.imag.adele.cadse.core.Item)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#isAncestorOf(fr.imag.
+	 * adele.cadse.core.Item)
 	 */
 	public boolean isAncestorOf(Item item2) {
 		return Accessor.isAncestorOf(this, item2);
@@ -2510,7 +2659,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#isInIncomingLinks(fr.imag.adele.cadse.core.Link)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#isInIncomingLinks(fr.
+	 * imag.adele.cadse.core.Link)
 	 */
 	public boolean isInIncomingLinks(Link l) {
 		assert l != null;
@@ -2520,7 +2671,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#isInOutgoingLinks(fr.imag.adele.cadse.core.Link)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#isInOutgoingLinks(fr.
+	 * imag.adele.cadse.core.Link)
 	 */
 	public boolean isInOutgoingLinks(Link l) {
 		assert l != null;
@@ -2530,7 +2683,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#isInstanceOf(fr.imag.adele.cadse.core.ItemType)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#isInstanceOf(fr.imag.
+	 * adele.cadse.core.ItemType)
 	 */
 	public boolean isInstanceOf(ItemType it) {
 		if (getType() == null) {
@@ -2579,8 +2734,6 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	public boolean isPartItem() {
 		return _parent != null;
 	}
-
-	
 
 	/*
 	 * (non-Javadoc)
@@ -2634,7 +2787,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#isTWAttributeModified(fr.imag.adele.cadse.core.attribute.IAttributeType)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#isTWAttributeModified
+	 * (fr.imag.adele.cadse.core.attribute.IAttributeType)
 	 */
 	public boolean isTWAttributeModified(IAttributeType<?> att) {
 		Link l = getOutgoingLink(CadseGCST.ITEM_lt_MODIFIED_ATTRIBUTES, att.getId());
@@ -2676,8 +2831,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#loadAttribute(fr.imag.adele.cadse.core.attribute.IAttributeType,
-	 *      java.lang.Object)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#loadAttribute(fr.imag
+	 * .adele.cadse.core.attribute.IAttributeType, java.lang.Object)
 	 */
 	public void loadAttribute(IAttributeType<?> key, Object value) throws CadseException {
 		setAttribute(key, key.getName(), value, true);
@@ -2686,8 +2842,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#loadAttribute(java.lang.String,
-	 *      java.lang.Object)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#loadAttribute(java.lang
+	 * .String, java.lang.Object)
 	 */
 	public void loadAttribute(String key, Object value) throws CadseException {
 		setAttribute(null, key, value, true);
@@ -2703,18 +2860,20 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 
 	public ContentItem _getContentItem() {
 		ItemDelta c = getOutgoingItem(CadseGCST.ITEM_lt_CONTENTS, true);
-		if (c == null) return null;
+		if (c == null)
+			return null;
 		return c.getAdapter(ContentItem.class);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#loadDerivedLink(java.lang.String,
-	 *      fr.imag.adele.cadse.core.delta.ItemOperationItf, boolean, boolean,
-	 *      java.lang.String, java.lang.String,
-	 *      fr.imag.adele.cadse.core.CompactUUID,
-	 *      fr.imag.adele.cadse.core.CompactUUID, int)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#loadDerivedLink(java.
+	 * lang.String, fr.imag.adele.cadse.core.delta.ItemOperationItf, boolean,
+	 * boolean, java.lang.String, java.lang.String,
+	 * fr.imag.adele.cadse.core.CompactUUID,
+	 * fr.imag.adele.cadse.core.CompactUUID, int)
 	 */
 	public void loadDerivedLink(String linkType, ItemDelta dest, boolean isAggregation, boolean isRequire,
 			String link_info, String originLinkTypeID, CompactUUID uuidOriginLinkSourceTypeID,
@@ -2726,9 +2885,11 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#loadItem(fr.imag.adele.cadse.core.IWorkingLoadingItems,
-	 *      fr.imag.adele.cadse.core.delta.ItemOperation,
-	 *      fr.imag.adele.cadse.core.util.IErrorCollector)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#loadItem(fr.imag.adele
+	 * .cadse.core.IWorkingLoadingItems,
+	 * fr.imag.adele.cadse.core.delta.ItemOperation,
+	 * fr.imag.adele.cadse.core.util.IErrorCollector)
 	 */
 	public void loadItem(IWorkingLoadingItems wl, ItemDelta itemOperation, IErrorCollector errorCollector)
 			throws CadseException {
@@ -2737,8 +2898,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#loadLink(java.lang.String,
-	 *      fr.imag.adele.cadse.core.delta.ItemOperation)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#loadLink(java.lang.String
+	 * , fr.imag.adele.cadse.core.delta.ItemOperation)
 	 */
 	public LinkDelta loadLink(String linkType, ItemDelta destItem) throws CadseException {
 		getWorkingCopy().check_write();
@@ -2752,8 +2914,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 			return linkOperation;
 		}
 		// synchronize _parentItem attribute
-		if (linkType.equals(CadseGCST.ITEM_lt_PARENT.getName()) 
-				|| linkType.startsWith("#inverse-part")  //$NON-NLS-1$
+		if (linkType.equals(CadseGCST.ITEM_lt_PARENT.getName()) || linkType.startsWith("#inverse-part") //$NON-NLS-1$
 				|| linkType.startsWith("#invert_part")) { //$NON-NLS-1$
 			setParent(destItem, null, false, false);
 		} else {
@@ -2765,11 +2926,11 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 				}
 			}
 		}
-		
+
 		linkOperation.setLoaded(true);
 		return linkOperation;
 	}
-	
+
 	public <T> T getAdapter(Class<T> clazz) {
 		ItemDeltaAdapterFactory<T> itemDeltaAdapterFactory = (ItemDeltaAdapterFactory<T>) _registerAdapter.get(clazz);
 		if (itemDeltaAdapterFactory == null)
@@ -2780,8 +2941,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.Item#migratePartLink(fr.imag.adele.cadse.core.Item,
-	 *      fr.imag.adele.cadse.core.LinkType)
+	 * @see
+	 * fr.imag.adele.cadse.core.Item#migratePartLink(fr.imag.adele.cadse.core
+	 * .Item, fr.imag.adele.cadse.core.LinkType)
 	 */
 	public void migratePartLink(Item newPartParent, LinkType lt) throws CadseException {
 
@@ -2815,8 +2977,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#moveAfter(fr.imag.adele.cadse.core.delta.LinkOperation,
-	 *      fr.imag.adele.cadse.core.Link)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#moveAfter(fr.imag.adele
+	 * .cadse.core.delta.LinkOperation, fr.imag.adele.cadse.core.Link)
 	 */
 	public boolean moveAfter(LinkDelta linkOne, Link linkTwo_) throws CadseException {
 		LinkDelta linkTwo = getOutgoingLinkOperation(linkTwo_);
@@ -2846,8 +3009,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#moveBefore(fr.imag.adele.cadse.core.delta.LinkOperation,
-	 *      fr.imag.adele.cadse.core.Link)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#moveBefore(fr.imag.adele
+	 * .cadse.core.delta.LinkOperation, fr.imag.adele.cadse.core.Link)
 	 */
 	public boolean moveBefore(LinkDelta linkOne, Link linkTwo_) throws CadseException {
 		LinkDelta linkTwo = getOutgoingLinkOperation(linkTwo_);
@@ -2876,7 +3040,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#notifieChangedContent(fr.imag.adele.cadse.core.ContentChangeInfo[])
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#notifieChangedContent
+	 * (fr.imag.adele.cadse.core.ContentChangeInfo[])
 	 */
 	public void notifieChangedContent(ContentChangeInfo[] change) {
 		getWorkingCopy().notifieChangedContent(this, change);
@@ -2897,7 +3063,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#propagateValue(fr.imag.adele.cadse.core.attribute.IAttributeType)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#propagateValue(fr.imag
+	 * .adele.cadse.core.attribute.IAttributeType)
 	 */
 	public Iterator<Item> propagateValue(IAttributeType<?> type) {
 		throw new UnsupportedOperationException();
@@ -2906,13 +3074,14 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#propagateValue(java.lang.String)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#propagateValue(java.lang
+	 * .String)
 	 */
 	public Iterator<Item> propagateValue(String key) {
 		throw new UnsupportedOperationException();
 	}
 
-	
 	@Override
 	public void setNextKey(ISpaceKey newK) throws CadseException {
 		if (newK == null) {
@@ -2921,25 +3090,28 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		}
 		if (newK == SpaceKey.INVALID)
 			return;
-		
+
 		if (_key == null && getBaseItem() != null)
 			_key = getBaseItem().getKey();
 		this._copy.checkKey(this, _key, newK);
 		this._nextKey = newK;
 	}
-	
+
 	@Override
 	public ISpaceKey getNextKey() {
 		return _nextKey;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#recomputeKey(fr.imag.adele.cadse.core.key.ISpaceKey)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#recomputeKey(fr.imag.
+	 * adele.cadse.core.key.ISpaceKey)
 	 */
 	public void setKey(ISpaceKey newkey) throws CadseException {
-		if (newkey == SpaceKey.INVALID) return;
+		if (newkey == SpaceKey.INVALID)
+			return;
 		if (_key == null && getBaseItem() != null)
 			_key = getBaseItem().getKey();
 		this._copy.changeKey(this, _key, newkey);
@@ -2968,7 +3140,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#remove(fr.imag.adele.cadse.core.delta.LinkOperation)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#remove(fr.imag.adele.
+	 * cadse.core.delta.LinkOperation)
 	 */
 	public void removeLink(LinkDelta linkOperation) {
 		if (this._links == null) {
@@ -2982,10 +3156,11 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#removeContentManager()
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#removeContentManager()
 	 */
 	public void removeContentItem() {
-		LinkDelta l  = getOutgoingLink(CadseGCST.ITEM_lt_CONTENTS);
+		LinkDelta l = getOutgoingLink(CadseGCST.ITEM_lt_CONTENTS);
 		if (l != null && !l.isDeleted()) {
 			try {
 				l.delete();
@@ -2999,8 +3174,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#removeIncomingLink(fr.imag.adele.cadse.core.Link,
-	 *      boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#removeIncomingLink(fr
+	 * .imag.adele.cadse.core.Link, boolean)
 	 */
 	public void removeIncomingLink(Link linkImpl, boolean notifie) {
 		_incomingLinks = ArraysUtil.remove(LinkDelta.class, _incomingLinks, (LinkDelta) linkImpl);
@@ -3039,7 +3215,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#removeListener(fr.imag.adele.cadse.core.WorkspaceListener)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#removeListener(fr.imag
+	 * .adele.cadse.core.WorkspaceListener)
 	 */
 	public void removeListener(WorkspaceListener l) {
 
@@ -3048,8 +3226,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#removeOutgoingItem(fr.imag.adele.cadse.core.LinkType,
-	 *      fr.imag.adele.cadse.core.Item)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#removeOutgoingItem(fr
+	 * .imag.adele.cadse.core.LinkType, fr.imag.adele.cadse.core.Item)
 	 */
 	public Link removeOutgoingItem(LinkType linkType, Item destination) throws CadseException {
 		return Accessor.removeOutgoingItem(this, linkType, destination);
@@ -3058,8 +3237,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#removeOutgoingLink(fr.imag.adele.cadse.core.Link,
-	 *      boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#removeOutgoingLink(fr
+	 * .imag.adele.cadse.core.Link, boolean)
 	 */
 	public void removeOutgoingLink(Link linkImpl, boolean notifie) {
 		throw new UnsupportedOperationException();
@@ -3068,7 +3248,8 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#resetContentIsChanged()
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#resetContentIsChanged()
 	 */
 	@Deprecated
 	public void resetContentIsChanged() {
@@ -3077,7 +3258,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#resetTWAttributeModified()
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#resetTWAttributeModified
+	 * ()
 	 */
 	public void resetTWAttributeModified() {
 		List<Link> modiflinks = getOutgoingLinks(CadseGCST.ITEM_lt_MODIFIED_ATTRIBUTES);
@@ -3094,8 +3277,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#setAttribute(fr.imag.adele.cadse.core.attribute.IAttributeType,
-	 *      java.lang.Object)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#setAttribute(fr.imag.
+	 * adele.cadse.core.attribute.IAttributeType, java.lang.Object)
 	 */
 	public void setAttribute(IAttributeType<?> key, Object value) throws CadseException {
 		setAttribute(key, key.getName(), value, false);
@@ -3104,33 +3288,34 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#setAttribute(fr.imag.adele.cadse.core.attribute.IAttributeType,
-	 *      java.lang.String, java.lang.Object, boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#setAttribute(fr.imag.
+	 * adele.cadse.core.attribute.IAttributeType, java.lang.String,
+	 * java.lang.Object, boolean)
 	 */
 	public void setAttribute(IAttributeType<?> key, String attributeName, Object newCurrentValue, boolean loaded)
 			throws CadseException {
 		if (attributeName == null)
 			attributeName = key.getName();
-		
+
 		if (attributeName.equals(ItemTypeImpl.ATTR_SHORT_NAME) || attributeName.equals(ItemTypeImpl.SHORT_NAME_KEY)) {
 			attributeName = CadseGCST.ITEM_at_NAME;
 			key = CadseGCST.ITEM_at_NAME_;
 		}
 		if (!loaded && isStatic()) {
-			addError(Messages.cannot_set_attribute_not_modifiable , attributeName , newCurrentValue ); //$NON-NLS-2$ //$NON-NLS-3$
+			addError(Messages.cannot_set_attribute_not_modifiable, attributeName, newCurrentValue); //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		if (attributeName.equals(Accessor.ATTR_PARENT_ITEM_ID)) {
 			setParentFromAtt(newCurrentValue);
 			return;
 		}
-		
+
 		SetAttributeOperation setAtt = null;
 		if (key == null)
-			setAtt = getSetAttributeOperation(attributeName);
-		else 
-			setAtt = getSetAttributeOperation(key);
-		
-		Object oldValue = null;
+			setAtt = getSetAttributeOperation(attributeName, true);
+		else
+			setAtt = getSetAttributeOperation(key, true);
+
 		if (setAtt != null) {
 			// compare the currentValue with the precedent value (newValue
 			// here)
@@ -3146,20 +3331,18 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 					return;
 				}
 			}
-			oldValue = setAtt.getOldValue();
-			
 			setAtt.setPrecCurrentValue(setAtt.getCurrentValue());
 			setAtt.setCurrentValue(newCurrentValue);
 		} else {
 			if (key == null)
-				setAtt = new SetAttributeOperationImpl(this, attributeName, newCurrentValue, oldValue);
-			else 
-				setAtt = new SetAttributeOperationImpl(this, key, newCurrentValue, oldValue);
+				setAtt = new SetAttributeOperationImpl(this, attributeName, newCurrentValue, null);
+			else
+				setAtt = new SetAttributeOperationImpl(this, key, newCurrentValue, null);
 			add(setAtt);
 		}
 		_copy.validateChangeAttribute(this, setAtt);
 		try {
-			
+
 			setAtt.setLoaded(loaded);
 			if (!loaded) {
 				getWorkingCopy().notifyChangeAttribute(this, setAtt);
@@ -3168,7 +3351,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 			throw e;
 		}
 	}
-	
+
 	/**
 	 * Gets the parent in storage.
 	 * 
@@ -3191,14 +3374,15 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#setAttribute(java.lang.String,
-	 *      java.lang.Object)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#setAttribute(java.lang
+	 * .String, java.lang.Object)
 	 */
 	public void setAttribute(String attributeName, Object value) throws CadseException {
 		IAttributeType<?> key = null;
 		ItemType _type = getType();
 		if (_type != null) {
-			key = _type.getAttributeType(attributeName);
+			key = _type.getAttributeType(attributeName, false);
 		}
 		setAttribute(key, attributeName, value, false);
 	}
@@ -3206,7 +3390,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#setComponents(java.util.Set)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#setComponents(java.util
+	 * .Set)
 	 */
 	public void setComponents(Set<ItemDescriptionRef> comp) throws CadseException {
 		// TODO Auto-generated method stub
@@ -3216,7 +3402,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#setDerivedLinks(java.util.Set)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#setDerivedLinks(java.
+	 * util.Set)
 	 */
 	public void setDerivedLinks(Set<DerivedLinkDescription> derivedLinks) {
 		// TODO Auto-generated method stub
@@ -3244,17 +3432,16 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * (non-Javadoc)
 	 * 
 	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#setModified(boolean,
-	 *      boolean)
+	 * boolean)
 	 */
 	public void setModified(boolean value, boolean loaded) throws CadseException {
 		setAttribute(null, Item.IS_MODIFIED_KEY, value, loaded);
 	}
 
-	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof Item) {
-			return ((Item)obj).getId().equals(getId());
+			return ((Item) obj).getId().equals(getId());
 		}
 		return super.equals(obj);
 	}
@@ -3262,8 +3449,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#setOutgoingItem(fr.imag.adele.cadse.core.LinkType,
-	 *      java.util.Collection)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#setOutgoingItem(fr.imag
+	 * .adele.cadse.core.LinkType, java.util.Collection)
 	 */
 	public Collection<Link> setOutgoingItems(LinkType lt, Collection<Item> value) throws CadseException {
 		List<Link> removed = new ArrayList<Link>();
@@ -3292,8 +3480,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#setOutgoingItemOne(fr.imag.adele.cadse.core.LinkType,
-	 *      fr.imag.adele.cadse.core.Item)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#setOutgoingItemOne(fr
+	 * .imag.adele.cadse.core.LinkType, fr.imag.adele.cadse.core.Item)
 	 */
 	public Link setOutgoingItem(LinkType lt, Item destination) throws CadseException {
 		if (lt.getMax() != 1) {
@@ -3315,71 +3504,70 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	public void setParent(Item parent, LinkType lt) {
 		if (parent == null)
 			throw new CadseIllegalArgumentException(Messages.cannot_set_parent_to_null, this, lt);
-		
+
 		try {
 			setParent(_copy.getItem(parent), lt, true, true);
 		} catch (CadseException e) {
 			e.printStackTrace();
-		}	
+		}
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#setParent(fr.imag.adele.cadse.core.Item,
-	 *      fr.imag.adele.cadse.core.LinkType)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#setParent(fr.imag.adele
+	 * .cadse.core.Item, fr.imag.adele.cadse.core.LinkType)
 	 */
-	public void setParent(ItemDelta parent, LinkType lt, boolean createLinkIfNeed, boolean notify) throws CadseException {
+	public void setParent(ItemDelta parent, LinkType lt, boolean createLinkIfNeed, boolean notify)
+			throws CadseException {
 		if (parent != null) {
 			if (parent == _parentItem)
 				return;
-			
-			
-				if (_parentItem != null && _oldParentItem == null) {
-					_oldParentItem = _parentItem;
-				}
-				this._parentItem = (ItemDelta) parent;
-				if (lt == null) {
-					lt = _itemType.getIncomingPart(parent.getType());
-				}
-				if (lt == null) {
-					lt = _itemType.getIncomingOne(parent.getType());
+
+			if (_parentItem != null && _oldParentItem == null) {
+				_oldParentItem = _parentItem;
+			}
+			this._parentItem = (ItemDelta) parent;
+			if (lt == null) {
+				lt = _itemType.getIncomingPart(parent.getType());
+			}
+			if (lt == null) {
+				lt = _itemType.getIncomingOne(parent.getType());
+			}
+
+			if (lt != null) {
+				this._parentLinkType = lt;
+			}
+
+			if (createLinkIfNeed) {
+
+				LinkDelta l = getOutgoingLink(CadseGCST.ITEM_lt_PARENT);
+				if (l == null)
+					createLink(CadseGCST.ITEM_lt_PARENT, _parentItem, notify);
+				else if (l.getDestination() != parent) {
+					l.delete();
+					createLink(CadseGCST.ITEM_lt_PARENT, _parentItem, notify);
 				}
 
 				if (lt != null) {
-					this._parentLinkType = lt;
-				}
-				
-				if (createLinkIfNeed) {
-					
-					LinkDelta l = getOutgoingLink(CadseGCST.ITEM_lt_PARENT);
+					if (_oldParentItem != null) {
+						LinkDelta ltoparent = _oldParentItem.getOutgoingLink(lt, getId());
+						if (ltoparent != null)
+							ltoparent.delete(new DeleteOperationImpl(null, null, 0));
+					}
+					l = _parentItem.getOutgoingLink(CadseGCST.ITEM_lt_PARENT, getId());
 					if (l == null)
-						createLink(CadseGCST.ITEM_lt_PARENT, _parentItem, notify);
-					else if (l.getDestination() != parent) {
-						l.delete();
-						createLink(CadseGCST.ITEM_lt_PARENT, _parentItem, notify);
-					}
-					
-					if(lt != null) {
-						if (_oldParentItem != null) {
-							LinkDelta ltoparent = _oldParentItem.getOutgoingLink(lt, getId());
-							if (ltoparent != null)
-								ltoparent.delete(new DeleteOperationImpl(null, null, 0));
-						}
-						l = _parentItem.getOutgoingLink(CadseGCST.ITEM_lt_PARENT, getId());
-						if (l == null)
-							_parentItem.createLink(lt, this);
-					}
+						_parentItem.createLink(lt, this);
 				}
-				
-			
+			}
+
 		}
 	}
 
 	public ItemDelta getParentItem() {
 		return _parentItem;
 	}
-
-	
 
 	/*
 	 * (non-Javadoc)
@@ -3394,16 +3582,17 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * (non-Javadoc)
 	 * 
 	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#setReadOnly(boolean,
-	 *      boolean)
+	 * boolean)
 	 */
 	public void setReadOnly(boolean readOnly, boolean loaded) throws CadseException {
-		setAttribute(CadseGCST.ITEM_at_ITEM_READONLY_, CadseGCST.ITEM_at_ITEM_READONLY,readOnly, loaded);
+		setAttribute(CadseGCST.ITEM_at_ITEM_READONLY_, CadseGCST.ITEM_at_ITEM_READONLY, readOnly, loaded);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#setRecomputeComponantsAndDerivedLink(boolean)
+	 * @seefr.imag.adele.cadse.core.delta.ItemOperationItf#
+	 * setRecomputeComponantsAndDerivedLink(boolean)
 	 */
 	public void setRecomputeComponantsAndDerivedLink(boolean b) {
 		// TODO Auto-generated method stub
@@ -3413,7 +3602,8 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#setRequierNewRev(boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#setRequierNewRev(boolean)
 	 */
 	public void setRequierNewRev(boolean flag) throws CadseException {
 		if (flag) {
@@ -3425,7 +3615,8 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#setRevModified(boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#setRevModified(boolean)
 	 */
 	public void setRevModified(boolean flag) throws CadseException {
 		setAttribute(CadseGCST.ITEM_at_REV_MODIFIED, flag);
@@ -3434,7 +3625,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#setShortName(java.lang.String)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#setShortName(java.lang
+	 * .String)
 	 */
 	@Deprecated
 	public void setShortName(String shortname) throws CadseException {
@@ -3444,8 +3637,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#setShortName(java.lang.String,
-	 *      boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#setShortName(java.lang
+	 * .String, boolean)
 	 */
 	@Deprecated
 	public void setShortName(String shortname, boolean loaded) throws CadseException {
@@ -3455,7 +3649,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#setShortName(java.lang.String)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#setShortName(java.lang
+	 * .String)
 	 */
 	public void setName(String shortname) throws CadseException {
 		setName(shortname, false);
@@ -3464,8 +3660,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#setShortName(java.lang.String,
-	 *      boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#setShortName(java.lang
+	 * .String, boolean)
 	 */
 	public void setName(String shortname, boolean loaded) throws CadseException {
 		setAttribute(CadseGCST.ITEM_at_NAME_, CadseGCST.ITEM_at_NAME, shortname, loaded);
@@ -3474,7 +3671,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#setState(fr.imag.adele.cadse.core.ItemState)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#setState(fr.imag.adele
+	 * .cadse.core.ItemState)
 	 */
 	public void setState(ItemState modifing) {
 
@@ -3483,8 +3682,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#setTWAttributeModified(fr.imag.adele.cadse.core.attribute.IAttributeType,
-	 *      boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#setTWAttributeModified
+	 * (fr.imag.adele.cadse.core.attribute.IAttributeType, boolean)
 	 */
 	public void setTWAttributeModified(IAttributeType<?> att, boolean v) throws CadseException {
 		LinkDelta l = getOutgoingLink(CadseGCST.ITEM_lt_MODIFIED_ATTRIBUTES, att.getId());
@@ -3512,7 +3712,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#setType(fr.imag.adele.cadse.core.ItemType)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#setType(fr.imag.adele
+	 * .cadse.core.ItemType)
 	 */
 	public void setType(ItemType selectedItemType) {
 		_itemType = selectedItemType;
@@ -3523,46 +3725,48 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#setUniqueName(java.lang.String)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#setUniqueName(java.lang
+	 * .String)
 	 */
 	@Deprecated
 	public void setUniqueName(String uniqueName) throws CadseException {
-		setAttribute(CadseGCST.ITEM_at_QUALIFIED_NAME_, CadseGCST.ITEM_at_QUALIFIED_NAME, uniqueName,
-				false);
+		setAttribute(CadseGCST.ITEM_at_QUALIFIED_NAME_, CadseGCST.ITEM_at_QUALIFIED_NAME, uniqueName, false);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#setUniqueName(java.lang.String,
-	 *      boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#setUniqueName(java.lang
+	 * .String, boolean)
 	 */
 	@Deprecated
 	public void setUniqueName(String uniqueName, boolean loaded) throws CadseException {
-		setAttribute(CadseGCST.ITEM_at_QUALIFIED_NAME_, CadseGCST.ITEM_at_QUALIFIED_NAME, uniqueName,
-				loaded);
+		setAttribute(CadseGCST.ITEM_at_QUALIFIED_NAME_, CadseGCST.ITEM_at_QUALIFIED_NAME, uniqueName, loaded);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#setUniqueName(java.lang.String)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#setUniqueName(java.lang
+	 * .String)
 	 */
 	public void setQualifiedName(String qName) throws CadseException {
-		setAttribute(CadseGCST.ITEM_at_QUALIFIED_NAME_, CadseGCST.ITEM_at_QUALIFIED_NAME, qName,
-				false);
+		setAttribute(CadseGCST.ITEM_at_QUALIFIED_NAME_, CadseGCST.ITEM_at_QUALIFIED_NAME, qName, false);
 		_copy.changeQualifiedName(this, qName);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#setUniqueName(java.lang.String,
-	 *      boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#setUniqueName(java.lang
+	 * .String, boolean)
 	 */
 	public void setQualifiedName(String uniqueName, boolean loaded) throws CadseException {
-		setAttribute(CadseGCST.ITEM_at_QUALIFIED_NAME_, CadseGCST.ITEM_at_QUALIFIED_NAME, uniqueName,
-				loaded);
+		setAttribute(CadseGCST.ITEM_at_QUALIFIED_NAME_, CadseGCST.ITEM_at_QUALIFIED_NAME, uniqueName, loaded);
 	}
 
 	/*
@@ -3588,7 +3792,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * (non-Javadoc)
 	 * 
 	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#setValid(boolean,
-	 *      boolean)
+	 * boolean)
 	 */
 	public void setValid(boolean valid, boolean loaded) {
 		// TODO Auto-generated method stub
@@ -3645,8 +3849,8 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#toString(java.lang.StringBuilder,
-	 *      java.lang.String)
+	 * @seefr.imag.adele.cadse.core.delta.ItemOperationItf#toString(java.lang.
+	 * StringBuilder, java.lang.String)
 	 */
 	public void toString(StringBuilder sb, String tab) {
 		sb.append(tab);
@@ -3697,7 +3901,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#toStringShort(java.lang.StringBuilder)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#toStringShort(java.lang
+	 * .StringBuilder)
 	 */
 	public void toStringShort(StringBuilder sb) {
 		if (isDeleted()) {
@@ -3736,9 +3942,11 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#update(fr.imag.adele.cadse.core.IWorkingLoadingItems,
-	 *      fr.imag.adele.cadse.core.delta.ItemOperationItf,
-	 *      fr.imag.adele.cadse.core.IWorkspaceNotifier)
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#update(fr.imag.adele.
+	 * cadse.core.IWorkingLoadingItems,
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf,
+	 * fr.imag.adele.cadse.core.IWorkspaceNotifier)
 	 */
 	public void update(IWorkingLoadingItems items, ItemDelta desc, IWorkspaceNotifier notifie) {
 		throw new UnsupportedOperationException();
@@ -3757,11 +3965,11 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	public void setLoaded(boolean loaded) {
 		if (isStatic()) {
-			throw new CadseIllegalArgumentException(Messages.cannot_load_a_static_item+getName(), this);
+			throw new CadseIllegalArgumentException(Messages.cannot_load_a_static_item + getName(), this);
 		}
 		super.setLoaded(loaded);
 	}
@@ -3800,5 +4008,5 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 }
