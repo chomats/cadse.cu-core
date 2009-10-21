@@ -1323,4 +1323,10 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements Li
 		
 	}
 
+	@Override
+	public void setIsGroup(boolean b) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
