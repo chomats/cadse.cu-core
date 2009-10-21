@@ -1289,7 +1289,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	@Override
 	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
 		if (CadseGCST.ITEM_at_DISPLAY_NAME_ == type) {
-			return (T) _displayName;
+			return (T) getDisplayName();
 		}
 		if (CadseGCST.ITEM_TYPE_at_MANAGER_CLASS_ == type) {
 			return (T) _managerClass;
