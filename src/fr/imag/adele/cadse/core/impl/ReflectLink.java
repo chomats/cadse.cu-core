@@ -21,12 +21,13 @@ package fr.imag.adele.cadse.core.impl;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CommonMethods;
 import fr.imag.adele.cadse.core.CompactUUID;
-import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
+import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
+import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
 import fr.imag.adele.cadse.core.impl.internal.Accessor;
 
 public class ReflectLink implements Link {
@@ -45,6 +46,10 @@ public class ReflectLink implements Link {
 		}
 		if (source == null) {
 			throw new NullPointerException("link null source --" + lt + "-- > " + dest);
+		}
+		if (!(dest instanceof AbstractGeneratedItem)) {
+			// throw new IllegalArgumentException("Bad type of dest type " +
+			// dest.getClass());
 		}
 		this._linkType = lt;
 		this._source = source;

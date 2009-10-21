@@ -60,7 +60,7 @@ import fr.imag.adele.cadse.core.util.Convert;
  */
 public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInternalTWLink {
 
-	//public static final String	LT_PARENT_SN_PREFIX	= "#parent:";
+	// public static final String LT_PARENT_SN_PREFIX = "#parent:";
 
 	/** The int id. */
 	private int					_intID;
@@ -93,9 +93,8 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	/** The info. */
 	private String				_displayName;
 
-	TWDestEvol					_twdestEvol			= TWDestEvol.immutable;
-	
-	
+	TWDestEvol					_twdestEvol	= TWDestEvol.immutable;
+
 	// TWCoupled is a flag
 
 	/**
@@ -209,11 +208,14 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 		this._selection = null;
 		this._intID = -1;
 	}
-	
+
 	@Override
 	public void finishLoad() {
 		if (_destination instanceof ItemTypeItemDeltaAdapter) {
 			_destination = getLogicalWorkspace().getItemType(_destination.getId());
+		}
+		if (_parent instanceof ItemTypeItemDeltaAdapter) {
+			_parent = getLogicalWorkspace().getItemType(_parent.getId());
 		}
 	}
 
@@ -363,8 +365,8 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 			return true;
 		}
 		if (obj instanceof LinkType) {
-			if (getSource().equals(((LinkType) obj).getSource())) {
-				return getName().equals(((LinkType) obj).getName());
+			if (getSource() != null && getSource().equals(((LinkType) obj).getSource())) {
+				return getName() != null && getName().equals(((LinkType) obj).getName());
 			}
 		}
 		return false;
@@ -377,7 +379,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	 */
 	@Override
 	public int hashCode() {
-		return getSource().hashCode() ^ getName().hashCode();
+		return (getSource() != null ? getSource().hashCode() : -1) ^ getName().hashCode();
 	}
 
 	/*
@@ -406,6 +408,12 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 		}
 		if (isDerived()) {
 			kindStr += "d";
+		}
+		if (isGroup()) {
+			kindStr += "g";
+		}
+		if (isAnnotation()) {
+			kindStr += "*";
 		}
 
 		return "LinkType " + getName() + "[" + kindStr + "] : " + getSource() + " -> " + getDestination();
@@ -438,40 +446,12 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 		return this._inverse;
 	}
 
-//	/*
-//	 * (non-Javadoc)
-//	 * 
-//	 * @see fr.imag.adele.cadse.core.LinkType#getInverse()
-//	 */
-//	public LinkType getInverse(CompactUUID invid) {
-//		if (this._inverse == null && isPart()) {
-//			// create pseudo linktype
-//			if (invid == null) {
-//				invid = CompactUUID.randomUUID();
-//			}
-//
-//			try {
-//				this._inverse = _destination.createLinkType(invid, 0, LT_PARENT_SN_PREFIX + invid + ":" + getName(),
-//						REQUIRE | INVERSE_PART, 0, 1, null, this);
-//				((LinkTypeImpl) this._inverse).setDisplayName("parent:" + getName());
-//				((LinkTypeImpl) this._inverse).setHidden(true);
-//				((LinkTypeImpl) this._inverse).setIsStatic(this.isStatic());
-//			} catch (CadseException e) {
-//				// ingored
-//			}
-//
-//		}
-//		return this._inverse;
-//	}
-
-	//private void setDisplayName(String _displayName) {
-//		this._displayName = _displayName;
-//	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.LinkType#getSelectingDestination(fr.imag.adele.cadse.core.Item)
+	 * @see
+	 * fr.imag.adele.cadse.core.LinkType#getSelectingDestination(fr.imag.adele
+	 * .cadse.core.Item)
 	 */
 	public Collection<Item> getSelectingDestination(Item source) {
 		Collection<Item> ret = null;
@@ -506,7 +486,9 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.LinkType#setManager(fr.imag.adele.cadse.core.ILinkTypeManager)
+	 * @see
+	 * fr.imag.adele.cadse.core.LinkType#setManager(fr.imag.adele.cadse.core
+	 * .ILinkTypeManager)
 	 */
 	public void setManager(ILinkTypeManager manager) {
 		_fManager = manager;
@@ -593,7 +575,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 		}
 		if (CadseGCST.LINK_at_ANNOTATION_ == type) {
 			return setKind(LinkType.ANNOTATION, Convert.toBoolean(value, CadseGCST.LINK_at_ANNOTATION_, false));
-				}
+		}
 		if (CadseGCST.LINK_at_COMPOSITION_ == type) {
 			return setKind(LinkType.COMPOSITION, Convert.toBoolean(value, CadseGCST.LINK_at_COMPOSITION_, false));
 		}
@@ -620,8 +602,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 			return true;
 		}
 		if (CadseGCST.LINK_at_TWCOUPLED_ == type) {
-			boolean localCoupled = Convert.toBoolean(value, CadseGCST.LINK_at_TWCOUPLED_,
-					false);
+			boolean localCoupled = Convert.toBoolean(value, CadseGCST.LINK_at_TWCOUPLED_, false);
 			if (localCoupled == getFlag(Item.EVOL_LINK_TYPE_COUPLED)) {
 				return false;
 			}
@@ -638,7 +619,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	private boolean getKind(int f) {
 		return (_kind & f) != 0;
 	}
-	
+
 	private boolean setKind(int f, boolean flag) {
 		boolean oldv = getKind(f);
 		if (flag) {
@@ -648,7 +629,6 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 		}
 		return oldv != flag;
 	}
-	
 
 	@Override
 	protected void collectOutgoingLinks(LinkType linkType, CollectedReflectLink ret) {
@@ -715,8 +695,9 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	 * 
 	 * @return destination of this link.
 	 * 
-	 * NOTE: Si ce lien est non-resolu, avant de retouner l'objet, essayer de
-	 * r�cup�rer cet item dans le workspace. Si non trouv�, retourner null.
+	 *         NOTE: Si ce lien est non-resolu, avant de retouner l'objet,
+	 *         essayer de r�cup�rer cet item dans le workspace. Si non trouv�,
+	 *         retourner null.
 	 */
 	public Item getResolvedDestination() {
 		return getDestination(true);
@@ -755,6 +736,8 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	 * @return id destination
 	 */
 	public CompactUUID getDestinationId() {
+		if (_destination == null)
+			return null;
 		return _destination.getId();
 	}
 
@@ -782,7 +765,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	 */
 	@Override
 	public boolean isReadOnly() {
-		if (getSource().isReadOnly()) {
+		if (getSource() != null && getSource().isReadOnly()) {
 			return true;
 		}
 		return (_kind & LinkType.READ_ONLY) != 0;
@@ -859,24 +842,26 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 		return false;
 	}
 
-//	/**
-//	 * Unresolve a link.
-//	 */
-//	private void unresolve() {
-//		if (getSource().isOrphan()) {
-//			return;
-//		}
-//
-//		try {
-//			_destination = (ItemType) ((LogicalWorkspaceImpl) getLogicalWorkspace()).getItem(_destination.getId(),
-//					_destination.getType(), _destination.getQualifiedName(), _destination.getName());
-//		} catch (CadseException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//
-//		_destination.addIncomingLink(this, false);
-//	}
+	// /**
+	// * Unresolve a link.
+	// */
+	// private void unresolve() {
+	// if (getSource().isOrphan()) {
+	// return;
+	// }
+	//
+	// try {
+	// _destination = (ItemType) ((LogicalWorkspaceImpl)
+	// getLogicalWorkspace()).getItem(_destination.getId(),
+	// _destination.getType(), _destination.getQualifiedName(),
+	// _destination.getName());
+	// } catch (CadseException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// }
+	//
+	// _destination.addIncomingLink(this, false);
+	// }
 
 	/**
 	 * Recompute destination.
@@ -894,7 +879,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	 * @return true, if checks if is resolved
 	 */
 	public boolean isLinkResolved() {
-		return ((AbstractItem) _destination).isResolved();
+		return _destination != null && _destination.isResolved();
 	}
 
 	/**
@@ -1067,8 +1052,5 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 		}
 		super.setParent(parent, lt);
 	}
-
-	
-	
 
 }

@@ -21,6 +21,7 @@ package fr.imag.adele.cadse.core.impl.internal;
 import java.util.List;
 
 import fr.imag.adele.cadse.core.CadseException;
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
@@ -30,7 +31,6 @@ import fr.imag.adele.cadse.core.delta.LinkDelta;
 import fr.imag.adele.cadse.core.delta.OrderOperation;
 import fr.imag.adele.cadse.core.delta.SetAttributeOperation;
 import fr.imag.adele.cadse.core.delta.WLWCOperation;
-import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.enumdef.TWDestEvol;
 import fr.imag.adele.cadse.core.enumdef.TWEvol;
 import fr.imag.adele.cadse.core.transaction.AbstractLogicalWorkspaceTransactionListener;
@@ -159,8 +159,8 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 	 *            the attribute definition
 	 * @throws CadseException
 	 */
-	private void computeAndSetAttrModified(WLWCOperation attOperation, ItemDelta modifiedItem,
-			IAttributeType attrDef) throws CadseException {
+	private void computeAndSetAttrModified(WLWCOperation attOperation, ItemDelta modifiedItem, IAttributeType attrDef)
+			throws CadseException {
 		// manage old cadse
 		if (attrDef == null || !attrDef.isResolved()) {
 			return;
@@ -229,14 +229,13 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 	 *            new modified flag value
 	 * @throws CadseException
 	 */
-	private void setAttrModified(ItemDelta item, IAttributeType<?> attrDef, boolean modifiedVal)
-			throws CadseException {
+	private void setAttrModified(ItemDelta item, IAttributeType<?> attrDef, boolean modifiedVal) throws CadseException {
 		item.setTWAttributeModified(attrDef, modifiedVal);
 	}
 
 	@Override
-	public void notifyChangeAttribute(LogicalWorkspaceTransaction wc, LinkDelta link,
-			SetAttributeOperation attOperation) throws CadseException {
+	public void notifyChangeAttribute(LogicalWorkspaceTransaction wc, LinkDelta link, SetAttributeOperation attOperation)
+			throws CadseException {
 		// do nothing
 	}
 
@@ -250,8 +249,7 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 	}
 
 	@Override
-	public void notifyCreatedItem(LogicalWorkspaceTransaction wc, ItemDelta item) throws CadseException,
-			CadseException {
+	public void notifyCreatedItem(LogicalWorkspaceTransaction wc, ItemDelta item) throws CadseException, CadseException {
 		/*
 		 * A created item is RequireNewRev and RevModified.
 		 */
@@ -260,8 +258,7 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 	}
 
 	@Override
-	public void notifyCreatedLink(LogicalWorkspaceTransaction wc, LinkDelta link) throws CadseException,
-			CadseException {
+	public void notifyCreatedLink(LogicalWorkspaceTransaction wc, LinkDelta link) throws CadseException, CadseException {
 		// manage case of attribute modified attribute value
 		LinkType linkType = link.getLinkType();
 		ItemDelta modifiedItem = link.getSource();
@@ -316,25 +313,22 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 	}
 
 	@Override
-	public void notifyDeletedItem(LogicalWorkspaceTransaction wc, ItemDelta item) throws CadseException,
-			CadseException {
+	public void notifyDeletedItem(LogicalWorkspaceTransaction wc, ItemDelta item) throws CadseException, CadseException {
 		// do nothing
 	}
 
 	@Override
-	public void notifyDeletedLink(LogicalWorkspaceTransaction wc, LinkDelta link) throws CadseException,
-			CadseException {
+	public void notifyDeletedLink(LogicalWorkspaceTransaction wc, LinkDelta link) throws CadseException, CadseException {
 		// manage case of attribute modified attribute value
 		LinkType linkType = link.getLinkType();
-		ItemDelta modifiedItem = link.getSource();
 		if (linkType.equals(CadseGCST.ITEM_lt_MODIFIED_ATTRIBUTES)) {
 			// manage case Modified -> Unmodified
 			return;
 		}
 
 		// ignore deleting items
-		ItemDelta sourceItem = link.getSource();
-		if ((sourceItem == null) || (sourceItem.isDeleted())) {
+		ItemDelta modifiedItem = link.getSource();
+		if ((modifiedItem == null) || (modifiedItem.isDeleted() || !modifiedItem.exists())) {
 			return;
 		}
 
@@ -343,8 +337,7 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 	}
 
 	@Override
-	public void notifyLoadedItem(LogicalWorkspaceTransaction workspaceLogiqueWorkingCopy,
-			List<ItemDelta> loadedItems) {
+	public void notifyLoadedItem(LogicalWorkspaceTransaction workspaceLogiqueWorkingCopy, List<ItemDelta> loadedItems) {
 		// TODO implement it
 	}
 

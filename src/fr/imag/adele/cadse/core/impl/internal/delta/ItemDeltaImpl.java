@@ -1178,6 +1178,8 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 				}
 				try {
 					LinkDelta lo = _copy.getOrCreateItemOperation(l.getSource()).getOutgoingLinkOperation(l);
+					if (lo == null)
+						continue;
 					if (!acceptDelete && lo.isDeleted()) {
 						continue;
 					}
@@ -1794,7 +1796,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		if (_links.containsKey(key)) {
 			return _links.get(key);
 		}
-		throw new CadseException(Messages.link_not_found_in_outgoing + l);
+		return null;
 	}
 
 	/*
@@ -3183,6 +3185,8 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * .imag.adele.cadse.core.Link, boolean)
 	 */
 	public void removeIncomingLink(Link linkImpl, boolean notifie) {
+		if (!(linkImpl instanceof LinkDelta))
+			return;
 		_incomingLinks = ArraysUtil.remove(LinkDelta.class, _incomingLinks, (LinkDelta) linkImpl);
 	}
 
@@ -3344,7 +3348,8 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 				setAtt = new SetAttributeOperationImpl(this, key, newCurrentValue, null);
 			add(setAtt);
 		}
-		_copy.validateChangeAttribute(this, setAtt);
+		if (!loaded)
+			_copy.validateChangeAttribute(this, setAtt);
 		try {
 
 			setAtt.setLoaded(loaded);

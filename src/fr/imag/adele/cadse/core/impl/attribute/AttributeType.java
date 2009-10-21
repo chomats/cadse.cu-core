@@ -23,8 +23,6 @@ import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemState;
-import fr.imag.adele.cadse.core.Link;
-import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.attribute.CheckStatus;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.delta.ItemDelta;
@@ -39,7 +37,7 @@ import fr.imag.adele.cadse.core.util.Convert;
 public abstract class AttributeType extends AbstractGeneratedItem implements IInternalTWAttribute {
 
 	private String			_name;
-	String 						_cstName;
+	String					_cstName;
 	private TWEvol			_evol			= TWEvol.twImmutable;
 	private boolean			_TWRevSpecific	= true;
 	private TWCommitKind	_TWCommitKind	= TWCommitKind.conflict;
@@ -74,21 +72,24 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 		if (CadseGCST.ATTRIBUTE_at_MUST_BE_INITIALIZED_ == type) {
 			return (T) Boolean.valueOf(getFlag(MUST_BE_INITIALIZED_AT_CREATION_TIME));
 		}
-		/*if (CadseGCST.ATTRIBUTE_at_IS_META_ATTRIBUTE_ == type) {
-			return (T) Boolean.valueOf(getFlag(IS_META_ATTRIBUTE));
-		}*/
-		/*if (CadseGCST.ATTRIBUTE_at_OVERWRITABLE_ == type) {
-			return (T) Boolean.valueOf(getFlag(OVERWRITABLE));
-		}*/
+		/*
+		 * if (CadseGCST.ATTRIBUTE_at_IS_META_ATTRIBUTE_ == type) { return (T)
+		 * Boolean.valueOf(getFlag(IS_META_ATTRIBUTE)); }
+		 */
+		/*
+		 * if (CadseGCST.ATTRIBUTE_at_OVERWRITABLE_ == type) { return (T)
+		 * Boolean.valueOf(getFlag(OVERWRITABLE)); }
+		 */
 		if (CadseGCST.ITEM_at_NAME_ == type) {
 			return (T) _name;
 		}
 		if (CadseGCST.ITEM_at_DISPLAY_NAME_ == type) {
 			return (T) _name;
 		}
-		/*if (CadseGCST.ITEM_at_QUALIFIED_DISPLAY_NAME_ == type) {
-			return (T) _name;
-		}*/
+		/*
+		 * if (CadseGCST.ITEM_at_QUALIFIED_DISPLAY_NAME_ == type) { return (T)
+		 * _name; }
+		 */
 		if (CadseGCST.ITEM_at_QUALIFIED_NAME_ == type) {
 			return (T) _name;
 		}
@@ -114,12 +115,12 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 		if (CadseGCST.ATTRIBUTE_at_MUST_BE_INITIALIZED_ == type) {
 			return setFlag(MUST_BE_INITIALIZED_AT_CREATION_TIME, Convert.toBoolean(value, false));
 		}
-		/*if (CadseGCST.ATTRIBUTE_at_IS_META_ATTRIBUTE_ == type) {
-			return setFlag(IS_META_ATTRIBUTE, Convert.toBoolean(value));
-		}
-		if (CadseGCST.ATTRIBUTE_at_OVERWRITABLE_ == type) {
-			return setFlag(OVERWRITABLE, Convert.toBoolean(value, false));
-		}*/
+		/*
+		 * if (CadseGCST.ATTRIBUTE_at_IS_META_ATTRIBUTE_ == type) { return
+		 * setFlag(IS_META_ATTRIBUTE, Convert.toBoolean(value)); } if
+		 * (CadseGCST.ATTRIBUTE_at_OVERWRITABLE_ == type) { return
+		 * setFlag(OVERWRITABLE, Convert.toBoolean(value, false)); }
+		 */
 		if (CadseGCST.ITEM_at_NAME_ == type) {
 			_name = Convert.toString(value);
 			return true;
@@ -149,7 +150,7 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 			}
 			return true;
 		}
-		
+
 		return super.commitSetAttribute(type, key, value);
 	}
 
@@ -231,14 +232,8 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 	public void setState(ItemState modifing) {
 	}
 
-	
-
 	public Item getParent() {
 		return _parent;
-	}
-
-	public void setParent(Item parent, LinkType lt) {
-		this._parent = parent;
 	}
 
 	public Object convertTo(Object v) {
@@ -268,7 +263,9 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.attribute.IInternalTWAttribute#setEvol(fr.imag.adele.cadse.core.enumdef.TWEvol)
+	 * @see
+	 * fr.imag.adele.cadse.core.attribute.IInternalTWAttribute#setEvol(fr.imag
+	 * .adele.cadse.core.enumdef.TWEvol)
 	 */
 	public void setEvol(TWEvol evol) {
 		this._evol = evol;
@@ -277,7 +274,9 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.attribute.IInternalTWAttribute#setTWRevSpecific(boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.attribute.IInternalTWAttribute#setTWRevSpecific
+	 * (boolean)
 	 */
 	public void setTWRevSpecific(boolean revSpecific) {
 		_TWRevSpecific = revSpecific;
@@ -286,7 +285,9 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.attribute.IInternalTWAttribute#setTWCommitKind(fr.imag.adele.cadse.core.enumdef.TWCommitKind)
+	 * @see
+	 * fr.imag.adele.cadse.core.attribute.IInternalTWAttribute#setTWCommitKind
+	 * (fr.imag.adele.cadse.core.enumdef.TWCommitKind)
 	 */
 	public void setTWCommitKind(TWCommitKind commitKind) {
 		_TWCommitKind = commitKind;
@@ -295,7 +296,9 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.attribute.IInternalTWAttribute#setTWUpdateKind(fr.imag.adele.cadse.core.enumdef.TWUpdateKind)
+	 * @see
+	 * fr.imag.adele.cadse.core.attribute.IInternalTWAttribute#setTWUpdateKind
+	 * (fr.imag.adele.cadse.core.enumdef.TWUpdateKind)
 	 */
 	public void setTWUpdateKind(TWUpdateKind updateKind) {
 		_TWUpdateKind = updateKind;
@@ -324,11 +327,11 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 	public boolean mustBeCreateNewValueAtCreationTimeOfItem() {
 		return false;
 	}
-	
+
 	public String getCSTName() {
 		return _cstName;
 	}
-	
+
 	public void setCSTName(String cst) {
 		_cstName = cst;
 	}

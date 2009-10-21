@@ -37,12 +37,9 @@ import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.ChangeID;
 import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.ContentItem;
-import fr.imag.adele.cadse.core.DefaultItemManager;
 import fr.imag.adele.cadse.core.DerivedLink;
 import fr.imag.adele.cadse.core.DerivedLinkDescription;
 import fr.imag.adele.cadse.core.EventFilter;
-import fr.imag.adele.cadse.core.IContentItemFactory;
-import fr.imag.adele.cadse.core.IItemManager;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemDescription;
 import fr.imag.adele.cadse.core.ItemDescriptionRef;
@@ -61,8 +58,8 @@ import fr.imag.adele.cadse.core.delta.LinkDelta;
 import fr.imag.adele.cadse.core.impl.CadseCore;
 import fr.imag.adele.cadse.core.impl.CadseIllegalArgumentException;
 import fr.imag.adele.cadse.core.impl.CollectedReflectLink;
-import fr.imag.adele.cadse.core.impl.ContentItemImpl;
 import fr.imag.adele.cadse.core.impl.ReflectLink;
+import fr.imag.adele.cadse.core.impl.internal.delta.ItemTypeItemDeltaAdapter;
 import fr.imag.adele.cadse.core.internal.IWorkingLoadingItems;
 import fr.imag.adele.cadse.core.internal.IWorkspaceNotifier;
 import fr.imag.adele.cadse.core.internal.InternalItem;
@@ -76,40 +73,40 @@ import fr.imag.adele.cadse.core.util.IErrorCollector;
 import fr.imag.adele.cadse.core.util.OrderWay;
 
 public abstract class AbstractGeneratedItem implements Item, InternalItem {
-	protected CompactUUID _id;
+	protected CompactUUID					_id;
 	// listener attributes
-	protected WorkspaceListener[] _listeners = null;
-	protected int[] _filter = null;
+	protected WorkspaceListener[]			_listeners				= null;
+	protected int[]							_filter					= null;
 	// flag
-	private int _flag = 0;
-	private int _definedflag = 0;
+	private int								_flag					= 0;
+	private int								_definedflag			= 0;
 	// links
-	private Object[] _incomings = null;
-	protected Object[] _outgoings = null;
+	private Object[]						_incomings				= null;
+	protected Object[]						_outgoings				= null;
 
 	// evol attributes
-	protected String _committedBy;
-	protected long _committedDate;
-	protected int _version;
-	protected IAttributeType<?>[] _modifiedAttributeTypes = null;
+	protected String						_committedBy;
+	protected long							_committedDate;
+	protected int							_version;
+	protected IAttributeType<?>[]			_modifiedAttributeTypes	= null;
 
 	// generic attributes
-	protected Object[] _attributes = null;
-	protected ItemDelta _workingCopyOperation = null;
+	protected Object[]						_attributes				= null;
+	protected ItemDelta						_workingCopyOperation	= null;
 
 	/** The state. */
-	protected ItemState _state = ItemState.NOT_IN_WORKSPACE;
+	protected ItemState						_state					= ItemState.NOT_IN_WORKSPACE;
 
 	/** The key. */
-	private ISpaceKey _key = AbstractSpaceKey.NO_INIT_KEY;
+	private ISpaceKey						_key					= AbstractSpaceKey.NO_INIT_KEY;
 
 	/** The wl. */
-	final protected LogicalWorkspaceImpl _wl;
+	final protected LogicalWorkspaceImpl	_wl;
 
 	/** The contentmanager. */
-	ContentItem _contentitem = null;
+	ContentItem								_contentitem			= null;
 	/** The parent. */
-	protected Item _parent = null;
+	protected Item							_parent					= null;
 
 	public boolean isTWAttributeModified(IAttributeType<?> att) {
 		return ArraysUtil.indexOf(_modifiedAttributeTypes, att) != -1;
@@ -144,15 +141,9 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 
 	private void checkId(CompactUUID id) {
 		if (id == null) {
-			// WorkspaceDomainImpl.error(this, "Id is null for
-			// "+getType().getShortName()+"::"+getShortName(), null);
 			this._id = CompactUUID.randomUUID();
 		}
 	}
-
-//	public boolean isPersistentCacheLoaded() {
-//		return getFlag(Item.PERSISTENCE_CACHE_LOADED);
-//	}
 
 	public AbstractGeneratedItem(ItemDelta item) {
 		this._id = item.getId();
@@ -193,7 +184,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 
 		return false;
 	}
-	
+
 	@Override
 	public boolean exists() {
 		return _wl.getItem(_id) == this;
@@ -209,8 +200,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		addListener(l, -1);
 	}
 
-	public List<WorkspaceListener> filter(int filters,
-			ImmutableWorkspaceDelta delta) {
+	public List<WorkspaceListener> filter(int filters, ImmutableWorkspaceDelta delta) {
 		if (_listeners == null) {
 			return null;
 		}
@@ -235,18 +225,15 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		if (index == -1) {
 			return;
 		}
-		_listeners = ArraysUtil.remove(WorkspaceListener.class, _listeners,
-				index);
+		_listeners = ArraysUtil.remove(WorkspaceListener.class, _listeners, index);
 		_filter = ArraysUtil.remove(_filter, index);
 	}
 
-	public Link addOutgoingItem(LinkType linkType, Item destination)
-			throws CadseException {
+	public Link addOutgoingItem(LinkType linkType, Item destination) throws CadseException {
 		return createLink(linkType, destination);
 	}
 
-	public Link removeOutgoingItem(LinkType linkType, Item destination)
-			throws CadseException {
+	public Link removeOutgoingItem(LinkType linkType, Item destination) throws CadseException {
 		return Accessor.removeOutgoingItem(this, linkType, destination);
 	}
 
@@ -276,8 +263,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		return true;
 	}
 
-	public void computeAttribute(String attributeName, Object theirsValue,
-			Object baseValue, Object mineValue) {
+	public void computeAttribute(String attributeName, Object theirsValue, Object baseValue, Object mineValue) {
 		// TODO Auto-generated method stub
 
 	}
@@ -291,8 +277,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	}
 
 	public boolean contentIsLoaded() {
-		return _contentitem != null
-				&& _contentitem != ContentItem.INVALID_CONTENT;
+		return _contentitem != null && _contentitem != ContentItem.INVALID_CONTENT;
 	}
 
 	/**
@@ -407,13 +392,11 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	 */
 	public void forceState(ItemState state) {
 		if (ItemState.NOT_IN_WORKSPACE == _state) {
-			throw new CadseIllegalArgumentException(
-					Messages.error_cannot_change_state, getId());
+			throw new CadseIllegalArgumentException(Messages.error_cannot_change_state, getId());
 		}
 		ItemState oldstate = _state;
 		_state = state;
-		getCadseDomain().notifieChangeEvent(ChangeID.STATE, this, oldstate,
-				_state);
+		getCadseDomain().notifieChangeEvent(ChangeID.STATE, this, oldstate, _state);
 	}
 
 	/**
@@ -422,8 +405,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	 * @return list links of kind Aggregation.
 	 */
 	public List<Link> getAggregations() {
-		return Accessor
-				.getLinksByKind(getOutgoingLinks(), LinkType.AGGREGATION);
+		return Accessor.getLinksByKind(getOutgoingLinks(), LinkType.AGGREGATION);
 	}
 
 	/*
@@ -464,8 +446,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		// _contentitem = ContentItem.INVALID_CONTENT;
 		// }
 		// }
-		if (_contentitem == ContentItem.NO_CONTENT
-				|| _contentitem == ContentItem.INVALID_CONTENT) {
+		if (_contentitem == ContentItem.NO_CONTENT || _contentitem == ContentItem.INVALID_CONTENT) {
 			return null;
 		}
 		return _contentitem;
@@ -481,8 +462,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	}
 
 	@Deprecated
-	public Set<DerivedLinkDescription> getDerivedLinkDescriptions(
-			ItemDescription source) {
+	public Set<DerivedLinkDescription> getDerivedLinkDescriptions(ItemDescription source) {
 		return Collections.emptySet();
 	}
 
@@ -525,8 +505,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 
 	public Item getIncomingItem(LinkType lt) {
 		Collection<Item> incomingItem = getIncomingItems(lt);
-		Item ret = incomingItem.size() == 1 ? incomingItem.iterator().next()
-				: null;
+		Item ret = incomingItem.size() == 1 ? incomingItem.iterator().next() : null;
 		return ret;
 	}
 
@@ -535,8 +514,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		if (_incomings != null) {
 			for (int i = 0; i < _incomings.length; i += 2) {
 				try {
-					ret.addIncoming((LinkType) _incomings[i],
-							(Item) _incomings[i + 1]);
+					ret.addIncoming((LinkType) _incomings[i], (Item) _incomings[i + 1]);
 				} catch (RuntimeException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -550,11 +528,10 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		Item source = link.getSource();
 		LinkType lt = link.getLinkType();
 		Assert.isNotNull(lt);
-		Assert.isNotNull(source);		
+		Assert.isNotNull(source);
 		int index = findIndex(_incomings, lt, source);
 		if (index != -1) {
-			Logger.getLogger("CU.Workspace.incomingslinks").log(Level.FINE,
-					"Allready register " + link,
+			Logger.getLogger("CU.Workspace.incomingslinks").log(Level.FINE, "Allready register " + link,
 					new CadseException("Allready register " + link));
 			return;
 		}
@@ -575,8 +552,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		if (index != -1) {
 			_incomings = ArraysUtil.remove(Object.class, _incomings, index, 2);
 			if (notifie) {
-				getCadseDomain().notifieChangeEvent(
-						ChangeID.UNRESOLVE_INCOMING_LINK, this, link);
+				getCadseDomain().notifieChangeEvent(ChangeID.UNRESOLVE_INCOMING_LINK, this, link);
 			}
 		}
 	}
@@ -601,17 +577,14 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	 */
 	public void removeOutgoingLink(Link link, boolean notifie) {
 		if (link.getLinkType() == CadseGCST.ITEM_lt_MODIFIED_ATTRIBUTES) {
-			int index = ArraysUtil.indexOf(this._modifiedAttributeTypes, link
-					.getDestination());
+			int index = ArraysUtil.indexOf(this._modifiedAttributeTypes, link.getDestination());
 			if (index == -1) {
 				return;
 			}
-			this._modifiedAttributeTypes = ArraysUtil.remove(
-					IAttributeType.class, this._modifiedAttributeTypes, index);
+			this._modifiedAttributeTypes = ArraysUtil.remove(IAttributeType.class, this._modifiedAttributeTypes, index);
 
 			if (notifie) {
-				getCadseDomain().notifieChangeEvent(
-						ChangeID.DELETE_OUTGOING_LINK, this, link);
+				getCadseDomain().notifieChangeEvent(ChangeID.DELETE_OUTGOING_LINK, this, link);
 			}
 		}
 		Item dest = link.getDestination();
@@ -620,8 +593,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		if (index != -1) {
 			_outgoings = ArraysUtil.remove(Object.class, _outgoings, index, 2);
 			if (notifie) {
-				getCadseDomain().notifieChangeEvent(
-						ChangeID.DELETE_OUTGOING_LINK, this, link);
+				getCadseDomain().notifieChangeEvent(ChangeID.DELETE_OUTGOING_LINK, this, link);
 			}
 		}
 	}
@@ -652,10 +624,11 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 			for (int i = 0; i < _incomings.length; i += 2) {
 				LinkType incoming_lt = (LinkType) _incomings[i];
 				Item src = (Item) _incomings[i + 1];
-				if (src == null) { continue; }
+				if (src == null) {
+					continue;
+				}
 				if (incoming_lt == lt && src.getId().equals(srcId)) {
-					return new ReflectLink(incoming_lt,
-							(Item) _incomings[i + 1], this, -1);
+					return new ReflectLink(incoming_lt, (Item) _incomings[i + 1], this, -1);
 				}
 			}
 		}
@@ -705,10 +678,8 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	 * @see fr.imag.adele.cadse.core.Item#getOutgoingItems(java.lang.String,
 	 * fr.imag.adele.cadse.core.CompactUUID, boolean)
 	 */
-	public Item getOutgoingItem(String attributte_link, CompactUUID itemId,
-			boolean resovledOnly) {
-		return Accessor.getOutgoingItems(getOutgoingLinks(), attributte_link,
-				itemId, resovledOnly);
+	public Item getOutgoingItem(String attributte_link, CompactUUID itemId, boolean resovledOnly) {
+		return Accessor.getOutgoingItems(getOutgoingLinks(), attributte_link, itemId, resovledOnly);
 	}
 
 	/*
@@ -719,8 +690,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	 * .LinkType, boolean)
 	 */
 	public Collection<Item> getOutgoingItems(LinkType lt, boolean resovledOnly) {
-		return Accessor
-				.getOutgoingItems(getOutgoingLinks(lt), lt, resovledOnly);
+		return Accessor.getOutgoingItems(getOutgoingLinks(lt), lt, resovledOnly);
 	}
 
 	public Collection<Item> getOutgoingItems(boolean resovledOnly) {
@@ -733,10 +703,8 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	 * @see fr.imag.adele.cadse.core.Item#getOutgoingItems(java.lang.String,
 	 * boolean)
 	 */
-	public Collection<Item> getOutgoingItems(String linkTypeName,
-			boolean resovledOnly) {
-		return Accessor.getOutgoingItems(getOutgoingLinks(), linkTypeName,
-				resovledOnly);
+	public Collection<Item> getOutgoingItems(String linkTypeName, boolean resovledOnly) {
+		return Accessor.getOutgoingItems(getOutgoingLinks(), linkTypeName, resovledOnly);
 	}
 
 	/*
@@ -757,8 +725,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	 * boolean)
 	 */
 	public Item getOutgoingItem(String linkTypeName, boolean resovledOnly) {
-		return Accessor.getOutgoingItem(getOutgoingLinks(), linkTypeName,
-				resovledOnly);
+		return Accessor.getOutgoingItem(getOutgoingLinks(), linkTypeName, resovledOnly);
 	}
 
 	public Link getOutgoingLink(LinkType linkType) {
@@ -811,14 +778,11 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		Item parent = null;
 		for (Link l : getIncomingLinks()) {
 			if (l.getLinkType() == null) {
-				getCadseDomain().error(
-						this,
-						"Type of link is null : dest = " + getId()
-								+ " source = " + l.getSource(), null);
+				getCadseDomain().error(this, "Type of link is null : dest = " + getId() + " source = " + l.getSource(),
+						null);
 				continue;
 			}
-			if ((lt == null && l.getLinkType().isPart())
-					|| (l.getLinkType() == lt)) {
+			if ((lt == null && l.getLinkType().isPart()) || (l.getLinkType() == lt)) {
 				parent = l.getSource();
 				if (set) {
 					setParent(parent, l.getLinkType());
@@ -844,14 +808,11 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		for (Link l : getOutgoingLinks()) {
 			final LinkType theTypeOfThisLink = l.getLinkType();
 			if (theTypeOfThisLink == null) {
-				getCadseDomain().error(
-						this,
-						"Type of link is null : dest = " + getId()
-								+ " source = " + l.getSource(), null);
+				getCadseDomain().error(this, "Type of link is null : dest = " + getId() + " source = " + l.getSource(),
+						null);
 				continue;
 			}
-			if ((theTypeOfThisLink.isInversePart())
-					&& (lt == null || theTypeOfThisLink.getInverse() == lt)) {
+			if ((theTypeOfThisLink.isInversePart()) && (lt == null || theTypeOfThisLink.getInverse() == lt)) {
 				parent = l.getDestination();
 				if (set) {
 					setParent(parent, theTypeOfThisLink.getInverse());
@@ -872,7 +833,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 						setParent(d, null);
 						break;
 					}
-			}
+				}
 		}
 		return _parent;
 	}
@@ -881,8 +842,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		return getOutgoingItem(lt.getInverse(), false);
 	}
 
-	public Item getPartParent(LinkType lt, boolean attemptToRecreate)
-			throws CadseException {
+	public Item getPartParent(LinkType lt, boolean attemptToRecreate) throws CadseException {
 		return getPartParent(lt);
 	}
 
@@ -1079,8 +1039,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	}
 
 	public boolean isReadOnly() {
-		if (getState() == ItemState.CREATED
-				|| getState() == ItemState.NOT_IN_WORKSPACE) {
+		if (getState() == ItemState.CREATED || getState() == ItemState.NOT_IN_WORKSPACE) {
 			return false;
 		}
 		// a static item is readonly
@@ -1098,8 +1057,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	public boolean itemHasContent() {
 		ItemType type = getType();
 		if (type != null)
-			return type.hasContent() && type.getItemManager() != null
-					&& type.getItemManager().hasContent(this);
+			return type.hasContent() && type.getItemManager() != null && type.getItemManager().hasContent(this);
 
 		return getFlag(HAS_CONTENT);
 	}
@@ -1112,8 +1070,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		this._contentitem = ContentItem.NO_CONTENT;
 	}
 
-	public void setComponents(Set<ItemDescriptionRef> comp)
-			throws CadseException {
+	public void setComponents(Set<ItemDescriptionRef> comp) throws CadseException {
 		// TODO Auto-generated method stub
 
 	}
@@ -1126,13 +1083,11 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		setFlag(IS_MODIFIED, flag);
 	}
 
-	public Collection<Link> setOutgoingItems(LinkType lt, Collection<Item> value)
-			throws CadseException {
+	public Collection<Link> setOutgoingItems(LinkType lt, Collection<Item> value) throws CadseException {
 		return Accessor.setOutgoingItem(this, lt, value);
 	}
 
-	public Link setOutgoingItem(LinkType lt, Item destination)
-			throws CadseException {
+	public Link setOutgoingItem(LinkType lt, Item destination) throws CadseException {
 		return Accessor.setOutgoingItemOne(this, lt, destination);
 	}
 
@@ -1207,22 +1162,19 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		return ret;
 	}
 
-	protected void collectOutgoingLinks(LinkType linkType,
-			CollectedReflectLink ret) {
+	protected void collectOutgoingLinks(LinkType linkType, CollectedReflectLink ret) {
 		if (linkType == CadseGCST.ITEM_lt_INSTANCE_OF) {
 			ret.addOutgoing(CadseGCST.ITEM_lt_INSTANCE_OF, getType());
 		}
 		if (linkType == CadseGCST.ITEM_lt_MODIFIED_ATTRIBUTES) {
-			ret.addOutgoing(CadseGCST.ITEM_lt_MODIFIED_ATTRIBUTES,
-					Item.IS_HIDDEN, this._modifiedAttributeTypes);
+			ret.addOutgoing(CadseGCST.ITEM_lt_MODIFIED_ATTRIBUTES, Item.IS_HIDDEN, this._modifiedAttributeTypes);
 		}
 		if (linkType == CadseGCST.ITEM_lt_PARENT) {
 			ret.addOutgoing(linkType, _parent, Item.IS_HIDDEN);
 		}
 
 		if (linkType == CadseGCST.ITEM_lt_CONTENTS) {
-			if (_contentitem != ContentItem.NO_CONTENT
-					&& _contentitem != ContentItem.INVALID_CONTENT)
+			if (_contentitem != ContentItem.NO_CONTENT && _contentitem != ContentItem.INVALID_CONTENT)
 				ret.addOutgoing(linkType, _contentitem, Item.IS_HIDDEN);
 		}
 		if (_outgoings != null) {
@@ -1243,8 +1195,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		return getLogicalWorkspace().getAttribute(this, att, true);
 	}
 
-	final public <T> T getAttributeWithDefaultValue(IAttributeType<T> att,
-			T defaultValue) {
+	final public <T> T getAttributeWithDefaultValue(IAttributeType<T> att, T defaultValue) {
 		try {
 			T v = getAttribute(att);
 			if (v != null) {
@@ -1257,8 +1208,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		return defaultValue;
 	}
 
-	public void setAttribute(IAttributeType<?> att, Object value)
-			throws CadseException {
+	public void setAttribute(IAttributeType<?> att, Object value) throws CadseException {
 		CadseCore.getLogicalWorkspace().setAttribute(this, att, value);
 	}
 
@@ -1305,20 +1255,6 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	 * .adele.cadse.core.attribute.IAttributeType)
 	 */
 	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
-		// if (type == CadseGCST.ITEM_at_PARENT_ITEM_TYPE_ID_) {
-		// Link l = getPartLinkParent();
-		// if (l != null) {
-		// return (T) l.getLinkType().getName();
-		// }
-		// }
-		//
-		// if (type == CadseGCST.ITEM_at_PARENT_ITEM_ID_) {
-		// Item parent = getPartParent();
-		// if (parent != null) {
-		// return (T) parent.getId();
-		// }
-		// return null;
-		// }
 		if (type == CadseGCST.ITEM_at_ID_) {
 			return (T) _id;
 		}
@@ -1327,16 +1263,14 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 			if (d != null && d != Item.NO_VALUE_STRING) {
 				return (T) d;
 			}
-			return (T) getAttributeWithDefaultValue(CadseGCST.ITEM_at_NAME_,
-					Item.NO_VALUE_STRING);
+			return (T) getAttributeWithDefaultValue(CadseGCST.ITEM_at_NAME_, Item.NO_VALUE_STRING);
 		}
 		/*
 		 * if (type == CadseGCST.ITEM_at_QUALIFIED_DISPLAY_NAME_) { return (T)
 		 * getQualifiedName(); }
 		 */
 		if (type == CadseGCST.ITEM_at_QUALIFIED_NAME_) {
-			return (T) getAttributeWithDefaultValue(CadseGCST.ITEM_at_NAME_,
-					Item.NO_VALUE_STRING);
+			return (T) getAttributeWithDefaultValue(CadseGCST.ITEM_at_NAME_, Item.NO_VALUE_STRING);
 		}
 		if (type == CadseGCST.ITEM_at_NAME_) {
 			return (T) Item.NO_VALUE_STRING;
@@ -1432,11 +1366,9 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	 * fr.imag.adele.cadse.core.internal.Item#commitSetAttribute(fr.imag.adele
 	 * .cadse.core.attribute.IAttributeType, java.lang.String, java.lang.Object)
 	 */
-	public boolean commitSetAttribute(IAttributeType<?> type, String key,
-			Object value) {
+	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
 		if (CadseGCST.ITEM_at_TW_VERSION_ == type) {
-			int _local_version = Convert.toInt(value,
-					CadseGCST.ITEM_at_TW_VERSION_, 0);
+			int _local_version = Convert.toInt(value, CadseGCST.ITEM_at_TW_VERSION_, 0);
 			if (_version == _local_version) {
 				return false;
 			}
@@ -1453,8 +1385,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		}
 
 		if (CadseGCST.ITEM_at_COMMITTED_DATE_ == type) {
-			long _local_committedDate = Convert.toLong(value,
-					CadseGCST.ITEM_at_COMMITTED_DATE_, new Date().getTime());
+			long _local_committedDate = Convert.toLong(value, CadseGCST.ITEM_at_COMMITTED_DATE_, new Date().getTime());
 			if (Convert.equals(_committedBy, _local_committedDate)) {
 				return false;
 			}
@@ -1462,8 +1393,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 			return true;
 		}
 		if (CadseGCST.ITEM_at_REQUIRE_NEW_REV_ == type) {
-			boolean _local_b = Convert.toBoolean(value,
-					CadseGCST.ITEM_at_REQUIRE_NEW_REV_, false);
+			boolean _local_b = Convert.toBoolean(value, CadseGCST.ITEM_at_REQUIRE_NEW_REV_, false);
 			if (getFlag(Item.EVOL_REQUIRER_NEW_REV) == _local_b) {
 				return false;
 			}
@@ -1471,8 +1401,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 			return true;
 		}
 		if (CadseGCST.ITEM_at_REV_MODIFIED_ == type) {
-			boolean _local_b = Convert.toBoolean(value,
-					CadseGCST.ITEM_at_REV_MODIFIED_, false);
+			boolean _local_b = Convert.toBoolean(value, CadseGCST.ITEM_at_REV_MODIFIED_, false);
 			if (getFlag(Item.EVOL_REV_MODIFIED) == _local_b) {
 				return false;
 			}
@@ -1481,8 +1410,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		}
 
 		if (CadseGCST.ITEM_at_ITEM_HIDDEN_ == type) {
-			boolean _local_b = Convert.toBoolean(value,
-					CadseGCST.ITEM_at_ITEM_HIDDEN_, false);
+			boolean _local_b = Convert.toBoolean(value, CadseGCST.ITEM_at_ITEM_HIDDEN_, false);
 			if (getFlag(Item.IS_HIDDEN) == _local_b) {
 				return false;
 			}
@@ -1491,8 +1419,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		}
 
 		if (CadseGCST.ITEM_at_ITEM_READONLY_ == type) {
-			boolean _local_b = Convert.toBoolean(value,
-					CadseGCST.ITEM_at_ITEM_READONLY_, false);
+			boolean _local_b = Convert.toBoolean(value, CadseGCST.ITEM_at_ITEM_READONLY_, false);
 			if (getFlag(Item.READONLY) == _local_b) {
 				return false;
 			}
@@ -1506,15 +1433,12 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		return commitGenericSetAttribute(type, key, value);
 	}
 
-	protected boolean commitGenericSetAttribute(IAttributeType<?> type,
-			String key, Object value) {
+	protected boolean commitGenericSetAttribute(IAttributeType<?> type, String key, Object value) {
 		if (_attributes == null) {
 			if (type == null) {
-				_attributes = ArraysUtil.addList2(Object.class, _attributes,
-						key, value);
+				_attributes = ArraysUtil.addList2(Object.class, _attributes, key, value);
 			} else {
-				_attributes = ArraysUtil.addList2(Object.class, _attributes,
-						type, value);
+				_attributes = ArraysUtil.addList2(Object.class, _attributes, type, value);
 			}
 		}
 		for (int i = 0; i < _attributes.length;) {
@@ -1527,19 +1451,16 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 				if (value != null) {
 					_attributes[i] = value;
 				} else {// remove
-					_attributes = ArraysUtil.remove(Object.class, _attributes,
-							i - 1, 2);
+					_attributes = ArraysUtil.remove(Object.class, _attributes, i - 1, 2);
 				}
 				return true;
 			}
 			i++;
 		}
 		if (type == null) {
-			_attributes = ArraysUtil.addList2(Object.class, _attributes, key,
-					value);
+			_attributes = ArraysUtil.addList2(Object.class, _attributes, key, value);
 		} else {
-			_attributes = ArraysUtil.addList2(Object.class, _attributes, type,
-					value);
+			_attributes = ArraysUtil.addList2(Object.class, _attributes, type, value);
 		}
 		return true;
 	}
@@ -1582,8 +1503,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	 * fr.imag.adele.cadse.core.internal.Item#commitLoadCreateLink(fr.imag.adele
 	 * .cadse.core.LinkType, fr.imag.adele.cadse.core.Item)
 	 */
-	public Link commitLoadCreateLink(LinkType lt, Item destination)
-			throws CadseException {
+	public Link commitLoadCreateLink(LinkType lt, Item destination) throws CadseException {
 		if (lt == CadseGCST.ITEM_lt_CONTENTS) {
 			_contentitem = (ContentItem) destination;
 			return new ReflectLink(lt, this, destination, 0);
@@ -1591,32 +1511,30 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		if (lt == CadseGCST.ITEM_lt_INSTANCE_OF) {
 			ItemType loacltype2 = this.getType();
 			if (loacltype2 != destination) {
-				throw new CadseException(
-						"Try to create a link of type 'instance-of' : Cannot change type "
-								+ loacltype2 + " to " + destination);
+				throw new CadseException("Try to create a link of type 'instance-of' : Cannot change type "
+						+ loacltype2 + " to " + destination);
 			}
 			return new ReflectLink(lt, this, destination, 0);
 		}
 		if (lt == CadseGCST.ITEM_lt_MODIFIED_ATTRIBUTES) {
 			IAttributeType<?> att = (IAttributeType<?>) destination;
-			this._modifiedAttributeTypes = ArraysUtil.add(IAttributeType.class,
-					this._modifiedAttributeTypes, att);
-			return new ReflectLink(lt, this, destination,
-					this._modifiedAttributeTypes.length - 1);
+			this._modifiedAttributeTypes = ArraysUtil.add(IAttributeType.class, this._modifiedAttributeTypes, att);
+			return new ReflectLink(lt, this, destination, this._modifiedAttributeTypes.length - 1);
 		}
 		if (lt == CadseGCST.ITEM_lt_PARENT) {
 			if (!destination.isResolved())
-				throw new CadseException("Cannot set unresolved parent",this, destination);
+				throw new CadseException("Cannot set unresolved parent", this, destination);
+			if (destination != null && destination instanceof ItemTypeItemDeltaAdapter)
+				throw new CadseIllegalArgumentException("Bad type of parent : {0} ", destination.getClass());
+
 			_parent = destination;
 			return new ReflectLink(lt, this, destination, 0);
 		}
 		return createDefaultLink(lt, destination);
 	}
 
-	protected Link createDefaultLink(LinkType lt, Item destination)
-			throws CadseException {
-		_outgoings = ArraysUtil.addList2(Object.class, _outgoings, lt,
-				destination);
+	protected Link createDefaultLink(LinkType lt, Item destination) throws CadseException {
+		_outgoings = ArraysUtil.addList2(Object.class, _outgoings, lt, destination);
 		return new ReflectLink(lt, this, destination, -1);
 	}
 
@@ -1659,12 +1577,11 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	 * .IWorkingLoadingItems, fr.imag.adele.cadse.core.delta.ItemOperation,
 	 * fr.imag.adele.cadse.core.util.IErrorCollector)
 	 */
-	public void loadItem(IWorkingLoadingItems wl, ItemDelta itemOperation,
-			IErrorCollector errorCollector) throws CadseException {
+	public void loadItem(IWorkingLoadingItems wl, ItemDelta itemOperation, IErrorCollector errorCollector)
+			throws CadseException {
 		// find the parent
-		
-		ItemType type = Accessor.loadAttributes(this, itemOperation,
-				errorCollector);
+
+		ItemType type = Accessor.loadAttributes(this, itemOperation, errorCollector);
 
 		for (LinkDelta ldesc : itemOperation.getOutgoingLinkOperations()) {
 			try {
@@ -1684,11 +1601,10 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 				// LinkType lt =
 				// type.getOutgoingLinkType(ldesc.getLinkTypeName());
 				if (lt == null) {
-					lt = wl.getLogicalWorkspace().createUnresolvedLinkType(
-							ldesc.getLinkTypeName(), getType(), dest.getType());
-					errorCollector.addError(this, MessageFormat.format(
-							Messages.error_cannot_create_link, ldesc
-									.getLinkType(), dest.getName()));
+					lt = wl.getLogicalWorkspace().createUnresolvedLinkType(ldesc.getLinkTypeName(), getType(),
+							dest.getType());
+					errorCollector.addError(this, MessageFormat.format(Messages.error_cannot_create_link, ldesc
+							.getLinkType(), dest.getName()));
 					if (lt == null) {
 						continue;
 					}
@@ -1698,7 +1614,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 					continue;
 				if (lt == CadseGCST.ITEM_lt_PARENT)
 					continue;
-				
+
 				Link goodLink = null;
 				LinkType invLt = lt.getInverse();
 				if (invLt != null && invLt.isPart()) {
@@ -1721,8 +1637,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		}
 	}
 
-	public void update(IWorkingLoadingItems items, ItemDelta desc,
-			IWorkspaceNotifier notifie) {
+	public void update(IWorkingLoadingItems items, ItemDelta desc, IWorkspaceNotifier notifie) {
 
 	}
 
@@ -1794,24 +1709,22 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		getType().getAllAttributeTypes(all);
 	}
 
-	public void getLocalAllAttributeTypes(Map<String, IAttributeType<?>> all,
-			boolean keepLastAttribute) {
+	public void getLocalAllAttributeTypes(Map<String, IAttributeType<?>> all, boolean keepLastAttribute) {
 		if (getType() == null) {
 			throw new UnsupportedOperationException("type is undefined");
 		}
 		getType().getAllAttributeTypes(all, keepLastAttribute);
 	}
 
-	public void getLocalAllAttributeTypes(List<IAttributeType<?>> all,
-			ItemFilter filter) {
+	public void getLocalAllAttributeTypes(List<IAttributeType<?>> all, ItemFilter filter) {
 		if (getType() == null) {
 			throw new UnsupportedOperationException("type is undefined");
 		}
 		getType().getAllAttributeTypes(all, filter);
 	}
 
-	public void getLocalAllAttributeTypes(Map<String, IAttributeType<?>> all,
-			boolean keepLastAttribute, ItemFilter filter) {
+	public void getLocalAllAttributeTypes(Map<String, IAttributeType<?>> all, boolean keepLastAttribute,
+			ItemFilter filter) {
 		if (getType() == null) {
 			throw new UnsupportedOperationException("type is undefined");
 		}
@@ -1841,41 +1754,43 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	public Item getBaseItem() {
 		return this;
 	}
-	
-	static public <T> T castItem(Item item,
-			Class<T> classItem) throws CadseException {
+
+	static public <T> T castItem(Item item, Class<T> classItem) throws CadseException {
 		if (classItem.isInstance(item))
 			return (T) item;
-		throw new CadseException("Cannot cast item {0} of type {1} to {2}.", item.getName(), item.getType() == null ? "??": item.getType().getDisplayName(), classItem.getSimpleName());
+		throw new CadseException("Cannot cast item {0} of type {1} to {2}.", item.getName(),
+				item.getType() == null ? "??" : item.getType().getDisplayName(), classItem.getSimpleName());
 	}
-	
+
 	@Override
 	public void setParent(Item parent, LinkType lt) {
 		if (parent != null && !parent.isResolved())
 			throw new CadseIllegalArgumentException("Cannot set unresolved parent", this, parent);
+		if (parent != null && parent instanceof ItemTypeItemDeltaAdapter)
+			throw new CadseIllegalArgumentException("Bad type of parent : {0} ", parent.getClass());
 		_parent = parent;
 	}
-	
+
 	@Override
 	public boolean isGroup() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean isMember() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean isMemberOf(Item item) {
 		return false;
 	}
-	
+
 	@Override
 	public Item getGroup() {
 		return null;
 	}
-	
+
 	@Override
 	public List<Item> getMembers() {
 		return Collections.emptyList();
