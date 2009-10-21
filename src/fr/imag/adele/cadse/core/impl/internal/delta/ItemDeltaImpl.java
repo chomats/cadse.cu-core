@@ -1448,6 +1448,10 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	}
 
 	protected LinkDelta getOrCreateLinkOperation(Link l, int index) {
+		if (l == null || l.getDestination() == null) {
+			getCadseDomain().error(this, Messages.cannot_add_link_of_dest_is_null, null);
+			return null;
+		}
 		if (l.getDestination().getId() == null) {
 			getCadseDomain().error(this,
 					Messages.cannot_add_link_of_dest_is_null + l.getClass() + " : " + l.getDestination().getClass(), //$NON-NLS-2$
