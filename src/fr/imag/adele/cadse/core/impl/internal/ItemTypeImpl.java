@@ -2350,4 +2350,13 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	public void setCSTName(String cst) {
 		_cstName = cst;
 	}
+
+	@Override
+	public List<LinkType> getGroupOutgoingLinkTypes() {
+		ArrayList<LinkType> ret = new ArrayList<LinkType>();
+		for (LinkType lt : getOutgoingLinkTypes())
+			if (lt.isGroup())
+				ret.add(lt);
+		return ret;
+	}
 }
