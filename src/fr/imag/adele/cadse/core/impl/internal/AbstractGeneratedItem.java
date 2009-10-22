@@ -40,6 +40,7 @@ import fr.imag.adele.cadse.core.ContentItem;
 import fr.imag.adele.cadse.core.DerivedLink;
 import fr.imag.adele.cadse.core.DerivedLinkDescription;
 import fr.imag.adele.cadse.core.EventFilter;
+import fr.imag.adele.cadse.core.GroupType;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemDescription;
 import fr.imag.adele.cadse.core.ItemDescriptionRef;
@@ -107,6 +108,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	ContentItem								_contentitem			= null;
 	/** The parent. */
 	protected Item							_parent					= null;
+	protected ItemType _group;
 
 	public boolean isTWAttributeModified(IAttributeType<?> att) {
 		return ArraysUtil.indexOf(_modifiedAttributeTypes, att) != -1;
@@ -1771,28 +1773,20 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		_parent = parent;
 	}
 
-	@Override
-	public boolean isGroup() {
-		return false;
-	}
-
-	@Override
+		@Override
 	public boolean isMember() {
-		return false;
+		return _group != null;
 	}
 
 	@Override
 	public boolean isMemberOf(Item item) {
-		return false;
+		return _group == item || (_group != null && _group.isMemberOf(item));
 	}
 
 	@Override
-	public Item getGroup() {
-		return null;
+	public GroupType getGroup() {
+		return _group;
 	}
 
-	@Override
-	public List<Item> getMembers() {
-		return Collections.emptyList();
-	}
+	
 }

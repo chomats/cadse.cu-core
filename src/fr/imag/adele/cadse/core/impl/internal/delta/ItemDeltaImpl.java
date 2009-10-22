@@ -44,6 +44,7 @@ import fr.imag.adele.cadse.core.ContentItem;
 import fr.imag.adele.cadse.core.DerivedLink;
 import fr.imag.adele.cadse.core.DerivedLinkDescription;
 import fr.imag.adele.cadse.core.EventFilter;
+import fr.imag.adele.cadse.core.GroupType;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemDescription;
 import fr.imag.adele.cadse.core.ItemDescriptionRef;
@@ -3988,23 +3989,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		return _copy;
 	}
 
-	@Override
-	public Item getGroup() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Item> getMembers() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean isGroup() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	
 
 	@Override
 	public boolean isMember() {
@@ -4016,6 +4001,12 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	public boolean isMemberOf(Item item) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public GroupType getGroup() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -45,6 +45,7 @@ import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CadseRuntime;
 import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.DerivedLinkType;
+import fr.imag.adele.cadse.core.GroupType;
 import fr.imag.adele.cadse.core.IItemFactory;
 import fr.imag.adele.cadse.core.IItemManager;
 import fr.imag.adele.cadse.core.IItemNode;
@@ -2358,5 +2359,59 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 			if (lt.isGroup())
 				ret.add(lt);
 		return ret;
+	}
+
+	@Override
+	public GroupType getGroupType() {
+		if (getType().isGroupType())
+			return getType();
+		return null;
+	}
+
+	@Override
+	public boolean isGroupOf(GroupType groupType) {
+		if (groupType == null) return false;
+		
+		GroupType gt = getGroupType();
+		if (gt == null) return false;
+		if (gt == groupType)
+			return true;
+		return groupType.isSuperGroupOf(gt);
+	}
+
+	@Override
+	public boolean isGroupType() {
+		if (isGroup())
+			return true;
+		for (LinkType l : getOutgoingLinkTypes()) {
+			if (l.isGroup())
+				return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isSuperGroupOf(GroupType gt) {
+		if (gt == null) {
+			return false;
+		}
+		GroupType super_it = gt;
+		while ((super_it = super_it.getGroupType()) != null) {
+			if (super_it == this) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public List<Item> getMembers() {
+		//TODO
+		return Collections.emptyList();
+	}
+
+	@Override
+	public boolean isGroup() {
+		return getGroupType() != null;
 	}
 }

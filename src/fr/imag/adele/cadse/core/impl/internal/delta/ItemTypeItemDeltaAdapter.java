@@ -12,6 +12,7 @@ import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CadseRuntime;
 import fr.imag.adele.cadse.core.CompactUUID;
+import fr.imag.adele.cadse.core.GroupType;
 import fr.imag.adele.cadse.core.IItemFactory;
 import fr.imag.adele.cadse.core.IItemManager;
 import fr.imag.adele.cadse.core.IItemNode;
@@ -605,6 +606,48 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 	public List<LinkType> getGroupOutgoingLinkTypes() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public GroupType getGroup() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public GroupType getGroupType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Item> getMembers() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isGroup() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isGroupOf(GroupType groupType) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isGroupType() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isSuperGroupOf(GroupType gt) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 

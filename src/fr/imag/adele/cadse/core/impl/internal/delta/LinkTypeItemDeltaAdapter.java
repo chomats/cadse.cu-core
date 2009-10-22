@@ -15,6 +15,7 @@ import fr.imag.adele.cadse.core.ContentItem;
 import fr.imag.adele.cadse.core.DerivedLink;
 import fr.imag.adele.cadse.core.DerivedLinkDescription;
 import fr.imag.adele.cadse.core.EventFilter;
+import fr.imag.adele.cadse.core.GroupType;
 import fr.imag.adele.cadse.core.ILinkTypeManager;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemDescription;
@@ -1327,6 +1328,18 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements Li
 	public void setIsGroup(boolean b) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public boolean isGroup() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public GroupType getGroup() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
