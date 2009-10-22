@@ -78,6 +78,7 @@ import fr.imag.adele.cadse.core.ui.IActionPage;
 import fr.imag.adele.cadse.core.ui.IPage;
 import fr.imag.adele.cadse.core.ui.IPageFactory;
 import fr.imag.adele.cadse.core.ui.Pages;
+import fr.imag.adele.cadse.core.ui.view.NewContext;
 import fr.imag.adele.cadse.core.util.ArraysUtil;
 import fr.imag.adele.cadse.core.util.Convert;
 import fr.imag.adele.cadse.core.util.IErrorCollector;
@@ -200,7 +201,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	private Class<? extends IActionPage>		_clazzAction;
 
 	/** The default short name action. */
-	private String								_defaultShortNameAction;
+	protected String								_defaultShortNameAction;
 
 	private String								_cadseName					= NO_VALUE_STRING;
 
@@ -866,17 +867,21 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	/**
 	 * Compute ougoing link types.
 	 */
-	private void computeOutgoingLinkTypes() {
+	protected void computeOutgoingLinkTypes() {
 		List<LinkType> ret = new ArrayList<LinkType>();
-		if (_superType != null) {
-			ret.addAll(_superType.getOutgoingLinkTypes());
-		}
+		computeOutgoingLinkTypesH(ret);
 		for (Link l : this.m_outgoings) {
 			if (l.getLinkType() == CadseCore.theLinkType) {
 				ret.add((LinkType) l);
 			}
 		}
 		this._outgoingsLT = ret.toArray(new LinkType[ret.size()]);
+	}
+
+	protected void computeOutgoingLinkTypesH(List<LinkType> ret) {
+		if (_superType != null) {
+			ret.addAll(_superType.getOutgoingLinkTypes());
+		}
 	}
 
 	/**
@@ -1988,6 +1993,16 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 		return this._modificationPagesFactories == null ? EMPTY_PAGE_FACTORIES : this._modificationPagesFactories;
 	}
 
+	
+	@Override
+	public Pages getGoodCreationPage(NewContext context) throws CadseException {
+		IPageFactory[] pf = getGoodCreationPage_();
+		IPage[] p = createPages(IPageFactory.PAGE_CREATION_ITEM, 
+				context.getItemSource(), context.getItemNode(), context.getDestinationType(), 
+				context.getPartLinkType(), pf);
+		context.setDefaultName(_defaultShortNameAction);
+		return new PagesImpl(false, createDefaultCreationAction(context), p);
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -2118,6 +2133,25 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 		} catch (IllegalAccessException e) {
 			throw new CadseException("Cannot create creation action {1} with default constructor.", e, _clazzAction);
 		}
+	}
+	
+	/**
+	 * Creates the default creation action.
+	 * 
+	 * @param parent
+	 *            the parent
+	 * @param type
+	 *            the type
+	 * @param lt
+	 *            the lt
+	 * 
+	 * @return the i action page
+	 * 
+	 * @throws CadseException
+	 *             the melusine exception
+	 */
+	protected IActionPage createDefaultCreationAction(NewContext context) throws CadseException {
+		return new CreationAction(context);
 	}
 
 	/**
@@ -2363,6 +2397,8 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 
 	@Override
 	public GroupType getGroupType() {
+		if (_type == this)
+			return null;
 		if (getType().isGroupType())
 			return getType();
 		return null;
@@ -2376,7 +2412,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 		if (gt == null) return false;
 		if (gt == groupType)
 			return true;
-		return groupType.isSuperGroupOf(gt);
+		return groupType.isSuperGroupTypeOf(gt);
 	}
 
 	@Override
@@ -2391,7 +2427,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	}
 
 	@Override
-	public boolean isSuperGroupOf(GroupType gt) {
+	public boolean isSuperGroupTypeOf(GroupType gt) {
 		if (gt == null) {
 			return false;
 		}
@@ -2413,5 +2449,10 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	@Override
 	public boolean isGroup() {
 		return getGroupType() != null;
+	}
+	
+	@Override
+	public GroupType[] getAllSubGroupType() {
+		return new GroupType[0];
 	}
 }
