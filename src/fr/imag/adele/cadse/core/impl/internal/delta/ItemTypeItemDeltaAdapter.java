@@ -601,5 +601,11 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 		}
 	}
 
+	@Override
+	public List<LinkType> getGroupOutgoingLinkTypes() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }
