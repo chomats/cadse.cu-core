@@ -35,6 +35,7 @@ import fr.imag.adele.cadse.core.ui.IActionPage;
 import fr.imag.adele.cadse.core.ui.IPage;
 import fr.imag.adele.cadse.core.ui.IPageFactory;
 import fr.imag.adele.cadse.core.ui.Pages;
+import fr.imag.adele.cadse.core.ui.view.NewContext;
 
 public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements ItemType {
 
@@ -645,9 +646,21 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 	}
 
 	@Override
-	public boolean isSuperGroupOf(GroupType gt) {
+	public boolean isSuperGroupTypeOf(GroupType gt) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public Pages getGoodCreationPage(NewContext context) throws CadseException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public GroupType[] getAllSubGroupType() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 
