@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.logging.Logger;
 
 import org.eclipse.core.runtime.Platform;
@@ -191,7 +190,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 			Item foundItem = getItem(key);
 			if (foundItem == null || foundItem == item)
 				return false;
-		
+
 			return true;
 		}
 		if (!item.getType().hasQualifiedNameAttribute()) {
@@ -205,7 +204,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#containsUniqueName(java.lang.String)
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #containsUniqueName(java.lang.String)
 	 */
 	public boolean containsUniqueName(String un) {
 		if (un == null || un == Item.NO_VALUE_STRING) {
@@ -224,7 +225,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#containsSpaceKey(fr.imag.adele.cadse.core.key.ISpaceKey)
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #containsSpaceKey(fr.imag.adele.cadse.core.key.ISpaceKey)
 	 */
 	public boolean containsSpaceKey(ISpaceKey key) {
 		if (this.items_by_key.containsKey(key)) {
@@ -242,7 +245,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 			Item foundItem = getItem(key);
 			if (foundItem == null || foundItem == item)
 				return false;
-		
+
 			return true;
 		}
 		if (!item.getType().hasQualifiedNameAttribute()) {
@@ -250,7 +253,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		}
 
 		String un = item.getQualifiedName();
-		if ( un == null || un == Item.NO_VALUE_STRING ) 
+		if (un == null || un == Item.NO_VALUE_STRING)
 			return true;
 		Item foundItem = getItem(un);
 		return foundItem != null && foundItem != item;
@@ -271,7 +274,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#getItemOperation(fr.imag.adele.cadse.core.CompactUUID)
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #getItemOperation(fr.imag.adele.cadse.core.CompactUUID)
 	 */
 	public ItemDelta getItemOperation(CompactUUID id) {
 		return _operations.get(id);
@@ -284,8 +289,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#getItem(fr.imag.adele.cadse.core.CompactUUID,
-	 *      boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #getItem(fr.imag.adele.cadse.core.CompactUUID, boolean)
 	 */
 	public ItemDelta getItem(CompactUUID id, boolean showDeleteItem) {
 		ItemDelta oper = this._operations.get(id);
@@ -308,7 +314,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	}
 
 	public ItemDelta getItem(ISpaceKey key) {
-		
+
 		ItemDelta ret = null;
 		if ((ret = this.items_by_key.get(key)) != null) {
 			return ret;
@@ -324,7 +330,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 			return null;
 		}
 		ItemDelta ret = this.items_by_unique_name.get(qualifiedName);
-		
+
 		if (ret != null) {
 			return ret;
 		}
@@ -365,8 +371,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#getItemType(fr.imag.adele.cadse.core.CompactUUID,
-	 *      boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #getItemType(fr.imag.adele.cadse.core.CompactUUID, boolean)
 	 */
 	public ItemType getItemType(CompactUUID id, boolean createUnresolvedType) {
 		ItemType itemType = base.getItemType(id);
@@ -416,22 +423,18 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		ret.setUpdate(update);
 		return ret;
 	}
-	
+
 	public ItemDelta loadItem(Item desc) {
 		return getOrCreateItemOperation(desc);
-	/*	ItemDelta ret = loadItem(desc.getId(), desc.getType().getId());;
-		try {
-			if (desc.getQualifiedName() != null) {
-				ret.setQualifiedName(desc.getQualifiedName(), true);
-			}
-			if (desc.getName() != null) {
-				ret.setName(desc.getName(), true);
-			}
-		} catch (CadseException e) {
-			// ignored
-		}
-
-		return ret;*/
+		/*
+		 * ItemDelta ret = loadItem(desc.getId(), desc.getType().getId());; try
+		 * { if (desc.getQualifiedName() != null) {
+		 * ret.setQualifiedName(desc.getQualifiedName(), true); } if
+		 * (desc.getName() != null) { ret.setName(desc.getName(), true); } }
+		 * catch (CadseException e) { // ignored }
+		 * 
+		 * return ret;
+		 */
 	}
 
 	public ItemDelta loadItem(ItemDescription desc) throws CadseException {
@@ -469,7 +472,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		return ret;
 	}
 
-	public ItemDelta loadItem(ItemDescriptionRef desc)  {
+	public ItemDelta loadItem(ItemDescriptionRef desc) {
 		ItemDelta loadingItem = _operations.get(desc.getId());
 		if (loadingItem != null && loadingItem.isLoaded()) {
 			return loadingItem;
@@ -574,10 +577,10 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 
 		// notify create after the set parent ..
 		notifyCreatedItem(ret);
-		//if (ret.getParentItem() != null) { deja fait dans setParent
-		//	// set attribute value and create link
-		//	ret.createPartParentLink();
-		//}
+		// if (ret.getParentItem() != null) { deja fait dans setParent
+		// // set attribute value and create link
+		// ret.createPartParentLink();
+		// }
 		ret.createLink(CadseGCST.ITEM_lt_INSTANCE_OF, ret.getType());
 
 		if (itemDescriptionRef.getName() != null) {
@@ -586,14 +589,15 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		if (itemDescriptionRef.getQualifiedName() != null) {
 			ret.setQualifiedName(itemDescriptionRef.getQualifiedName());
 		}
-		
+
 		IAttributeType<?>[] attributes = ret.getType().getAllAttributeTypes();
 		for (IAttributeType<?> attributeType : attributes) {
 			Object v = attributeType.getDefaultValue();
-			if (v == null) continue;
+			if (v == null)
+				continue;
 			ret.setAttribute(attributeType, v);
 		}
-		
+
 		if (log != null) {
 			log.actionAddItem(itemDescriptionRef);
 		}
@@ -705,8 +709,10 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#getOrCreateItemOperation(fr.imag.adele.cadse.core.CompactUUID,
-	 *      fr.imag.adele.cadse.core.CompactUUID)
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #getOrCreateItemOperation(fr.imag.adele.cadse.core.CompactUUID,
+	 * fr.imag.adele.cadse.core.CompactUUID)
 	 */
 	public ItemDelta getOrCreateItemOperation(CompactUUID id, CompactUUID type) throws CadseException, CadseException {
 		return getOrCreateItemOperation(id, type, true);
@@ -715,8 +721,10 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#getOrCreateItemOperation(fr.imag.adele.cadse.core.CompactUUID,
-	 *      fr.imag.adele.cadse.core.CompactUUID, boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #getOrCreateItemOperation(fr.imag.adele.cadse.core.CompactUUID,
+	 * fr.imag.adele.cadse.core.CompactUUID, boolean)
 	 */
 	public ItemDelta getOrCreateItemOperation(CompactUUID id, CompactUUID type, boolean add) throws CadseException,
 			CadseException {
@@ -735,7 +743,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#getOrCreateItemOperation(fr.imag.adele.cadse.core.CompactUUID)
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #getOrCreateItemOperation(fr.imag.adele.cadse.core.CompactUUID)
 	 */
 	public ItemDelta getOrCreateItemOperation(CompactUUID id) throws CadseException {
 		ItemDelta ret = _operations.get(id);
@@ -754,9 +764,11 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#getOrCreateItemOperation(fr.imag.adele.cadse.core.Item)
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #getOrCreateItemOperation(fr.imag.adele.cadse.core.Item)
 	 */
-	public ItemDelta getOrCreateItemOperation(Item itembase)  {
+	public ItemDelta getOrCreateItemOperation(Item itembase) {
 		ItemDelta ret = _operations.get(itembase.getId());
 		if (ret != null) {
 			return ret;
@@ -813,14 +825,15 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#remove(fr.imag.adele.cadse.core.delta.ItemOperation)
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #remove(fr.imag.adele.cadse.core.delta.ItemOperation)
 	 */
 	public void remove(ItemDelta itemOperation) {
 		this.items.remove(itemOperation.getId());
 		this._operations.remove(itemOperation.getId());
 		itemOperation.removeInParent();
 	}
-
 
 	public void checkAll() throws CadseException {
 		// TODO Auto-generated method stub
@@ -830,7 +843,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#getItemOperations()
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #getItemOperations()
 	 */
 	public Collection<ItemDelta> getItemOperations() {
 		return new ArrayList<ItemDelta>(this._operations.values());
@@ -848,7 +863,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#getLog()
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #getLog()
 	 */
 	public ILoggableAction getLog() {
 		return log;
@@ -857,7 +874,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#actionDelete(fr.imag.adele.cadse.core.delta.ItemOperation)
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #actionDelete(fr.imag.adele.cadse.core.delta.ItemOperation)
 	 */
 	public void actionDelete(ItemDelta item) {
 		try {
@@ -871,7 +890,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#actionAdd(fr.imag.adele.cadse.core.delta.ItemOperation)
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #actionAdd(fr.imag.adele.cadse.core.delta.ItemOperation)
 	 */
 	public void actionAdd(ItemDelta item) throws CadseException {
 		check_write();
@@ -905,7 +926,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#getBaseItem(fr.imag.adele.cadse.core.CompactUUID)
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #getBaseItem(fr.imag.adele.cadse.core.CompactUUID)
 	 */
 	public Item getBaseItem(CompactUUID id) {
 		return base.getItem(id);
@@ -914,7 +937,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#isModified()
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #isModified()
 	 */
 	public boolean isModified() {
 		for (ItemDelta oper : this._operations.values()) {
@@ -978,7 +1003,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#getOperations()
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #getOperations()
 	 */
 	public Collection<WLWCOperationImpl> getOperations() {
 		if (all_operations == null) {
@@ -994,7 +1021,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#getMappingOrder()
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #getMappingOrder()
 	 */
 	public ElementsOrder<MappingOperation> getMappingOrder() {
 		ArrayList<MappingOperation[]> references = new ArrayList<MappingOperation[]>();
@@ -1017,10 +1046,8 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 
 	private static class WoLProWCListener extends AbstractLogicalWorkspaceTransactionListener {
 
-		
 		@Override
-		public void validateDeletedLink(LogicalWorkspaceTransaction wc,
-				LinkDelta link) throws CadseException {
+		public void validateDeletedLink(LogicalWorkspaceTransaction wc, LinkDelta link) throws CadseException {
 			if (link.getLinkType() == CadseGCST.ITEM_lt_PARENT) {
 				if (link.getSource().getType().isPartType()) {
 					if (link.getSource().getPartParent() == null) {
@@ -1032,11 +1059,10 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 						throw new CadseException(Messages.parent_must_be_set, link);
 					}
 				}
-					
+
 			}
 		}
-		
-		
+
 		@Override
 		public void validateCreatedItem(LogicalWorkspaceTransaction wc, ItemDelta item) throws CadseException,
 				CadseException {
@@ -1072,7 +1098,8 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 
 				if (!item.isInstanceOf(lt.getDestination())) {
 					throw new CadseException(Messages.error_cannot_create_an_item_bad_destination, parent.getName(), lt
-							.getName(), lt.getDestination().getName(), lt.getDestination().getId(), it.getName(), it.getId());
+							.getName(), lt.getDestination().getName(), lt.getDestination().getId(), it.getName(), it
+							.getId());
 				}
 			}
 		}
@@ -1092,13 +1119,13 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 					throw new CadseException("Depassement du nombre de link autorizé pour le type " + lt.getName());
 				}
 			}
-			if (lt.getMin() !=0) {
-				//TODO add a warning
+			if (lt.getMin() != 0) {
+				// TODO add a warning
 			}
 			ItemDelta item = link.getSource();
 			if (item.getType() != null && item.getType().getSpaceKeyType() != null) {
 				SpaceKeyType keyType = item.getType().getSpaceKeyType();
-				KEY: { 
+				KEY: {
 					if (item.isAdded()) {
 						ISpaceKey key = item.getKey();
 						if (key == null) {
@@ -1112,16 +1139,16 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 							if (attKeys[i] == link.getLinkType()) {
 								// Attribute of the key has changed
 								ISpaceKey newK = keyType.computeKey(item);
-								if (!key.equals(newK)) 
+								if (!key.equals(newK))
 									item.setNextKey(newK);
 								break KEY;
 							}
 						}
 						break KEY;
-					} 
+					}
 					if (item.isDeleted()) {
 						break KEY;
-					} 
+					}
 					// item is modified
 					Item baseItem = item.getBaseItem();
 					if (baseItem != null) {
@@ -1129,8 +1156,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 						if (key == null) {
 							break KEY;
 						}
-						IAttributeType<?>[] attKeys = keyType
-								.getAttributeTypes();
+						IAttributeType<?>[] attKeys = keyType.getAttributeTypes();
 						if (attKeys == null) {
 							break KEY;
 						}
@@ -1138,7 +1164,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 							if (attKeys[i] == link.getLinkType()) {
 								// Attribute of the key has changed
 								ISpaceKey newK = keyType.computeKey(item);
-								if (!key.equals(newK)) 
+								if (!key.equals(newK))
 									item.setNextKey(newK);
 								break;
 							}
@@ -1157,10 +1183,10 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 				ISpaceKey key = item.getNextKey();
 				if (key != null) {
 					item.setKey(key);
-					item.setNextKey( null);
+					item.setNextKey(null);
 				}
 			}
-			
+
 			LinkType link_lt = link.getLinkType();
 
 			LinkType inverseLinkType = link_lt.getInverse();
@@ -1226,7 +1252,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 			}
 
 			DeleteOperation deleteOperation = item.getDeleteOperation();
-			
+
 			/*
 			 * Suppresion de tous les liens outgoings sauf ceux qui sont déjà
 			 * détruit Il sont toujours détruit car il ne peuvent exister sans
@@ -1237,7 +1263,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 					l.delete(deleteOperation);
 				}
 			}
-			
+
 			/*
 			 * Suppresion des liens incomings si l'option "delete incoming link"
 			 * est a true ou si la source doit est detruite (ex: une annotation
@@ -1251,7 +1277,6 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 				}
 			}
 
-			
 		}
 
 		@Override
@@ -1280,15 +1305,14 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 				inverseLink.delete(deleteOperation);
 			}
 		}
-		
+
 		@Override
-		public void validateChangeAttribute(LogicalWorkspaceTransaction wc,
-				ItemDelta item, SetAttributeOperation attOperation)
-				throws CadseException {
-		
+		public void validateChangeAttribute(LogicalWorkspaceTransaction wc, ItemDelta item,
+				SetAttributeOperation attOperation) throws CadseException {
+
 			if (item.getType() != null && item.getType().getSpaceKeyType() != null) {
 				SpaceKeyType keyType = item.getType().getSpaceKeyType();
-				KEY: { 
+				KEY: {
 					if (item.isAdded()) {
 						ISpaceKey key = item.getKey();
 						if (key == null) {
@@ -1302,16 +1326,16 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 							if (attKeys[i] == attOperation.getAttributeDefinition()) {
 								// Attribute of the key has changed
 								ISpaceKey newK = keyType.computeKey(item);
-								if (!key.equals(newK)) 
+								if (!key.equals(newK))
 									item.setNextKey(newK);
 								break KEY;
 							}
 						}
 						break KEY;
-					} 
+					}
 					if (item.isDeleted()) {
 						break KEY;
-					} 
+					}
 					// item is modified
 					Item baseItem = item.getBaseItem();
 					if (baseItem != null) {
@@ -1319,17 +1343,15 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 						if (key == null) {
 							break KEY;
 						}
-						IAttributeType<?>[] attKeys = keyType
-								.getAttributeTypes();
+						IAttributeType<?>[] attKeys = keyType.getAttributeTypes();
 						if (attKeys == null) {
 							break KEY;
 						}
 						for (int i = 0; i < attKeys.length; i++) {
-							if (attKeys[i] == attOperation
-									.getAttributeDefinition()) {
+							if (attKeys[i] == attOperation.getAttributeDefinition()) {
 								// Attribute of the key has changed
 								ISpaceKey newK = keyType.computeKey(item);
-								if (!key.equals(newK)) 
+								if (!key.equals(newK))
 									item.setNextKey(newK);
 								break;
 							}
@@ -1337,7 +1359,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 					}
 				}
 			}
-			
+
 		}
 
 		@Override
@@ -1345,11 +1367,11 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 				SetAttributeOperation attOperation) throws CadseException {
 
 			if (item.getType() != null && item.getType().getSpaceKeyType() != null) {
-					ISpaceKey key = item.getNextKey();
-					if (key != null) {
-						item.setKey(key);
-						item.setNextKey( null);
-					}
+				ISpaceKey key = item.getNextKey();
+				if (key != null) {
+					item.setKey(key);
+					item.setNextKey(null);
+				}
 			}
 
 			if (attOperation.getAttributeDefinition() == CadseGCST.ITEM_at_QUALIFIED_NAME_) {
@@ -1363,7 +1385,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 			}
 
 			try {
-				if (attOperation.getAttributeDefinition() != CadseGCST.ITEM_at_DISPLAY_NAME_) {
+				if (attOperation.getAttributeDefinition() == CadseGCST.ITEM_at_DISPLAY_NAME_) {
 					String dn = item.getDisplayName();
 
 					ItemType it = item.getType();
@@ -1410,7 +1432,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 			for (ItemDelta itemDelta : loadedItems) {
 				try {
 					if (itemDelta.getType() != null && itemDelta.getType().isPartType()) {
-						// get the parent 
+						// get the parent
 						ItemDelta partParent = itemDelta.getParentItem();
 						// get the link parent.
 						Link l = getInversePartLink(itemDelta);
@@ -1482,7 +1504,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 						// alldready exist", null);
 						return;
 					}
-					
+
 					try {
 						itemDelta.createLink(CadseGCST.ITEM_lt_PARENT, partParent);
 					} catch (CadseException e) {
@@ -1516,8 +1538,6 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 			return parent.getType().getPartParentLinkType();
 		}
 
-		
-
 		private Link getIncommingLinkParent(ItemDelta itemDelta) {
 			List<Link> links;
 			links = itemDelta.getIncomingLinks();
@@ -1537,8 +1557,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 
 	/**
 	 * This method used to verify the preconditions before create an item. An
-	 * item have not yet been created and item type must be ready in workspace .
-	 * <br>
+	 * item have not yet been created and item type must be ready in workspace . <br>
 	 * 
 	 * @param it
 	 *            not null
@@ -1552,22 +1571,25 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	 *            the tHIS
 	 * @throws CadseException
 	 * 
-	 * @OCL<br>
-	 *      context: Workspace::createItem(String id, ItemType it) : Item<br>
-	 *      1. pre: id <> null <br/> 2. pre: id <> '' <br/> 3. pre: it <> null
-	 *      <br/> 4. pre: parent <> null <br/> 5. pre: lt <> null <br/> 6. pre:
-	 *      items->forAll(item | item.id <> id )<br/> 7. pre:
-	 *      self.type.selectedItemtype->include(it) <br/> 8. pre: parent.type =
-	 *      lt.source and it = lt.dest<br/> 9. pre: parent.isReadOnly = false<br/>
-	 * @exception CadseException :
-	 *                Id can not be null. CadseException : Id can not be empty.
-	 *                CadseException : Invalid assignment, this item
-	 *                <tt>$id</tt> already exist.<br/> CadseException :
-	 *                Invalid assignment, type of this item is not supported for
-	 *                this kind of workspace.<br/> CadseException : Invalid
-	 *                assignment, link type is not correct. CadseException :
-	 *                Invalid assignment, item parent <tt>$parent.id</tt> + "
-	 *                is in state read only.
+	 * @OCL<br> context: Workspace::createItem(String id, ItemType it) : Item<br>
+	 *          1. pre: id <> null <br/>
+	 *          2. pre: id <> '' <br/>
+	 *          3. pre: it <> null <br/>
+	 *          4. pre: parent <> null <br/>
+	 *          5. pre: lt <> null <br/>
+	 *          6. pre: items->forAll(item | item.id <> id )<br/>
+	 *          7. pre: self.type.selectedItemtype->include(it) <br/>
+	 *          8. pre: parent.type = lt.source and it = lt.dest<br/>
+	 *          9. pre: parent.isReadOnly = false<br/>
+	 * @exception CadseException
+	 *                : Id can not be null. CadseException : Id can not be
+	 *                empty. CadseException : Invalid assignment, this item
+	 *                <tt>$id</tt> already exist.<br/>
+	 *                CadseException : Invalid assignment, type of this item is
+	 *                not supported for this kind of workspace.<br/>
+	 *                CadseException : Invalid assignment, link type is not
+	 *                correct. CadseException : Invalid assignment, item parent
+	 *                <tt>$parent.id</tt> + " is in state read only.
 	 */
 
 	private void preconditions_createItem(Item THIS, ItemType it, Item parent, LinkType lt) throws CadseException {
@@ -1631,8 +1653,10 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#notifyChangeAttribute(fr.imag.adele.cadse.core.delta.ItemOperation,
-	 *      fr.imag.adele.cadse.core.delta.SetAttributeOperation)
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #notifyChangeAttribute(fr.imag.adele.cadse.core.delta.ItemOperation,
+	 * fr.imag.adele.cadse.core.delta.SetAttributeOperation)
 	 */
 	public void notifyChangeAttribute(ItemDelta item, SetAttributeOperation attOperation) throws CadseException,
 			CadseException {
@@ -1665,8 +1689,10 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#notifyChangeAttribute(fr.imag.adele.cadse.core.delta.LinkOperation,
-	 *      fr.imag.adele.cadse.core.delta.SetAttributeOperation)
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #notifyChangeAttribute(fr.imag.adele.cadse.core.delta.LinkOperation,
+	 * fr.imag.adele.cadse.core.delta.SetAttributeOperation)
 	 */
 	public void notifyChangeAttribute(LinkDelta link, SetAttributeOperation attOperation) throws CadseException,
 			CadseException {
@@ -1722,8 +1748,10 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#notifyChangeLinkOrder(fr.imag.adele.cadse.core.delta.LinkOperation,
-	 *      fr.imag.adele.cadse.core.internal.delta.OrderOperation)
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #notifyChangeLinkOrder(fr.imag.adele.cadse.core.delta.LinkOperation,
+	 * fr.imag.adele.cadse.core.internal.delta.OrderOperation)
 	 */
 	public void notifyChangeLinkOrder(LinkDelta link, OrderOperation orderOperation) {
 		if (_logicalWorkspaceTransactionListeners != null) {
@@ -1896,7 +1924,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#notifyCreatedItem(fr.imag.adele.cadse.core.delta.ItemOperation)
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #notifyCreatedItem(fr.imag.adele.cadse.core.delta.ItemOperation)
 	 */
 	public void notifyCreatedItem(ItemDelta item) throws CadseException {
 		if (_logicalWorkspaceTransactionListeners != null) {
@@ -1984,8 +2014,10 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#notifyAddMappingOperation(fr.imag.adele.cadse.core.delta.ItemOperation,
-	 *      fr.imag.adele.cadse.core.delta.MappingOperation)
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #notifyAddMappingOperation(fr.imag.adele.cadse.core.delta.ItemOperation,
+	 * fr.imag.adele.cadse.core.delta.MappingOperation)
 	 */
 	public void notifyAddMappingOperation(ItemDelta item, MappingOperation mappingOperation) {
 		if (_logicalWorkspaceTransactionListeners != null) {
@@ -2030,9 +2062,8 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 			}
 		}
 	}
-	
-	public void validateChangeAttribute(ItemDelta item, SetAttributeOperation attOperation)
-	throws CadseException {
+
+	public void validateChangeAttribute(ItemDelta item, SetAttributeOperation attOperation) throws CadseException {
 		if (_logicalWorkspaceTransactionListeners != null) {
 			for (int i = 0; i < _logicalWorkspaceTransactionListeners.length; i++) {
 				_logicalWorkspaceTransactionListeners[i].validateChangeAttribute(this, item, attOperation);
@@ -2048,9 +2079,8 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 			}
 		}
 	}
-	
-	public void validateCreatedLink(LinkDelta link)
-	throws CadseException {
+
+	public void validateCreatedLink(LinkDelta link) throws CadseException {
 		if (_logicalWorkspaceTransactionListeners != null) {
 			for (int i = 0; i < _logicalWorkspaceTransactionListeners.length; i++) {
 				_logicalWorkspaceTransactionListeners[i].validateCreatedLink(this, link);
@@ -2066,9 +2096,8 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 			}
 		}
 	}
-	
-	public void validateDeleteLink(LinkDelta link)
-	throws CadseException {
+
+	public void validateDeleteLink(LinkDelta link) throws CadseException {
 		if (_logicalWorkspaceTransactionListeners != null) {
 			for (int i = 0; i < _logicalWorkspaceTransactionListeners.length; i++) {
 				_logicalWorkspaceTransactionListeners[i].validateDeletedLink(this, link);
@@ -2088,7 +2117,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#notifyCreatedLink(fr.imag.adele.cadse.core.delta.LinkOperation)
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #notifyCreatedLink(fr.imag.adele.cadse.core.delta.LinkOperation)
 	 */
 	public void notifyCreatedLink(LinkDelta link) throws CadseException {
 		if (_logicalWorkspaceTransactionListeners != null) {
@@ -2120,7 +2151,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#notifyDeletedItem(fr.imag.adele.cadse.core.delta.ItemOperation)
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #notifyDeletedItem(fr.imag.adele.cadse.core.delta.ItemOperation)
 	 */
 	public void notifyDeletedItem(ItemDelta item) throws CadseException {
 		if (_logicalWorkspaceTransactionListeners != null) {
@@ -2142,7 +2175,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#notifyDoubleClick(fr.imag.adele.cadse.core.delta.ItemOperation)
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #notifyDoubleClick(fr.imag.adele.cadse.core.delta.ItemOperation)
 	 */
 	public void notifyDoubleClick(ItemDelta item) throws CadseException {
 		if (_logicalWorkspaceTransactionListeners != null) {
@@ -2164,7 +2199,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#notifyDeletedLink(fr.imag.adele.cadse.core.delta.LinkOperation)
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #notifyDeletedLink(fr.imag.adele.cadse.core.delta.LinkOperation)
 	 */
 	public void notifyDeletedLink(LinkDelta link) throws CadseException {
 		if (_logicalWorkspaceTransactionListeners != null) {
@@ -2191,7 +2228,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#notifyCancelCreatedItem(fr.imag.adele.cadse.core.delta.ItemOperation)
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #notifyCancelCreatedItem(fr.imag.adele.cadse.core.delta.ItemOperation)
 	 */
 	public void notifyCancelCreatedItem(ItemDelta item) throws CadseException {
 		if (_logicalWorkspaceTransactionListeners != null) {
@@ -2223,7 +2262,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#notifyCancelCreatedLink(fr.imag.adele.cadse.core.delta.LinkOperation)
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #notifyCancelCreatedLink(fr.imag.adele.cadse.core.delta.LinkOperation)
 	 */
 	public void notifyCancelCreatedLink(LinkDelta link) throws CadseException {
 		if (_logicalWorkspaceTransactionListeners != null) {
@@ -2273,10 +2314,11 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 			CompactUUID id, String shortName, String displayName, boolean hasContent, boolean isAbstract,
 			IItemManager manager) {
 		ItemType acc = null;
-		
-	//	ItemDelta TypeA = createItem(CadseGCST.ITEM_TYPE, dm, CadseGCST.DATA_MODEL_lt_TYPES);
-	//	TypeA.setName(static_generator.newName());
-	//	copy.commit();
+
+		// ItemDelta TypeA = createItem(CadseGCST.ITEM_TYPE, dm,
+		// CadseGCST.DATA_MODEL_lt_TYPES);
+		// TypeA.setName(static_generator.newName());
+		// copy.commit();
 		return acc;
 	}
 
@@ -2305,7 +2347,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#addLoadedItem(fr.imag.adele.cadse.core.Item)
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #addLoadedItem(fr.imag.adele.cadse.core.Item)
 	 */
 	public void addLoadedItem(Item item) {
 		if (loadedItems == null) {
@@ -2323,7 +2367,8 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		for (WLWCOperationImpl o : this.all_operations.values()) {
 			if (o.getOperationType() == OperationTypeCst.ITEM_OPERATION) {
 				ItemDelta itemOperation = (ItemDelta) o;
-				if (!itemOperation.isLoaded()) continue;
+				if (!itemOperation.isLoaded())
+					continue;
 				allLoadedItems.add(itemOperation);
 				ItemType it = itemOperation.getType();
 				if (it == null) {
@@ -2353,7 +2398,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#isUpdate()
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #isUpdate()
 	 */
 	public boolean isUpdate() {
 		return update;
@@ -2362,7 +2409,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#isForceToSave()
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #isForceToSave()
 	 */
 	public boolean isForceToSave() {
 		return forceToSave;
@@ -2371,7 +2420,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#isForcetoLoad()
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #isForcetoLoad()
 	 */
 	public boolean isForcetoLoad() {
 		return forcetoLoad;
@@ -2380,7 +2431,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#getNotifier()
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #getNotifier()
 	 */
 	public IWorkspaceNotifier getNotifier() {
 		return notifier;
@@ -2389,7 +2442,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy#getProjectAssociationSet()
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
+	 * #getProjectAssociationSet()
 	 */
 	public Collection<ProjectAssociation> getProjectAssociationSet() {
 		return projectAssociationSet;
@@ -2397,7 +2452,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 
 	public ItemDelta createItemIfNeed(ItemType itemType, Item parent, LinkType partLinkType, String uniqueName,
 			String shortName, SetAttrVal<?>... attributes) throws CadseException {
-		
+
 		// create item already and compute the unique name.
 		if (!itemType.hasShortNameAttribute()) {
 			shortName = Item.NO_VALUE_STRING;
@@ -2406,8 +2461,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		ItemDelta parentDelta = parent == null ? null : getItem(parent.getId());
 		SpaceKeyType keyType = itemType.getSpaceKeyType();
 		if (keyType != null) {
-			IAttributeType<?>[] attribuesDefintions = keyType
-					.getAttributeTypes();
+			IAttributeType<?>[] attribuesDefintions = keyType.getAttributeTypes();
 			Object[] keyvaluse = new Object[attribuesDefintions.length];
 			for (int i = 0; i < keyvaluse.length; i++) {
 				if (attribuesDefintions[i] == CadseGCST.ITEM_at_NAME_) {
@@ -2423,12 +2477,8 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 					}
 				}
 				if (keyvaluse[i] == null)
-					throw new CadseException(
-							NLS
-									.bind(
-											"Cannot find the value for the attribute definition {0} ({1}).",
-											attribuesDefintions[i].getName(),
-											attribuesDefintions[i].getCSTName()));
+					throw new CadseException(NLS.bind("Cannot find the value for the attribute definition {0} ({1}).",
+							attribuesDefintions[i].getName(), attribuesDefintions[i].getCSTName()));
 			}
 			ISpaceKey key = keyType.computeKey(shortName, parentDelta, keyvaluse);
 			newItem = getItem(key);
@@ -2531,7 +2581,6 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	public ItemDelta createItemIfNeed(String uniqueName, String shortname, ItemType it, Item parent, LinkType lt,
 			Object... attributes) throws CadseException {
 
-		
 		// create item already and compute the unique name.
 		if (!it.hasShortNameAttribute()) {
 			shortname = Item.NO_VALUE_STRING;
@@ -2539,8 +2588,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		ItemDelta parentDelta = parent == null ? null : getItem(parent.getId());
 		SpaceKeyType keyType = it.getSpaceKeyType();
 		if (keyType != null) {
-			IAttributeType<?>[] attribuesDefintions = keyType
-					.getAttributeTypes();
+			IAttributeType<?>[] attribuesDefintions = keyType.getAttributeTypes();
 			Object[] keyvaluse = new Object[attribuesDefintions.length];
 			for (int i = 0; i < keyvaluse.length; i++) {
 				if (attribuesDefintions[i] == CadseGCST.ITEM_at_NAME_) {
@@ -2550,19 +2598,14 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 				for (int j = 0; j < attributes.length;) {
 					Object key = attributes[j++];
 					Object value = attributes[j++];
-					if (attribuesDefintions[i] == key
-							|| attribuesDefintions[i].getName().equals(key)) {
+					if (attribuesDefintions[i] == key || attribuesDefintions[i].getName().equals(key)) {
 						keyvaluse[i] = value;
 						break;
 					}
 				}
 				if (keyvaluse[i] == null)
-					throw new CadseException(
-							NLS
-									.bind(
-											"Cannot find the value for the attribute definition {0} ({1}).",
-											attribuesDefintions[i].getName(),
-											attribuesDefintions[i].getCSTName()));
+					throw new CadseException(NLS.bind("Cannot find the value for the attribute definition {0} ({1}).",
+							attribuesDefintions[i].getName(), attribuesDefintions[i].getCSTName()));
 			}
 			ISpaceKey key = keyType.computeKey(shortname, parentDelta, keyvaluse);
 			ItemDelta newItem = getItem(key);
@@ -2729,7 +2772,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 				if (newkey != null) {
 					items_by_key.remove(newkey);
 					items_by_key_deleted.remove(newkey);
-				}				
+				}
 			} else {
 				if (oldkey != null) {
 					items_by_key.remove(oldkey);
@@ -2745,7 +2788,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 			}
 		}
 	}
-	
+
 	public void checkKey(ItemDeltaImpl itemDeltaImpl, ISpaceKey oldkey, ISpaceKey newkey) throws CadseException {
 		if (itemDeltaImpl.isAdded()) {
 			Item findItem = getItem(newkey);
@@ -2771,7 +2814,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		} else {
 			items_by_unique_name.put(qName, itemDeltaImpl);
 		}
-		
+
 	}
 
 	@Override

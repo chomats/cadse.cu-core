@@ -109,12 +109,14 @@ public class MC_AttributesItem extends AbstractModelController implements IModel
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IEventListener#notifieValueChanged(fr.imag.adele.cadse.core.ui.UIField,
-	 *      java.lang.Object)
+	 * @see
+	 * fr.imag.adele.cadse.core.ui.IEventListener#notifieValueChanged(fr.imag
+	 * .adele.cadse.core.ui.UIField, java.lang.Object)
 	 */
 	public void notifieValueChanged(UIField field, Object value) {
 		Item item = getItem();
-		if (item.isReadOnly()) return;
+		if (item.isReadOnly() || item.isStatic())
+			return;
 		// item.setAttribute(getUIField().getKey(),value);
 		IAttributeType<?> attrType = getUIField().getAttributeDefinition();
 		if (attrType != null) {
@@ -146,8 +148,8 @@ public class MC_AttributesItem extends AbstractModelController implements IModel
 					setMessageError(attRef.getName() + ": " + status.getFormatedMessage());
 					return true;
 				} else {
-					getUIField().getPageController()
-							.setMessage(attRef.getName() + ": " + status.getFormatedMessage(), status.getType());
+					getUIField().getPageController().setMessage(attRef.getName() + ": " + status.getFormatedMessage(),
+							status.getType());
 				}
 			}
 		}

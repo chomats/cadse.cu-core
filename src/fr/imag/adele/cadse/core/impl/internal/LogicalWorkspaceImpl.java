@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,9 +39,7 @@ import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CadseRuntime;
 import fr.imag.adele.cadse.core.ChangeID;
 import fr.imag.adele.cadse.core.CompactUUID;
-import fr.imag.adele.cadse.core.ContentItem;
 import fr.imag.adele.cadse.core.DefaultItemManager;
-import fr.imag.adele.cadse.core.DerivedLink;
 import fr.imag.adele.cadse.core.EventFilter;
 import fr.imag.adele.cadse.core.IItemManager;
 import fr.imag.adele.cadse.core.Item;
@@ -68,7 +65,6 @@ import fr.imag.adele.cadse.core.impl.CadseRuntimeImpl;
 import fr.imag.adele.cadse.core.impl.attribute.AttributeTypeUnresolved;
 import fr.imag.adele.cadse.core.impl.internal.delta.ItemDeltaImpl;
 import fr.imag.adele.cadse.core.impl.internal.delta.LinkDeltaImpl;
-import fr.imag.adele.cadse.core.internal.ILoadDependenciesManager;
 import fr.imag.adele.cadse.core.internal.ILoggableAction;
 import fr.imag.adele.cadse.core.internal.IWorkspaceNotifier;
 import fr.imag.adele.cadse.core.key.ISpaceKey;
@@ -84,7 +80,7 @@ import fr.imag.adele.cadse.core.var.ContextVariable;
  * @author <a href="mailto:stephane.chomat@imag.fr">Stephane Chomat</a>
  */
 public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWorkspace {
-	
+
 	static public class CaptureNewOperation implements ILoggableAction {
 		ILoggableAction							log;
 		private ArrayList<WLWCOperationImpl>	removedOperations	= new ArrayList<WLWCOperationImpl>();	;
@@ -225,8 +221,9 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		/*
 		 * (non-Javadoc)
 		 * 
-		 * @see fr.imag.adele.cadse.core.IWSNotifieChange#notifieChangeEvent(fr.imag.adele.cadse.core.ChangeID,
-		 *      java.lang.Object[])
+		 * @see
+		 * fr.imag.adele.cadse.core.IWSNotifieChange#notifieChangeEvent(fr.imag
+		 * .adele.cadse.core.ChangeID, java.lang.Object[])
 		 */
 		@SuppressWarnings("unchecked")
 		public void notifieChangeEvent(WSEvent wse) {
@@ -243,7 +240,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 						}
 
 						// creation des liens d�rived.
-						//createDerivedLinkFromLink(link);
+						// createDerivedLinkFromLink(link);
 						break;
 
 					case CREATE_ITEM:
@@ -258,7 +255,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 							// complete.
 							// Elle se completera au fure et � mesure.
 							((ItemImpl) item)._composants = ((ItemImpl) item).computeComponents(true);
-							//((ItemImpl) item).reComputeDerivedLink(false);
+							// ((ItemImpl) item).reComputeDerivedLink(false);
 
 						}
 						break;
@@ -355,7 +352,8 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 * @see fr.imag.adele.cadse.core.IWorkspaceLogique#loadMetaModel()
 	 */
 	public LinkType createMLTIfNeed() throws CadseException {
-		return CadseCore.theItemType.createLinkType(CadseDomain.META_LINK_ID, -1, "#mLT", 0, 0, -1, null, CadseCore.theItemType);
+		return CadseCore.theItemType.createLinkType(CadseDomain.META_LINK_ID, -1, "#mLT", 0, 0, -1, null,
+				CadseCore.theItemType);
 	}
 
 	/*
@@ -370,7 +368,9 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.IWorkspaceLogique#setState(fr.imag.adele.cadse.core.WSModelState)
+	 * @see
+	 * fr.imag.adele.cadse.core.IWorkspaceLogique#setState(fr.imag.adele.cadse
+	 * .core.WSModelState)
 	 */
 	public void setState(WSModelState state) {
 		this._state = state;
@@ -384,29 +384,30 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 * NOTE: After initializing a new item, a link between parent and this item
 	 * will be created.
 	 * 
-	 * @param it :
-	 *            item type.
-	 * @param parent :
-	 *            item's parent. can be null if is not an containment
-	 * @param lt :
-	 *            link type. can be null
+	 * @param it
+	 *            : item type.
+	 * @param parent
+	 *            : item's parent. can be null if is not an containment
+	 * @param lt
+	 *            : link type. can be null
 	 * 
 	 * @return new item.
 	 * 
 	 * @throws CadseException
 	 *             the melusine exception
 	 * 
-	 * @OCL<br>
-	 *      context: Workspace::createItem(String id, ItemType it) : Item<br>
-	 *      1. pre: id <> null <br/> 2. pre: id <> '' <br/> 3. pre: it <> null
-	 *      <br/> 6. pre: items->forAll(item | item.id <> id )<br/> 7. pre:
-	 *      self.type.selectedItemtype->include(it) <br/> 8. pre: parent.type =
-	 *      lt.source and it = lt.dest<br/>
-	 * @exception CadseIllegalArgumentException :
-	 *                Id can not be null. CadseIllegalArgumentException : Id can
-	 *                not be empty. CadseIllegalArgumentException : Parent can
-	 *                not be null. CadseIllegalArgumentException : Link type can
-	 *                not be null. CadseIllegalArgumentException : Invalid
+	 * @OCL<br> context: Workspace::createItem(String id, ItemType it) : Item<br>
+	 *          1. pre: id <> null <br/>
+	 *          2. pre: id <> '' <br/>
+	 *          3. pre: it <> null <br/>
+	 *          6. pre: items->forAll(item | item.id <> id )<br/>
+	 *          7. pre: self.type.selectedItemtype->include(it) <br/>
+	 *          8. pre: parent.type = lt.source and it = lt.dest<br/>
+	 * @exception CadseIllegalArgumentException
+	 *                : Id can not be null. CadseIllegalArgumentException : Id
+	 *                can not be empty. CadseIllegalArgumentException : Parent
+	 *                can not be null. CadseIllegalArgumentException : Link type
+	 *                can not be null. CadseIllegalArgumentException : Invalid
 	 *                assignment, this item <tt>$id</tt> already exist.<br/>
 	 *                CadseIllegalArgumentException : Invalid assignment, type
 	 *                of this item is not supported for this kind of workspace.<br/>
@@ -414,8 +415,8 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 *                CadseIllegalArgumentException : You must specifie the
 	 *                parent for the containement item
 	 *                CadseIllegalArgumentException : You must specifie a
-	 *                parent(<tt>$parent</tt>) of type <tt>$lt.source</tt>
-	 *                not of type <tt>$parent.type</tt>
+	 *                parent(<tt>$parent</tt>) of type <tt>$lt.source</tt> not
+	 *                of type <tt>$parent.type</tt>
 	 */
 	public Item createItem(ItemType it, Item parent, LinkType lt) throws CadseException {
 		LogicalWorkspaceTransaction copy = createTransaction();
@@ -427,10 +428,11 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.IWorkspaceLogique#createItem(fr.imag.adele.cadse.core.ItemType,
-	 *      fr.imag.adele.cadse.core.Item, fr.imag.adele.cadse.core.LinkType,
-	 *      fr.imag.adele.cadse.core.CompactUUID, java.lang.String,
-	 *      java.lang.String)
+	 * @see
+	 * fr.imag.adele.cadse.core.IWorkspaceLogique#createItem(fr.imag.adele.cadse
+	 * .core.ItemType, fr.imag.adele.cadse.core.Item,
+	 * fr.imag.adele.cadse.core.LinkType, fr.imag.adele.cadse.core.CompactUUID,
+	 * java.lang.String, java.lang.String)
 	 */
 	public Item createItem(ItemType it, Item parent, LinkType lt, CompactUUID id, String longName, String shortName)
 			throws CadseException {
@@ -508,8 +510,9 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.IWorkspaceLogique#getItemByShortName(fr.imag.adele.cadse.core.ItemType,
-	 *      java.lang.String)
+	 * @see
+	 * fr.imag.adele.cadse.core.IWorkspaceLogique#getItemByShortName(fr.imag
+	 * .adele.cadse.core.ItemType, java.lang.String)
 	 */
 	public Item getItemByShortName(ItemType type, String name) {
 		SpaceKeyType spacekeytype = type.getSpaceKeyType();
@@ -528,8 +531,8 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	/**
 	 * Get the items by item type not items of sub item type.
 	 * 
-	 * @param it :
-	 *            item type to seek.
+	 * @param it
+	 *            : item type to seek.
 	 * 
 	 * @return a list of items.
 	 */
@@ -556,7 +559,9 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.IWorkspaceLogique#canDeleteLink(fr.imag.adele.cadse.core.Link)
+	 * @see
+	 * fr.imag.adele.cadse.core.IWorkspaceLogique#canDeleteLink(fr.imag.adele
+	 * .cadse.core.Link)
 	 */
 	public boolean canDeleteLink(Link link) {
 		return !link.isReadOnly();
@@ -565,7 +570,9 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.IWorkspaceLogique#canDeleteInverseLink(fr.imag.adele.cadse.core.Link)
+	 * @see
+	 * fr.imag.adele.cadse.core.IWorkspaceLogique#canDeleteInverseLink(fr.imag
+	 * .adele.cadse.core.Link)
 	 */
 	public boolean canDeleteInverseLink(Link link) {
 		return true;
@@ -676,8 +683,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 
 	/**
 	 * This method used to verify the preconditions before create an item. An
-	 * item have not yet been created and item type must be ready in workspace .
-	 * <br>
+	 * item have not yet been created and item type must be ready in workspace . <br>
 	 * 
 	 * @param it
 	 *            not null
@@ -690,23 +696,26 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 * @param THIS
 	 *            the tHIS
 	 * 
-	 * @OCL<br>
-	 *      context: Workspace::createItem(String id, ItemType it) : Item<br>
-	 *      1. pre: id <> null <br/> 2. pre: id <> '' <br/> 3. pre: it <> null
-	 *      <br/> 4. pre: parent <> null <br/> 5. pre: lt <> null <br/> 6. pre:
-	 *      items->forAll(item | item.id <> id )<br/> 7. pre:
-	 *      self.type.selectedItemtype->include(it) <br/> 8. pre: parent.type =
-	 *      lt.source and it = lt.dest<br/> 9. pre: parent.isReadOnly = false<br/>
-	 * @exception CadseIllegalArgumentException :
-	 *                Id can not be null. CadseIllegalArgumentException : Id can
-	 *                not be empty. CadseIllegalArgumentException : Invalid
+	 * @OCL<br> context: Workspace::createItem(String id, ItemType it) : Item<br>
+	 *          1. pre: id <> null <br/>
+	 *          2. pre: id <> '' <br/>
+	 *          3. pre: it <> null <br/>
+	 *          4. pre: parent <> null <br/>
+	 *          5. pre: lt <> null <br/>
+	 *          6. pre: items->forAll(item | item.id <> id )<br/>
+	 *          7. pre: self.type.selectedItemtype->include(it) <br/>
+	 *          8. pre: parent.type = lt.source and it = lt.dest<br/>
+	 *          9. pre: parent.isReadOnly = false<br/>
+	 * @exception CadseIllegalArgumentException
+	 *                : Id can not be null. CadseIllegalArgumentException : Id
+	 *                can not be empty. CadseIllegalArgumentException : Invalid
 	 *                assignment, this item <tt>$id</tt> already exist.<br/>
 	 *                CadseIllegalArgumentException : Invalid assignment, type
 	 *                of this item is not supported for this kind of workspace.<br/>
 	 *                CadseIllegalArgumentException : Invalid assignment, link
 	 *                type is not correct. CadseIllegalArgumentException :
-	 *                Invalid assignment, item parent <tt>$parent.id</tt> + "
-	 *                is in state read only.
+	 *                Invalid assignment, item parent <tt>$parent.id</tt> + " is
+	 *                in state read only.
 	 */
 
 	private void preconditions_createItem(Item THIS, ItemType it, Item parent, LinkType lt) {
@@ -744,7 +753,8 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 
 		if (!(lt.getDestination().isSuperTypeOf(it)) && !lt.getDestination().equals(it)) {
 			throw new CadseIllegalArgumentException(Messages.error_cannot_create_an_item_bad_destination, parent
-					.getName(), lt.getName(), lt.getDestination().getName(), lt.getDestination().getId(), it.getName(), it.getId());
+					.getName(), lt.getName(), lt.getDestination().getName(), lt.getDestination().getId(), it.getName(),
+					it.getId());
 		}
 
 	}
@@ -887,7 +897,9 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.IWorkspaceLogique#getItem(fr.imag.adele.cadse.core.key.ISpaceKey)
+	 * @see
+	 * fr.imag.adele.cadse.core.IWorkspaceLogique#getItem(fr.imag.adele.cadse
+	 * .core.key.ISpaceKey)
 	 */
 	public Item getItem(ISpaceKey key) {
 		return _items_by_key.get(key);
@@ -896,8 +908,8 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	/**
 	 * Get the items by item type. (instanceof)
 	 * 
-	 * @param it :
-	 *            item type to seek.
+	 * @param it
+	 *            : item type to seek.
 	 * 
 	 * @return a list of items.
 	 */
@@ -930,7 +942,9 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.IWorkspaceLogique#existsItem(fr.imag.adele.cadse.core.Item)
+	 * @see
+	 * fr.imag.adele.cadse.core.IWorkspaceLogique#existsItem(fr.imag.adele.cadse
+	 * .core.Item)
 	 */
 	public boolean existsItem(Item item) {
 		ISpaceKey key = getKeyItem(item, null, _logger);
@@ -938,7 +952,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 			Item foundItem = this._items_by_key.get(key);
 			if (foundItem == null || foundItem == item)
 				return false;
-		
+
 			return true;
 		}
 		if (!item.getType().hasQualifiedNameAttribute()) {
@@ -949,11 +963,11 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		if (qname == null || qname == Item.NO_VALUE_STRING) {
 			return true;
 		}
-		
+
 		Item foundItem = _items_by_qualified_name.get(qname);
 		if (foundItem == null || foundItem == item)
 			return false;
-	
+
 		return true;
 	}
 
@@ -986,8 +1000,9 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.IWorkspaceLogique#existsItem(fr.imag.adele.cadse.core.Item,
-	 *      java.lang.String)
+	 * @see
+	 * fr.imag.adele.cadse.core.IWorkspaceLogique#existsItem(fr.imag.adele.cadse
+	 * .core.Item, java.lang.String)
 	 */
 	public boolean existsItem(Item item, String shortName) throws CadseException {
 		ISpaceKey key = getKeyItem(item, shortName, _logger);
@@ -1091,39 +1106,39 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		}
 	}
 
-//	/**
-//	 * Creates the derived link from link.
-//	 * 
-//	 * @param link
-//	 *            the link
-//	 */
-//	private void createDerivedLinkFromLink(Link link) {
-//		if (link.getLinkType().isComposition()) {
-//			// un lien de composition est cr��.
-//			// la source du lien est le composite auquel on cherche � rajouter
-//			// des liens d�riv�s ou � en enlever.
-//			// Il est pr�f�rable de recalculer les lien d�riv�es.
-//			((ItemImpl) link.getSource()).reComputeDerivedLink(false);
-//		} else {
-//			// deuxi�me cas un lien non composite a �t� cre�,
-//			// il faut int�grer ce lien � tout les composite �ventuelle auquel
-//			// appartiendrai la source du lien.
-//			for (Link cl : link.getSource().getIncomingLinks()) {
-//				if (cl.getLinkType().isComposition()) {
-//					ItemImpl source = (ItemImpl) cl.getSource();
-//					if (!source.containsComponent(link.getDestinationId())) {
-//						if (source._derivedLinks == null) {
-//							source._derivedLinks = new HashSet<DerivedLink>();
-//						}
-//						DerivedLink dl = source.createOneDerivedLink(link);
-//						if (source._derivedLinks.add(dl)) {
-//
-//						}
-//					}
-//				}
-//			}
-//		}
-//	}
+	// /**
+	// * Creates the derived link from link.
+	// *
+	// * @param link
+	// * the link
+	// */
+	// private void createDerivedLinkFromLink(Link link) {
+	// if (link.getLinkType().isComposition()) {
+	// // un lien de composition est cr��.
+	// // la source du lien est le composite auquel on cherche � rajouter
+	// // des liens d�riv�s ou � en enlever.
+	// // Il est pr�f�rable de recalculer les lien d�riv�es.
+	// ((ItemImpl) link.getSource()).reComputeDerivedLink(false);
+	// } else {
+	// // deuxi�me cas un lien non composite a �t� cre�,
+	// // il faut int�grer ce lien � tout les composite �ventuelle auquel
+	// // appartiendrai la source du lien.
+	// for (Link cl : link.getSource().getIncomingLinks()) {
+	// if (cl.getLinkType().isComposition()) {
+	// ItemImpl source = (ItemImpl) cl.getSource();
+	// if (!source.containsComponent(link.getDestinationId())) {
+	// if (source._derivedLinks == null) {
+	// source._derivedLinks = new HashSet<DerivedLink>();
+	// }
+	// DerivedLink dl = source.createOneDerivedLink(link);
+	// if (source._derivedLinks.add(dl)) {
+	//
+	// }
+	// }
+	// }
+	// }
+	// }
+	// }
 
 	/*
 	 * (non-Javadoc)
@@ -1156,13 +1171,12 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		Item i = _items.get(id);
 
 		if (i == null) {
-			
+
 			if (type == CadseGCST.CADSE_RUNTIME) {
 				i = new CadseRuntimeImpl(shortname, id, null);
 				i.setFlag(Item.UNRESOLVED, true);
-				
-			}
-			else {
+
+			} else {
 				i = new ItemUnresolved(this, id, type, uniqueName, shortname);
 			}
 			this._items.put(id, i);
@@ -1222,7 +1236,9 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.IWorkspaceLogique#loadItem(fr.imag.adele.cadse.core.ItemDescriptionRef)
+	 * @see
+	 * fr.imag.adele.cadse.core.IWorkspaceLogique#loadItem(fr.imag.adele.cadse
+	 * .core.ItemDescriptionRef)
 	 */
 	synchronized public Item loadItem(ItemDescriptionRef ref) throws CadseException {
 		if (ref == null) {
@@ -1237,11 +1253,12 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		return getItem(ref.getId(), itemtype, ref.getQualifiedName(), ref.getName());
 	}
 
-	
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.IWorkspaceLogique#loadItem(fr.imag.adele.cadse.core.ItemDescriptionRef)
+	 * @see
+	 * fr.imag.adele.cadse.core.IWorkspaceLogique#loadItem(fr.imag.adele.cadse
+	 * .core.ItemDescriptionRef)
 	 */
 	synchronized public Item loadItem(ItemDelta ref) throws CadseException {
 		if (ref == null) {
@@ -1255,6 +1272,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		}
 		return getItem(ref.getId(), itemtype, ref.getQualifiedName(), ref.getName());
 	}
+
 	/**
 	 * Gets the item type.
 	 * 
@@ -1285,7 +1303,9 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.IWorkspaceLogique#getItemType(fr.imag.adele.cadse.core.CompactUUID)
+	 * @see
+	 * fr.imag.adele.cadse.core.IWorkspaceLogique#getItemType(fr.imag.adele.
+	 * cadse.core.CompactUUID)
 	 */
 	public ItemType getItemType(CompactUUID id) {
 
@@ -1368,8 +1388,8 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	/**
 	 * Create an item type.
 	 * 
-	 * @param id :
-	 *            id item type.
+	 * @param id
+	 *            : id item type.
 	 * @param superType
 	 *            the super type
 	 * @param intID
@@ -1386,8 +1406,9 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 * @return a new item type.
 	 * 
 	 * @OCL context: WorkspaceDomain::createItemType(String id, boolean
-	 *      isContent) : ItemType 1. pre: id <> null <br/> 2. pre: id <> ''
-	 *      <br/> 3. pre: self.itemTypes->forAll(it | not it.id = id)
+	 *      isContent) : ItemType 1. pre: id <> null <br/>
+	 *      2. pre: id <> '' <br/>
+	 *      3. pre: self.itemTypes->forAll(it | not it.id = id)
 	 *      CadseIllegalArgumentException : Id can not be null.
 	 *      CadseIllegalArgumentException : Id can not be empty.
 	 *      CadseIllegalArgumentException : Item type $id$ already exist.
@@ -1406,20 +1427,20 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		if (id.equals(CadseDomain.ITEM_ID) && CadseCore.theItemType == null) {
 			throw new CadseIllegalArgumentException("Before, you must load Model.Workspace.Root");
 		}
-		if (!id.equals(CadseDomain.ITEMTYPE_ID) && !id.equals(CadseDomain.ITEM_ID)
-				&& CadseCore.theItem == null) {
+		if (!id.equals(CadseDomain.ITEMTYPE_ID) && !id.equals(CadseDomain.ITEM_ID) && CadseCore.theItem == null) {
 			throw new CadseIllegalArgumentException("Before, you must load Model.Workspace.Root");
 		}
 		if (id.equals(CadseDomain.EXT_ITEM_ID) || id.equals(CadseDomain.ITEM_ID)) {
 			superType = null;
 		} else {
 			if (superType == null) {
-				// si je n'ai pas de super type et que je ne suis pas le type Item ou ExtItem.
+				// si je n'ai pas de super type et que je ne suis pas le type
+				// Item ou ExtItem.
 				// on met d'office le type Item comme super type.
 				superType = CadseCore.theItem;
 			}
 		}
-		
+
 		if (metaType == null) {
 			metaType = CadseCore.theItemType;
 		}
@@ -1444,17 +1465,23 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 
 	};
 
-//	public ItemType createItemType(CadseRuntime cadseName, ItemType superType, int intID, CompactUUID id,
-//			String shortName, String displayName, boolean hasContent, boolean isAbstract, IItemManager manager) {
-//		return createItemType(null, cadseName, superType, intID, id, shortName, displayName, hasContent, isAbstract,
-//				manager);
-//	}
+	// public ItemType createItemType(CadseRuntime cadseName, ItemType
+	// superType, int intID, CompactUUID id,
+	// String shortName, String displayName, boolean hasContent, boolean
+	// isAbstract, IItemManager manager) {
+	// return createItemType(null, cadseName, superType, intID, id, shortName,
+	// displayName, hasContent, isAbstract,
+	// manager);
+	// }
 
-//	public ItemType createItemType(CadseRuntime cadseName, ItemType superType, int intID, CompactUUID id,
-//			String shortName, String displayName, boolean hasContent, boolean isAbstract) {
-//
-//		return createItemType(cadseName, superType, intID, id, shortName, displayName, hasContent, isAbstract, null);
-//	}
+	// public ItemType createItemType(CadseRuntime cadseName, ItemType
+	// superType, int intID, CompactUUID id,
+	// String shortName, String displayName, boolean hasContent, boolean
+	// isAbstract) {
+	//
+	// return createItemType(cadseName, superType, intID, id, shortName,
+	// displayName, hasContent, isAbstract, null);
+	// }
 
 	/**
 	 * Register a type.
@@ -1462,8 +1489,9 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 * @param it
 	 *            the itemtype which be register.
 	 * 
-	 * @OCL context: WSModelType 1. pre: self.itemTypes->forAll(it2 | not it2.id =
-	 *      it.id) CadseIllegalArgumentException : Item type $id$ already exist.
+	 * @OCL context: WSModelType 1. pre: self.itemTypes->forAll(it2 | not it2.id
+	 *      = it.id) CadseIllegalArgumentException : Item type $id$ already
+	 *      exist.
 	 * @since 2.0
 	 */
 	protected void registerItemType(ItemType it) {
@@ -1493,7 +1521,9 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.IWorkspaceLogique#getItemTypeByName(java.lang.String)
+	 * @see
+	 * fr.imag.adele.cadse.core.IWorkspaceLogique#getItemTypeByName(java.lang
+	 * .String)
 	 */
 	public synchronized ItemType getItemTypeByName(String shortName) {
 		for (ItemType it : getItemTypes()) {
@@ -1506,43 +1536,44 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 
 	int	stateLoadContentManager	= 0;	// 0 not loaded, 1 loading, 2 loaded
 
-//	protected void loadContentManager(Item item) throws CadseException {
-//		// synchronized (WorkspaceLogique.this) {
-//		if (stateLoadContentManager == 0) {
-//			for (ItemType it : LogicalWorkspaceImpl.this._itemTypes) {
-//				IItemManager im = it.getItemManager();
-//				if (im instanceof ILoadDependenciesManager) {
-//					ILoadDependenciesManager ldm = (ILoadDependenciesManager) im;
-//					ldm.loadDependencies();
-//				}
-//			}
-//			stateLoadContentManager = 1;
-//		}
-//
-//		try {
-//			getCadseDomain().beginRule(this);
-//			synchronized (this) {
-//				recurcifLoadContent(item);
-//			}
-//		} finally {
-//			getCadseDomain().endRule(this);
-//		}
-//		// }
-//	}
+	// protected void loadContentManager(Item item) throws CadseException {
+	// // synchronized (WorkspaceLogique.this) {
+	// if (stateLoadContentManager == 0) {
+	// for (ItemType it : LogicalWorkspaceImpl.this._itemTypes) {
+	// IItemManager im = it.getItemManager();
+	// if (im instanceof ILoadDependenciesManager) {
+	// ILoadDependenciesManager ldm = (ILoadDependenciesManager) im;
+	// ldm.loadDependencies();
+	// }
+	// }
+	// stateLoadContentManager = 1;
+	// }
+	//
+	// try {
+	// getCadseDomain().beginRule(this);
+	// synchronized (this) {
+	// recurcifLoadContent(item);
+	// }
+	// } finally {
+	// getCadseDomain().endRule(this);
+	// }
+	// // }
+	// }
 
-//	// relation de dependence de chargement de contentu non cyclique
-//	// bon algo est peut etre de trier les item suivant cette relation.
-//	// cette relation est la relation part
-//	private void recurcifLoadContent(Item item) throws CadseException {
-//		Item part = item.getPartParent(true);
-//		if (part != item && part != null && part.isResolved()) {
-//			Object contentmanager = part._getContentItem();
-//			if (contentmanager == null || contentmanager == ContentItem.INVALID_CONTENT) {
-//				recurcifLoadContent(part);
-//			}
-//		}
-//		item.loadContent();
-//	}
+	// // relation de dependence de chargement de contentu non cyclique
+	// // bon algo est peut etre de trier les item suivant cette relation.
+	// // cette relation est la relation part
+	// private void recurcifLoadContent(Item item) throws CadseException {
+	// Item part = item.getPartParent(true);
+	// if (part != item && part != null && part.isResolved()) {
+	// Object contentmanager = part._getContentItem();
+	// if (contentmanager == null || contentmanager ==
+	// ContentItem.INVALID_CONTENT) {
+	// recurcifLoadContent(part);
+	// }
+	// }
+	// item.loadContent();
+	// }
 
 	public LogicalWorkspaceTransaction createTransaction() {
 		return new LogicalWorkspaceTransactionImpl(this, ArraysUtil.clone(_workspaceLogiqueCopyListeners));
@@ -1551,25 +1582,28 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	/**
 	 * Test preconditions before creating a link.
 	 * 
-	 * @param lt :
-	 *            type of link to create.
-	 * @param destination :
-	 *            destination of link<br/><br/>
+	 * @param lt
+	 *            : type of link to create.
+	 * @param destination
+	 *            : destination of link<br/>
+	 * <br/>
 	 * @throws CadseException
 	 * 
-	 * @throws CadseIllegalArgumentException:
-	 *             Link type <tt>lt</tt> is null.<br/>
+	 * @throws CadseIllegalArgumentException
+	 *             : Link type <tt>lt</tt> is null.<br/>
 	 *             CadseIllegalArgumentException: Link type <tt>lt</tt> is not
 	 *             selected yet in workspace type. <br/>
-	 *             IllegalArgumentException: Type of <tt>source</tt> has not
-	 *             the type like as item type source defined in <tt>lt</tt>.
-	 *             <br/> IllegalArgumentException: Type of <tt>destination</tt>
-	 *             has not the type like as item type destination defined in
-	 *             <tt>lt</tt>. <br/> IllegalArgumentException: The maximum
-	 *             cardinatily is exceed.<br/> IllegalArgumentException:
-	 *             Destination is null.<br/> IllegalArgumentException: An
-	 *             object reference to itself.<br/> IllegalArgumentException:
-	 *             Link to this destination has been created.<br/><br/>
+	 *             IllegalArgumentException: Type of <tt>source</tt> has not the
+	 *             type like as item type source defined in <tt>lt</tt>. <br/>
+	 *             IllegalArgumentException: Type of <tt>destination</tt> has
+	 *             not the type like as item type destination defined in
+	 *             <tt>lt</tt>. <br/>
+	 *             IllegalArgumentException: The maximum cardinatily is exceed.<br/>
+	 *             IllegalArgumentException: Destination is null.<br/>
+	 *             IllegalArgumentException: An object reference to itself.<br/>
+	 *             IllegalArgumentException: Link to this destination has been
+	 *             created.<br/>
+	 * <br/>
 	 */
 	static public void preconditions_createLink(Link l, LinkType lt, Item source, Item destination)
 			throws CadseException {
@@ -1598,7 +1632,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		constraints_LinkType(lt);
 		constraints_SourceItem(l, lt, source);
 		if (destination.getType() == null)
-			throw new CadseException("the type of the destinion of this link is null : "+l);
+			throw new CadseException("the type of the destinion of this link is null : " + l);
 		constraints_DestItem(lt, source, destination);
 		constraints_BetweenDestAndSource(l, lt, source, destination);
 	}
@@ -1607,30 +1641,34 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 * Called before creating a link. Verify contraints between source and
 	 * destination.
 	 * 
-	 * @param lt :
-	 *            type of link to create.
-	 * @param destination :
-	 *            destination of link<br/><br/>
+	 * @param lt
+	 *            : type of link to create.
+	 * @param destination
+	 *            : destination of link<br/>
+	 * <br/>
 	 * @throws CadseException
 	 * 
-	 * @throws CadseIllegalArgumentException:
-	 *             An object reference to itself.<br/>
+	 * @throws CadseIllegalArgumentException
+	 *             : An object reference to itself.<br/>
 	 *             CadseIllegalArgumentException: Link to this destination has
-	 *             been created.<br/><br/>
+	 *             been created.<br/>
+	 * <br/>
 	 * 
 	 * @NOTE: This method is used when create normal link. Source in this case
 	 *        is object <tt>this</tt> <br/>
 	 * @contraints: - 1. Source and destination must be two different objects
-	 *              (it means an item cannot point to itself).<br/> - 2.
-	 *              Beetwen source and destination there have no link the same
-	 *              type have ready created.<br/><br/>
-	 * @OCL: <b>pre:</b> <tt>self</tt> != <tt>destination </tt> <i> //
-	 *       Source and destination must be two different objects (it means an
-	 *       item cannot point to itself).<br/> <b>pre:</b> not
-	 *       <tt>self.to</tt>->exist(<tt>l</tt> | <tt>l.dest</tt> =
-	 *       <tt>destination</tt> or <tt>l.destId</tt> =
+	 *              (it means an item cannot point to itself).<br/>
+	 *              - 2. Beetwen source and destination there have no link the
+	 *              same type have ready created.<br/>
+	 * <br/>
+	 * @OCL: <b>pre:</b> <tt>self</tt> != <tt>destination </tt> <i> // Source
+	 *       and destination must be two different objects (it means an item
+	 *       cannot point to itself).<br/>
+	 *       <b>pre:</b> not <tt>self.to</tt>->exist(<tt>l</tt> |
+	 *       <tt>l.dest</tt> = <tt>destination</tt> or <tt>l.destId</tt> =
 	 *       <tt>destination.id</tt>) <i> // Beetwen source and destination
-	 *       there have no link the same type have ready created.<br/><br/>
+	 *       there have no link the same type have ready created.<br/>
+	 * <br/>
 	 */
 	static public void constraints_BetweenDestAndSource(Link l_orig, LinkType lt, Item source, Item destination)
 			throws CadseException {
@@ -1658,22 +1696,23 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 * non resolved link. In two case, it must always verify contrainsts on link
 	 * type.
 	 * 
-	 * Constraints: - 1. Link type <tt>lt</tt> cannot be null. <br/> - 2. Link
-	 * type <tt>lt</tt> must be selected in workspace type. <br/>
+	 * Constraints: - 1. Link type <tt>lt</tt> cannot be null. <br/>
+	 * - 2. Link type <tt>lt</tt> must be selected in workspace type. <br/>
 	 * 
-	 * @param lt :
-	 *            type of link to create. <br/><br/>
+	 * @param lt
+	 *            : type of link to create. <br/>
+	 * <br/>
 	 * @throws CadseException
 	 * 
-	 * @throws CadseIllegalArgumentException:
-	 *             Link type <tt>lt</tt> is null.<br/>
+	 * @throws CadseIllegalArgumentException
+	 *             : Link type <tt>lt</tt> is null.<br/>
 	 * 
 	 * @OCL: <b>context:</b> Item::createLink(String id, LinkType lt, Item
 	 *       destination) : Link </br> <b>pre:</b> <tt>lt</tt> <> null <i> //
-	 *       Link type <tt>lt</tt> cannot be null. <br/> <b>pre:</b>
-	 *       <tt>self.workspace.type.selectedLinkTypes</tt>->include(<tt>lt</tt>)
-	 *       <i> // Link type <tt>lt</tt> must be selected in workspace type.
-	 *       <br/>
+	 *       Link type <tt>lt</tt> cannot be null. <br/>
+	 *       <b>pre:</b> <tt>self.workspace.type.selectedLinkTypes</tt>
+	 *       ->include(<tt>lt</tt>) <i> // Link type <tt>lt</tt> must be
+	 *       selected in workspace type. <br/>
 	 */
 	static public void constraints_LinkType(LinkType lt) throws CadseException {
 		// 1. Link type lt cannot be null.
@@ -1685,36 +1724,37 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	/**
 	 * Called before creating a link. Verify contraints on item source.
 	 * 
-	 * @param lt :
-	 *            type of link to create.
+	 * @param lt
+	 *            : type of link to create.
 	 * @throws CadseException
 	 * 
 	 * @NOTE: This method is used in both methods: Create normal link and Create
 	 *        non resolved link. In two case, it must always verify contrainsts
 	 *        on item source. Note that in this case source is object
 	 *        <tt>this</tt> <br/>
-	 * @constraints: - 1. Type of <tt>source</tt> must be the same type as
-	 *               item type source defined in link type<tt>lt</tt> <br/> -
-	 *               2. The number of outgoing links having type <tt>lt</tt>
+	 * @constraints: - 1. Type of <tt>source</tt> must be the same type as item
+	 *               type source defined in link type<tt>lt</tt> <br/>
+	 *               - 2. The number of outgoing links having type <tt>lt</tt>
 	 *               of this item can not excerce the cardinality min and max
-	 *               defined in link type <tt>lt</tt>. <br/> - 3. The source
-	 *               isn't in read only state.
+	 *               defined in link type <tt>lt</tt>. <br/>
+	 *               - 3. The source isn't in read only state.
 	 * @OCL: <b>pre:</b> <tt>self.type</tt> = <tt>lt.type.source</tt> <i> //
 	 *       Type of <tt>source</tt> must be the same type as item type source
-	 *       defined in link type<tt>lt</tt> <br/> <b>pre:</b> let
-	 *       <tt>s</tt> = <tt>self.to</tt>->collect(<tt>l</tt> |
+	 *       defined in link type<tt>lt</tt> <br/>
+	 *       <b>pre:</b> let <tt>s</tt> = <tt>self.to</tt>->collect(<tt>l</tt> |
 	 *       <tt>l.type</tt> = <tt>lt</tt>) <tt>s</tt>->size() >=
-	 *       <tt>lt.min</tt> and if (<tt>lt.max</tt> !=-1) then <tt>s</tt>->size() <=
-	 *       <tt>lt.max</tt> <i> // The number of outgoing links having type
-	 *       <tt>lt</tt> of this item can not excerce the cardinality min and
-	 *       max defined in link type <tt>lt</tt>. <br/> <b>pre:</b>
-	 *       self.isReadOnly = false
-	 * @exception CadseIllegalArgumentException:
-	 *                Type of <tt>source</tt> has not the type like as item
+	 *       <tt>lt.min</tt> and if (<tt>lt.max</tt> !=-1) then <tt>s</tt>
+	 *       ->size() <= <tt>lt.max</tt> <i> // The number of outgoing links
+	 *       having type <tt>lt</tt> of this item can not excerce the
+	 *       cardinality min and max defined in link type <tt>lt</tt>. <br/>
+	 *       <b>pre:</b> self.isReadOnly = false
+	 * @exception CadseIllegalArgumentException
+	 *                : Type of <tt>source</tt> has not the type like as item
 	 *                type source defined in <tt>lt</tt>. <br/>
 	 *                CadseIllegalArgumentException: The maximum cardinatily is
-	 *                exceed.<br/> CadseIllegalArgumentException: The source is
-	 *                in read only state.<br/>
+	 *                exceed.<br/>
+	 *                CadseIllegalArgumentException: The source is in read only
+	 *                state.<br/>
 	 */
 	static public void constraints_SourceItem(Link l_orig, LinkType lt, Item source) throws CadseException {
 		// 1. Type of source must be the same type as item type source defined
@@ -1757,24 +1797,26 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	/**
 	 * Called before creating a link. Verify contraints on item destination.
 	 * 
-	 * @param lt :
-	 *            type of link to create.
-	 * @param destination :
-	 *            destination of link<br/><br/>
+	 * @param lt
+	 *            : type of link to create.
+	 * @param destination
+	 *            : destination of link<br/>
+	 * <br/>
 	 * 
-	 * @throws CadseIllegalArgumentException:
-	 *             Destination is null.<br/> CadseIllegalArgumentException:
-	 *             Type of <tt>destination</tt> has not the type like as item
-	 *             type destination defined in <tt>lt</tt>. <br/>
+	 * @throws CadseIllegalArgumentException
+	 *             : Destination is null.<br/>
+	 *             CadseIllegalArgumentException: Type of <tt>destination</tt>
+	 *             has not the type like as item type destination defined in
+	 *             <tt>lt</tt>. <br/>
 	 * 
 	 * @NOTE: This method is used just when Create normal link.
-	 * @constraints: - 1. <tt>destination</tt> cannot be null. <br/> - 2. Type
-	 *               of <tt>destination</tt> must be the same type as item
-	 *               type destination defined in <tt>lt</tt> <br/>
-	 * @OCL: <b>pre:</b> <tt>destination</tt> <> null <i>//
-	 *       <tt>destination</tt> cannot be null. <br/> <b>pre:</b>
-	 *       <tt>destination.type</tt> = <tt>lt.type.dest </tt> <i> // Type
-	 *       of <tt>destination</tt> must be the same type as item type
+	 * @constraints: - 1. <tt>destination</tt> cannot be null. <br/>
+	 *               - 2. Type of <tt>destination</tt> must be the same type as
+	 *               item type destination defined in <tt>lt</tt> <br/>
+	 * @OCL: <b>pre:</b> <tt>destination</tt> <> null <i>// <tt>destination</tt>
+	 *       cannot be null. <br/>
+	 *       <b>pre:</b> <tt>destination.type</tt> = <tt>lt.type.dest </tt> <i>
+	 *       // Type of <tt>destination</tt> must be the same type as item type
 	 *       destination defined in <tt>lt</tt> <br/>
 	 */
 	static public void constraints_DestItem(LinkType lt, Item source, Item destination) {
@@ -1819,6 +1861,16 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 					if (operations.size() != 0) {
 						for (WLWCOperationImpl oper : operations) {
 							OperationType opertype = oper.getOperationType();
+							if (opertype == OperationTypeCst.SET_ATTRIBUTE_OPERATION) {
+								opertype = oper.getParentType();
+								if (opertype == OperationTypeCst.ITEM_OPERATION) {
+									ItemDelta item = (ItemDelta) oper.getParent();
+									if (item.getBaseItem() != null && item.getBaseItem().isStatic()) {
+										throw new CadseException("Cannot set attribute on a static item");
+									}
+									continue;
+								}
+							}
 							if (opertype == OperationTypeCst.DELETE_OPERATION) {
 								opertype = oper.getParentType();
 								if (opertype == OperationTypeCst.ITEM_OPERATION) {
@@ -1858,8 +1910,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 										continue;
 									}
 									if (!source.isAdded() && !source.isLoaded()) {
-										if (source.getBaseItem() != null
-												&& source.getBaseItem().isReadOnly()) {
+										if (source.getBaseItem() != null && source.getBaseItem().isReadOnly()) {
 											throw new CadseException("Source is readonly");
 										}
 									}
@@ -1869,8 +1920,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 									if (destination == null) {
 										throw new CadseException("Destination is null!!!");
 									}
-									preconditions_createLink(linkOperation, link_lt, source,
-											destination);
+									preconditions_createLink(linkOperation, link_lt, source, destination);
 									continue;
 								}
 								continue;
@@ -2169,8 +2219,8 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 */
 	ItemType createUnresolvedItemType(CompactUUID id, String sn, String un) throws CadseException {
 		CadseRuntime cr = getCadseRuntimeForUnresolvedItemType();
-		ItemTypeImpl itemTypeImpl = (ItemTypeImpl) createItemType(null, cr, null, 0, id, sn, "Unresolved Item type" + id,
-				false, true, _unresolveManager);
+		ItemTypeImpl itemTypeImpl = (ItemTypeImpl) createItemType(null, cr, null, 0, id, sn, "Unresolved Item type"
+				+ id, false, true, _unresolveManager);
 		itemTypeImpl.setFlag(Item.UNRESOLVED, true);
 		itemTypeImpl._qualifiedName = un;
 		itemTypeImpl.setFlag(Item.IS_HIDDEN, true);
