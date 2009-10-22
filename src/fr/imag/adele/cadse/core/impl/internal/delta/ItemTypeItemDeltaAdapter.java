@@ -616,7 +616,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 	}
 
 	@Override
-	public GroupType getGroupType() {
+	public ItemType getGroupType() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -628,7 +628,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 	}
 
 	@Override
-	public boolean isGroup() {
+	public boolean isHeadGroup() {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -658,9 +658,8 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 	}
 
 	@Override
-	public GroupType[] getAllSubGroupType() {
-		// TODO Auto-generated method stub
-		return null;
+	public ItemType[] getAllSubGroupType() {
+		return getSubTypes();
 	}
 
 

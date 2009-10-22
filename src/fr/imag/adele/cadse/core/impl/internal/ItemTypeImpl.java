@@ -2396,7 +2396,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	}
 
 	@Override
-	public GroupType getGroupType() {
+	public ItemType getGroupType() {
 		if (_type == this)
 			return null;
 		if (getType().isGroupType())
@@ -2417,7 +2417,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 
 	@Override
 	public boolean isGroupType() {
-		if (isGroup())
+		if (isHeadGroup())
 			return true;
 		for (LinkType l : getOutgoingLinkTypes()) {
 			if (l.isGroup())
@@ -2447,12 +2447,12 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	}
 
 	@Override
-	public boolean isGroup() {
+	public boolean isHeadGroup() {
 		return getGroupType() != null;
 	}
 	
 	@Override
-	public GroupType[] getAllSubGroupType() {
-		return new GroupType[0];
+	public ItemType[] getAllSubGroupType() {
+		return isGroupType() ? getSubTypes() : new ItemType[0];
 	}
 }

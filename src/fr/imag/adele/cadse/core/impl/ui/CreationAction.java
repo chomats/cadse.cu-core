@@ -30,6 +30,7 @@ import fr.imag.adele.cadse.core.impl.CadseCore;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
 import fr.imag.adele.cadse.core.ui.IActionPage;
 import fr.imag.adele.cadse.core.ui.IPageObject;
+import fr.imag.adele.cadse.core.ui.view.NewContext;
 
 /**
  * The Class CreationAction.
@@ -49,6 +50,8 @@ public class CreationAction extends AbstractActionPage implements IActionPage {
 
 	/** The type. */
 	private final ItemType	type;
+
+	private NewContext context;
 
 	/**
 	 * Instantiates a new creation action.
@@ -87,6 +90,25 @@ public class CreationAction extends AbstractActionPage implements IActionPage {
 		this.parentLT = lt;
 		this.parentItem = parent;
 	}
+	
+	/**
+	 * Instantiates a new creation action.
+	 * 
+	 * @param parent
+	 *            the parent
+	 * @param type
+	 *            the type
+	 * @param lt
+	 *            the lt
+	 */
+	public CreationAction(NewContext c) {
+		super();
+		this.defaultName = null;
+		this.type = c.getDestinationType();
+		this.parentLT = c.getPartLinkType();
+		this.parentItem = c.getPartParent();
+		this.context = c;
+	}
 
 	// TODO : il faut garder avant
 	/*
@@ -98,33 +120,10 @@ public class CreationAction extends AbstractActionPage implements IActionPage {
 	public void doCancel(Object monitor) {
 		super.doCancel(monitor);
 		Item item = getItem();
-		if ((parentItem != null) && (parentLT != null)) {
-			// for (Link l : new ArrayList<Link>(parentItem.getOutgoingLinks()))
-			// {
-			// if (l.getType().equals(parentLT) &&
-			// l.getDestinationId().equals(item.getId())) {
-			// l.delete();
-			// }
-			// }
-		}
+		
 		if (item.getState() == ItemState.NOT_IN_WORKSPACE) {
 			cancelContent(item);
 		}
-		// if (item != null) {
-		// if (theLinkType != null)
-		// for (Link l : createdItem.getIncomingLinks()) {
-		// if (l.getType().equals(theLinkType)) {
-		// l.delete();
-		// }
-		// }
-		// try {
-		// createdItem.shadow(true);
-		// } catch (CadseException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		// }
-
 	}
 
 	/**
@@ -165,15 +164,11 @@ public class CreationAction extends AbstractActionPage implements IActionPage {
 	 */
 	@Override
 	public void doFinish(Object monitor) throws Exception {
-
 		super.doFinish(monitor);
 		String shortname = getFinishAutomaticShortName();
 		if (shortname != null) {
 			CadseCore.setName(getItem(), shortname);
 		}
-		// Item creatingItem = getItem();
-
-		// /pageObject.putLocal(IFieldDescription.CREATED_ITEM, creatingItem);
 	}
 
 	/*
@@ -250,8 +245,6 @@ public class CreationAction extends AbstractActionPage implements IActionPage {
 	 *             the melusine exception
 	 */
 	protected Item createItem() throws CadseException {
-		// return
-		// type.getWorkspaceLogique().createOrphanItem(type,parentItem,parentLT);
 		return getCopy().createItem(type, parentItem, parentLT);
 	}
 
@@ -289,4 +282,7 @@ public class CreationAction extends AbstractActionPage implements IActionPage {
 		return type.getId().toString();
 	}
 
+	public NewContext getContext() {
+		return context;
+	}
 }
