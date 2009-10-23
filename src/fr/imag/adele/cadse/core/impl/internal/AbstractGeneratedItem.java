@@ -21,6 +21,7 @@ package fr.imag.adele.cadse.core.impl.internal;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -1165,14 +1166,21 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	}
 
 	protected void collectOutgoingLinks(LinkType linkType, CollectedReflectLink ret) {
+		if (linkType ==CadseGCST.GROUP_EXT_ITEM_lt_MEMBER_OF) {
+			ret.addOutgoing(CadseGCST.GROUP_EXT_ITEM_lt_MEMBERS, _group);
+			return;
+		}
 		if (linkType == CadseGCST.ITEM_lt_INSTANCE_OF) {
 			ret.addOutgoing(CadseGCST.ITEM_lt_INSTANCE_OF, getType());
+			return;
 		}
 		if (linkType == CadseGCST.ITEM_lt_MODIFIED_ATTRIBUTES) {
 			ret.addOutgoing(CadseGCST.ITEM_lt_MODIFIED_ATTRIBUTES, Item.IS_HIDDEN, this._modifiedAttributeTypes);
+			return;
 		}
 		if (linkType == CadseGCST.ITEM_lt_PARENT) {
 			ret.addOutgoing(linkType, _parent, Item.IS_HIDDEN);
+			return;
 		}
 
 		if (linkType == CadseGCST.ITEM_lt_CONTENTS) {
@@ -1749,6 +1757,13 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	}
 
 	public IAttributeType<?>[] getLocalAllAttributeTypes() {
+		if (_group != null) {
+			ArrayList<IAttributeType<?>> ret = new ArrayList<IAttributeType<?>>();
+			ret.addAll(Arrays.asList(getType().getAllAttributeTypes()));
+			ret.addAll(Arrays.asList(_group.getLocalAllAttributeTypes()));
+			return (IAttributeType<?>[]) ret.toArray(new IAttributeType<?>[ret
+					.size()]);
+		}
 		return getType().getAllAttributeTypes();
 	}
 

@@ -2274,22 +2274,28 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	protected void collectOutgoingLinks(LinkType linkType, CollectedReflectLink ret) {
 		if (linkType == CadseGCST.ITEM_TYPE_lt_SUPER_TYPE) {
 			ret.addOutgoing(CadseGCST.ITEM_TYPE_lt_SUPER_TYPE, getSuperType());
+			return;
 		}
 		if (linkType == CadseGCST.ITEM_TYPE_lt_CADSE_RUNTIME) {
 			ret.addOutgoing(CadseGCST.ITEM_TYPE_lt_CADSE_RUNTIME, getCadseRuntime(), Item.IS_HIDDEN);
-		}
+			return;
+			}
 		if (linkType == CadseGCST.ITEM_TYPE_lt_SUB_TYPES) {
 			ret.addOutgoing(CadseGCST.ITEM_TYPE_lt_SUB_TYPES, Item.IS_HIDDEN, this._subTypes);
-		}
+			return;
+			}
 		if (linkType == CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES) {
 			ret.addOutgoing(CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES, _attributesDefinitions);
-		}
+			return;
+			}
 		if (linkType == CadseGCST.ITEM_TYPE_lt_CREATION_PAGES) {
 			ret.addOutgoing(CadseGCST.ITEM_TYPE_lt_CREATION_PAGES, Item.IS_HIDDEN, _creationPages);
+			return;
 		}
 		if (linkType == CadseGCST.ITEM_TYPE_lt_MODIFICATION_PAGES) {
 			ret.addOutgoing(CadseGCST.ITEM_TYPE_lt_MODIFICATION_PAGES, Item.IS_HIDDEN, _modificationPages);
-		}
+			return;
+			}
 		super.collectOutgoingLinks(linkType, ret);
 	}
 
@@ -2442,8 +2448,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	
 	@Override
 	public List<Item> getMembers() {
-		//TODO
-		return Collections.emptyList();
+		return new ArrayList<Item>(getOutgoingItems(CadseGCST.GROUP_EXT_ITEM_lt_MEMBERS, true));
 	}
 
 	@Override
