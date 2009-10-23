@@ -3304,6 +3304,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 */
 	public void setAttribute(IAttributeType<?> key, String attributeName, Object newCurrentValue, boolean loaded)
 			throws CadseException {
+		if (getBaseItem() != null && getBaseItem().isStatic()) {
+			throw new CadseException("Cannot set attribute on a static item");
+		}
 		if (attributeName == null)
 			attributeName = key.getName();
 
@@ -3988,8 +3991,6 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	public LogicalWorkspaceTransaction getCopy() {
 		return _copy;
 	}
-
-	
 
 	@Override
 	public boolean isMember() {
