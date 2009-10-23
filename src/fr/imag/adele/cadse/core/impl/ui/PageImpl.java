@@ -19,6 +19,8 @@
 
 package fr.imag.adele.cadse.core.impl.ui;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -94,6 +96,8 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	private UIListener[]	listeners	= null;
 
 	private FilterContext	_filterContext;
+
+	private IPage[]			_superPages;
 
 	public PageImpl(CompactUUID id, String name, ItemType parent) {
 		super(id);
@@ -226,7 +230,9 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IPage#addLast(fr.imag.adele.cadse.core.ui.UIField)
+	 * @see
+	 * fr.imag.adele.cadse.core.ui.IPage#addLast(fr.imag.adele.cadse.core.ui
+	 * .UIField)
 	 */
 	public void addLast(UIField... field) {
 		_fields = ArraysUtil.addList(UIField.class, _fields, field);
@@ -235,7 +241,9 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IPage#addUIListner(fr.imag.adele.cadse.core.ui.UIListener)
+	 * @see
+	 * fr.imag.adele.cadse.core.ui.IPage#addUIListner(fr.imag.adele.cadse.core
+	 * .ui.UIListener)
 	 */
 	public void addUIListner(UIListener l) {
 		listeners = ArraysUtil.add(UIListener.class, listeners, l);
@@ -245,7 +253,7 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	 * (non-Javadoc)
 	 * 
 	 * @see fr.imag.adele.cadse.core.ui.IPage#addBefore(java.lang.String,
-	 *      fr.imag.adele.cadse.core.ui.UIField)
+	 * fr.imag.adele.cadse.core.ui.UIField)
 	 */
 	public void addBefore(String key, UIField field) {
 		int i = indexOf(key);
@@ -271,7 +279,7 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	 * (non-Javadoc)
 	 * 
 	 * @see fr.imag.adele.cadse.core.ui.IPage#addAfter(java.lang.String,
-	 *      fr.imag.adele.cadse.core.ui.UIField)
+	 * fr.imag.adele.cadse.core.ui.UIField)
 	 */
 	public void addAfter(String key, UIField field) {
 		int i = indexOf(key);
@@ -530,7 +538,7 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	 * (non-Javadoc)
 	 * 
 	 * @see fr.imag.adele.cadse.core.ui.IPageObject#putLocal(java.lang.String,
-	 *      java.lang.Object)
+	 * java.lang.Object)
 	 */
 	public void putLocal(String key, Object value) {
 		if (cxts == null) {
@@ -556,7 +564,7 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	 * (non-Javadoc)
 	 * 
 	 * @see fr.imag.adele.cadse.core.ui.IPageObject#getLocal(java.lang.String,
-	 *      java.lang.Object)
+	 * java.lang.Object)
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> T getLocal(String key, T d) {
@@ -586,7 +594,7 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	 * (non-Javadoc)
 	 * 
 	 * @see fr.imag.adele.cadse.core.ui.IPageObject#get(java.lang.String,
-	 *      java.lang.Object)
+	 * java.lang.Object)
 	 */
 	public <T> T get(String key, T d) {
 		T ret = (T) getLocal(key);
@@ -639,7 +647,9 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IEventListener#init(fr.imag.adele.cadse.core.ui.UIField)
+	 * @see
+	 * fr.imag.adele.cadse.core.ui.IEventListener#init(fr.imag.adele.cadse.core
+	 * .ui.UIField)
 	 */
 	public void init(UIField field) {
 	}
@@ -647,8 +657,9 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IEventListener#notifieSubValueAdded(fr.imag.adele.cadse.core.ui.UIField,
-	 *      java.lang.Object)
+	 * @see
+	 * fr.imag.adele.cadse.core.ui.IEventListener#notifieSubValueAdded(fr.imag
+	 * .adele.cadse.core.ui.UIField, java.lang.Object)
 	 */
 	public void notifieSubValueAdded(UIField field, Object added) {
 	}
@@ -656,8 +667,9 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IEventListener#notifieSubValueRemoved(fr.imag.adele.cadse.core.ui.UIField,
-	 *      java.lang.Object)
+	 * @see
+	 * fr.imag.adele.cadse.core.ui.IEventListener#notifieSubValueRemoved(fr.
+	 * imag.adele.cadse.core.ui.UIField, java.lang.Object)
 	 */
 	public void notifieSubValueRemoved(UIField field, Object removed) {
 	}
@@ -665,8 +677,9 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IEventListener#notifieValueChanged(fr.imag.adele.cadse.core.ui.UIField,
-	 *      java.lang.Object)
+	 * @see
+	 * fr.imag.adele.cadse.core.ui.IEventListener#notifieValueChanged(fr.imag
+	 * .adele.cadse.core.ui.UIField, java.lang.Object)
 	 */
 	public void notifieValueChanged(UIField field, Object value) {
 	}
@@ -674,8 +687,9 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IEventListener#notifieValueDeleted(fr.imag.adele.cadse.core.ui.UIField,
-	 *      java.lang.Object)
+	 * @see
+	 * fr.imag.adele.cadse.core.ui.IEventListener#notifieValueDeleted(fr.imag
+	 * .adele.cadse.core.ui.UIField, java.lang.Object)
 	 */
 	public void notifieValueDeleted(UIField field, Object oldvalue) {
 	}
@@ -706,10 +720,11 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 			addLast((UIField) destination);
 			return new ReflectLink(lt, this, destination, this._fields.length - 1);
 		}
-		/*if (lt == CadseGCST.PAGE_lt_LISTENER && destination.isResolved()) {
-			addUIListner((UIListener) destination);
-			return new ReflectLink(lt, this, destination, this.listeners.length - 1);
-		}*/
+		/*
+		 * if (lt == CadseGCST.PAGE_lt_LISTENER && destination.isResolved()) {
+		 * addUIListner((UIListener) destination); return new ReflectLink(lt,
+		 * this, destination, this.listeners.length - 1); }
+		 */
 		return super.commitLoadCreateLink(lt, destination);
 	}
 
@@ -722,10 +737,11 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 			_fields = ArraysUtil.remove(UIField.class, _fields, (UIField) destination);
 			return;
 		}
-		/*if (lt == CadseGCST.PAGE_lt_LISTENER && destination.isResolved()) {
-			listeners = ArraysUtil.remove(UIListener.class, listeners, (UIListener) destination);
-			return;
-		}*/
+		/*
+		 * if (lt == CadseGCST.PAGE_lt_LISTENER && destination.isResolved()) {
+		 * listeners = ArraysUtil.remove(UIListener.class, listeners,
+		 * (UIListener) destination); return; }
+		 */
 		super.removeOutgoingLink(link, notifie);
 	}
 
@@ -734,9 +750,10 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 		if (linkType == CadseGCST.PAGE_lt_FIELDS) {
 			ret.addOutgoing(CadseGCST.PAGE_lt_FIELDS, this._fields);
 		}
-		/*if (linkType == CadseGCST.PAGE_lt_LISTENER) {
-			ret.addOutgoing(CadseGCST.PAGE_lt_LISTENER, this.listeners);
-		}*/
+		/*
+		 * if (linkType == CadseGCST.PAGE_lt_LISTENER) {
+		 * ret.addOutgoing(CadseGCST.PAGE_lt_LISTENER, this.listeners); }
+		 */
 		super.collectOutgoingLinks(linkType, ret);
 	}
 
@@ -824,9 +841,8 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 
 	@Override
 	public boolean commitMove(OrderWay kind, Link l1, Link l2) {
-		if (l1.getLinkType() == CadseGCST.PAGE_lt_FIELDS
-				&& l2.getLinkType() == CadseGCST.PAGE_lt_FIELDS && l1.isLinkResolved()
-				&& l2.isLinkResolved()) {
+		if (l1.getLinkType() == CadseGCST.PAGE_lt_FIELDS && l2.getLinkType() == CadseGCST.PAGE_lt_FIELDS
+				&& l1.isLinkResolved() && l2.isLinkResolved()) {
 			return moveField(kind, (UIField) l1.getDestination(), (UIField) l2.getDestination());
 		}
 		return super.commitMove(kind, l1, l2);
@@ -842,7 +858,9 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IPage#isLast(fr.imag.adele.cadse.core.ui.UIField)
+	 * @see
+	 * fr.imag.adele.cadse.core.ui.IPage#isLast(fr.imag.adele.cadse.core.ui.
+	 * UIField)
 	 */
 	public boolean isLast(UIField field) {
 		if (_fields == null) {
@@ -858,7 +876,9 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IPage#isFirst(fr.imag.adele.cadse.core.ui.UIField)
+	 * @see
+	 * fr.imag.adele.cadse.core.ui.IPage#isFirst(fr.imag.adele.cadse.core.ui
+	 * .UIField)
 	 */
 	public boolean isFirst(UIField field) {
 		if (_fields == null) {
@@ -883,7 +903,8 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IPage#setMessageWarning(java.lang.String)
+	 * @see
+	 * fr.imag.adele.cadse.core.ui.IPage#setMessageWarning(java.lang.String)
 	 */
 	public void setMessageWarning(String msg) {
 		getPageController().setMessage(msg, IPageController.WARNING);
@@ -912,5 +933,15 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	@Override
 	public boolean isEmpty() {
 		return _fields == null || _fields.length == 0;
+	}
+
+	@Override
+	public List<UIField> getGoodFields() {
+		return Arrays.asList(getFields());
+	}
+
+	@Override
+	public IPage[] getSuperPage() {
+		return _superPages;
 	}
 }

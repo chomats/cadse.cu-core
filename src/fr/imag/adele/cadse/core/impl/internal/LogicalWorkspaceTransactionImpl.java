@@ -75,6 +75,8 @@ import fr.imag.adele.cadse.core.key.SpaceKeyType;
 import fr.imag.adele.cadse.core.transaction.AbstractLogicalWorkspaceTransactionListener;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransactionListener;
+import fr.imag.adele.cadse.core.ui.view.FilterContext;
+import fr.imag.adele.cadse.core.ui.view.NewContext;
 import fr.imag.adele.cadse.core.util.ArraysUtil;
 import fr.imag.adele.cadse.core.util.ComputeElementOrder;
 import fr.imag.adele.cadse.core.util.Convert;
@@ -2820,6 +2822,12 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	@Override
 	public ContextVariable getContext() {
 		return getNewContext();
+	}
+
+	@Override
+	public NewContext[] getNewContextFrom(FilterContext context) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

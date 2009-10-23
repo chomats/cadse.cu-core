@@ -109,7 +109,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	ContentItem								_contentitem			= null;
 	/** The parent. */
 	protected Item							_parent					= null;
-	protected ItemType _group;
+	protected ItemType						_group;
 
 	public boolean isTWAttributeModified(IAttributeType<?> att) {
 		return ArraysUtil.indexOf(_modifiedAttributeTypes, att) != -1;
@@ -1166,7 +1166,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	}
 
 	protected void collectOutgoingLinks(LinkType linkType, CollectedReflectLink ret) {
-		if (linkType ==CadseGCST.GROUP_EXT_ITEM_lt_MEMBER_OF) {
+		if (linkType == CadseGCST.GROUP_EXT_ITEM_lt_MEMBER_OF) {
 			ret.addOutgoing(CadseGCST.GROUP_EXT_ITEM_lt_MEMBERS, _group);
 			return;
 		}
@@ -1761,8 +1761,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 			ArrayList<IAttributeType<?>> ret = new ArrayList<IAttributeType<?>>();
 			ret.addAll(Arrays.asList(getType().getAllAttributeTypes()));
 			ret.addAll(Arrays.asList(_group.getLocalAllAttributeTypes()));
-			return (IAttributeType<?>[]) ret.toArray(new IAttributeType<?>[ret
-					.size()]);
+			return (IAttributeType<?>[]) ret.toArray(new IAttributeType<?>[ret.size()]);
 		}
 		return getType().getAllAttributeTypes();
 	}
@@ -1788,7 +1787,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		_parent = parent;
 	}
 
-		@Override
+	@Override
 	public boolean isMember() {
 		return _group != null;
 	}
@@ -1803,5 +1802,9 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		return _group;
 	}
 
-	
+	@Override
+	public List<LinkType> getInstanceOutgoingLinkTypes() {
+		return getType().getOutgoingLinkTypes();
+	}
+
 }

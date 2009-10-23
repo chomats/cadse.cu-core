@@ -1,8 +1,6 @@
 package fr.imag.adele.cadse.core.impl.internal.delta;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -12,7 +10,6 @@ import java.util.Set;
 import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CompactUUID;
-import fr.imag.adele.cadse.core.ContentChangeInfo;
 import fr.imag.adele.cadse.core.ContentItem;
 import fr.imag.adele.cadse.core.DerivedLink;
 import fr.imag.adele.cadse.core.DerivedLinkDescription;
@@ -28,31 +25,18 @@ import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.WorkspaceListener;
-import fr.imag.adele.cadse.core.attribute.BooleanAttributeType;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
-import fr.imag.adele.cadse.core.attribute.IntegerAttributeType;
-import fr.imag.adele.cadse.core.attribute.StringAttributeType;
-import fr.imag.adele.cadse.core.attribute.URLAttributeType;
-import fr.imag.adele.cadse.core.delta.CreateOperation;
-import fr.imag.adele.cadse.core.delta.DeleteOperation;
 import fr.imag.adele.cadse.core.delta.ImmutableWorkspaceDelta;
 import fr.imag.adele.cadse.core.delta.ItemDelta;
-import fr.imag.adele.cadse.core.delta.LinkDelta;
-import fr.imag.adele.cadse.core.delta.MappingOperation;
-import fr.imag.adele.cadse.core.delta.OperationType;
-import fr.imag.adele.cadse.core.delta.OrderOperation;
-import fr.imag.adele.cadse.core.delta.SetAttributeOperation;
-import fr.imag.adele.cadse.core.delta.WLWCOperation;
 import fr.imag.adele.cadse.core.internal.IWorkingLoadingItems;
 import fr.imag.adele.cadse.core.internal.IWorkspaceNotifier;
 import fr.imag.adele.cadse.core.key.ISpaceKey;
-import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
 import fr.imag.adele.cadse.core.util.IErrorCollector;
 import fr.imag.adele.cadse.core.util.OrderWay;
 
 public class ItemItemDeltaAdapter implements Item {
 
-	protected ItemDelta _delta;
+	protected ItemDelta	_delta;
 
 	public ItemItemDeltaAdapter(ItemDelta itemDelta) {
 		_delta = itemDelta;
@@ -70,8 +54,7 @@ public class ItemItemDeltaAdapter implements Item {
 		_delta.addListener(listener, eventFilter);
 	}
 
-	public Link addOutgoingItem(LinkType lt, Item destination)
-			throws CadseException {
+	public Link addOutgoingItem(LinkType lt, Item destination) throws CadseException {
 		return _delta.addOutgoingItem(lt, destination);
 	}
 
@@ -91,25 +74,20 @@ public class ItemItemDeltaAdapter implements Item {
 		return _delta.canSetAttribute(attrName, value);
 	}
 
-	public Link commitLoadCreateLink(LinkType lt, Item destination)
-			throws CadseException {
+	public Link commitLoadCreateLink(LinkType lt, Item destination) throws CadseException {
 		return _delta.commitLoadCreateLink(lt, destination);
 	}
 
-	public boolean commitMove(OrderWay kind, Link l1, Link l2)
-			throws CadseException {
+	public boolean commitMove(OrderWay kind, Link l1, Link l2) throws CadseException {
 		return _delta.commitMove(kind, l1, l2);
 	}
 
-	public boolean commitSetAttribute(IAttributeType<?> type, String key,
-			Object value) {
+	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
 		return _delta.commitSetAttribute(type, key, value);
 	}
 
-	public void computeAttribute(String attributeName, Object theirsValue,
-			Object baseValue, Object mineValue) {
-		_delta.computeAttribute(attributeName, theirsValue, baseValue,
-				mineValue);
+	public void computeAttribute(String attributeName, Object theirsValue, Object baseValue, Object mineValue) {
+		_delta.computeAttribute(attributeName, theirsValue, baseValue, mineValue);
 	}
 
 	public void computeAttributes() {
@@ -128,8 +106,7 @@ public class ItemItemDeltaAdapter implements Item {
 		return _delta.contentIsLoaded();
 	}
 
-	public Link createLink(LinkType lt, Item destination)
-			throws CadseException {
+	public Link createLink(LinkType lt, Item destination) throws CadseException {
 		return _delta.createLink(lt, destination);
 	}
 
@@ -141,8 +118,7 @@ public class ItemItemDeltaAdapter implements Item {
 		return _delta.exists();
 	}
 
-	public List<WorkspaceListener> filter(int eventFilter,
-			ImmutableWorkspaceDelta delta) {
+	public List<WorkspaceListener> filter(int eventFilter, ImmutableWorkspaceDelta delta) {
 		return _delta.filter(eventFilter, delta);
 	}
 
@@ -182,8 +158,7 @@ public class ItemItemDeltaAdapter implements Item {
 		return _delta.getAttributeOwner(att);
 	}
 
-	public <T> T getAttributeWithDefaultValue(IAttributeType<T> att,
-			T defaultValue) {
+	public <T> T getAttributeWithDefaultValue(IAttributeType<T> att, T defaultValue) {
 		return _delta.getAttributeWithDefaultValue(att, defaultValue);
 	}
 
@@ -219,8 +194,7 @@ public class ItemItemDeltaAdapter implements Item {
 		return _delta.getContentItem();
 	}
 
-	public Set<DerivedLinkDescription> getDerivedLinkDescriptions(
-			ItemDescription source) {
+	public Set<DerivedLinkDescription> getDerivedLinkDescriptions(ItemDescription source) {
 		return _delta.getDerivedLinkDescriptions(source);
 	}
 
@@ -272,31 +246,24 @@ public class ItemItemDeltaAdapter implements Item {
 		return _delta.getLocalAllAttributeTypes();
 	}
 
-	public void getLocalAllAttributeTypes(
-			List<IAttributeType<?>> allLocalAttrDefs, ItemFilter filter) {
+	public void getLocalAllAttributeTypes(List<IAttributeType<?>> allLocalAttrDefs, ItemFilter filter) {
 		_delta.getLocalAllAttributeTypes(allLocalAttrDefs, filter);
 	}
 
-	public void getLocalAllAttributeTypes(
-			List<IAttributeType<?>> allLocalAttrDefs) {
+	public void getLocalAllAttributeTypes(List<IAttributeType<?>> allLocalAttrDefs) {
 		_delta.getLocalAllAttributeTypes(allLocalAttrDefs);
 	}
 
-	public void getLocalAllAttributeTypes(
-			Map<String, IAttributeType<?>> allLocalAttrDefs,
-			boolean keepLastAttribute, ItemFilter filter) {
-		_delta.getLocalAllAttributeTypes(allLocalAttrDefs, keepLastAttribute,
-				filter);
+	public void getLocalAllAttributeTypes(Map<String, IAttributeType<?>> allLocalAttrDefs, boolean keepLastAttribute,
+			ItemFilter filter) {
+		_delta.getLocalAllAttributeTypes(allLocalAttrDefs, keepLastAttribute, filter);
 	}
 
-	public void getLocalAllAttributeTypes(
-			Map<String, IAttributeType<?>> allLocalAttrDefs,
-			boolean keepLastAttribute) {
+	public void getLocalAllAttributeTypes(Map<String, IAttributeType<?>> allLocalAttrDefs, boolean keepLastAttribute) {
 		_delta.getLocalAllAttributeTypes(allLocalAttrDefs, keepLastAttribute);
 	}
 
-	public void getLocalAllAttributeTypesKeys(Set<String> allLocalAttrDefs,
-			ItemFilter filter) {
+	public void getLocalAllAttributeTypesKeys(Set<String> allLocalAttrDefs, ItemFilter filter) {
 		_delta.getLocalAllAttributeTypesKeys(allLocalAttrDefs, filter);
 	}
 
@@ -336,8 +303,7 @@ public class ItemItemDeltaAdapter implements Item {
 		return _delta.getOutgoingItem(linkNameID, resovledOnly);
 	}
 
-	public Item getOutgoingItem(String linkTypeName, CompactUUID itemId,
-			boolean resolvedOnly) {
+	public Item getOutgoingItem(String linkTypeName, CompactUUID itemId, boolean resolvedOnly) {
 		return _delta.getOutgoingItem(linkTypeName, itemId, resolvedOnly);
 	}
 
@@ -349,8 +315,7 @@ public class ItemItemDeltaAdapter implements Item {
 		return _delta.getOutgoingItems(lt, resolvedOnly);
 	}
 
-	public Collection<Item> getOutgoingItems(String typesLink,
-			boolean resolvedOnly) {
+	public Collection<Item> getOutgoingItems(String typesLink, boolean resolvedOnly) {
 		return _delta.getOutgoingItems(typesLink, resolvedOnly);
 	}
 
@@ -365,7 +330,7 @@ public class ItemItemDeltaAdapter implements Item {
 	public Link getOutgoingLink(LinkType linkType) {
 		return _delta.getOutgoingLink(linkType);
 	}
-	
+
 	public List<Link> getOutgoingLinks() {
 		return _delta.getOutgoingLinks();
 	}
@@ -485,6 +450,7 @@ public class ItemItemDeltaAdapter implements Item {
 	public boolean isComposite() {
 		return _delta.isComposite();
 	}
+
 	public boolean isHidden() {
 		return _delta.isHidden();
 	}
@@ -541,8 +507,8 @@ public class ItemItemDeltaAdapter implements Item {
 		return _delta.itemHasContent();
 	}
 
-	public void loadItem(IWorkingLoadingItems wl, ItemDelta itemOperation,
-			IErrorCollector errorCollector) throws CadseException {
+	public void loadItem(IWorkingLoadingItems wl, ItemDelta itemOperation, IErrorCollector errorCollector)
+			throws CadseException {
 		_delta.loadItem(wl, itemOperation, errorCollector);
 	}
 
@@ -570,8 +536,7 @@ public class ItemItemDeltaAdapter implements Item {
 		_delta.removeListener(listener);
 	}
 
-	public Link removeOutgoingItem(LinkType linkType, Item destination)
-			throws CadseException {
+	public Link removeOutgoingItem(LinkType linkType, Item destination) throws CadseException {
 		return _delta.removeOutgoingItem(linkType, destination);
 	}
 
@@ -579,8 +544,7 @@ public class ItemItemDeltaAdapter implements Item {
 		_delta.removeOutgoingLink(link, notify);
 	}
 
-	public void setAttribute(IAttributeType<?> att, Object value)
-			throws CadseException {
+	public void setAttribute(IAttributeType<?> att, Object value) throws CadseException {
 		_delta.setAttribute(att, value);
 	}
 
@@ -588,8 +552,7 @@ public class ItemItemDeltaAdapter implements Item {
 		_delta.setAttribute(att, value);
 	}
 
-	public void setComponents(Set<ItemDescriptionRef> comp)
-			throws CadseException {
+	public void setComponents(Set<ItemDescriptionRef> comp) throws CadseException {
 		_delta.setComponents(comp);
 	}
 
@@ -613,13 +576,11 @@ public class ItemItemDeltaAdapter implements Item {
 		_delta.setName(name);
 	}
 
-	public Link setOutgoingItem(LinkType linkType, Item dest)
-			throws CadseException {
+	public Link setOutgoingItem(LinkType linkType, Item dest) throws CadseException {
 		return _delta.setOutgoingItem(linkType, dest);
 	}
 
-	public Collection<Link> setOutgoingItems(LinkType linkType,
-			Collection<Item> value) throws CadseException {
+	public Collection<Link> setOutgoingItems(LinkType linkType, Collection<Item> value) throws CadseException {
 		return _delta.setOutgoingItems(linkType, value);
 	}
 
@@ -671,8 +632,7 @@ public class ItemItemDeltaAdapter implements Item {
 		_delta.unload();
 	}
 
-	public void update(IWorkingLoadingItems items, ItemDelta desc,
-			IWorkspaceNotifier notifie) {
+	public void update(IWorkingLoadingItems items, ItemDelta desc, IWorkspaceNotifier notifie) {
 		_delta.update(items, desc, notifie);
 	}
 
@@ -680,8 +640,6 @@ public class ItemItemDeltaAdapter implements Item {
 	public ContentItem _getContentItem() {
 		return _delta._getContentItem();
 	}
-
-	
 
 	@Override
 	public boolean isMember() {
@@ -700,5 +658,10 @@ public class ItemItemDeltaAdapter implements Item {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
+	@Override
+	public List<LinkType> getInstanceOutgoingLinkTypes() {
+		return _delta.getInstanceOutgoingLinkTypes();
+	}
+
 }

@@ -32,18 +32,19 @@ import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
 import fr.imag.adele.cadse.core.impl.ui.view.TreeView;
 import fr.imag.adele.cadse.core.internal.InternalCadseRuntime;
+import fr.imag.adele.cadse.core.ui.view.DefineNewContext;
 import fr.imag.adele.cadse.core.util.ArraysUtil;
 import fr.imag.adele.cadse.core.util.Convert;
 
 public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRuntime, InternalCadseRuntime {
-	protected String			_cadseName;
+	protected String		_cadseName;
 	private ItemType[]		_itemTypes;
 	private CadseRuntime[]	_requiredCadses;
 	private TreeView		_views;
 	private CompactUUID		_idCadseDefinition;
-	protected String			_name;
-	protected String			_qname;
-	protected String			_description;
+	protected String		_name;
+	protected String		_qname;
+	protected String		_description;
 	private String			_repoLogin;
 	private URL				_item_repos_url;
 	private URL				_defaultContentRepoURL;
@@ -52,7 +53,8 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 	boolean					_cadseroot	= false;
 
 	private String[]		_errors;
-	private String _cstClassName;
+	private String			_cstClassName;
+	DefineNewContext[]		_defineNewContext;
 
 	public CadseRuntimeImpl(String name, CompactUUID runtimeId, CompactUUID definitionId) {
 		super(runtimeId);
@@ -70,7 +72,7 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 			this._qname = name;
 		} else {
 			this._name = name;
-			this._qname = CADSE_NAME_SUFFIX+name;
+			this._qname = CADSE_NAME_SUFFIX + name;
 		}
 	}
 
@@ -85,7 +87,7 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 	public String getName() {
 		return _name;
 	}
-	
+
 	@Override
 	public String getQualifiedName() {
 		return _qname;
@@ -99,12 +101,16 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.CadseRuntime#addItemType(fr.imag.adele.cadse.core.internal.ItemTypeImpl)
+	 * @see
+	 * fr.imag.adele.cadse.core.CadseRuntime#addItemType(fr.imag.adele.cadse
+	 * .core.internal.ItemTypeImpl)
 	 */
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.InternalCadseRuntime#addItemType(fr.imag.adele.cadse.core.ItemType)
+	 * @see
+	 * fr.imag.adele.cadse.core.InternalCadseRuntime#addItemType(fr.imag.adele
+	 * .cadse.core.ItemType)
 	 */
 	public void addItemType(ItemType it) {
 		_itemTypes = ArraysUtil.add(ItemType.class, _itemTypes, it);
@@ -129,7 +135,9 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.InternalCadseRuntime#setExtendsCadse(fr.imag.adele.cadse.core.CadseRuntimeImpl[])
+	 * @see
+	 * fr.imag.adele.cadse.core.InternalCadseRuntime#setExtendsCadse(fr.imag
+	 * .adele.cadse.core.CadseRuntimeImpl[])
 	 */
 	public void setRequiredCadses(CadseRuntime[] extendsCadse) {
 
@@ -158,7 +166,7 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 
 	@Override
 	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
-		
+
 		if (CadseGCST.CADSE_RUNTIME_at_ID_DEFINITION_ == type) {
 			return (T) _idCadseDefinition.toString();
 		}
@@ -189,7 +197,7 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 
 		return super.internalGetOwnerAttribute(type);
 	}
-	
+
 	@Override
 	public String getQualifiedName(boolean recompute) {
 		return getQualifiedName();
@@ -198,12 +206,12 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 	@Override
 	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
 		if (CadseGCST.ITEM_at_NAME_ == type) {
-			_name =  Convert.toString(value);
+			_name = Convert.toString(value);
 			return true;
 		}
-		
+
 		if (CadseGCST.ITEM_at_QUALIFIED_NAME_ == type) {
-			_qname =  Convert.toString(value);
+			_qname = Convert.toString(value);
 			return true;
 		}
 		// TODO
@@ -235,7 +243,9 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.InternalCadseRuntime#setDescription(java.lang.String)
+	 * @see
+	 * fr.imag.adele.cadse.core.InternalCadseRuntime#setDescription(java.lang
+	 * .String)
 	 */
 	public void setDescription(String description) {
 		this._description = description;
@@ -298,7 +308,9 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.CadseRuntime#thisExtendsThat(fr.imag.adele.cadse.core.CadseRuntime)
+	 * @see
+	 * fr.imag.adele.cadse.core.CadseRuntime#thisExtendsThat(fr.imag.adele.cadse
+	 * .core.CadseRuntime)
 	 */
 	public boolean isRequired(CadseRuntime cr) {
 		if (this._requiredCadses == null) {
@@ -316,11 +328,13 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 		}
 		return false;
 	}
-	
+
 	@Override
 	public boolean canBeExecuted() {
-		if (!isResolved()) return false;
-		if (_requiredCadses == null) return true;
+		if (!isResolved())
+			return false;
+		if (_requiredCadses == null)
+			return true;
 		for (CadseRuntime eCr : this._requiredCadses) {
 			if (!eCr.isResolved()) {
 				return false; // this extends eCr
@@ -337,7 +351,9 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.InternalCadseRuntime#setDisplayName(java.lang.String)
+	 * @see
+	 * fr.imag.adele.cadse.core.InternalCadseRuntime#setDisplayName(java.lang
+	 * .String)
 	 */
 	public void setDisplayName(String displayName) {
 		if (displayName == null) {
@@ -361,14 +377,30 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 
 	@Override
 	public void setCstQualifiedClassName(String cstClass) {
-		_cstClassName = cstClass;		
+		_cstClassName = cstClass;
 	}
 
 	@Override
 	public String getCSTName() {
 		int index = _cstClassName.lastIndexOf('.');
-		if (index == -1) return _cstClassName;
-		return _cstClassName.substring(index+1);
+		if (index == -1)
+			return _cstClassName;
+		return _cstClassName.substring(index + 1);
 	}
-	
+
+	@Override
+	public void addDefineNewContext(DefineNewContext d) {
+		_defineNewContext = ArraysUtil.add(DefineNewContext.class, _defineNewContext, d);
+	}
+
+	@Override
+	public DefineNewContext[] getDefineNewContexts() {
+		return _defineNewContext;
+	}
+
+	@Override
+	public void removeDefineNewContext(DefineNewContext d) {
+		_defineNewContext = ArraysUtil.remove(DefineNewContext.class, _defineNewContext, d);
+	}
+
 }

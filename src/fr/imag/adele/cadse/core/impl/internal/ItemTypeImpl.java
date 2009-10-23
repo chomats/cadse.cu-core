@@ -201,7 +201,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	private Class<? extends IActionPage>		_clazzAction;
 
 	/** The default short name action. */
-	protected String								_defaultShortNameAction;
+	protected String							_defaultShortNameAction;
 
 	private String								_cadseName					= NO_VALUE_STRING;
 
@@ -1993,16 +1993,15 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 		return this._modificationPagesFactories == null ? EMPTY_PAGE_FACTORIES : this._modificationPagesFactories;
 	}
 
-	
 	@Override
 	public Pages getGoodCreationPage(NewContext context) throws CadseException {
 		IPageFactory[] pf = getGoodCreationPage_();
-		IPage[] p = createPages(IPageFactory.PAGE_CREATION_ITEM, 
-				context.getItemSource(), context.getItemNode(), context.getDestinationType(), 
-				context.getPartLinkType(), pf);
+		IPage[] p = createPages(IPageFactory.PAGE_CREATION_ITEM, context.getItemSource(), context.getItemNode(),
+				context.getDestinationType(), context.getPartLinkType(), pf);
 		context.setDefaultName(_defaultShortNameAction);
 		return new PagesImpl(false, createDefaultCreationAction(context), p);
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -2134,7 +2133,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 			throw new CadseException("Cannot create creation action {1} with default constructor.", e, _clazzAction);
 		}
 	}
-	
+
 	/**
 	 * Creates the default creation action.
 	 * 
@@ -2279,15 +2278,15 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 		if (linkType == CadseGCST.ITEM_TYPE_lt_CADSE_RUNTIME) {
 			ret.addOutgoing(CadseGCST.ITEM_TYPE_lt_CADSE_RUNTIME, getCadseRuntime(), Item.IS_HIDDEN);
 			return;
-			}
+		}
 		if (linkType == CadseGCST.ITEM_TYPE_lt_SUB_TYPES) {
 			ret.addOutgoing(CadseGCST.ITEM_TYPE_lt_SUB_TYPES, Item.IS_HIDDEN, this._subTypes);
 			return;
-			}
+		}
 		if (linkType == CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES) {
 			ret.addOutgoing(CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES, _attributesDefinitions);
 			return;
-			}
+		}
 		if (linkType == CadseGCST.ITEM_TYPE_lt_CREATION_PAGES) {
 			ret.addOutgoing(CadseGCST.ITEM_TYPE_lt_CREATION_PAGES, Item.IS_HIDDEN, _creationPages);
 			return;
@@ -2295,7 +2294,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 		if (linkType == CadseGCST.ITEM_TYPE_lt_MODIFICATION_PAGES) {
 			ret.addOutgoing(CadseGCST.ITEM_TYPE_lt_MODIFICATION_PAGES, Item.IS_HIDDEN, _modificationPages);
 			return;
-			}
+		}
 		super.collectOutgoingLinks(linkType, ret);
 	}
 
@@ -2412,10 +2411,12 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 
 	@Override
 	public boolean isGroupOf(GroupType groupType) {
-		if (groupType == null) return false;
-		
+		if (groupType == null)
+			return false;
+
 		GroupType gt = getGroupType();
-		if (gt == null) return false;
+		if (gt == null)
+			return false;
 		if (gt == groupType)
 			return true;
 		return groupType.isSuperGroupTypeOf(gt);
@@ -2423,7 +2424,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 
 	@Override
 	public boolean isGroupType() {
-		if (isHeadGroup())
+		if (isGroupHead())
 			return true;
 		for (LinkType l : getOutgoingLinkTypes()) {
 			if (l.isGroup())
@@ -2445,19 +2446,28 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 		}
 		return false;
 	}
-	
+
 	@Override
 	public List<Item> getMembers() {
 		return new ArrayList<Item>(getOutgoingItems(CadseGCST.GROUP_EXT_ITEM_lt_MEMBERS, true));
 	}
 
 	@Override
-	public boolean isHeadGroup() {
+	public boolean isGroupHead() {
 		return getGroupType() != null;
 	}
-	
+
 	@Override
 	public ItemType[] getAllSubGroupType() {
 		return isGroupType() ? getSubTypes() : new ItemType[0];
+	}
+
+	@Override
+	public boolean isMemberType() {
+		for (LinkType lt : getIncomingLinkTypes()) {
+			if (lt.isGroup())
+				return true;
+		}
+		return false;
 	}
 }

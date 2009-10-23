@@ -2,8 +2,6 @@ package fr.imag.adele.cadse.core.impl.internal.delta;
 
 import java.util.ArrayList;
 
-import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
-
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CadseRuntime;
 import fr.imag.adele.cadse.core.CompactUUID;
@@ -11,6 +9,7 @@ import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.delta.ItemDelta;
 import fr.imag.adele.cadse.core.delta.LinkDelta;
+import fr.imag.adele.cadse.core.ui.view.DefineNewContext;
 
 public class CadseRuntimeItemDeltaAdapter extends ItemItemDeltaAdapter implements CadseRuntime {
 
@@ -48,14 +47,14 @@ public class CadseRuntimeItemDeltaAdapter extends ItemItemDeltaAdapter implement
 		ArrayList<CadseRuntime> ret = new ArrayList<CadseRuntime>();
 		for (Link l : extendsLinks) {
 			if (l.isLinkResolved()) {
-				CadseRuntime cr = ((LinkDelta)l).getDestination().getAdapter(CadseRuntime.class);
+				CadseRuntime cr = ((LinkDelta) l).getDestination().getAdapter(CadseRuntime.class);
 				if (cr != null)
 					ret.add(cr);
 			}
 		}
 		if (ret.size() == 0)
 			return null;
-		
+
 		return (CadseRuntime[]) ret.toArray(new CadseRuntime[ret.size()]);
 	}
 
@@ -92,55 +91,55 @@ public class CadseRuntimeItemDeltaAdapter extends ItemItemDeltaAdapter implement
 	@Override
 	public void addError(String msg) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void addItemType(ItemType it) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setCadseroot(boolean cadseroot) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setCstQualifiedClassName(String cstClass) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setDescription(String description) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setDisplayName(String displayName) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setExecuted(boolean executed) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setIdCadseDefinition(CompactUUID idCadseDefintiion) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setRequiredCadses(CadseRuntime[] extendsCadse) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -148,6 +147,23 @@ public class CadseRuntimeItemDeltaAdapter extends ItemItemDeltaAdapter implement
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	
+
+	@Override
+	public void addDefineNewContext(DefineNewContext d) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public DefineNewContext[] getDefineNewContexts() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void removeDefineNewContext(DefineNewContext d) {
+		// TODO Auto-generated method stub
+
+	}
+
 }

@@ -4010,4 +4010,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		return null;
 	}
 
+	@Override
+	public List<LinkType> getInstanceOutgoingLinkTypes() {
+		return getType().getOutgoingLinkTypes();
+	}
+
 }

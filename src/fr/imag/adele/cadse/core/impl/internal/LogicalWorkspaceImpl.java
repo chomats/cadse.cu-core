@@ -71,6 +71,9 @@ import fr.imag.adele.cadse.core.key.ISpaceKey;
 import fr.imag.adele.cadse.core.key.SpaceKeyType;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransactionListener;
+import fr.imag.adele.cadse.core.ui.view.DefineNewContext;
+import fr.imag.adele.cadse.core.ui.view.FilterContext;
+import fr.imag.adele.cadse.core.ui.view.NewContext;
 import fr.imag.adele.cadse.core.util.ArraysUtil;
 import fr.imag.adele.cadse.core.var.ContextVariable;
 
@@ -2243,5 +2246,25 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	@Override
 	public ContextVariable getContext() {
 		return new ContextVariable();
+	}
+
+	@Override
+	public NewContext[] getNewContextFrom(FilterContext context) {
+		ArrayList<NewContext> ret = new ArrayList<NewContext>();
+		if (_cadses != null)
+			for (CadseRuntime cr : _cadses) {
+				DefineNewContext[] dfs = cr.getDefineNewContexts();
+				if (dfs == null)
+					continue;
+				for (DefineNewContext df : dfs) {
+					try {
+						df.computeNew(context, ret);
+					} catch (Throwable e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		return (NewContext[]) ret.toArray(new NewContext[ret.size()]);
 	}
 }

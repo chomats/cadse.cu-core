@@ -2,7 +2,6 @@ package fr.imag.adele.cadse.core.impl.internal.delta;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,8 +38,6 @@ import fr.imag.adele.cadse.core.ui.view.NewContext;
 
 public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements ItemType {
 
-	
-	
 	public ItemTypeItemDeltaAdapter(ItemDelta itemDelta) {
 		super(itemDelta);
 	}
@@ -64,21 +61,19 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 	}
 
 	@Override
-	public LinkType createLinkType(CompactUUID id, int intID, String name,
-			int kind, int min, int max, String selection, LinkType inverse)
-			throws CadseException {
+	public LinkType createLinkType(CompactUUID id, int intID, String name, int kind, int min, int max,
+			String selection, LinkType inverse) throws CadseException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	//TODO LINK TYPE RUNTIME or LINK TYPE EDITION (CADSEG) ?
-	/* id-runtime == id if item is static
-	 * else attribute 'id-runtime'
-	 * 
-	 * */
+	// TODO LINK TYPE RUNTIME or LINK TYPE EDITION (CADSEG) ?
+	/*
+	 * id-runtime == id if item is static else attribute 'id-runtime'
+	 */
 	@Override
-	public LinkType createLinkType(CompactUUID id, int intID, String name,
-			int kind, int min, int max, String selection, ItemType destination) throws CadseException {
+	public LinkType createLinkType(CompactUUID id, int intID, String name, int kind, int min, int max,
+			String selection, ItemType destination) throws CadseException {
 		ItemDelta linktypedelta = null;
 		LogicalWorkspaceTransaction copy = _delta.getCopy();
 		if (id == null) {
@@ -88,7 +83,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 			linktypedelta = copy.loadItem(id, CadseGCST.LINK.getId());
 			linktypedelta.setParent(_delta, CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES);
 			linktypedelta.loadLink(CadseGCST.LINK_lt_DESTINATION.getName(), copy.loadItem(destination));
-			
+
 		}
 		linktypedelta.setAttribute(CadseGCST.LINK_at_KIND_, null, kind, id != null);
 		if (selection != null)
@@ -96,7 +91,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 		linktypedelta.setAttribute(CadseGCST.ITEM_at_NAME_, null, name, id != null);
 		linktypedelta.setAttribute(CadseGCST.LINK_at_MIN_, null, min, id != null);
 		linktypedelta.setAttribute(CadseGCST.LINK_at_MAX_, null, max, id != null);
-		
+
 		return linktypedelta.getAdapter(LinkType.class);
 	}
 
@@ -149,8 +144,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 	}
 
 	@Override
-	public Pages getGoodCreationPage(Item parent, ItemType type, LinkType lt)
-			throws CadseException {
+	public Pages getGoodCreationPage(Item parent, ItemType type, LinkType lt) throws CadseException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -178,8 +172,6 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 		return Accessor.filterName(getIncomingLinkTypes(), name);
 	}
 
-	
-	
 	/**
 	 * Get all incoming link types.
 	 * 
@@ -234,11 +226,11 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 		return null;
 	}
 
-//	@Override
-//	@Deprecated
-//	public List<LinkType> getOugoingLinkTypes() {
-//		return getOutgoingLinkTypes();
-//	}
+	// @Override
+	// @Deprecated
+	// public List<LinkType> getOugoingLinkTypes() {
+	// return getOutgoingLinkTypes();
+	// }
 
 	@Override
 	public LinkType getOutgoingLinkType(String name) {
@@ -259,15 +251,15 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 	public List<LinkType> getOutgoingLinkTypes() {
 		List<LinkType> ret = new ArrayList<LinkType>();
 		ItemType _this = this;
-		
+
 		while (true) {
 			ret.addAll(_this.getOwnerOutgoingLinkTypes());
 			ItemType s = _this.getSuperType();
 			if (s == null || s == _this)
 				break;
-			_this = s; 
+			_this = s;
 		}
-		
+
 		return ret;
 	}
 
@@ -341,7 +333,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 	@Override
 	public boolean isAbstract() {
 		Boolean ret = _delta.getAttribute(CadseGCST.ITEM_TYPE_at_IS_ABSTRACT_);
-		return ret == null? CadseGCST.ITEM_TYPE_at_IS_ABSTRACT_.getDefaultValue() : ret;
+		return ret == null ? CadseGCST.ITEM_TYPE_at_IS_ABSTRACT_.getDefaultValue() : ret;
 	}
 
 	@Override
@@ -352,7 +344,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 	@Override
 	public boolean isRootElement() {
 		Boolean ret = _delta.getAttribute(CadseGCST.ITEM_TYPE_at_IS_ROOT_ELEMENT_);
-		return ret == null? CadseGCST.ITEM_TYPE_at_IS_ROOT_ELEMENT_.getDefaultValue() : ret;
+		return ret == null ? CadseGCST.ITEM_TYPE_at_IS_ROOT_ELEMENT_.getDefaultValue() : ret;
 	}
 
 	@Override
@@ -366,8 +358,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 	}
 
 	@Override
-	public void setCreationAction(Class<? extends IActionPage> clazz,
-			String defaultShortName) {
+	public void setCreationAction(Class<? extends IActionPage> clazz, String defaultShortName) {
 		// TODO Auto-generated method stub
 
 	}
@@ -431,15 +422,13 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 	}
 
 	@Override
-	public void getAllAttributeTypes(Map<String, IAttributeType<?>> all,
-			boolean keepLastAttribute) {
+	public void getAllAttributeTypes(Map<String, IAttributeType<?>> all, boolean keepLastAttribute) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void getAllAttributeTypes(List<IAttributeType<?>> all,
-			ItemFilter filter) {
+	public void getAllAttributeTypes(List<IAttributeType<?>> all, ItemFilter filter) {
 		// TODO Auto-generated method stub
 
 	}
@@ -451,8 +440,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 	}
 
 	@Override
-	public void getAllAttributeTypes(Map<String, IAttributeType<?>> all,
-			boolean keepLastAttribute, ItemFilter filter) {
+	public void getAllAttributeTypes(Map<String, IAttributeType<?>> all, boolean keepLastAttribute, ItemFilter filter) {
 		// TODO Auto-generated method stub
 
 	}
@@ -470,8 +458,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 	}
 
 	@Override
-	public IAttributeType<?> getAttributeType(String name,
-			boolean createUnresolvedDefinition) {
+	public IAttributeType<?> getAttributeType(String name, boolean createUnresolvedDefinition) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -483,8 +470,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 	}
 
 	@Override
-	public void addLogicalWorkspaceTransactionListener(
-			LogicalWorkspaceTransactionListener listener) {
+	public void addLogicalWorkspaceTransactionListener(LogicalWorkspaceTransactionListener listener) {
 		// TODO Auto-generated method stub
 
 	}
@@ -496,8 +482,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 	}
 
 	@Override
-	public void removeLogicalWorkspaceTransactionListener(
-			LogicalWorkspaceTransactionListener listener) {
+	public void removeLogicalWorkspaceTransactionListener(LogicalWorkspaceTransactionListener listener) {
 		// TODO Auto-generated method stub
 
 	}
@@ -514,8 +499,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 	}
 
 	@Override
-	public void computegetGoodCreationPage(Map<String, IPageFactory> map,
-			List<IPageFactory> list) {
+	public void computegetGoodCreationPage(Map<String, IPageFactory> map, List<IPageFactory> list) {
 		// TODO Auto-generated method stub
 
 	}
@@ -589,7 +573,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 	@Override
 	public void setCSTName(String cst) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -628,7 +612,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 	}
 
 	@Override
-	public boolean isHeadGroup() {
+	public boolean isGroupHead() {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -662,5 +646,10 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 		return getSubTypes();
 	}
 
+	@Override
+	public boolean isMemberType() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 }
