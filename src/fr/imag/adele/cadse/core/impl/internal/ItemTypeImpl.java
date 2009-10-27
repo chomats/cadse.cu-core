@@ -2470,4 +2470,9 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 		}
 		return false;
 	}
+
+	@Override
+	public boolean canCreateItem(NewContext newContext) {
+		return true;
+	}
 }

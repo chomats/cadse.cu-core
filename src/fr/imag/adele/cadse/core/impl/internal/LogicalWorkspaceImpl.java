@@ -2066,7 +2066,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		return cadseRuntime;
 	}
 
-	public CadseRuntime[] getCadseRuntime() {
+	public CadseRuntime[] getCadseRuntime () {
 		return this._cadses;
 	}
 

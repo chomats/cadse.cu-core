@@ -652,4 +652,10 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 		return false;
 	}
 
+	@Override
+	public boolean canCreateItem(NewContext newContext) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }
