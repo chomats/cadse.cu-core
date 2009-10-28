@@ -362,7 +362,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 					// value)(goodItem.getId(), att.getKey(),
 					// goodItem.getAttribute(att.getKey()));
 
-					if (l.commitSetAttribute(att.getAttributeDefinition(), att
+					if (l.commitSetAttribute(att.getAttributeDefinition(), att.getAttributeName(), att
 							.getCurrentValue())) {
 						notifie.notifieChangeEvent(ChangeID.SET_LINK_ATTRIBUTE, l, att.getAttributeName(), att
 								.getOldValue(), att.getCurrentValue());

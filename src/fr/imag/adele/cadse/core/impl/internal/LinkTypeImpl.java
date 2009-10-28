@@ -1017,6 +1017,16 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 		}
 		super.setParent(parent, lt);
 	}
+
+	/**
+	 * method du link
+	 */
+	
+	@Override
+	public boolean commitSetAttribute(IAttributeType<?> type, String key,
+			Object value) {
+		return false;
+	}
 	
 	
 

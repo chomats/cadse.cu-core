@@ -1341,4 +1341,11 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements Li
 		return null;
 	}
 
+	@Override
+	public boolean commitSetAttribute(IAttributeType<?> type, String key,
+			Object value) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }
