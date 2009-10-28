@@ -275,12 +275,11 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 						}
 						if (attributeDefinition != null) {
 							currentValue = attributeDefinition.convertTo(currentValue);
+							if (goodItem.commitSetAttribute(attributeDefinition, currentValue)) {
+								notifie.notifieChangeEvent(ChangeID.SET_ATTRIBUTE, goodItem, attributeDefinition, att
+										.getOldValue(), currentValue);
+							}
 						}
-						if (goodItem.commitSetAttribute(attributeDefinition, currentValue)) {
-							notifie.notifieChangeEvent(ChangeID.SET_ATTRIBUTE, goodItem, attributeDefinition, att
-									.getOldValue(), currentValue);
-						}
-
 					} catch (Throwable e) {
 						wl.getCadseDomain().log("wl", "error in commit set attribute " + att, e);
 						addError(item, "Add setAttribute " + att + ":" + e.getMessage());

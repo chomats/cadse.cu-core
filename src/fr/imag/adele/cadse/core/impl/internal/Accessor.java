@@ -159,7 +159,7 @@ public class Accessor {
 								+ att.getType().getName() + " : " + v);
 						goodV = null;
 					}
-					// if (goodV == null) continue;
+					if (att == null) continue;
 					item.commitSetAttribute(att, goodV);
 				} catch (Throwable e) {
 					e.printStackTrace();
