@@ -505,4 +505,12 @@ public class CadseDomainImpl implements CadseDomain {
 			CompactUUID id) throws CadseException {
 		return this._logicalWorkspace.loadItem(new ItemDescriptionRef(id, itemType.getId(), name, name));
 	}
+
+	public static boolean isStopped() {
+		return STOPPED;
+	}
+
+	public static boolean isStarted() {
+		return STARTED;
+	}
 }

@@ -127,6 +127,7 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 	}
 
 	private void setRequireNewRev(Item sourceItem) throws CadseException {
+		if (sourceItem.isStatic()) return;
 		sourceItem.setAttribute(CadseGCST.ITEM_at_REQUIRE_NEW_REV_, true);
 	}
 
