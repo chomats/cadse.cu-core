@@ -1851,13 +1851,14 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	}
 
 	public void commit(LogicalWorkspaceTransactionImpl workingLogiqueCopy, boolean check) throws CadseException {
-		if (!CadseDomainImpl.isStopped())
-			throw new CadseException("Cadse is stopped");
-		if (!CadseDomainImpl.isStarted())
+		if (!CadseDomainImpl.isStarted()) {
+			if (!CadseDomainImpl.isStopped())
+				throw new CadseException("Cadse is stopped");
 			throw new CadseException("Cadse not started");
-		if (((CadseDomainImpl)getCadseDomain()).getIdeService() == null)
+		}
+		if (((CadseDomainImpl) getCadseDomain()).getIdeService() == null)
 			throw new CadseException("IDE service not started");
-		
+
 		try {
 			// getCadseDomain().beginOperation("WSModel.commit");
 			getCadseDomain().beginRule(this);
@@ -2073,7 +2074,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		return cadseRuntime;
 	}
 
-	public CadseRuntime[] getCadseRuntime () {
+	public CadseRuntime[] getCadseRuntime() {
 		return this._cadses;
 	}
 
