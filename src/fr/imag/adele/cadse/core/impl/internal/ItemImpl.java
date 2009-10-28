@@ -54,6 +54,7 @@ import fr.imag.adele.cadse.core.delta.LinkDelta;
 import fr.imag.adele.cadse.core.impl.CadseIllegalArgumentException;
 import fr.imag.adele.cadse.core.impl.CollectedReflectLink;
 import fr.imag.adele.cadse.core.internal.IWorkingLoadingItems;
+import fr.imag.adele.cadse.core.util.Assert;
 import fr.imag.adele.cadse.core.util.IErrorCollector;
 import fr.imag.adele.cadse.core.util.OrderWay;
 
@@ -229,6 +230,8 @@ public class ItemImpl extends AbstractItem implements Item {
 	// fisrt
 	// time.
 
+	/** The outgoings. */
+	protected ArrayList<Link>	m_outgoings;
 
 	/** The attributes. */
 	private Map<String, Object>	attributes;
@@ -260,6 +263,7 @@ public class ItemImpl extends AbstractItem implements Item {
 	public ItemImpl(LogicalWorkspace wl, CompactUUID id, ItemType it, String uniqueName, String shortName) {
 		super(wl, id, it, uniqueName, shortName);
 		// this.incomings = new ArrayList<Link>();
+		this.m_outgoings = new ArrayList<Link>();
 		this.attributes = new HashMap<String, Object>();
 		this._state = ItemState.NOT_IN_WORKSPACE;
 
@@ -270,6 +274,7 @@ public class ItemImpl extends AbstractItem implements Item {
 			Item parent, LinkType lt) throws CadseException {
 		super(wl, id, type, uniqueName, shortName);
 		// this.incomings = new ArrayList<Link>();
+		this.m_outgoings = new ArrayList<Link>();
 		this.attributes = new HashMap<String, Object>();
 		this._state = ItemState.NOT_IN_WORKSPACE;
 
@@ -295,6 +300,7 @@ public class ItemImpl extends AbstractItem implements Item {
 	protected ItemImpl(LogicalWorkspaceImpl wl, ItemType type) {
 		super(wl, type);
 		// this.incomings = new ArrayList<Link>();
+		this.m_outgoings = new ArrayList<Link>();
 		this.attributes = new HashMap<String, Object>();
 		this._state = ItemState.NOT_IN_WORKSPACE;
 
@@ -305,6 +311,7 @@ public class ItemImpl extends AbstractItem implements Item {
 		assert wl != null && itemtype != null && desc != null;
 		this.isValid = desc.isValid();
 
+		this.m_outgoings = new ArrayList<Link>();
 		this.attributes = new HashMap<String, Object>();
 		this._state = ItemState.MODIFING;
 
@@ -334,14 +341,13 @@ public class ItemImpl extends AbstractItem implements Item {
 				if (!ldesc.isLoaded() && !ldesc.isAdded()) {
 					continue;
 				}
-				Item dest = wl.loadItem(ldesc.getDestination());
-
-				if (ldesc.getLinkType() == null) {
+				LinkType lt = ldesc.getLinkType();
+				if (lt == null) {
 					errorCollector.addError(this, "Cannot load link " + ldesc);
 				}
-				
-
-				LinkType lt = _type.getOutgoingLinkType(ldesc.getLinkTypeName());
+		
+				Item dest = wl.loadItem(ldesc.getDestination());
+		
 				if (lt == null) {
 					lt = wl.getLogicalWorkspace().createUnresolvedLinkType(ldesc.getLinkTypeName(), getType(),
 							dest.getType());
@@ -351,16 +357,26 @@ public class ItemImpl extends AbstractItem implements Item {
 						continue;
 					}
 				}
-				if (lt == CadseGCST.ITEM_lt_CONTENTS || lt == CadseGCST.ITEM_lt_PARENT) continue;
-				
-				
+		
+				if (lt == CadseGCST.ITEM_lt_CONTENTS)
+					continue;
+				if (lt == CadseGCST.ITEM_lt_PARENT)
+					continue;
+		
+				Link goodLink = null;
+				LinkType invLt = lt.getInverse();
+				if (invLt != null && invLt.isPart()) {
+					// this -- lt --> dest
+					// dest -- inv-lt --> this
+					setParent(dest, invLt);
+				}
 				if (lt.isNatif() && dest.isResolved()) {
-					Link goodlink = commitLoadCreateLink(lt, dest);
-					if (goodlink != null) {
-						dest.addIncomingLink(goodlink, false);
+					goodLink = commitLoadCreateLink(lt, dest);
+					if (goodLink != null) {
+						dest.addIncomingLink(goodLink, false);
 					}
 					continue;
-				}
+				} 
 				if (lt.isNatif() && !dest.isResolved()) {
 					Item goodDest = wl.getItem(dest.getId());
 					if (goodDest != null && goodDest.isResolved()) {
@@ -376,22 +392,29 @@ public class ItemImpl extends AbstractItem implements Item {
 					errorCollector.addError(this, lt.getSource().getName() + "::" + lt.getName()
 							+ " is natif and destination is not resolved... " + new ItemDescriptionRef(dest));
 				}
-
 				if (lt.getMax() == 1 && getOutgoingLink(lt) != null) {
 					continue;
 				}
-				// create a link
-				LinkImpl l = new LinkImpl(this, lt, dest, true);
-				// add link l into the list "outgoings" of source "this".
-				if (!m_outgoings.contains(l)) {
-					m_outgoings.add(l);
+				goodLink = createDefaultLink(lt, dest);
+				if (goodLink != null) {
+					dest.addIncomingLink(goodLink, false);
 				}
-
 			} catch (Throwable e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+	}
+	@Override
+	protected Link createDefaultLink(LinkType lt, Item destination)
+			throws CadseException {
+		// create a link
+		LinkImpl l = new LinkImpl(this, lt, destination, true);
+		// add link l into the list "outgoings" of source "this".
+		if (!m_outgoings.contains(l)) {
+			m_outgoings.add(l);
+		}
+		return l;
 	}
 
 	@Override
@@ -405,12 +428,6 @@ public class ItemImpl extends AbstractItem implements Item {
 		if (type == CadseGCST.ITEM_at_DISPLAY_NAME_) {
 			return (T) getDisplayName();
 		}
-		/*if (CadseGCST.ITEM_at_PARENT_ITEM_ID_ == type) {
-			return (T) internalGetGenericOwnerAttribute(CadseGCST.ITEM_at_PARENT_ITEM_ID_);
-		}
-		if (CadseGCST.ITEM_at_PARENT_ITEM_TYPE_ID_ == type) {
-			return (T) internalGetGenericOwnerAttribute(CadseGCST.ITEM_at_PARENT_ITEM_TYPE_ID_);
-		}*/
 		return super.internalGetOwnerAttribute(type);
 	}
 
@@ -451,11 +468,6 @@ public class ItemImpl extends AbstractItem implements Item {
 	@Override
 	public List<Link> getOutgoingLinks() {
 		return getOutgoingLinks(null);
-	}
-
-	public List<Link> getOwnerOutgoingLinks() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	/**
@@ -546,38 +558,6 @@ public class ItemImpl extends AbstractItem implements Item {
 		return _type.hasContent() && _type.getItemManager() != null && _type.getItemManager().hasContent(this);
 	}
 
-	// /**
-	// * Preconsitions_delete item.
-	// *
-	// * @throws IllegalArgumentException:
-	// * It is not possible to delete item <tt>$this.getId()</tt>
-	// * because of it has an incomming link with a read only item
-	// * <tt>$source.id</tt> <br/>
-	// *
-	// * @contraints: - 1. The sources of all incomming links are not in read
-	// only
-	// * state. <br/>
-	// * @OCL: <b>pre:</b> not <tt>self.from</tt>->exist(<tt>l</tt> |
-	// * <tt>l.source.isReadOnly = true </tt><br/>
-	// */
-	// private void preconsitions_deleteItem() {
-	// if (getState() == ItemState.ORPHAN)
-	// throw new CadseIllegalArgumentException(
-	// Messages.error_not_possible_delete_orphan, getId()); //$NON-NLS-1$
-	//
-	// for (Link l : this.getIncomingLinks()) {
-	// Item source = l.getSource();
-	// if (source.isReadOnly()) {
-	// throw new CadseIllegalArgumentException(
-	// "It is not possible to delete item {0}" //$NON-NLS-1$
-	// + " because of it has an incomming link with a read only item {1}.",
-	// //$NON-NLS-1$
-	// getId(), source.getId());
-	//
-	// }
-	// }
-	// }
-
 	/**
 	 * Supprimer un lien dans la liste <tt>incomings</tt> de cet item.<br/>
 	 * This method is called by method delete() of Link
@@ -615,6 +595,21 @@ public class ItemImpl extends AbstractItem implements Item {
 	 */
 	synchronized void removeOutgoingLink(Link link) {
 		removeOutgoingLink(link, _state != ItemState.NOT_IN_WORKSPACE && _state != ItemState.MODIFING);
+	}
+
+	/**
+	 * Supprimer un lien dans la liste <tt>outgoings</tt> de cet item. <br/>
+	 * This method is called by method delete() of Link
+	 * 
+	 * @param link :
+	 *            lien � supprimer.
+	 */
+	@Override
+	public synchronized void removeOutgoingLink(Link link, boolean notifie) {
+		m_outgoings.remove(link);
+		if (notifie) {
+			_wl.getCadseDomain().notifieChangeEvent(ChangeID.DELETE_OUTGOING_LINK, link);
+		}
 	}
 
 	/*
@@ -2013,9 +2008,8 @@ public class ItemImpl extends AbstractItem implements Item {
 	}
 
 	private boolean hasCompositionLinks() {
-		for (int i = 0; i < _outgoings.length; i+=2) {
-			LinkType lt = (LinkType) _outgoings[i];
-			if (lt.isComposition()) {
+		for (Link l : this.m_outgoings) {
+			if (l.getLinkType().isComposition()) {
 				return true;
 			}
 		}
