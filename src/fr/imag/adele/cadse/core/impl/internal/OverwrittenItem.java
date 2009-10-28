@@ -38,13 +38,13 @@ public class OverwrittenItem extends AbstractGeneratedItem {
 	}
 
 	@Override
-	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
+	public boolean commitSetAttribute(IAttributeType<?> type, Object value) {
 		if (value == null) {
 			removeAttribute(type);
 		} else {
 			addAttribute(type, value);
 		}
-		return super.commitSetAttribute(type, key, value);
+		return super.commitSetAttribute(type, value);
 	}
 
 	private void addAttribute(IAttributeType<?> type, Object value) {

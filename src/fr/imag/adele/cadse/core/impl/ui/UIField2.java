@@ -169,21 +169,21 @@ public class UIField2 extends UIFieldImpl {
 	}
 
 	@Override
-	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
-		if (key.equals(CadseGCST.FIELD_at_EDITABLE)) {
+	public boolean commitSetAttribute(IAttributeType<?> type, Object value) {
+		if (type == CadseGCST.FIELD_at_EDITABLE_) {
 			editable = Convert.toBoolean(value, (Boolean) type.getDefaultValue());
 			return true;
 		}
 
-		if (key.equals(CadseGCST.FIELD_at_LABEL)) {
+		if (type == CadseGCST.FIELD_at_LABEL_) {
 			_label = (String) value;
 			return true;
 		}
-		if (key.equals(CadseGCST.FIELD_at_POSITION)) {
+		if (type == CadseGCST.FIELD_at_POSITION_) {
 			this._posLabel = (EPosLabel) type.convertTo(value);
 			return true;
 		}
-		return super.commitSetAttribute(type, key, value);
+		return super.commitSetAttribute(type, value);
 	}
 
 	@Override

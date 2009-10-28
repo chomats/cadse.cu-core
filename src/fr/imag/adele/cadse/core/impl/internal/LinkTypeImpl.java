@@ -569,7 +569,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	}
 
 	@Override
-	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
+	public boolean commitSetAttribute(IAttributeType<?> type, Object value) {
 		if (CadseGCST.LINK_at_AGGREGATION_ == type) {
 			return setKind(LinkType.AGGREGATION, Convert.toBoolean(value, CadseGCST.LINK_at_AGGREGATION_, false));
 		}
@@ -613,7 +613,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 			this._twdestEvol = CadseGCST.LINK_at_TWDEST_EVOL_.convertTo(value);
 			return true;
 		}
-		return super.commitSetAttribute(type, key, value);
+		return super.commitSetAttribute(type, value);
 	}
 
 	private boolean getKind(int f) {

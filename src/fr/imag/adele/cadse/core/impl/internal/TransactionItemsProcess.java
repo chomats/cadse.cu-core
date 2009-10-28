@@ -276,7 +276,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 						if (attributeDefinition != null) {
 							currentValue = attributeDefinition.convertTo(currentValue);
 						}
-						if (goodItem.commitSetAttribute(attributeDefinition, att.getAttributeName(), currentValue)) {
+						if (goodItem.commitSetAttribute(attributeDefinition, currentValue)) {
 							notifie.notifieChangeEvent(ChangeID.SET_ATTRIBUTE, goodItem, attributeDefinition, att
 									.getOldValue(), currentValue);
 						}
@@ -363,7 +363,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 					// value)(goodItem.getId(), att.getKey(),
 					// goodItem.getAttribute(att.getKey()));
 
-					if (l.commitSetAttribute(att.getAttributeDefinition(), att.getAttributeName(), att
+					if (l.commitSetAttribute(att.getAttributeDefinition(), att
 							.getCurrentValue())) {
 						notifie.notifieChangeEvent(ChangeID.SET_LINK_ATTRIBUTE, l, att.getAttributeName(), att
 								.getOldValue(), att.getCurrentValue());
@@ -742,7 +742,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 						if (attributeType.mustBeCreateNewValueAtCreationTimeOfItem()) {
 							Object v = attributeType.createNewValueFor(goodItem);
 							if (v != null) {
-								goodItem.commitSetAttribute(attributeType, attributeType.getName(), v);
+								goodItem.commitSetAttribute(attributeType, v);
 							}
 						}
 					} catch (Throwable e) {

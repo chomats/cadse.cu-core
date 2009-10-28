@@ -116,12 +116,12 @@ public class DateAttributeType extends AttributeType implements fr.imag.adele.ca
 	}
 
 	@Override
-	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
+	public boolean commitSetAttribute(IAttributeType<?> type, Object value) {
 		if (CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_ == type) {
 			setDefaultValue(convertTo(value));
 			return true;
 		}
-		return super.commitSetAttribute(type, key, value);
+		return super.commitSetAttribute(type, value);
 	}
 
 	@Override

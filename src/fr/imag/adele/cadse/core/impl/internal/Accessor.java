@@ -160,7 +160,7 @@ public class Accessor {
 						goodV = null;
 					}
 					// if (goodV == null) continue;
-					item.commitSetAttribute(att, att.getName(), goodV);
+					item.commitSetAttribute(att, goodV);
 				} catch (Throwable e) {
 					e.printStackTrace();
 					errorCollector.addError(item, "Cannot load attribute from " + att.getName() + ", exception : "
@@ -190,7 +190,7 @@ public class Accessor {
 					}
 
 					Object value = v.getCurrentValue();
-					item.commitSetAttribute(null, v.getAttributeName(), value);
+					item.commitSetAttribute(null, value);
 				} catch (Throwable e) {
 					e.printStackTrace();
 					errorCollector.addError(item, "Cannot load attribute from " + v.getAttributeName()

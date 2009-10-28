@@ -1327,13 +1327,18 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	 * (java.lang.String)
 	 */
 	public <T> T internalGetGenericOwnerAttribute(String key) {
+		IAttributeType<? extends Object> attDefFound = getType().getAttributeType(key, false);
+		if (attDefFound == null) return null;
+		if (attDefFound instanceof LinkType) {
+			return (T) getOutgoingLinks((LinkType) attDefFound);
+		}
 		if (_attributes == null) {
 			return null;
 		}
 		for (int i = 0; i < _attributes.length; i++) {
-			Object ak = _attributes[i++];
+			Object attDef = _attributes[i++];
 			Object av = _attributes[i];
-			if (key.equals(ak)) {
+			if (attDefFound == attDef) {
 				return (T) av;
 			}
 		}
@@ -1347,22 +1352,26 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	 * fr.imag.adele.cadse.core.internal.Item#internalGetGenericOwnerAttribute
 	 * (fr.imag.adele.cadse.core.attribute.IAttributeType)
 	 */
-	public <T> T internalGetGenericOwnerAttribute(IAttributeType<T> type) {
+	public <T> T internalGetGenericOwnerAttribute(IAttributeType<T> attDefFound) {
+		if (attDefFound instanceof LinkType) {
+			return (T) getOutgoingLinks((LinkType) attDefFound);
+		}
 		if (_attributes == null) {
 			return null;
 		}
 		for (int i = 0; i < _attributes.length; i++) {
-			Object ak = _attributes[i++];
+			Object attDef = _attributes[i++];
 			Object av = _attributes[i];
-			if (ak == type) {
+			if (attDef == attDefFound) {
 				return (T) av;
 			}
 		}
 		return null;
 	}
 
+	@Deprecated
 	public String[] getAttributeKeys() {
-		return getType().getAttributeTypeIds();
+		return (getType() != null) ? getType().getAttributeTypeIds() : new String[0];
 	}
 
 	protected void loadCache() {
@@ -1376,7 +1385,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	 * fr.imag.adele.cadse.core.internal.Item#commitSetAttribute(fr.imag.adele
 	 * .cadse.core.attribute.IAttributeType, java.lang.String, java.lang.Object)
 	 */
-	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
+	public boolean commitSetAttribute(IAttributeType<?> type, Object value) {
 		if (CadseGCST.ITEM_at_TW_VERSION_ == type) {
 			int _local_version = Convert.toInt(value, CadseGCST.ITEM_at_TW_VERSION_, 0);
 			if (_version == _local_version) {
@@ -1439,23 +1448,22 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		if (CadseGCST.ITEM_at_DISPLAY_NAME_ == type) {
 			return false;
 		}
+		if (type == null)
+			return false;
 
-		return commitGenericSetAttribute(type, key, value);
+		return commitGenericSetAttribute(type, value);
 	}
 
-	protected boolean commitGenericSetAttribute(IAttributeType<?> type, String key, Object value) {
+	protected boolean commitGenericSetAttribute(IAttributeType<?> type, Object value) {
 		if (_attributes == null) {
-			if (type == null) {
-				_attributes = ArraysUtil.addList2(Object.class, _attributes, key, value);
-			} else {
-				_attributes = ArraysUtil.addList2(Object.class, _attributes, type, value);
-			}
+			_attributes = ArraysUtil.addList2(Object.class, _attributes, type, value);
+			return !type.getName().startsWith("#");
 		}
 		for (int i = 0; i < _attributes.length;) {
 			Object ak = _attributes[i++];
 			Object av = _attributes[i];
-			if (ak == type || (ak.equals(key))) {
-				if (type != null && !type.isValueModified(av, value)) {
+			if (ak == type) {
+				if (!type.isValueModified(av, value)) {
 					return false;
 				}
 				if (value != null) {
@@ -1463,16 +1471,12 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 				} else {// remove
 					_attributes = ArraysUtil.remove(Object.class, _attributes, i - 1, 2);
 				}
-				return true;
+				return !type.getName().startsWith("#");
 			}
 			i++;
 		}
-		if (type == null) {
-			_attributes = ArraysUtil.addList2(Object.class, _attributes, key, value);
-		} else {
-			_attributes = ArraysUtil.addList2(Object.class, _attributes, type, value);
-		}
-		return true;
+		_attributes = ArraysUtil.addList2(Object.class, _attributes, type, value);
+		return !type.getName().startsWith("#");
 	}
 
 	public boolean isStatic() {

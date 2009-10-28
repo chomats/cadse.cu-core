@@ -1372,12 +1372,12 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	 */
 
 	@Override
-	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
-		if (CadseGCST.ITEM_at_DISPLAY_NAME.equals(key)) {
+	public boolean commitSetAttribute(IAttributeType<?> type, Object value) {
+		if (CadseGCST.ITEM_at_DISPLAY_NAME_ == type) {
 			_displayName = Convert.toString(value);
 			return true;
 		}
-		if (CadseGCST.ITEM_TYPE_at_HAS_CONTENT.equals(key)) {
+		if (CadseGCST.ITEM_TYPE_at_HAS_CONTENT_ == type) {
 			this._hasContent = Convert.toBoolean(value);
 			return true;
 		}
@@ -1412,7 +1412,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 				e.printStackTrace();
 			}
 		}
-		if (CadseGCST.ITEM_TYPE_at_ITEM_FACTORY.equals(key)) {
+		if (CadseGCST.ITEM_TYPE_at_ITEM_FACTORY_ == type) {
 			if (value instanceof String) {
 				// && (value.toString().length() == 0) {
 				return false;
@@ -1420,7 +1420,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 			_itemFactory = (IItemFactory) value;
 			return true;
 		}
-		if (CadseGCST.ITEM_TYPE_at_ITEM_MANAGER.equals(key)) {
+		if (CadseGCST.ITEM_TYPE_at_ITEM_MANAGER_ == type) {
 			if (value instanceof String) {
 				// && (value.toString().length() == 0) {
 				return false;
@@ -1429,7 +1429,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 			return true;
 		}
 
-		return super.commitSetAttribute(type, key, value);
+		return super.commitSetAttribute(type, value);
 	}
 
 	public <T> Link addAttributeType(IAttributeType<T> type) {

@@ -82,8 +82,8 @@ public class ItemItemDeltaAdapter implements Item {
 		return _delta.commitMove(kind, l1, l2);
 	}
 
-	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
-		return _delta.commitSetAttribute(type, key, value);
+	public boolean commitSetAttribute(IAttributeType<?> type, Object value) {
+		return _delta.commitSetAttribute(type, value);
 	}
 
 	public void computeAttribute(String attributeName, Object theirsValue, Object baseValue, Object mineValue) {

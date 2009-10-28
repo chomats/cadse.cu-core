@@ -160,7 +160,7 @@ public class EnumAttributeType<X extends Enum<X>> extends AttributeType implemen
 	}
 
 	@Override
-	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
+	public boolean commitSetAttribute(IAttributeType<?> type, Object value) {
 		if (CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_ == type) {
 			this.defaultValue = Convert.toString(value);
 			return true;
@@ -173,7 +173,7 @@ public class EnumAttributeType<X extends Enum<X>> extends AttributeType implemen
 				this.values = ((ArrayList<String>) value).toArray(new String[0]);
 			}
 		}
-		return super.commitSetAttribute(type, key, value);
+		return super.commitSetAttribute(type, value);
 	}
 
 	public X toEnum(Object value2) {

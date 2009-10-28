@@ -313,10 +313,10 @@ public abstract class AbstractItem extends AbstractGeneratedItem implements Item
 		throw new UnsupportedOperationException();
 	}
 
-	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
+	public boolean commitSetAttribute(IAttributeType<?> type, Object value) {
 		if (type == CadseGCST.ITEM_at_QUALIFIED_NAME_) {
 			_qualifiedName = (String) value;
 		}
-		return super.commitSetAttribute(type, key, value);
+		return super.commitSetAttribute(type, value);
 	}
 }

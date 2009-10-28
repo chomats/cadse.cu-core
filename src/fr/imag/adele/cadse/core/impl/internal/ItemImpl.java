@@ -233,8 +233,6 @@ public class ItemImpl extends AbstractItem implements Item {
 	/** The outgoings. */
 	protected ArrayList<Link>	m_outgoings;
 
-	/** The attributes. */
-	private Map<String, Object>	attributes;
 
 	/** The composants. */
 	Map<CompactUUID, Item>		_composants	= null;
@@ -264,7 +262,6 @@ public class ItemImpl extends AbstractItem implements Item {
 		super(wl, id, it, uniqueName, shortName);
 		// this.incomings = new ArrayList<Link>();
 		this.m_outgoings = new ArrayList<Link>();
-		this.attributes = new HashMap<String, Object>();
 		this._state = ItemState.NOT_IN_WORKSPACE;
 
 		setIsStatic(false);
@@ -275,7 +272,6 @@ public class ItemImpl extends AbstractItem implements Item {
 		super(wl, id, type, uniqueName, shortName);
 		// this.incomings = new ArrayList<Link>();
 		this.m_outgoings = new ArrayList<Link>();
-		this.attributes = new HashMap<String, Object>();
 		this._state = ItemState.NOT_IN_WORKSPACE;
 
 		setIsStatic(false);
@@ -301,7 +297,6 @@ public class ItemImpl extends AbstractItem implements Item {
 		super(wl, type);
 		// this.incomings = new ArrayList<Link>();
 		this.m_outgoings = new ArrayList<Link>();
-		this.attributes = new HashMap<String, Object>();
 		this._state = ItemState.NOT_IN_WORKSPACE;
 
 	}
@@ -312,7 +307,6 @@ public class ItemImpl extends AbstractItem implements Item {
 		this.isValid = desc.isValid();
 
 		this.m_outgoings = new ArrayList<Link>();
-		this.attributes = new HashMap<String, Object>();
 		this._state = ItemState.MODIFING;
 
 		this._isRecomputeComponants = true;
@@ -429,40 +423,6 @@ public class ItemImpl extends AbstractItem implements Item {
 			return (T) getDisplayName();
 		}
 		return super.internalGetOwnerAttribute(type);
-	}
-
-	@Override
-	public <T> T internalGetGenericOwnerAttribute(String key) {
-		IAttributeType<? extends Object> attType = getType().getAttributeType(key, false);
-		if (attType == null) return null;
-		if (attType instanceof LinkType) {
-			return (T) getOutgoingLinks((LinkType) attType);
-		}
-		return (T) attributes.get(key);
-	}
-
-	@Override
-	public <T> T internalGetGenericOwnerAttribute(IAttributeType<T> type) {
-		if (type instanceof LinkType) {
-			return (T) getOutgoingLinks((LinkType) type);
-		}
-		return (T) attributes.get(type.getName());
-	}
-
-	/**
-	 * Get keys all attributes . jamais null
-	 * 
-	 * @return keys all attributes.
-	 */
-	@Override
-	public String[] getAttributeKeys() {
-		HashSet<String> returnKeys = new HashSet<String>();
-		returnKeys.addAll(attributes.keySet());
-		ItemType it = getType();
-		if (it != null) {
-			it.getAllAttributeTypesKeys(returnKeys, new FilterOutLinkType());
-		}
-		return returnKeys.toArray(new String[returnKeys.size()]);
 	}
 
 	@Override
@@ -649,7 +609,7 @@ public class ItemImpl extends AbstractItem implements Item {
 	}
 
 	@Override
-	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
+	public boolean commitSetAttribute(IAttributeType<?> type, Object value) {
 		if (CadseGCST.ITEM_at_NAME_ == type) {
 			if (value == null) {
 				value = NO_VALUE_STRING;
@@ -665,30 +625,8 @@ public class ItemImpl extends AbstractItem implements Item {
 			return true;
 		}
 
-		return super.commitSetAttribute(type, key, value);
+		return super.commitSetAttribute(type, value);
 
-	}
-
-	@Override
-	protected boolean commitGenericSetAttribute(IAttributeType<?> type, String key, Object value) {
-		Object oldValue = attributes.get(key);
-		boolean notifie = false;
-		if (value == null) {
-			if (attributes.containsKey(key)) {
-				attributes.remove(key);
-				if (!key.startsWith("#")) {
-					notifie = true;
-				}
-			}
-		} else {
-			if (!(value.equals(oldValue))) {
-				attributes.put(key, value);
-				if (!key.startsWith("#")) {
-					notifie = true;
-				}
-			}
-		}
-		return notifie;
 	}
 
 	/**

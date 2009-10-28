@@ -1047,13 +1047,13 @@ public abstract class UIFieldImpl extends AbstractGeneratedItem implements UIFie
 	}
 
 	@Override
-	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
-		if (key.equals(CadseGCST.ITEM_at_NAME)) {
+	public boolean commitSetAttribute(IAttributeType<?> type, Object value) {
+		if (type == CadseGCST.ITEM_at_NAME_) {
 			this._name = Convert.toString(value);
 			return true;
 		}
 
-		return super.commitSetAttribute(type, key, value);
+		return super.commitSetAttribute(type, value);
 	}
 
 	/*

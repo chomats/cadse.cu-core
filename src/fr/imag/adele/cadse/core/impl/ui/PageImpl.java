@@ -758,7 +758,7 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	}
 
 	@Override
-	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
+	public boolean commitSetAttribute(IAttributeType<?> type, Object value) {
 		if (CadseGCST.ITEM_at_NAME_ == type) {
 			this.shortName = Convert.toString(value);
 			return true;
@@ -780,7 +780,7 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 			return true;
 		}
 
-		return super.commitSetAttribute(type, key, value);
+		return super.commitSetAttribute(type, value);
 	}
 
 	@Override

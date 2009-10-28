@@ -227,7 +227,7 @@ public class ReflectLink implements Link {
 		return false;
 	}
 
-	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
+	public boolean commitSetAttribute(IAttributeType<?> type, Object value) {
 		return false;
 	}
 

@@ -683,7 +683,7 @@ public final class LinkDeltaImpl extends ItemOrLinkDeltaImpl implements Link, Li
 	 * @see fr.imag.adele.cadse.core.internal.delta.LinkOperation#commitSetAttribute(fr.imag.adele.cadse.core.attribute.IAttributeType,
 	 *      java.lang.String, java.lang.Object)
 	 */
-	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
+	public boolean commitSetAttribute(IAttributeType<?> type, Object value) {
 		throw new UnsupportedOperationException();
 	}
 

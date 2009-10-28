@@ -117,7 +117,7 @@ public class IntegerAttributeType extends AttributeType implements
 	}
 
 	@Override
-	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
+	public boolean commitSetAttribute(IAttributeType<?> type, Object value) {
 		if (CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_ == type) {
 			setValue(Convert.toInteger(value));
 			return true;
@@ -130,7 +130,7 @@ public class IntegerAttributeType extends AttributeType implements
 //			setMaxValue(Convert.toInteger(value));
 //			return true;
 //		}
-		return super.commitSetAttribute(type, key, value);
+		return super.commitSetAttribute(type, value);
 	}
 
 	public Integer getMinValue() {

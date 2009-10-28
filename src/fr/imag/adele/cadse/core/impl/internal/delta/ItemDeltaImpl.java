@@ -349,7 +349,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * .imag.adele.cadse.core.attribute.IAttributeType, java.lang.String,
 	 * java.lang.Object)
 	 */
-	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
+	public boolean commitSetAttribute(IAttributeType<?> type, Object value) {
 		throw new UnsupportedOperationException();
 	}
 

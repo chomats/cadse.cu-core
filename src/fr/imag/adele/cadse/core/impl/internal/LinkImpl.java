@@ -550,8 +550,8 @@ public class LinkImpl implements Link {
 		this.version = version;
 	}
 
-	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
-		if (key.equals(Item.VERSION_KEY)) {
+	public boolean commitSetAttribute(IAttributeType<?> type, Object value) {
+		if (type.getName().equals(Item.VERSION_KEY)) {
 			this.version = Convert.toInt(value, null, -1);
 			return true;
 		}

@@ -107,7 +107,7 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 	}
 
 	@Override
-	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
+	public boolean commitSetAttribute(IAttributeType<?> type, Object value) {
 		if (CadseGCST.ATTRIBUTE_at_CANNOT_BE_UNDEFINED_ == type) {
 			return setFlag(CAN_BE_UNDEFINED, !Convert.toBoolean(value));
 		}
@@ -151,7 +151,7 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 			return true;
 		}
 
-		return super.commitSetAttribute(type, key, value);
+		return super.commitSetAttribute(type, value);
 	}
 
 	@Override

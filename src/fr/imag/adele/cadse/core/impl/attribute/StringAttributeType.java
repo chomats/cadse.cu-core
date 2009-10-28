@@ -116,7 +116,7 @@ public class StringAttributeType extends AttributeType implements fr.imag.adele.
 	}
 
 	@Override
-	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
+	public boolean commitSetAttribute(IAttributeType<?> type, Object value) {
 		if (CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_ == type) {
 			setValue(Convert.toString(value));
 			return true;
@@ -125,7 +125,7 @@ public class StringAttributeType extends AttributeType implements fr.imag.adele.
 			setIsNotEmpty(Convert.toBoolean(value));
 			return true;
 		}
-		return super.commitSetAttribute(type, key, value);
+		return super.commitSetAttribute(type, value);
 	}
 
 	public void setValue(String value) {

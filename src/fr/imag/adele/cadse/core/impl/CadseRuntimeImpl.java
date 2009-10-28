@@ -204,7 +204,7 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 	}
 
 	@Override
-	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
+	public boolean commitSetAttribute(IAttributeType<?> type, Object value) {
 		if (CadseGCST.ITEM_at_NAME_ == type) {
 			_name = Convert.toString(value);
 			return true;
@@ -224,7 +224,7 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 		if (CadseGCST.CADSE_RUNTIME_at_DEFAULT_CONTENT_REPO_URL_ == type) {
 			return false;
 		}
-		return super.commitSetAttribute(type, key, value);
+		return super.commitSetAttribute(type, value);
 	}
 
 	@Override

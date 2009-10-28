@@ -20,8 +20,7 @@ public class CadseDefinitionImpl extends CadseRuntimeImpl {
 	}
 	
 	@Override
-	public boolean commitSetAttribute(IAttributeType<?> type, String key,
-			Object value) {
+	public boolean commitSetAttribute(IAttributeType<?> type, Object value) {
 		if (type == CadseGCST.CADSE_DEFINITION_at_CADSE_NAME_) {
 			_cadseName = Convert.toString(value);
 			return true;
@@ -32,7 +31,7 @@ public class CadseDefinitionImpl extends CadseRuntimeImpl {
 			return true;
 		}
 		
-		return super.commitSetAttribute(type, key, value);
+		return super.commitSetAttribute(type, value);
 	}
 	
 	@Override
