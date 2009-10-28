@@ -348,16 +348,12 @@ public class EventsManagerImpl extends Thread implements EventsManager {
 						mLogger.info("stop");
 						break;
 					}
-					// mLogger.debug(" wait...");
-					synchronized (eventsArray) {
+					// Remove synchronize test
 						ImmutableWorkspaceDelta events = eventsArray.poll(2, TimeUnit.SECONDS);
 						if (events != null && events._events.size() > 0) {
 							mLogger.finest("send events...");
 							localNotifyChangeEvent(events);
 						}
-					}
-					// mLogger.debug("[eventsManager] sleep...");
-					// Thread.sleep(10);
 				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -618,11 +614,10 @@ public class EventsManagerImpl extends Thread implements EventsManager {
 				}
 			}
 			Thread.sleep(millis);
-			synchronized (eventsArray) {
-				if (eventsArray.size() == 0) {
-					return;
-				}
-			}
+			//Remove synchronize
+			if (eventsArray.size() == 0) {
+				return;
+			}			
 		}
 	}
 
