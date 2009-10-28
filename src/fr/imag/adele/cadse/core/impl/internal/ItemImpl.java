@@ -229,8 +229,6 @@ public class ItemImpl extends AbstractItem implements Item {
 	// fisrt
 	// time.
 
-	/** The outgoings. */
-	protected ArrayList<Link>	m_outgoings;
 
 	/** The attributes. */
 	private Map<String, Object>	attributes;
@@ -262,7 +260,6 @@ public class ItemImpl extends AbstractItem implements Item {
 	public ItemImpl(LogicalWorkspace wl, CompactUUID id, ItemType it, String uniqueName, String shortName) {
 		super(wl, id, it, uniqueName, shortName);
 		// this.incomings = new ArrayList<Link>();
-		this.m_outgoings = new ArrayList<Link>();
 		this.attributes = new HashMap<String, Object>();
 		this._state = ItemState.NOT_IN_WORKSPACE;
 
@@ -273,7 +270,6 @@ public class ItemImpl extends AbstractItem implements Item {
 			Item parent, LinkType lt) throws CadseException {
 		super(wl, id, type, uniqueName, shortName);
 		// this.incomings = new ArrayList<Link>();
-		this.m_outgoings = new ArrayList<Link>();
 		this.attributes = new HashMap<String, Object>();
 		this._state = ItemState.NOT_IN_WORKSPACE;
 
@@ -299,7 +295,6 @@ public class ItemImpl extends AbstractItem implements Item {
 	protected ItemImpl(LogicalWorkspaceImpl wl, ItemType type) {
 		super(wl, type);
 		// this.incomings = new ArrayList<Link>();
-		this.m_outgoings = new ArrayList<Link>();
 		this.attributes = new HashMap<String, Object>();
 		this._state = ItemState.NOT_IN_WORKSPACE;
 
@@ -310,7 +305,6 @@ public class ItemImpl extends AbstractItem implements Item {
 		assert wl != null && itemtype != null && desc != null;
 		this.isValid = desc.isValid();
 
-		this.m_outgoings = new ArrayList<Link>();
 		this.attributes = new HashMap<String, Object>();
 		this._state = ItemState.MODIFING;
 
@@ -621,21 +615,6 @@ public class ItemImpl extends AbstractItem implements Item {
 	 */
 	synchronized void removeOutgoingLink(Link link) {
 		removeOutgoingLink(link, _state != ItemState.NOT_IN_WORKSPACE && _state != ItemState.MODIFING);
-	}
-
-	/**
-	 * Supprimer un lien dans la liste <tt>outgoings</tt> de cet item. <br/>
-	 * This method is called by method delete() of Link
-	 * 
-	 * @param link :
-	 *            lien � supprimer.
-	 */
-	@Override
-	public synchronized void removeOutgoingLink(Link link, boolean notifie) {
-		m_outgoings.remove(link);
-		if (notifie) {
-			_wl.getCadseDomain().notifieChangeEvent(ChangeID.DELETE_OUTGOING_LINK, link);
-		}
 	}
 
 	/*
@@ -1186,7 +1165,7 @@ public class ItemImpl extends AbstractItem implements Item {
 	 */
 	@Override
 	public Link getOutgoingLink(LinkType lt, CompactUUID destId) {
-		List<Link> links = getOutgoingLinks();
+		List<Link> links = getOutgoingLinks(lt);
 		for (Link l : links) {
 			if (l.getLinkType() == lt && l.getDestinationId().equals(destId)) {
 				return l;
@@ -2034,8 +2013,9 @@ public class ItemImpl extends AbstractItem implements Item {
 	}
 
 	private boolean hasCompositionLinks() {
-		for (Link l : this.m_outgoings) {
-			if (l.getLinkType().isComposition()) {
+		for (int i = 0; i < _outgoings.length; i+=2) {
+			LinkType lt = (LinkType) _outgoings[i];
+			if (lt.isComposition()) {
 				return true;
 			}
 		}
