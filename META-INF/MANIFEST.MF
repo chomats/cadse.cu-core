@@ -221,9 +221,10 @@ iPOJO-Components: component { $immediate="true" $classname="fr.imag.ade
  olvedItem" $return="fr.imag.adele.cadse.core.Item" }method { $argument
  s="{fr.imag.adele.cadse.core.ItemType,java.lang.String,fr.imag.adele.c
  adse.core.CompactUUID}" $name="__createUnresolvedItem" $return="fr.ima
- g.adele.cadse.core.Item" }interface { $name="fr.imag.adele.cadse.core.
- CadseDomain" }}}instance { $component="fr.imag.adele.cadse.core.impl.i
- nternal.CadseDomainImpl" $name="fr.imag.adele.cadse.core.impl.internal
- .CadseDomainImpl" }
+ g.adele.cadse.core.Item" }method { $name="isStopped" $return="boolean"
+  }method { $name="isStarted" $return="boolean" }interface { $name="fr.
+ imag.adele.cadse.core.CadseDomain" }}}instance { $component="fr.imag.a
+ dele.cadse.core.impl.internal.CadseDomainImpl" $name="fr.imag.adele.ca
+ dse.core.impl.internal.CadseDomainImpl" }
 ipojo-auto-start: true
 
