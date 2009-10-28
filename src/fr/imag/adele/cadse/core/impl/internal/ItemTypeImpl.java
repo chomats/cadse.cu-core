@@ -80,6 +80,7 @@ import fr.imag.adele.cadse.core.ui.IPageFactory;
 import fr.imag.adele.cadse.core.ui.Pages;
 import fr.imag.adele.cadse.core.ui.view.NewContext;
 import fr.imag.adele.cadse.core.util.ArraysUtil;
+import fr.imag.adele.cadse.core.util.Assert;
 import fr.imag.adele.cadse.core.util.Convert;
 import fr.imag.adele.cadse.core.util.IErrorCollector;
 import fr.imag.adele.cadse.core.util.LinkPathUtil;
@@ -2473,6 +2474,51 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 
 	@Override
 	public boolean canCreateItem(NewContext newContext) {
+		org.eclipse.core.runtime.Assert.isTrue(newContext.getDestinationType() == this, "");
+		{
+			Item[] incSrc = newContext.getIncomingSources();
+			LinkType[] incLT = newContext.getIncomingLinkType();
+			if (incSrc != null) {
+				for (int i = 0; i < incLT.length; i++) {
+					LinkType lt = incLT[i];
+					Item src = incSrc[i];
+					if (!src.getType().canCreateItem(newContext, lt, src)) {
+						return false;
+					}
+				}
+			}
+		}
+		{
+			Item[] outDest = newContext.getOutgoingDestinations();
+			LinkType[] outLT = newContext.getOutgoingLinkType();
+			if (outDest != null) {
+				for (int i = 0; i < outLT.length; i++) {
+					LinkType lt = outLT[i];
+					Item dst = outDest[i];
+					if (!dst.getType().canCreateItem(newContext, lt, dst)) {
+						return false;
+					}
+				}
+			}
+		}
+		
+		if (getItemManager().canCreateMeItem(newContext.getPartParent(), newContext.getPartLinkType(), this) != null) {
+			return false;
+		}
+		return true;
+	}
+	
+	@Override
+	public boolean canCreateItem(NewContext newContext, LinkType lt, Item src) {
+		if (lt == CadseGCST.ITEM_lt_PARENT) {
+			if (src.getType().getItemManager().canCreateChildItem(src, newContext.getPartLinkType(), newContext.getDestinationType()) != null)
+				return false;
+		}
+		if (lt == CadseGCST.ITEM_lt_INSTANCE_OF) {
+			if (!(src instanceof ItemType) || ((ItemType)src).isAbstract()) {
+				return false;
+			}
+		}
 		return true;
 	}
 }
