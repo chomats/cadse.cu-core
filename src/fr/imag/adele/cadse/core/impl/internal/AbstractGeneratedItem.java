@@ -1179,7 +1179,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 			return;
 		}
 		if (linkType == CadseGCST.ITEM_lt_PARENT) {
-			ret.addOutgoing(linkType, _parent, Item.IS_HIDDEN);
+			ret.addOutgoing(CadseGCST.ITEM_lt_PARENT, _parent, Item.IS_HIDDEN);
 			return;
 		}
 
@@ -1544,12 +1544,37 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	}
 
 	protected Link createDefaultLink(LinkType lt, Item destination) throws CadseException {
+		Assert.isNotNull(lt);
+		Assert.isNotNull(destination);
 		_outgoings = ArraysUtil.addList2(Object.class, _outgoings, lt, destination);
 		return new ReflectLink(lt, this, destination, -1);
 	}
 
 	public int indexOf(Link link) {
-		return Accessor.indexOf(link);
+		LinkType lt = link.getLinkType();
+		Item dest = link.getDestination();
+		if (!lt.isNatif())
+			return indexGeneric(lt, dest);
+		CollectedReflectLink ret = new CollectedReflectLink(this);
+		collectOutgoingLinks(lt, ret);
+		int i = 0;
+		for (Link l : ret) {
+			if (l.getLinkType() == lt && l.getDestination() == dest)
+				return i;
+			i++;
+		}
+		return -1;
+	}
+
+	private int indexGeneric(LinkType lt, Item dest) {
+		if (_outgoings != null) {
+			for (int i = 0; i < _outgoings.length; i += 2) {
+				if (lt == _outgoings[i] && dest == _outgoings[i + 1]) {
+					return i >> 1;
+				}
+			}
+		}
+		return -1;
 	}
 
 	public void setState(ItemState modifing) {
