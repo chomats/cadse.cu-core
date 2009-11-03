@@ -164,6 +164,11 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 				parent == null ? null : parent.getId(), lt);
 		return ret;
 	}
+	
+	@Override
+	public ItemDelta createItem(NewContext c) throws CadseException {
+		return actionAddItem(c);
+	}
 
 	public ItemDelta createItem(ItemType it, Item parent, LinkType lt) throws CadseException {
 		check_write();
@@ -554,6 +559,83 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		notifyChangeAttribute(linkOper, attOper);
 	}
 
+	public ItemDelta actionAddItem(NewContext context)
+	throws CadseException {
+		check_write();
+		CompactUUID itemId = CompactUUID.randomUUID();
+		ItemDeltaImpl ret = new ItemDeltaImpl(this, itemId, context.getDestinationType(), false);
+		
+		if (ret.isAdded()) {
+			return ret;
+		}
+		if (ret.isDeleted()) {
+			return ret;
+		}
+		
+		CreateOperationImpl createOperation = new CreateOperationImpl(ret);
+		ret.setCreateOperation(createOperation);
+		createOperation.addInParent();
+		
+		ret.addInParent();
+		
+		List<LinkDelta> linkToNotifie = new ArrayList<LinkDelta>();
+		{ 
+			LinkType[] outLT = context.getOutgoingLinkType();
+			Item[] outDest = context.getOutgoingDestinations();
+			for (int i = 0; i < outDest.length; i++) {
+				ItemDelta deltaDest = getOrCreateItemOperation(outDest[i]);
+				linkToNotifie.add(ret.createLink(outLT[i], deltaDest, false));
+			}
+		}
+		Item parent = context.getPartParent();
+		if (parent != null) {
+			// set field and store in this parentItem and link part
+			ret.setParent(getOrCreateItemOperation(parent), context.getPartLinkType(), false, false);
+		}
+		validateCreatedItem(ret);
+		
+		{
+			LinkType[] inLT = context.getIncomingLinkType();
+		Item[] inSrc = context.getIncomingSources();
+		if (inLT != null) {
+			for (int i = 0; i < inSrc.length; i++) {
+				ItemDeltaImpl deltaSrc = (ItemDeltaImpl) getOrCreateItemOperation(inSrc[i]);
+				linkToNotifie.add(deltaSrc.createLink(inLT[i], ret, false));
+			}
+		}
+		}
+		List<SetAttributeOperation> setAttToNotifie = new ArrayList<SetAttributeOperation>();
+		SetAttrVal<?>[] setAttrs = context.getSetAttrs();
+		if (setAttrs != null) {
+			for (int i = 0; i < setAttrs.length; i++) {
+				IAttributeType<?> def = setAttrs[i].getAttrDef();
+				Object v = setAttrs[i].getValue();
+				SetAttributeOperation setAtt = ret.setAttribute(def, setAttrs[i].getAttrName(), v, true, false);
+				if (setAtt == null) continue;
+				validateChangeAttribute(ret, setAtt);
+				setAttToNotifie.add(setAtt);
+			}
+		}
+		notifyCreatedItem(ret);
+		
+		for (LinkDelta createdLink : linkToNotifie) {
+			notifyCreatedLink(createdLink);
+		}
+		for (SetAttributeOperation setAtt : setAttToNotifie) {
+			notifyChangeAttribute(ret, setAtt);
+		}
+		
+		IAttributeType<?>[] attributes = ret.getType().getAllAttributeTypes();
+		for (IAttributeType<?> attributeType : attributes) {
+			Object v = attributeType.getDefaultValue();
+			if (v == null)
+				continue;
+			ret.setAttribute(attributeType, v);
+		}
+		
+		
+		return ret;
+}
 	public ItemDelta actionAddItem(ItemDescriptionRef itemDescriptionRef, CompactUUID parent, LinkType lt)
 			throws CadseException {
 		check_write();

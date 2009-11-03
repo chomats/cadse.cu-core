@@ -51,7 +51,7 @@ public class CreationAction extends AbstractActionPage implements IActionPage {
 	/** The type. */
 	private final ItemType	type;
 
-	private NewContext context;
+	private NewContext _context;
 
 	/**
 	 * Instantiates a new creation action.
@@ -107,7 +107,7 @@ public class CreationAction extends AbstractActionPage implements IActionPage {
 		this.type = c.getDestinationType();
 		this.parentLT = c.getPartLinkType();
 		this.parentItem = c.getPartParent();
-		this.context = c;
+		this._context = c;
 	}
 
 	// TODO : il faut garder avant
@@ -245,6 +245,8 @@ public class CreationAction extends AbstractActionPage implements IActionPage {
 	 *             the melusine exception
 	 */
 	protected Item createItem() throws CadseException {
+		if (this._context != null)
+			return getCopy().createItem(_context);
 		return getCopy().createItem(type, parentItem, parentLT);
 	}
 
@@ -283,6 +285,6 @@ public class CreationAction extends AbstractActionPage implements IActionPage {
 	}
 
 	public NewContext getContext() {
-		return context;
+		return _context;
 	}
 }

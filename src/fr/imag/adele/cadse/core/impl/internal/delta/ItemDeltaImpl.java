@@ -135,6 +135,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	private SpaceKeyDeltaImpl						_keyDelta;
 	private Item									_baseItem;
 	private ISpaceKey								_nextKey;
+	private GroupType _group;
 
 	public ItemDeltaImpl(LogicalWorkspaceTransactionImpl copy, CompactUUID id, CompactUUID type, boolean add) {
 		super(OperationTypeCst.ITEM_OPERATION, null);
@@ -477,7 +478,10 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		// synchronize _parentItem attribute
 		if (lt == CadseGCST.ITEM_lt_PARENT || linkOperation.getLinkTypeName().startsWith("#inverse-part") //$NON-NLS-1$
 				|| linkOperation.getLinkTypeName().startsWith("#invert_part")) { //$NON-NLS-1$
-			setParent(destiDelta, null);
+			setParent(destiDelta, null, false, false);
+		}
+		if (lt == CadseGCST.GROUP_EXT_ITEM_lt_MEMBER_OF) {
+			_group = new ItemTypeItemDeltaAdapter(destiDelta);
 		}
 		if (linkOperation.isDeleted()) {
 			linkOperation.getDeleteOperation().removeInParent();
@@ -3304,6 +3308,19 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 */
 	public void setAttribute(IAttributeType<?> key, String attributeName, Object newCurrentValue, boolean loaded)
 			throws CadseException {
+		setAttribute(key, attributeName, newCurrentValue, loaded, true);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#setAttribute(fr.imag.
+	 * adele.cadse.core.attribute.IAttributeType, java.lang.String,
+	 * java.lang.Object, boolean)
+	 */
+	public SetAttributeOperation setAttribute(IAttributeType<?> key, String attributeName, Object newCurrentValue, boolean loaded, boolean n)
+			throws CadseException {
 		if (getBaseItem() != null && getBaseItem().isStatic()) {
 			throw new CadseException("Cannot set attribute on a static item");
 		}
@@ -3319,7 +3336,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		}
 		if (attributeName.equals(Accessor.ATTR_PARENT_ITEM_ID)) {
 			setParentFromAtt(newCurrentValue);
-			return;
+			return null;
 		}
 
 		SetAttributeOperation setAtt = null;
@@ -3336,11 +3353,11 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 			Object currentValue = setAtt.getCurrentValue();
 			if (key != null) {
 				if (!key.isValueModified(currentValue, newCurrentValue)) {
-					return;
+					return null;
 				}
 			} else {
 				if (Convert.equals(currentValue, newCurrentValue)) {
-					return;
+					return null;
 				}
 			}
 			setAtt.setPrecCurrentValue(setAtt.getCurrentValue());
@@ -3352,17 +3369,18 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 				setAtt = new SetAttributeOperationImpl(this, key, newCurrentValue, null);
 			add(setAtt);
 		}
-		if (!loaded)
+		if (n && !loaded)
 			_copy.validateChangeAttribute(this, setAtt);
 		try {
 
 			setAtt.setLoaded(loaded);
-			if (!loaded) {
+			if (n && !loaded) {
 				getWorkingCopy().notifyChangeAttribute(this, setAtt);
 			}
 		} catch (CadseException e) {
 			throw e;
 		}
+		return setAtt;
 	}
 
 	/**
@@ -4006,8 +4024,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 
 	@Override
 	public GroupType getGroup() {
-		// TODO Auto-generated method stub
-		return null;
+		return _group;
 	}
 
 	@Override

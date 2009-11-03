@@ -178,16 +178,25 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 	 * @return an list all incoming link types.
 	 */
 	public List<LinkType> getIncomingLinkTypes() {
+		if (_delta.getBaseItem() != null && _delta.getBaseItem() instanceof ItemType) {
+			return ((ItemType)_delta.getBaseItem()).getIncomingLinkTypes();
+		}
 		List<LinkType> ret = new ArrayList<LinkType>();
 		ItemType superType = getSuperType();
 		if (superType != null) {
 			ret.addAll(superType.getIncomingLinkTypes());
 		}
-		for (Link l : _delta.getIncomingLinks()) {
-			if (l.getLinkType() == CadseCore.theLinkType) {
-				ret.add((LinkType) l);
-			}
-		}
+		
+//		for (Link l : _delta.getIncomingLinks()) {
+//			if (l.getLinkType() == CadseCore.theLinkType) {
+//				if (l instanceof LinkType)
+//					ret.add((LinkType) l);
+//				else if (l instanceof LinkDelta) {
+//					System.out.println(l);
+//					new ItemTypeItemDeltaAdapter(l.getSource()).getOutgoingLinkType(((LinkDelta) l).getLinkTypeName())
+//				}
+//			}
+//		}
 		return ret;
 	}
 
