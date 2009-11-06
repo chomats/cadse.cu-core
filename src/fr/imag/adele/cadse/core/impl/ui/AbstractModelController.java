@@ -48,11 +48,18 @@ public class AbstractModelController extends AbstractUIRunningValidator implemen
 		super(desc);
 	}
 	
+	public AbstractModelController() {
+		super(null);
+	}
+	
 	@Override
 	public void init(IPageController uiPlatform) {	
 		_uiPlatform = uiPlatform;
 	}
 	
+	public Item getItem() {
+		return _uiPlatform.getItem(getUIField());
+	}
 
 	/*
 	 * (non-Javadoc)
