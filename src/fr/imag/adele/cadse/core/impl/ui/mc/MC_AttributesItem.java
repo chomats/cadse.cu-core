@@ -80,9 +80,7 @@ public class MC_AttributesItem extends AbstractModelController implements Runnin
 		super(null);
 	}
 
-	public Item getItem() {
-		return _uiPlatform.getItem(getUIField());
-	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
