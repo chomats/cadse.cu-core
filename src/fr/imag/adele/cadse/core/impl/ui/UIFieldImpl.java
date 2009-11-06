@@ -33,7 +33,7 @@ import fr.imag.adele.cadse.core.impl.ReflectLink;
 import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
 import fr.imag.adele.cadse.core.ui.EPosLabel;
 import fr.imag.adele.cadse.core.ui.RuningInteractionController;
-import fr.imag.adele.cadse.core.ui.IModelController;
+import fr.imag.adele.cadse.core.ui.RunningModelController;
 import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.util.Convert;
 
@@ -56,7 +56,7 @@ public class UIFieldImpl extends AbstractGeneratedItem implements
 	private int					_style	= 0;
 	
 	/** The _mc. */
-	protected IModelController _mc;
+	protected Item _mc;
 
 	/** The _ic. */
 	protected Item _ic;
@@ -88,7 +88,7 @@ public class UIFieldImpl extends AbstractGeneratedItem implements
 	 *            the ic
 	 */
 	public UIFieldImpl(ItemType it, CompactUUID uuid, IAttributeType<?> attr, String label,
-			EPosLabel poslabel, IModelController mc, Item ic) {
+			EPosLabel poslabel, Item mc, Item ic) {
 		super(uuid);
 		assert mc != null;
 		this._ic = ic;
@@ -171,7 +171,7 @@ public class UIFieldImpl extends AbstractGeneratedItem implements
 	 * 
 	 * @see fr.imag.adele.cadse.core.ui.UIField#getModelController()
 	 */
-	public IModelController getModelController() {
+	public Item getModelController() {
 		return _mc;
 	}
 
@@ -226,8 +226,7 @@ public class UIFieldImpl extends AbstractGeneratedItem implements
 		if (linkType == CadseGCST.FIELD_lt_IC) {
 			ret.addOutgoing(CadseGCST.FIELD_lt_IC, _ic);
 		}
-		if (linkType == CadseGCST.FIELD_lt_MC && _mc != null
-				&& !_mc.isAnonymous()) {
+		if (linkType == CadseGCST.FIELD_lt_MC && _mc != null) {
 			ret.addOutgoing(CadseGCST.FIELD_lt_MC, _mc);
 		}
 		if (linkType == CadseGCST.FIELD_lt_ATTRIBUTE) {
@@ -244,7 +243,7 @@ public class UIFieldImpl extends AbstractGeneratedItem implements
 			return new ReflectLink(lt, this, destination, 0);
 		}
 		if (lt == CadseGCST.FIELD_lt_MC) {
-			_mc = castItem(destination, (IModelController.class));
+			_mc = castItem(destination, (Item.class));
 			return new ReflectLink(lt, this, destination, 0);
 		}
 		if (lt == CadseGCST.FIELD_lt_ATTRIBUTE) {
@@ -415,7 +414,7 @@ public class UIFieldImpl extends AbstractGeneratedItem implements
 	}
 
 	@Override
-	public void setModelController(IModelController modelController) {
+	public void setModelController(Item modelController) {
 		_mc = modelController;
 	}
 

@@ -25,7 +25,7 @@ import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
-import fr.imag.adele.cadse.core.ui.IModelController;
+import fr.imag.adele.cadse.core.ui.RunningModelController;
 import fr.imag.adele.cadse.core.ui.UIField;
 
 public class IC_Abstract extends AbstractGeneratedItem  {
@@ -45,7 +45,7 @@ public class IC_Abstract extends AbstractGeneratedItem  {
 		return "ic";
 	}
 
-	public IModelController getModelController() {
+	public Item getModelController() {
 		return ((UIField) _parent).getModelController();
 	}
 

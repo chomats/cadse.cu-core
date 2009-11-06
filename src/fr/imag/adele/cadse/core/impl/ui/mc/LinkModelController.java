@@ -33,14 +33,14 @@ import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.impl.CadseCore;
 import fr.imag.adele.cadse.core.impl.CadseIllegalArgumentException;
 import fr.imag.adele.cadse.core.impl.ui.AbstractModelController;
-import fr.imag.adele.cadse.core.impl.ui.MC_AttributesItem;
 import fr.imag.adele.cadse.core.oper.WSODeleteLink;
-import fr.imag.adele.cadse.core.ui.IModelController;
+import fr.imag.adele.cadse.core.ui.RunningModelController;
 import fr.imag.adele.cadse.core.ui.IPageController;
 import fr.imag.adele.cadse.core.ui.UIField;
+import fr.imag.adele.cadse.core.ui.UIValidator;
 import fr.imag.adele.cadse.core.util.Convert;
 
-public class LinkModelController extends MC_AttributesItem implements IModelController {
+public class LinkModelController extends MC_AttributesItem implements RunningModelController {
 
 	private boolean					mandatory	= false;
 	private String					msg			= null;
@@ -53,15 +53,14 @@ public class LinkModelController extends MC_AttributesItem implements IModelCont
 		init = false;
 	}
 
-	public LinkModelController(CompactUUID id) {
-		super(id);
+	public LinkModelController(Item desc) {
+		super(desc);
 		init = true;
 	}
-
 	@Override
-	public void init(IPageController uiPlatform) throws CadseException {
+	public void init(IPageController uiPlatform) {
 		super.init(uiPlatform);
-		Item item = uiPlatform.getItem(getUIField());
+		Item item = _uiPlatform.getItem(getUIField());
 		if (item == null) {
 			throw new CadseIllegalArgumentException("No item in the context.");
 		}
@@ -81,7 +80,7 @@ public class LinkModelController extends MC_AttributesItem implements IModelCont
 			}
 			// removed old api
 			// item.getWorkspaceDomain().addListener(this);
-			uiPlatform.addListener(item, new ItemLinkTypeWorkspaceListener(uiPlatform, item, getUIField(), lt),
+			_uiPlatform.addListener(item, new ItemLinkTypeWorkspaceListener(_uiPlatform, item, getUIField(), lt),
 					ChangeID.CREATE_OUTGOING_LINK.ordinal() + ChangeID.ORDER_OUTGOING_LINK.ordinal()
 					+ ChangeID.DELETE_OUTGOING_LINK.ordinal());
 		}
@@ -91,20 +90,20 @@ public class LinkModelController extends MC_AttributesItem implements IModelCont
 	
 
 	@Override
-	public void initAfterUI(IPageController uiPlatform) {
+	public void initAfterUI(UIField field) {
 		IAttributeType<?> attRef = getUIField().getAttributeDefinition();
 		if (attRef.getType() == CadseGCST.LINK) {
 			LinkType lt = (LinkType)attRef;
 			if (lt.isPart()) {
-				uiPlatform.setEnabled(getUIField(), false);
+				_uiPlatform.setEnabled(getUIField(), false);
 			}
 		}
 	}
 
 
 	@Override
-	public Object getValue(IPageController uiPlatform) {
-		Item item = uiPlatform.getItem(getUIField());
+	public Object getValue() {
+		Item item = _uiPlatform.getItem(getUIField());
 		if (item == null) {
 			throw new CadseIllegalArgumentException("No item in the context.");
 		}
@@ -119,25 +118,25 @@ public class LinkModelController extends MC_AttributesItem implements IModelCont
 			return ret;
 		}
 		if (attRef.getType() == CadseGCST.BOOLEAN) {
-			Object value = super.getValue(uiPlatform);
+			Object value = super.getValue();
 			if (value == null) {
 				Object _defaultValue = defaultValue();
 				if (_defaultValue == null) {
 					_defaultValue = Boolean.FALSE;
 				}
 	
-				super.notifieValueChanged(uiPlatform, getUIField(), _defaultValue.toString());
+				super.notifieValueChanged(getUIField(), _defaultValue.toString());
 				return _defaultValue;
 			}
 			return Convert.toBoolean(value);
 		}
 		if (attRef.getType() == CadseGCST.ENUM) {
-			Object value = super.getValue(uiPlatform);
+			Object value = super.getValue();
 			if (value == null ) {
 				if (defaultValue == null)
 					return null;
 				value = toEnum(value);
-				super.notifieValueChanged(uiPlatform, getUIField(), value);
+				super.notifieValueChanged( getUIField(), value);
 				return value;
 			}
 			if (value instanceof String)
@@ -158,36 +157,36 @@ public class LinkModelController extends MC_AttributesItem implements IModelCont
 	}
 
 	@Override
-	public void notifieValueChanged(IPageController uiPlatform, UIField field, Object value) {
+	public void notifieValueChanged(UIField field, Object value) {
 		// do nothing for link...
 		IAttributeType<?> attRef = getUIField().getAttributeDefinition();
 		if (attRef.getType() == CadseGCST.BOOLEAN) {
-			super.notifieValueChanged(uiPlatform, field, Convert.toBoolean(value));
+			super.notifieValueChanged( field, Convert.toBoolean(value));
 		}
 		if (attRef.getType() == CadseGCST.ENUM) {
-			super.notifieValueChanged(uiPlatform, field, toEnum(value));
+			super.notifieValueChanged( field, toEnum(value));
 		}
 	}
 
 	@Override
-	public boolean validValueChanged(IPageController uiPlatform, UIField field, Object value) {
+	public boolean validValueChanged(UIField field, Object value) {
 		IAttributeType<?> attRef = getUIField().getAttributeDefinition();
 		if (mandatory && value == null) {
 			if (msg != null) {
-				uiPlatform.setMessageError(msg);
+				_uiPlatform.setMessageError(msg);
 			} else {
 				if (attRef.getType() == CadseGCST.LINK) {
 					LinkType lt = (LinkType)attRef;
-					uiPlatform.setMessageError("The link " + lt.getName() + " must be set");
+					_uiPlatform.setMessageError("The link " + lt.getName() + " must be set");
 				}
 			}
 			return true;
 		}
-		return super.validValueChanged(uiPlatform, field, value);
+		return super.validValueChanged(field, value);
 	}
 
 	@Override
-	public void notifieValueDeleted(IPageController uiPlatform, UIField field, Object oldvalue) {
+	public void notifieValueDeleted(UIField field, Object oldvalue) {
 		if (oldvalue instanceof Link) {
 			Link l = (Link) oldvalue;
 			WSODeleteLink oper = new WSODeleteLink(l);
@@ -198,23 +197,6 @@ public class LinkModelController extends MC_AttributesItem implements IModelCont
 
 	public ItemType getType() {
 		return CadseGCST.LINK_MODEL_CONTROLLER;
-	}
-
-	@Override
-	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
-		if (CadseGCST.LINK_MODEL_CONTROLLER_at_ERROR_MESSAGE_ == type) {
-			return (T) msg;
-		}
-		return super.internalGetOwnerAttribute(type);
-	}
-
-	@Override
-	public boolean commitSetAttribute(IAttributeType<?> type, Object value) {
-		if (CadseGCST.LINK_MODEL_CONTROLLER_at_ERROR_MESSAGE_ == type) {
-			msg = Convert.toString(value);
-			return true;
-		}
-		return super.commitSetAttribute(type, value);
 	}
 
 	@Override

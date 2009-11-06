@@ -28,6 +28,7 @@ import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.delta.ItemDelta;
 import fr.imag.adele.cadse.core.impl.CadseCore;
 import fr.imag.adele.cadse.core.impl.ui.UIFieldImpl;
+import fr.imag.adele.cadse.core.impl.ui.mc.MC_Descriptor;
 import fr.imag.adele.cadse.core.impl.ui.mc.MC_Integer;
 import fr.imag.adele.cadse.core.ui.EPosLabel;
 import fr.imag.adele.cadse.core.ui.IPageController;
@@ -215,6 +216,7 @@ public class IntegerAttributeType extends AttributeType implements
 
 	@Override
 	public UIField generateDefaultField() {
-		return new UIFieldImpl(CadseGCST.DTEXT, CompactUUID.randomUUID(), this, getDisplayName(), EPosLabel.defaultpos, new MC_Integer(CompactUUID.randomUUID()), null);
+		return new UIFieldImpl(CadseGCST.DTEXT, CompactUUID.randomUUID(), this, getDisplayName(), EPosLabel.defaultpos, 
+				new MC_Descriptor(CadseGCST.INT_MODEL_CONTROLLER), null);
 	}
 }

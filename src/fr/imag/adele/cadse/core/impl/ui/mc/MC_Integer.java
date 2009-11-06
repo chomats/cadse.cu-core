@@ -23,9 +23,9 @@ package fr.imag.adele.cadse.core.impl.ui.mc;
 
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CompactUUID;
+import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
-import fr.imag.adele.cadse.core.impl.ui.MC_AttributesItem;
 import fr.imag.adele.cadse.core.ui.IPageController;
 import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.util.Convert;
@@ -45,33 +45,33 @@ public final class MC_Integer extends MC_AttributesItem {
 		this.defaultValue = defaultValue;
 	}
 
-	public MC_Integer(CompactUUID id) {
+	public MC_Integer(Item id) {
 		super(id);
 	}
 
 	@Override
-	public boolean validValueChanged(IPageController uiPlatform, UIField field, Object value) {
+	public boolean validValueChanged(UIField field, Object value) {
 		try {
 			int intValue = Integer.parseInt((String) value);
 			if (msg_min != null && intValue < min) {
-				uiPlatform.setMessageError(msg_min);
+				_uiPlatform.setMessageError(msg_min);
 				return true;
 			}
 
 			if (msg_max != null && intValue > max) {
-				uiPlatform.setMessageError(msg_max);
+				_uiPlatform.setMessageError(msg_max);
 				return true;
 			}
 		} catch (NumberFormatException e) {
-			uiPlatform.setMessageError(e.getMessage());
+			_uiPlatform.setMessageError(e.getMessage());
 			return true;
 		}
 		return false;
 	}
 
 	@Override
-	public void notifieValueChanged(IPageController uiPlatform, UIField field, Object value) {
-		super.notifieValueChanged(uiPlatform, field, Convert.toInteger(value));
+	public void notifieValueChanged(UIField field, Object value) {
+		super.notifieValueChanged(field, Convert.toInteger(value));
 	}
 
 	@Override
@@ -84,30 +84,5 @@ public final class MC_Integer extends MC_AttributesItem {
 		}
 
 		return defaultValue;
-	}
-
-	@Override
-	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
-		if (CadseGCST.INT_MODEL_CONTROLLER_at_ERROR_MSG_MAX_ == type) {
-			return (T) msg_max;
-		}
-		if (CadseGCST.INT_MODEL_CONTROLLER_at_MAX_ == type) {
-			return (T) (Integer.valueOf(max));
-		}
-		if (CadseGCST.INT_MODEL_CONTROLLER_at_ERROR_MSG_MIN_ == type) {
-			return (T) msg_min;
-		}
-		if (CadseGCST.INT_MODEL_CONTROLLER_at_MIN_ == type) {
-			return (T) (Integer.valueOf(min));
-		}
-		if (CadseGCST.INT_MODEL_CONTROLLER_at_DEFAULT_VALUE_ == type) {
-			return (T) defaultValue;
-		}
-		return super.internalGetOwnerAttribute(type);
-	}
-	
-	@Override
-	public ItemType getType() {
-		return CadseGCST.INT_MODEL_CONTROLLER;
 	}
 }

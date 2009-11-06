@@ -20,9 +20,9 @@ package fr.imag.adele.cadse.core.impl.ui.mc;
 
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CompactUUID;
+import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
-import fr.imag.adele.cadse.core.impl.ui.MC_AttributesItem;
 import fr.imag.adele.cadse.core.ui.IPageController;
 import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.util.Convert;
@@ -32,28 +32,28 @@ public class MC_StringToBoolean extends MC_AttributesItem {
 	public MC_StringToBoolean() {
 	}
 
-	public MC_StringToBoolean(CompactUUID id) {
+	public MC_StringToBoolean(Item id) {
 		super(id);
 	}
 
 	@Override
-	public Object getValue(IPageController uiPlatform) {
-		Object value = super.getValue(uiPlatform);
+	public Object getValue() {
+		Object value = super.getValue();
 		if (value == null) {
 			Object _defaultValue = defaultValue();
 			if (_defaultValue == null) {
 				_defaultValue = Boolean.FALSE;
 			}
 
-			super.notifieValueChanged(uiPlatform, getUIField(), _defaultValue.toString());
+			super.notifieValueChanged(getUIField(), _defaultValue.toString());
 			return _defaultValue;
 		}
 		return Convert.toBoolean(value);
 	}
 
 	@Override
-	public void notifieValueChanged(IPageController uiPlatform, UIField field, Object value) {
-		super.notifieValueChanged(uiPlatform, field, Convert.toBoolean(value));
+	public void notifieValueChanged(UIField field, Object value) {
+		super.notifieValueChanged(field, Convert.toBoolean(value));
 	}
 
 	@Override
@@ -63,11 +63,6 @@ public class MC_StringToBoolean extends MC_AttributesItem {
 			return attr.getDefaultValue();
 		}
 		return Boolean.FALSE;
-	}
-
-	@Override
-	public ItemType getType() {
-		return CadseGCST.STRING_TO_BOOLEAN_MODEL_CONTROLLER;
 	}
 
 }

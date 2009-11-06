@@ -34,8 +34,9 @@ import fr.imag.adele.cadse.core.attribute.CheckStatus;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.delta.ItemDelta;
 import fr.imag.adele.cadse.core.impl.CadseIllegalArgumentException;
-import fr.imag.adele.cadse.core.impl.ui.MC_AttributesItem;
 import fr.imag.adele.cadse.core.impl.ui.UIFieldImpl;
+import fr.imag.adele.cadse.core.impl.ui.mc.MC_AttributesItem;
+import fr.imag.adele.cadse.core.impl.ui.mc.MC_Descriptor;
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.ui.EPosLabel;
 import fr.imag.adele.cadse.core.ui.IPageController;
@@ -266,6 +267,7 @@ public class EnumAttributeType<X extends Enum<X>> extends AttributeType implemen
 
 	@Override
 	public UIField generateDefaultField() {
-		return new UIFieldImpl(CadseGCST.DBROWSER, CompactUUID.randomUUID(), this, getDisplayName(), EPosLabel.defaultpos, new MC_AttributesItem(), null);
+		return new UIFieldImpl(CadseGCST.DBROWSER, CompactUUID.randomUUID(), this, getDisplayName(), EPosLabel.defaultpos, 
+				new MC_Descriptor(CadseGCST.STRING_TO_ENUM_MODEL_CONTROLLER), null);
 	}
 }

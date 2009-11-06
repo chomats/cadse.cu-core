@@ -37,47 +37,47 @@ public abstract class MC_LinkToBoolean extends LinkModelController   {
     }
 
     @Override
-    public Object getValue(IPageController uiPlatform) {
-    	Object value =  super.getValue(uiPlatform);
+    public Object getValue() {
+    	Object value =  super.getValue();
     	return Boolean.valueOf(value != null);
     }
     
     @Override
-    public void initAfterUI(IPageController uiPlatform) {
+    public void initAfterUI(UIField uiPlatform) {
     	/** mise � jour du label */
-		Item dest = getDestinationLink(uiPlatform);
+		Item dest = getDestinationLink();
 		if (dest == currentItemDest) return;
 		currentItemDest = dest;
 		
         if (dest == null) {
-        	uiPlatform.setVisible(getUIField(), false);
-        	uiPlatform.setTextLabel(getUIField(), "");
+        	_uiPlatform.setVisible(getUIField(), false);
+        	_uiPlatform.setTextLabel(getUIField(), "");
         } else {
-        	uiPlatform.setVisible(getUIField(), true);
+        	_uiPlatform.setVisible(getUIField(), true);
         	String message = (String) getUIField().getLabel();
-        	uiPlatform.setTextLabel(getUIField(), MessageFormat.format(message,dest.getDisplayName()));
+        	_uiPlatform.setTextLabel(getUIField(), MessageFormat.format(message,dest.getDisplayName()));
         }
     }
     
     @Override
-    public void notifieValueChanged(IPageController uiPlatform, UIField field, Object value) {
+    public void notifieValueChanged(UIField field, Object value) {
     	if (field == getUIField()) {
     		Boolean valueBool = (Boolean) value;
     		try {
-				value =  setValue(uiPlatform,valueBool.booleanValue()?currentItemDest:null);
+				value =  setValue(valueBool.booleanValue()?currentItemDest:null);
 			} catch (CadseException e) {
 				e.printStackTrace();
 			}
-    		super.notifieValueChanged(uiPlatform,field, value);
+    		super.notifieValueChanged(field, value);
     	}
     }
     
-    private Link setValue(IPageController uiPlatform, Item cu) throws CadseException { 
+    private Link setValue(Item cu) throws CadseException { 
     	LinkType lt = (LinkType) getAttributeDefinition();
     	
         if (lt == null) return null;
         
-        Item theCurrentItem = uiPlatform.getItem(getUIField());
+        Item theCurrentItem = _uiPlatform.getItem(getUIField());
     	
         List<Link> result = theCurrentItem.getOutgoingLinks(lt);
         for (Link l : result) {
@@ -93,7 +93,7 @@ public abstract class MC_LinkToBoolean extends LinkModelController   {
     
     
 
-    protected abstract Item getDestinationLink(IPageController uiPlatform);
+    protected abstract Item getDestinationLink();
 
   
 }
