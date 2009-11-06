@@ -43,7 +43,7 @@ public class CadseRuntimeItemDeltaAdapter extends ItemItemDeltaAdapter implement
 
 	@Override
 	public CadseRuntime[] getRequiredCadses() {
-		java.util.List<Link> extendsLinks = _delta.getOutgoingLinks(CadseGCST.CADSE_RUNTIME_lt_EXTENDS);
+		java.util.List<Link> extendsLinks = _delta.getOutgoingLinks(CadseGCST.CADSE_lt_EXTENDS);
 		ArrayList<CadseRuntime> ret = new ArrayList<CadseRuntime>();
 		for (Link l : extendsLinks) {
 			if (l.isLinkResolved()) {
@@ -66,7 +66,7 @@ public class CadseRuntimeItemDeltaAdapter extends ItemItemDeltaAdapter implement
 
 	@Override
 	public boolean isExecuted() {
-		return _delta.getAttribute(CadseGCST.CADSE_RUNTIME_at_EXECUTED_);
+		return _delta.getAttribute(CadseGCST.CADSE_at_EXECUTED_);
 	}
 
 	@Override

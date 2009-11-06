@@ -22,6 +22,7 @@ package fr.imag.adele.cadse.core.impl.var;
 import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.impl.attribute.AttributeType;
+import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.CadseGCST;
 
 /**
@@ -97,4 +98,8 @@ public abstract class VariableImpl extends AttributeType implements fr.imag.adel
 		return v;
 	}
 
+	@Override
+	public UIField generateDefaultField() {
+		return null;
+	}
 }

@@ -47,6 +47,7 @@ import fr.imag.adele.cadse.core.impl.internal.delta.LinkTypeItemDeltaAdapter;
 import fr.imag.adele.cadse.core.internal.attribute.IInternalTWLink;
 import fr.imag.adele.cadse.core.path.EvaluatePath;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransactionListener;
+import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.util.ArraysUtil;
 import fr.imag.adele.cadse.core.util.Convert;
 
@@ -131,7 +132,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 		}
 
 		this._kind = kind;
-		setParent(source, CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES);
+		setParent(source, CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES);
 
 		this._min = min;
 		this._max = max;
@@ -168,7 +169,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 		this._linkType = CadseCore.theLinkType;
 		this._kind = kind;
-		setParent(source, CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES);
+		setParent(source, CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES);
 
 		this._min = min;
 		this._max = max;
@@ -186,7 +187,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 		this._linkType = CadseCore.theLinkType;
 		this._kind = 0;
-		setParent(source, CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES);
+		setParent(source, CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES);
 
 		this._min = 0;
 		this._max = -1;
@@ -1026,6 +1027,12 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	public boolean commitSetAttribute(IAttributeType<?> type, String key,
 			Object value) {
 		return false;
+	}
+
+	@Override
+	public UIField generateDefaultField() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	

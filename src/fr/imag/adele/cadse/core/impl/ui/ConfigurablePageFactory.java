@@ -101,15 +101,15 @@ public class ConfigurablePageFactory extends PageImpl implements IPageFactory {
 			switch (cas) {
 				case PAGE_CREATION_ITEM:
 					newPage = this.m.newInstance(item, type, lt);
-					newPage.setParent(type, CadseGCST.ITEM_TYPE_lt_CREATION_PAGES);
+					newPage.setParent(type, CadseGCST.TYPE_DEFINITION_lt_CREATION_PAGES);
 					return newPage;
 				case PAGE_PROPERTY_ITEM:
 					newPage = this.m.newInstance(item);
-					newPage.setParent(type, CadseGCST.ITEM_TYPE_lt_MODIFICATION_PAGES);
+					newPage.setParent(type, CadseGCST.TYPE_DEFINITION_lt_MODIFICATION_PAGES);
 					return newPage;
 				case PAGE_PROPERTY_VIEW_ITEM:
 					newPage = this.m.newInstance(item, node);
-					newPage.setParent(type, CadseGCST.ITEM_TYPE_lt_MODIFICATION_PAGES);
+					newPage.setParent(type, CadseGCST.TYPE_DEFINITION_lt_MODIFICATION_PAGES);
 					return newPage;
 			}
 		} catch (IllegalArgumentException e) {
@@ -135,13 +135,7 @@ public class ConfigurablePageFactory extends PageImpl implements IPageFactory {
 		return false;
 	}
 
-	@Override
-	protected void collectOutgoingLinks(LinkType linkType, CollectedReflectLink ret) {
-		if (linkType == CadseGCST.PAGE_lt_FIELDS) {
-			ret.addOutgoing(CadseGCST.PAGE_lt_FIELDS, getCachedPage().getFields());
-		}
-		super.collectOutgoingLinks(linkType, ret);
-	}
+	
 
 	IPage	cachedPage	= null;
 

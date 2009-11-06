@@ -35,6 +35,7 @@ import fr.imag.adele.cadse.core.internal.IWorkingLoadingItems;
 import fr.imag.adele.cadse.core.internal.IWorkspaceNotifier;
 import fr.imag.adele.cadse.core.key.ISpaceKey;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransactionListener;
+import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.util.IErrorCollector;
 import fr.imag.adele.cadse.core.util.OrderWay;
 
@@ -1346,6 +1347,18 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements Li
 			Object value) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public UIField generateDefaultField() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IAttributeType<?>[] getChildren() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

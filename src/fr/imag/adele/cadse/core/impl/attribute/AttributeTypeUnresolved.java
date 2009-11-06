@@ -6,6 +6,7 @@ import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.delta.ItemDelta;
 import fr.imag.adele.cadse.core.enumdef.TWEvol;
+import fr.imag.adele.cadse.core.ui.UIField;
 
 public class AttributeTypeUnresolved extends AttributeType implements IAttributeType<Object> {
 
@@ -28,6 +29,11 @@ public class AttributeTypeUnresolved extends AttributeType implements IAttribute
 
 	public int getIntID() {
 		return 0;
+	}
+	
+	@Override
+	public UIField generateDefaultField() {
+		return null;
 	}
 
 }

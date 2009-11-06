@@ -32,6 +32,7 @@ import fr.imag.adele.cadse.core.enumdef.TWUpdateKind;
 import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
 import fr.imag.adele.cadse.core.internal.attribute.IInternalTWAttribute;
 import fr.imag.adele.cadse.core.ui.IPageController;
+import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.util.Convert;
 
 public abstract class AttributeType extends AbstractGeneratedItem implements IInternalTWAttribute {
@@ -336,4 +337,11 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 		_cstName = cst;
 	}
 
+	public IAttributeType<?>[] getChildren() {
+		return null;
+	}
+	
+	public UIField generateDefaultField() {
+		return null;
+	}
 }

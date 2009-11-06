@@ -16,56 +16,58 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package fr.imag.adele.cadse.core.impl.ui.ic;
 
-package fr.imag.adele.cadse.core.impl.ui;
-
-import fr.imag.adele.cadse.core.CadseException;
+import fr.imag.adele.cadse.core.CadseGCST;
+import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.LinkType;
+import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
-import fr.imag.adele.cadse.core.ui.IActionPage;
-import fr.imag.adele.cadse.core.ui.IFieldDescription;
-import fr.imag.adele.cadse.core.ui.IPage;
-import fr.imag.adele.cadse.core.ui.IPageController;
-import fr.imag.adele.cadse.core.ui.IPageObject;
-import fr.imag.adele.cadse.core.ui.Pages;
+import fr.imag.adele.cadse.core.ui.IModelController;
+import fr.imag.adele.cadse.core.ui.UIField;
 
-/**
- * .
- */
-
-public class AbstractActionPage implements IActionPage {
-
-	/**
-	 * Instantiates a new abstract action page.
-	 */
-	public AbstractActionPage() {
+public class IC_Abstract extends AbstractGeneratedItem  {
+	
+	ItemType _it;
+	
+	public IC_Abstract(CompactUUID id, ItemType it) {
+		super(id);
+		_it = it;
 	}
 
-	public String getTypeId() {
-		return getClass().getName();
+	public IC_Abstract() {
 	}
 
 	@Override
-	public void dispose(IPageController uiPlatform) {
+	public String getName() {
+		return "ic";
+	}
+
+	public IModelController getModelController() {
+		return ((UIField) _parent).getModelController();
+	}
+
+	public UIField getUIField() {
+		return ((UIField) _parent);
+	}
+
+	public void setParent(Item parent, LinkType lt) {
+		 _parent = (UIField) parent;
 	}
 
 	@Override
-	public void doCancel(IPageController uiPlatform, Object monitor) {
+	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
+		if (CadseGCST.ITEM_at_NAME_ == type) {
+			return (T) "ic";
+		}
+		return super.internalGetOwnerAttribute(type);
 	}
-
+	
 	@Override
-	public void doFinish(IPageController uiPlatform, Object monitor)
-			throws Exception {
-	}
-
-	@Override
-	public void init(IPageController uiPlatform) throws CadseException {
-	}
-
-	@Override
-	public void initAfterUI(IPageController uiPlatform) {
+	public ItemType getType() {
+		return _it;
 	}
 
 }

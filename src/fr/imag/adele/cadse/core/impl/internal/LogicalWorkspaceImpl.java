@@ -454,6 +454,10 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	}
 
 	public void setAttribute(Item item, IAttributeType<?> key, Object value) throws CadseException {
+		if (!item.exists()) {
+			item.commitSetAttribute(key, value);
+			return;
+		}
 		LogicalWorkspaceTransaction copy = createTransaction();
 		ItemDelta itemOperation = copy.getItem(item.getId());
 		if (itemOperation == null) {
@@ -1175,7 +1179,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 
 		if (i == null) {
 
-			if (type == CadseGCST.CADSE_RUNTIME) {
+			if (type == CadseGCST.CADSE) {
 				i = new CadseRuntimeImpl(shortname, id, null);
 				i.setFlag(Item.UNRESOLVED, true);
 
@@ -1451,7 +1455,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		// cretion du super type et enregistrement.
 		ItemTypeImpl it = new ItemTypeImpl(metaType, this, (ItemTypeImpl) (superType), id, intID, hasContent,
 				isAbstract, shortName, displayName);
-		it.setParent(cadseName, CadseGCST.CADSE_RUNTIME_lt_ITEM_TYPES);
+		it.setParent(cadseName, CadseGCST.CADSE_lt_ITEM_TYPES);
 		cadseName.addItemType(it);
 		registerItemType(it);
 		if (id.equals(CadseDomain.ITEM_ID)) {

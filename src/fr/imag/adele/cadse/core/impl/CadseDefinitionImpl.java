@@ -26,7 +26,7 @@ public class CadseDefinitionImpl extends CadseRuntimeImpl {
 			return true;
 		}
 		
-		if (type == CadseGCST.CADSE_RUNTIME_at_DESCRIPTION_) {
+		if (type == CadseGCST.CADSE_at_DESCRIPTION_) {
 			_description = Convert.toString(value);
 			return true;
 		}

@@ -64,11 +64,10 @@ import fr.imag.adele.cadse.core.impl.CadseIllegalArgumentException;
 import fr.imag.adele.cadse.core.impl.CollectedReflectLink;
 import fr.imag.adele.cadse.core.impl.ItemFactory;
 import fr.imag.adele.cadse.core.impl.ReflectLink;
-import fr.imag.adele.cadse.core.impl.internal.ui.IPage2;
+import fr.imag.adele.cadse.core.impl.internal.ui.HierachicPage;
 import fr.imag.adele.cadse.core.impl.internal.ui.PagesImpl;
 import fr.imag.adele.cadse.core.impl.ui.CreationAction;
 import fr.imag.adele.cadse.core.impl.ui.ModificationAction;
-import fr.imag.adele.cadse.core.impl.ui.PageImpl;
 import fr.imag.adele.cadse.core.internal.IWorkingLoadingItems;
 import fr.imag.adele.cadse.core.internal.ItemTypeInternal;
 import fr.imag.adele.cadse.core.key.SpaceKeyType;
@@ -78,9 +77,10 @@ import fr.imag.adele.cadse.core.ui.IActionPage;
 import fr.imag.adele.cadse.core.ui.IPage;
 import fr.imag.adele.cadse.core.ui.IPageFactory;
 import fr.imag.adele.cadse.core.ui.Pages;
+import fr.imag.adele.cadse.core.ui.UIField;
+import fr.imag.adele.cadse.core.ui.UIValidator;
 import fr.imag.adele.cadse.core.ui.view.NewContext;
 import fr.imag.adele.cadse.core.util.ArraysUtil;
-import fr.imag.adele.cadse.core.util.Assert;
 import fr.imag.adele.cadse.core.util.Convert;
 import fr.imag.adele.cadse.core.util.IErrorCollector;
 import fr.imag.adele.cadse.core.util.LinkPathUtil;
@@ -96,7 +96,7 @@ import fr.imag.adele.cadse.core.util.LinkPathUtil;
  * @version 2.2
  * @date 26/09/05
  */
-public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal {
+public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTypeInternal {
 
 	/**
 	 * old string
@@ -132,7 +132,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	public static final IActionContributor[]	EMPTY_ACTION_CONTRIBUTORS	= new IActionContributor[0];
 
 	/** The Constant EMPTY_PAGE_FACTORIES. */
-	public static final IPageFactory[]			EMPTY_PAGE_FACTORIES		= new IPageFactory[0];
+	
 
 	/** The Constant NO_SUB_TYPES. */
 	private final static ItemType[]				NO_SUB_TYPES				= new ItemType[0];
@@ -146,8 +146,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	/** The sub types. */
 	private List<ItemType>						_subTypes;
 
-	IAttributeType<?>[]							_attributesDefinitions		= null;
-
+	
 	/** The attribute types. */
 	private Map<String, IAttributeType<?>>		__cache_attributeTypes		= null;
 
@@ -178,22 +177,8 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	/** The __action contributors. */
 	IActionContributor[]						__actionContributors		= null;
 
-	/** The creation pages. */
-	IPageFactory[]								_creationPagesFactories		= null;
-
-	/** The modification pages. */
-	IPageFactory[]								_modificationPagesFactories	= null;
-	// cache
-	/** The __creation pages. */
-	IPageFactory[]								__creationPages				= null;
-
-	// IPage[] pages = null;
-	IPage2[]									_creationPages				= null;
-	IPage2[]									_modificationPages			= null;
-
-	// // cache
-	/** The __modification pages. */
-	IPageFactory[]								__modificationPages			= null;
+	
+	
 
 	/** The icon. */
 	private URL									_icon;
@@ -213,9 +198,13 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	/**
 	 * implementation of extension ...
 	 */
-	private ItemType[]							_extendedBy;
+	private TypeDefinitionImpl[]							_extendedBy;
 
 	private String								_managerClass;
+
+	private IPage[] __creationPages;
+
+	private IPage[] __modificationPages;
 
 	/*
 	 * (non-Javadoc)
@@ -298,8 +287,8 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 			throws CadseException {
 		// correct link type Attributes is natif
 		// TODO correct in model
-		if (CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES != null)
-			CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES.setIsNatif(true);
+		if (CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES != null)
+			CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES.setIsNatif(true);
 		else {
 			//
 			System.out.println("NOT GO HERE");
@@ -387,7 +376,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 
 	@Override
 	public Link commitLoadCreateLink(LinkType lt, Item destination) throws CadseException {
-		if (lt == CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES) {
+		if (lt == CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES) {
 			if (destination.getType() == CadseGCST.UNRESOLVED_ATTRIBUTE_TYPE) {
 				return null;
 			}
@@ -425,23 +414,14 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 			}
 			return new ReflectLink(lt, this, destination, 0);
 		}
-		if (lt == CadseGCST.ITEM_TYPE_lt_CREATION_PAGES) {
-			this._creationPages = ArraysUtil.add(IPage2.class, this._creationPages, (IPage2) destination);
-			resetCreationPages();
-			return new ReflectLink(lt, this, destination, this._creationPages.length - 1);
-		}
-		if (lt == CadseGCST.ITEM_TYPE_lt_MODIFICATION_PAGES) {
-			this._modificationPages = ArraysUtil.add(IPage2.class, this._modificationPages, (IPage2) destination);
-			resetModificationPages();
-			return new ReflectLink(lt, this, destination, this._modificationPages.length - 1);
-		}
+		
 		if (lt == CadseGCST.ITEM_TYPE_lt_SUB_TYPES) {
 		}
 
 		if (lt == CadseGCST.ITEM_TYPE_lt_LINK_TYPE) {
 			return null;
 		}
-		if (lt == CadseGCST.ITEM_TYPE_lt_CADSE_RUNTIME) {
+		if (lt == CadseGCST.TYPE_DEFINITION_lt_CADSE) {
 			_cadseName = destination.getQualifiedName();
 			// _cadseRuntime = destination
 			return new ReflectLink(lt, this, destination, 0, Item.IS_HIDDEN);
@@ -455,7 +435,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 		LinkType lt = link.getLinkType();
 		Item destination = link.getDestination();
 
-		if (lt == CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES && destination.isResolved()) {
+		if (lt == CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES && destination.isResolved()) {
 			removeAttributeType((IAttributeType<?>) destination);
 			if (destination.getType() == CadseGCST.LINK) {
 				LinkType atlt = (LinkType) destination;
@@ -488,16 +468,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 			}
 			return;
 		}
-		if (lt == CadseGCST.ITEM_TYPE_lt_CREATION_PAGES && destination.isResolved()) {
-			this._creationPages = ArraysUtil.remove(IPage2.class, this._creationPages, (IPage2) destination);
-			resetCreationPages();
-			return;
-		}
-		if (lt == CadseGCST.ITEM_TYPE_lt_MODIFICATION_PAGES && destination.isResolved()) {
-			this._modificationPages = ArraysUtil.remove(IPage2.class, this._modificationPages, (IPage2) destination);
-			resetModificationPages();
-			return;
-		}
+		
 		if (lt == CadseGCST.ITEM_TYPE_lt_SUB_TYPES) {
 			return;
 		}
@@ -1330,7 +1301,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 			return (T) _packageName;
 		}
 
-		if (CadseGCST.ABSTRACT_ITEM_TYPE_at_ID_RUNTIME_ == type) {
+		if (CadseGCST.TYPE_DEFINITION_at_ID_RUNTIME_ == type) {
 			if (isRuntime())
 				return (T) getId().toString();
 
@@ -1339,10 +1310,10 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	}
 
 	public boolean isRuntime() {
-		CadseRuntime cr = getCadseRuntime();
+		CadseRuntime cr = getCadse();
 		if (cr == null)
 			return false;
-		return cr.getType() == CadseGCST.CADSE_RUNTIME;
+		return cr.getType() == CadseGCST.CADSE;
 	}
 
 	@Override
@@ -1432,64 +1403,13 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 		return super.commitSetAttribute(type, value);
 	}
 
-	public <T> Link addAttributeType(IAttributeType<T> type) {
-		Link l = _addAttributeType(type);
-		this._wl.registerItem(type);
-		if (l != null) {
-			type.addIncomingLink(l, false);
-		}
-		return l;
-	}
+	
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.imag.adele.cadse.core.IAttributableType#addAttributeType(fr.imag.adele
-	 * .cadse.core.IAttributeType)
-	 */
-	public <T> Link _addAttributeType(IAttributeType<T> type) {
-		int index = ArraysUtil.indexOf(_attributesDefinitions, type);
-		if (index != -1) {
-			_wl._wd.log(getDisplayName(), "Cannot add " + type, null);
-			return null;
-		}
-
-		_attributesDefinitions = ArraysUtil.add(IAttributeType.class, _attributesDefinitions, type);
-		type.setParent(this, CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES);
-		index = _attributesDefinitions.length - 1;
-
-		if (CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES == null) {
-			// le model root n'est pas encore charg�.
-			return null;
-		}
-
-		return new ReflectLink(CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES, this, type, index);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.imag.adele.cadse.core.IAttributableType#addAttributeType(fr.imag.adele
-	 * .cadse.core.IAttributeType)
-	 */
-	public <T> int removeAttributeType(IAttributeType<T> type) {
-		int index = ArraysUtil.indexOf(_attributesDefinitions, type);
-		if (index == -1) {
-			return index;
-		}
-		_attributesDefinitions = ArraysUtil.remove(IAttributeType.class, _attributesDefinitions, index);
-		// Pose un probleme lors de la destruction d'un lien
-		// type.setParent(null); (note 22)
-		return index;
-	}
 
 	public IAttributeType<?>[] getAllAttributeTypes() {
-		Map<String, IAttributeType<?>> all = new HashMap<String, IAttributeType<?>>();
-		getAllAttributeTypes(all, true);
-		Collection<IAttributeType<?>> ret = all.values();
-		return ret.toArray(new IAttributeType<?>[ret.size()]);
+		ArrayList<IAttributeType<?>> all = new ArrayList<IAttributeType<?>>();
+		getAllAttributeTypes(all);
+		return all.toArray(new IAttributeType<?>[all.size()]);
 	}
 
 	public void getAllAttributeTypes(List<IAttributeType<?>> all) {
@@ -1500,17 +1420,13 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 		if (_superType != null) {
 			_superType.getAllAttributeTypes(all, filter);
 		}
-		if (_attributesDefinitions != null) {
-			if (filter == null) {
-				all.addAll(Arrays.asList(_attributesDefinitions));
-			} else {
-				for (IAttributeType<?> at : _attributesDefinitions) {
-					if (filter.accept(at)) {
-						all.add(at);
-					}
-				}
+		if (_extendedBy != null) {
+			for (TypeDefinitionImpl ext : _extendedBy) {
+				ext.getAllAttributeTypes(all, filter);
 			}
 		}
+		super.getAllAttributeTypes(all, filter);
+		
 	}
 
 	public void getAllAttributeTypes(Map<String, IAttributeType<?>> all, boolean keepLastAttribute) {
@@ -1616,10 +1532,17 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 		return ret;
 	}
 
+	/**
+	 * @deprecated Use {@link #getCadse()} instead
+	 */
 	public CadseRuntime getCadseRuntime() {
+		return getCadse();
+	}
+
+	public CadseRuntime getCadse() {
 		Item parent = _parent;
 		while (parent != null) {
-			if (parent.isInstanceOf(CadseGCST.CADSE_RUNTIME) && parent instanceof CadseRuntime)
+			if (parent.isInstanceOf(CadseGCST.CADSE) && parent instanceof CadseRuntime)
 				return (CadseRuntime) parent;
 			parent = parent.getPartParent();
 		}
@@ -1650,35 +1573,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 		resetContributions();
 	}
 
-	/**
-	 * Ajoute des pages de creation.
-	 * 
-	 * @param creationPages
-	 *            the creation pages
-	 */
-	public synchronized void addCreationPages(List<IPageFactory> creationPages) {
-		if (creationPages == null || creationPages.size() == 0) {
-			return; // todo nothing
-		}
-		this._creationPagesFactories = ArraysUtil.addList(IPageFactory.class, this._creationPagesFactories,
-				creationPages);
-		resetCreationPages();
-	}
-
-	/**
-	 * Ajoute des pages de modification.
-	 * 
-	 * @param modificationPages
-	 *            the modification pages
-	 */
-	public void addModificationPages(List<IPageFactory> modificationPages) {
-		if (modificationPages == null || modificationPages.size() == 0) {
-			return; // todo nothing
-		}
-		this._modificationPagesFactories = ArraysUtil.addList(IPageFactory.class, this._modificationPagesFactories,
-				modificationPages);
-		resetModificationPages();
-	}
+	
 
 	/**
 	 * reset du cache de modification de pages.
@@ -1802,37 +1697,29 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 		return __actionContributors;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.ItemType#getCreationPage()
-	 */
-	public IPageFactory[] getCreationPage() {
-		return this._creationPagesFactories == null ? EMPTY_PAGE_FACTORIES : this._creationPagesFactories;
-	}
-
+	
 	/**
 	 * Gets the good creation page_.
 	 * 
 	 * @return the good creation page_
 	 */
-	public IPageFactory[] getGoodCreationPage_() {
+	public IPage[] getGoodCreationPage_() {
 		if (__creationPages == null) {
-			Map<String, IPageFactory> map = new HashMap<String, IPageFactory>();
-			List<IPageFactory> list = new ArrayList<IPageFactory>();
-			computegetGoodCreationPage(map, list);
+			
+			List<IPage> list = new ArrayList<IPage>();
+			computegetGoodCreationPage(list);
 			int count = list.size();
-			for (IPageFactory factory : list) {
+			for (IPage factory : list) {
 				if (factory.isEmptyPage()) {
 					count--;
 				}
 			}
 			if (count == 0) {
-				__creationPages = EMPTY_PAGE_FACTORIES;
+				__creationPages = EMPTY_PAGE;
 			} else {
-				__creationPages = new IPageFactory[count];
+				__creationPages = new IPage[count];
 				int i = 0;
-				for (IPageFactory factory : list) {
+				for (IPage factory : list) {
 					if (factory.isEmptyPage()) {
 						continue;
 					}
@@ -1852,44 +1739,14 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	 * @param list
 	 *            the list
 	 */
-	public void computegetGoodCreationPage(Map<String, IPageFactory> map, List<IPageFactory> list) {
+	public void computegetGoodCreationPage(List<IPage> list) {
 		if (_superType != null) {
-			_superType.computegetGoodCreationPage(map, list);
+			_superType.computegetGoodCreationPage(list);
 		}
-		if (_creationPagesFactories != null) {
-			for (IPageFactory f : _creationPagesFactories) {
-				IPageFactory oldF = null;
-				if ((oldF = map.get(f.getName())) != null) {
-					for (int i = 0; i < list.size(); i++) {
-						if (list.get(i) == oldF) {
-							list.set(i, f);
-							map.put(f.getName(), f);
-							break;
-						}
-					}
-
-				} else {
-					list.add(f);
-					map.put(f.getName(), f);
-				}
-			}
-		}
-		if (this._creationPages != null) {
-			for (IPageFactory f : _creationPages) {
-				IPageFactory oldF = null;
-				if ((oldF = map.get(f.getName())) != null) {
-					for (int i = 0; i < list.size(); i++) {
-						if (list.get(i) == oldF) {
-							list.set(i, f);
-							map.put(f.getName(), f);
-							break;
-						}
-					}
-
-				} else {
-					list.add(f);
-					map.put(f.getName(), f);
-				}
+		super.computegetGoodCreationPage(list);
+		if (_extendedBy != null) {
+			for (TypeDefinitionImpl ext : _extendedBy) {
+				ext.computegetGoodCreationPage(list);
 			}
 		}
 	}
@@ -1902,44 +1759,27 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	 * @param list
 	 *            the list
 	 */
-	void computeGoodModificationPage(Map<String, IPageFactory> map, List<IPageFactory> list) {
+	protected void recurcifComputeGoodModificationPage(List<IPage> list) {
 		if (_superType != null) {
-			((ItemTypeImpl) _superType).computeGoodModificationPage(map, list);
+			((ItemTypeImpl) _superType).recurcifComputeGoodModificationPage(list);
 		}
-		if (_modificationPagesFactories != null) {
-			for (IPageFactory f : _modificationPagesFactories) {
-				IPageFactory oldF = null;
-				if ((oldF = map.get(f.getName())) != null) {
-					for (int i = 0; i < list.size(); i++) {
-						if (list.get(i) == oldF) {
-							list.set(i, f);
-							map.put(f.getName(), f);
-							break;
-						}
-					}
-
-				} else {
-					list.add(f);
-					map.put(f.getName(), f);
-				}
+		super.recurcifComputeGoodModificationPage(list);
+		if (_extendedBy != null) {
+			for (TypeDefinitionImpl ext : _extendedBy) {
+				ext.recurcifComputeGoodModificationPage(list);
 			}
 		}
-		if (this._modificationPages != null) {
-			for (IPageFactory f : _modificationPages) {
-				IPageFactory oldF = null;
-				if ((oldF = map.get(f.getName())) != null) {
-					for (int i = 0; i < list.size(); i++) {
-						if (list.get(i) == oldF) {
-							list.set(i, f);
-							map.put(f.getName(), f);
-							break;
-						}
-					}
-
-				} else {
-					list.add(f);
-					map.put(f.getName(), f);
-				}
+	}
+	
+	@Override
+	protected void computeValidators(List<UIValidator> validators) {
+		if (_superType != null) {
+			((ItemTypeImpl) _superType).computeValidators(validators);
+		}
+		super.computeValidators(validators);
+		if (_extendedBy != null) {
+			for (TypeDefinitionImpl ext : _extendedBy) {
+				ext.computeValidators(validators);
 			}
 		}
 	}
@@ -1949,58 +1789,63 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	 * 
 	 * @return the good modification page_
 	 */
-	public IPageFactory[] getGoodModificationPage_() {
+	public IPage[] getGoodModificationPage_() {
 		if (__modificationPages == null) {
-			Map<String, IPageFactory> map = new HashMap<String, IPageFactory>();
-			List<IPageFactory> list = new ArrayList<IPageFactory>();
-			computeGoodModificationPage(map, list);
+			List<IPage> list = new ArrayList<IPage>();
+			computeGoodModificationPage(list);
+			
 			int count = list.size();
-			for (IPageFactory factory : list) {
+			for (IPage factory : list) {
 				if (factory.isEmptyPage()) {
 					count--;
 				}
 			}
 			if (count == 0) {
-				__modificationPages = EMPTY_PAGE_FACTORIES;
+				__modificationPages = EMPTY_PAGE;
 			} else {
-				__modificationPages = new IPageFactory[count];
-				IPageFactory evolPage = null;
+				__modificationPages = new IPage[count];
+			//	IPageFactory evolPage = null;
 				int i = 0;
-				for (IPageFactory factory : list) {
+				for (IPage factory : list) {
 					if (factory.isEmptyPage()) {
 						continue;
 					}
-					if (factory.getName().equals("evolution-page")) {
-						evolPage = factory;
-						continue;
-					}
+//					if (factory.getName().equals("evolution-page")) {
+//						evolPage = factory;
+//						continue;
+//					}
 					__modificationPages[i++] = factory;
 				}
-				if (evolPage != null) {
-					__modificationPages[i++] = evolPage;
-				}
+			//	if (evolPage != null) {
+			//		__modificationPages[i++] = evolPage;
+			//	}
 				assert i == count;
 			}
 		}
 		return __modificationPages;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.ItemType#getModificationPage()
-	 */
-	public IPageFactory[] getModificationPage() {
-		return this._modificationPagesFactories == null ? EMPTY_PAGE_FACTORIES : this._modificationPagesFactories;
+	protected void computeGoodModificationPage(List<IPage> list) {
+		recurcifComputeGoodModificationPage(list);
+		HashSet<IAttributeType<?>> inSpecificPages = new HashSet<IAttributeType<?>>();
+		for (IPage iPage : list) {
+			inSpecificPages.addAll(Arrays.asList(iPage.getAttributes()));
+		}
+		
+		HierachicPage genericPage = new HierachicPage(this, true);
+		computeGenericPage(genericPage, inSpecificPages);
+		list.add(0, genericPage);
 	}
+
+	
+	
 
 	@Override
 	public Pages getGoodCreationPage(NewContext context) throws CadseException {
-		IPageFactory[] pf = getGoodCreationPage_();
-		IPage[] p = createPages(IPageFactory.PAGE_CREATION_ITEM, context.getItemSource(), context.getItemNode(),
-				context.getDestinationType(), context.getPartLinkType(), pf);
 		context.setDefaultName(_defaultShortNameAction);
-		return new PagesImpl(false, createDefaultCreationAction(context), p);
+		List<UIValidator> validators = new ArrayList<UIValidator>();
+		computeValidators(validators);
+		return new PagesImpl(false, createDefaultCreationAction(context), computeGoodFields(), getGoodCreationPage_(), validators);
 	}
 
 	/*
@@ -2031,9 +1876,9 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	 *             the melusine exception
 	 */
 	protected Pages createCreationPage(Item parent, ItemType type, LinkType lt) throws CadseException {
-		IPageFactory[] pf = getGoodCreationPage_();
-		IPage[] p = createPages(IPageFactory.PAGE_CREATION_ITEM, parent, null, type, lt, pf);
-		return new PagesImpl(false, createDefaultCreationAction(parent, type, lt), p);
+		List<UIValidator> validators = new ArrayList<UIValidator>();
+		computeValidators(validators);
+		return new PagesImpl(false, createDefaultCreationAction(parent, type, lt), computeGoodFields(), getGoodCreationPage_(), validators);
 	}
 
 	/**
@@ -2059,8 +1904,8 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 		for (int i = 0; i < pf.length; i++) {
 			try {
 				IPage createdPage = pf[i].createPage(cas, null, item, node, type, lt);
-				if (createdPage != null && !createdPage.isEmpty()) {
-					createdPage.setParent(type, CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES);
+				if (createdPage != null && !createdPage.isEmptyPage()) {
+					createdPage.setParent(type, CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES);
 					ret.add(createdPage);
 				}
 			} catch (Throwable e) {
@@ -2186,9 +2031,9 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	 * .cadse.core.Item)
 	 */
 	public Pages getGoodModificationPage(Item selected) {
-		IPageFactory[] pf = getGoodModificationPage_();
-		IPage[] p = createPages(IPageFactory.PAGE_PROPERTY_ITEM, selected, null, this, null, pf);
-		return new PagesImpl(true, createDefaultModificationAction(this, selected), p);
+		List<UIValidator> validators = new ArrayList<UIValidator>();
+		computeValidators(validators);
+		return new PagesImpl(true, createDefaultModificationAction(this, selected), computeGoodFields(), getGoodModificationPage_(), validators);
 	}
 
 	/*
@@ -2199,10 +2044,56 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	 * .cadse.core.IItemNode)
 	 */
 	public Pages getGoodModificationPage(IItemNode node) {
-		IPageFactory[] pf = getGoodModificationPage_();
-		IPage[] p = createPages(IPageFactory.PAGE_PROPERTY_VIEW_ITEM, node.getItem(), node, this, null, pf);
-		return new PagesImpl(true, createDefaultModificationAction(this, node), p);
+		List<UIValidator> validators = new ArrayList<UIValidator>();
+		computeValidators(validators);
+		return new PagesImpl(true, createDefaultModificationAction(this, node), computeGoodFields(), getGoodModificationPage_(), validators);
 	}
+
+	
+
+	protected Map<IAttributeType<?>, UIField> computeGoodFields() {
+		Map<IAttributeType<?>, UIField> fiedls = new HashMap<IAttributeType<?>, UIField>();
+		for (IAttributeType<?> att : getAllAttributeTypes()) {
+			UIField f = findField(att);
+			if (f == null)
+				f = att.generateDefaultField();
+			if (f != null)
+				fiedls.put(att, f);
+		}
+		return fiedls;
+	}
+
+
+	protected UIField findField(IAttributeType<?> att) {
+		UIField ret;
+		if (_extendedBy != null) {
+			for (TypeDefinitionImpl ext : _extendedBy) {
+				ret = ext.findField(att);
+				if (ret != null) return ret;
+			}
+		}
+		ret = super.findField(att);
+		if (ret != null) return ret;
+		if (_superType != null) {
+			return ((ItemTypeImpl) _superType).findField(att);
+		}
+		return null;
+	}
+
+	@Override
+	protected void computeGenericPage(HierachicPage genericPage,
+			HashSet<IAttributeType<?>> inSpecificPages) {
+		super.computeGenericPage(genericPage, inSpecificPages);
+		if (_extendedBy != null) {
+			for (TypeDefinitionImpl ext : _extendedBy) {
+				ext.computeGenericPage(genericPage, inSpecificPages);
+			}
+		}
+		if (_superType != null) {
+			((ItemTypeImpl) _superType).computeGenericPage(genericPage, inSpecificPages);
+		}
+	}
+	
 
 	/*
 	 * (non-Javadoc)
@@ -2254,7 +2145,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	}
 
 	public String getCadseName() {
-		CadseRuntime cr = getCadseRuntime();
+		CadseRuntime cr = getCadse();
 		if (cr != null) {
 			_cadseName = cr.getQualifiedName();
 			return cr.getQualifiedName();
@@ -2263,7 +2154,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 	}
 
 	public void setCadseName(String cadseName) {
-		CadseRuntime cr = getCadseRuntime();
+		CadseRuntime cr = getCadse();
 		if (cr != null) {
 			_cadseName = cr.getQualifiedName();
 		}
@@ -2276,24 +2167,24 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 			ret.addOutgoing(CadseGCST.ITEM_TYPE_lt_SUPER_TYPE, getSuperType());
 			return;
 		}
-		if (linkType == CadseGCST.ITEM_TYPE_lt_CADSE_RUNTIME) {
-			ret.addOutgoing(CadseGCST.ITEM_TYPE_lt_CADSE_RUNTIME, getCadseRuntime(), Item.IS_HIDDEN);
+		if (linkType == CadseGCST.TYPE_DEFINITION_lt_CADSE) {
+			ret.addOutgoing(CadseGCST.TYPE_DEFINITION_lt_CADSE, getCadse(), Item.IS_HIDDEN);
 			return;
 		}
 		if (linkType == CadseGCST.ITEM_TYPE_lt_SUB_TYPES) {
 			ret.addOutgoing(CadseGCST.ITEM_TYPE_lt_SUB_TYPES, Item.IS_HIDDEN, this._subTypes);
 			return;
 		}
-		if (linkType == CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES) {
-			ret.addOutgoing(CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES, _attributesDefinitions);
+		if (linkType == CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES) {
+			ret.addOutgoing(CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES, _attributesDefinitions);
 			return;
 		}
-		if (linkType == CadseGCST.ITEM_TYPE_lt_CREATION_PAGES) {
-			ret.addOutgoing(CadseGCST.ITEM_TYPE_lt_CREATION_PAGES, Item.IS_HIDDEN, _creationPages);
+		if (linkType == CadseGCST.TYPE_DEFINITION_lt_CREATION_PAGES) {
+			ret.addOutgoing(CadseGCST.TYPE_DEFINITION_lt_CREATION_PAGES, Item.IS_HIDDEN, _creationPages);
 			return;
 		}
-		if (linkType == CadseGCST.ITEM_TYPE_lt_MODIFICATION_PAGES) {
-			ret.addOutgoing(CadseGCST.ITEM_TYPE_lt_MODIFICATION_PAGES, Item.IS_HIDDEN, _modificationPages);
+		if (linkType == CadseGCST.TYPE_DEFINITION_lt_MODIFICATION_PAGES) {
+			ret.addOutgoing(CadseGCST.TYPE_DEFINITION_lt_MODIFICATION_PAGES, Item.IS_HIDDEN, _modificationPages);
 			return;
 		}
 		super.collectOutgoingLinks(linkType, ret);
@@ -2316,19 +2207,7 @@ public class ItemTypeImpl extends ItemImpl implements ItemType, ItemTypeInternal
 		_itemFactory = factory;
 	}
 
-	public PageImpl getFirstCreatedPage() {
-		if (_creationPages == null || _creationPages.length == 0) {
-			return null;
-		}
-		return _creationPages[0];
-	}
-
-	public PageImpl getFirstModificationPage() {
-		if (_modificationPages == null || _modificationPages.length == 0) {
-			return null;
-		}
-		return _modificationPages[0];
-	}
+	
 
 	public void setPackageName(String packageName) {
 		if (packageName == null) {

@@ -26,7 +26,12 @@ import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.attribute.CheckStatus;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.delta.ItemDelta;
+import fr.imag.adele.cadse.core.impl.CadseCore;
+import fr.imag.adele.cadse.core.impl.ui.UIFieldImpl;
+import fr.imag.adele.cadse.core.impl.ui.mc.MC_Integer;
+import fr.imag.adele.cadse.core.ui.EPosLabel;
 import fr.imag.adele.cadse.core.ui.IPageController;
+import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.util.Convert;
 import fr.imag.adele.cadse.core.util.NLS;
 
@@ -206,5 +211,10 @@ public class IntegerAttributeType extends AttributeType implements
 			return v;
 		}
 		throw new ClassCastException(NLS.bind(Messages.cannot_convert_to_int, v.getClass()));
+	}
+
+	@Override
+	public UIField generateDefaultField() {
+		return new UIFieldImpl(CadseGCST.DTEXT, CompactUUID.randomUUID(), this, getDisplayName(), EPosLabel.defaultpos, new MC_Integer(CompactUUID.randomUUID()), null);
 	}
 }

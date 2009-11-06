@@ -27,6 +27,7 @@ import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.delta.ItemDelta;
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.ui.IPageController;
+import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.util.Convert;
 
 /**
@@ -158,6 +159,12 @@ public class StringAttributeType extends AttributeType implements fr.imag.adele.
 		if (v instanceof String) {
 			return v;
 		}
+		return null;
+	}
+
+	@Override
+	public UIField generateDefaultField() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 }

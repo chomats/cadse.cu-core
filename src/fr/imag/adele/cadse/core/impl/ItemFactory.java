@@ -39,8 +39,8 @@ import fr.imag.adele.cadse.core.impl.internal.ExtItemTypeImpl;
 import fr.imag.adele.cadse.core.impl.internal.ItemImpl;
 import fr.imag.adele.cadse.core.impl.internal.ItemTypeImpl;
 import fr.imag.adele.cadse.core.impl.internal.LinkTypeImpl;
-import fr.imag.adele.cadse.core.impl.internal.ui.IPage2;
-import fr.imag.adele.cadse.core.impl.ui.UIField2;
+import fr.imag.adele.cadse.core.impl.ui.PageImpl;
+import fr.imag.adele.cadse.core.impl.ui.UIFieldImpl;
 
 public class ItemFactory implements IItemFactory {
 	static final public ItemFactory	SINGLETON	= new ItemFactory();
@@ -86,10 +86,10 @@ public class ItemFactory implements IItemFactory {
 			// return new MapAttributeType(id,shortName, 0, null, null);
 		}*/
 		if (it == CadseGCST.PAGE) {
-			return new IPage2(id, shortName, null);
+			return new PageImpl(id, shortName, null);
 		}
-		if (it == CadseGCST.FIELD) {
-			return new UIField2(id, shortName);
+		if (it == CadseGCST.FIELD || CadseGCST.FIELD.isSuperTypeOf(it)) {
+			return new UIFieldImpl(it, id);
 		}
 		if (it == CadseGCST.UUID) {
 			return new UUIDAttributeType(id, shortName);

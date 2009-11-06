@@ -43,7 +43,7 @@ import fr.imag.adele.cadse.core.ui.IPageObject;
 import fr.imag.adele.cadse.core.ui.IUIFieldContainer;
 import fr.imag.adele.cadse.core.ui.Pages;
 import fr.imag.adele.cadse.core.ui.UIField;
-import fr.imag.adele.cadse.core.ui.UIListener;
+import fr.imag.adele.cadse.core.ui.UIValidator;
 import fr.imag.adele.cadse.core.ui.view.FilterContext;
 import fr.imag.adele.cadse.core.util.ArraysUtil;
 import fr.imag.adele.cadse.core.util.Convert;
@@ -58,11 +58,7 @@ import fr.imag.adele.cadse.core.util.OrderWay;
  */
 public class PageImpl extends AbstractGeneratedItem implements IPage {
 
-	/** The _pages le parent � l'execution regroupant l'ensemble des pages. */
-	Pages					_pages;
-
-	/** La list des fields */
-	UIField[]				_fields;
+	IAttributeType<?>[] 		_attributes;
 
 	/** The _label. */
 	String					_label;
@@ -73,9 +69,6 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	/** The _id. */
 	private String			shortName;
 
-	/** The nombre de collonne. */
-	private int				_hspan;
-
 	/** The _title. */
 	private String			_title;
 
@@ -85,19 +78,11 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	/** The _description. */
 	private String			_description;
 
-	/** The cxts. */
-	Map<String, Object>		cxts		= null;
-
-	/** The page controller. */
-	private IPageController	pageController;
 
 	private ItemType		_parentItemType;
 
-	private UIListener[]	listeners	= null;
 
-	private FilterContext	_filterContext;
-
-	private IPage[]			_superPages;
+	private IPage[]			_owPages;
 
 	public PageImpl(CompactUUID id, String name, ItemType parent) {
 		super(id);
@@ -126,39 +111,36 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	 *            the fields
 	 */
 	public PageImpl(CompactUUID id, String name, String label, String title, String description,
-			boolean isPageComplete, int hspan, IActionPage action, UIField... fields) {
+			boolean isPageComplete, IActionPage action, IAttributeType<?>... fields) {
 		super(id);
-		_fields = fields;
+		_attributes = fields;
 		shortName = name;
 		_label = label;
 		_action = action;
-		_hspan = hspan;
 		_title = title;
 		_description = description;
 		_isPageComplete = isPageComplete;
 
 	}
 
-	public PageImpl(String name, String label, String title, String description, boolean isPageComplete, int hspan) {
+	public PageImpl(String name, String label, String title, String description, boolean isPageComplete) {
 		super();
-		_fields = EMPTY_UIFIELD;
+		_attributes = EMPTY_UIFIELD;
 		shortName = name;
 		_label = label;
 		_action = null;
-		_hspan = hspan;
 		_title = title;
 		_description = description;
 		_isPageComplete = isPageComplete;
 	}
 
 	public PageImpl(String name, String label, String title, String description, boolean isPageComplete, int hspan,
-			IActionPage action, UIField... fields) {
+			IActionPage action, IAttributeType<?>... fields) {
 		super();
-		_fields = fields;
+		_attributes = fields;
 		shortName = name;
 		_label = label;
 		_action = action;
-		_hspan = hspan;
 		_title = title;
 		_description = description;
 		_isPageComplete = isPageComplete;
@@ -168,63 +150,26 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	public PageImpl(CompactUUID id, String name, String label, String title, String description,
 			boolean isPageComplete, int hspan) {
 		super(id);
-		_fields = EMPTY_UIFIELD;
+		_attributes = EMPTY_UIFIELD;
 		shortName = name;
 		_label = label;
 		_action = null;
-		_hspan = hspan;
 		_title = title;
 		_description = description;
 		_isPageComplete = isPageComplete;
 	}
 
-	/**
-	 * Sets the pages.
-	 * 
-	 * @param _pages
-	 *            the new pages
-	 */
-	public void setPages(Pages pages) {
-		this._pages = pages;
-		for (UIField f : _fields) {
-			f.setPage(this);
-		}
-	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see fr.imag.adele.cadse.core.ui.IPage#getFields()
 	 */
-	public UIField[] getFields() {
-		if (_fields == null) {
+	public IAttributeType<?>[] getAttributes() {
+		if (_attributes == null) {
 			return EMPTY_UIFIELD;
 		}
-		return _fields;
-	}
-
-	/**
-	 * Inits the.
-	 * 
-	 * @param pageController
-	 *            the page controller
-	 * 
-	 * @throws CadseException
-	 *             the melusine exception
-	 */
-	public void init(IPageController pageController) throws CadseException {
-		this.pageController = pageController;
-		if (_action != null) {
-			_action.init(this);
-		}
-		for (UIField f : _fields) {
-			f.init();
-		}
-		if (this.listeners != null) {
-			for (UIListener l : this.listeners) {
-				l.initAndResgister();
-			}
-		}
+		return _attributes;
 	}
 
 	/*
@@ -234,40 +179,31 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	 * fr.imag.adele.cadse.core.ui.IPage#addLast(fr.imag.adele.cadse.core.ui
 	 * .UIField)
 	 */
-	public void addLast(UIField... field) {
-		_fields = ArraysUtil.addList(UIField.class, _fields, field);
+	public void addLast(IAttributeType<?>... attrs) {
+		_attributes = ArraysUtil.addList(IAttributeType.class, _attributes, attrs);
+	}
+	
+	@Override
+	public void addLast(List<IAttributeType> attrs) {
+		_attributes = ArraysUtil.addList(IAttributeType.class, _attributes, attrs);	
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.imag.adele.cadse.core.ui.IPage#addUIListner(fr.imag.adele.cadse.core
-	 * .ui.UIListener)
-	 */
-	public void addUIListner(UIListener l) {
-		listeners = ArraysUtil.add(UIListener.class, listeners, l);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IPage#addBefore(java.lang.String,
-	 * fr.imag.adele.cadse.core.ui.UIField)
-	 */
-	public void addBefore(String key, UIField field) {
-		int i = indexOf(key);
+	
+	@Override
+	public void addBefore(IAttributeType<?> beforeAttr,
+			IAttributeType<?> attributeToInsert) {
+		// TODO Auto-generated method stub
+		int i = indexOf(beforeAttr);
 		if (i == -1) {
-			throw new NoSuchElementException("Not found " + key);
+			throw new NoSuchElementException("Not found attribute " + beforeAttr);
 		}
-		_fields = ArraysUtil.add(UIField.class, _fields, field, i);
+		_attributes = ArraysUtil.add(IAttributeType.class, _attributes, attributeToInsert, i);
 	}
 
-	private int indexOf(String key) {
-		if (_fields != null) {
-			for (int i = 0; i < _fields.length; i++) {
-				UIField ui = _fields[i];
-				if (ui.getName().equals(key)) {
+	private int indexOf(IAttributeType<?> key) {
+		if (_attributes != null) {
+			for (int i = 0; i < _attributes.length; i++) {
+				if (_attributes[i] == key) {
 					return i;
 				}
 			}
@@ -275,28 +211,17 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 		return -1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IPage#addAfter(java.lang.String,
-	 * fr.imag.adele.cadse.core.ui.UIField)
-	 */
-	public void addAfter(String key, UIField field) {
-		int i = indexOf(key);
+	@Override
+	public void addAfter(IAttributeType<?> afterAttr,
+			IAttributeType<?> attributeToInsert) {
+		int i = indexOf(afterAttr);
 		if (i == -1) {
-			throw new NoSuchElementException("Not found " + key);
+			throw new NoSuchElementException("Not found attribute " + afterAttr);
 		}
-		_fields = ArraysUtil.add(UIField.class, _fields, field, i + 1);
+		_attributes = ArraysUtil.add(IAttributeType.class, _attributes, attributeToInsert, i + 1);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IPageObject#getPageController()
-	 */
-	public IPageController getPageController() {
-		return pageController;
-	}
+	
 
 	/*
 	 * (non-Javadoc)
@@ -311,14 +236,6 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 		this._action = _action;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IPage#getHSpan()
-	 */
-	public int getHSpan() {
-		return _hspan;
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -329,26 +246,8 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 		return _label;
 	}
 
-	/**
-	 * Inits the after ui.
-	 */
-	public void initAfterUI() {
-		if (_action != null) {
-			_action.initAfterUI();
-		}
-		for (UIField f : _fields) {
-			f.initAfterUI();
-		}
-	}
+	
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IPageObject#getParent()
-	 */
-	public IPageObject getParent() {
-		return _pages;
-	}
 
 	@Override
 	public String getName() {
@@ -357,70 +256,6 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 
 	public ItemType getType() {
 		return CadseGCST.PAGE;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IPage#getField(java.lang.String)
-	 */
-	public UIField getField(String... keyPath) {
-		if (keyPath.length <= 0) {
-			return null;
-		}
-
-		UIField[] descs = getFields();
-		UIField root = null;
-		ONE: for (int i = 0; i < keyPath.length; i++) {
-			if (descs == null) {
-				return null;
-			}
-			for (UIField d : descs) {
-				if (d.getName().equals(keyPath[i])) {
-					root = d;
-					if (root instanceof IUIFieldContainer) {
-						descs = ((IUIFieldContainer) root).getFields();
-					} else {
-						descs = null;
-					}
-					continue ONE;
-				}
-			}
-			return null;
-		}
-		return root;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IPage#getPages()
-	 */
-	public Pages getPages() {
-		return _pages;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IPageObject#getField(java.lang.String)
-	 */
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IPage#getField(java.lang.String)
-	 */
-	public UIField getField(String fieldid) {
-		UIField[] descs = getFields();
-		if (descs == null) {
-			return null;
-		}
-		for (UIField d : descs) {
-			if (d.getName().equals(fieldid)) {
-				return d;
-			}
-		}
-		return null;
 	}
 
 	/*
@@ -458,241 +293,7 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	public boolean isPageComplete() {
 		return _isPageComplete;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IPage#resetVisualValue()
-	 */
-	public void resetVisualValue() {
-		for (UIField f : _fields) { // avant, il avait deux boucles.
-			// set is running avant reset value pour utiliser
-			// ce flag dans la methode setvisualvalue durant le reset
-			f.setFlag(UI_RUNNING, true);
-			if (!f.isEditable()) {
-				f.internalSetEditable(false);
-			}
-			try {
-				f.resetVisualValue();
-			} catch (Throwable e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IPage#dispose()
-	 */
-	public void dispose() {
-		if (_action != null) {
-			_action.dispose();
-		}
-		if (_fields != null) {
-			for (UIField f : _fields) {
-				f.dispose();
-			}
-		}
-		if (this.listeners != null) {
-			for (UIListener l : this.listeners) {
-				l.disposeAndUnregister();
-			}
-		}
-		_filterContext = null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IPage#getContext()
-	 */
-	public Object getContext() {
-		String it_id = getContextItemKey();
-		Object ret = getLocal(it_id);
-		if (ret == null) {
-			ret = this._pages.getLocal(it_id);
-		}
-		return ret;
-	}
-
-	private String getContextItemKey() {
-		ItemType it = getParentItemType();
-		if (it == null) {
-			return "ITEM_CONTEXT";
-		}
-		return it.getId().toString();
-	}
-
-	/**
-	 * Gets the item.
-	 * 
-	 * @return the item
-	 */
-	public Item getItem() {
-		return (Item) getContext();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IPageObject#putLocal(java.lang.String,
-	 * java.lang.Object)
-	 */
-	public void putLocal(String key, Object value) {
-		if (cxts == null) {
-			cxts = new ObjectMap<String, Object>(4);
-		}
-		cxts.put(key, value);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IPageObject#getLocal(java.lang.String)
-	 */
-	@SuppressWarnings("unchecked")
-	public <T> T getLocal(String key) {
-		if (cxts != null) {
-			return (T) cxts.get(key);
-		}
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IPageObject#getLocal(java.lang.String,
-	 * java.lang.Object)
-	 */
-	@SuppressWarnings("unchecked")
-	public <T> T getLocal(String key, T d) {
-		if (cxts != null) {
-			T ret = (T) cxts.get(key);
-			if (ret != null) {
-				return ret;
-			}
-		}
-		return d;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IPageObject#get(java.lang.String)
-	 */
-	public <T> T get(String key) {
-		T ret = (T) getLocal(key);
-		if (ret != null) {
-			return ret;
-		}
-		return (T) _pages.getLocal(key);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IPageObject#get(java.lang.String,
-	 * java.lang.Object)
-	 */
-	public <T> T get(String key, T d) {
-		T ret = (T) getLocal(key);
-		if (ret != null) {
-			return ret;
-		}
-		return _pages.getLocal(key, d);
-	}
-
-	/**
-	 * Validate fields.
-	 * 
-	 * @param currentField
-	 *            the current field
-	 * 
-	 * @return true, if successful
-	 */
-	public boolean validateFields(UIField currentField) {
-		for (UIField f : _fields) {
-			if (f == currentField) {
-				continue;
-			}
-			if (f.validateField()) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public boolean validSubValueAdded(UIField field, Object addedElement) {
-		return false;
-	}
-
-	public boolean validSubValueRemoved(UIField field, Object removedElement) {
-		return false;
-	}
-
-	public boolean validValue(UIField field, Object value) {
-		return false;
-	}
-
-	public boolean validValueChanged(UIField field, Object value) {
-		return false;
-	}
-
-	public boolean validValueDeleted(UIField field, Object deletedValue) {
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.imag.adele.cadse.core.ui.IEventListener#init(fr.imag.adele.cadse.core
-	 * .ui.UIField)
-	 */
-	public void init(UIField field) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.imag.adele.cadse.core.ui.IEventListener#notifieSubValueAdded(fr.imag
-	 * .adele.cadse.core.ui.UIField, java.lang.Object)
-	 */
-	public void notifieSubValueAdded(UIField field, Object added) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.imag.adele.cadse.core.ui.IEventListener#notifieSubValueRemoved(fr.
-	 * imag.adele.cadse.core.ui.UIField, java.lang.Object)
-	 */
-	public void notifieSubValueRemoved(UIField field, Object removed) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.imag.adele.cadse.core.ui.IEventListener#notifieValueChanged(fr.imag
-	 * .adele.cadse.core.ui.UIField, java.lang.Object)
-	 */
-	public void notifieValueChanged(UIField field, Object value) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.imag.adele.cadse.core.ui.IEventListener#notifieValueDeleted(fr.imag
-	 * .adele.cadse.core.ui.UIField, java.lang.Object)
-	 */
-	public void notifieValueDeleted(UIField field, Object oldvalue) {
-	}
+	
 
 	/*
 	 * (non-Javadoc)
@@ -700,9 +301,6 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	 * @see fr.imag.adele.cadse.core.ui.IPage#getParentItemType()
 	 */
 	public ItemType getParentItemType() {
-		if (_parentItemType == null && _pages != null) {
-			return _pages.getParentItemType();
-		}
 		return _parentItemType;
 	}
 
@@ -710,15 +308,12 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 		_parentItemType = (ItemType) parent;
 	}
 
-	public boolean runCreationPage() {
-		return getPages().runCreationPage();
-	}
 
 	@Override
 	public Link commitLoadCreateLink(LinkType lt, Item destination) throws CadseException {
-		if (lt == CadseGCST.PAGE_lt_FIELDS && destination.isResolved()) {
-			addLast((UIField) destination);
-			return new ReflectLink(lt, this, destination, this._fields.length - 1);
+		if (lt == CadseGCST.PAGE_lt_ATTRIBUTES && destination.isResolved()) {
+			addLast((IAttributeType<?>) destination);
+			return new ReflectLink(lt, this, destination, this._attributes.length - 1);
 		}
 		/*
 		 * if (lt == CadseGCST.PAGE_lt_LISTENER && destination.isResolved()) {
@@ -733,8 +328,8 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 		Item destination = link.getDestination();
 		LinkType lt = link.getLinkType();
 
-		if (lt == CadseGCST.PAGE_lt_FIELDS && destination.isResolved()) {
-			_fields = ArraysUtil.remove(UIField.class, _fields, (UIField) destination);
+		if (lt == CadseGCST.PAGE_lt_ATTRIBUTES && destination.isResolved()) {
+			_attributes = ArraysUtil.remove(IAttributeType.class, _attributes, (IAttributeType<?>) destination);
 			return;
 		}
 		/*
@@ -747,8 +342,8 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 
 	@Override
 	protected void collectOutgoingLinks(LinkType linkType, CollectedReflectLink ret) {
-		if (linkType == CadseGCST.PAGE_lt_FIELDS) {
-			ret.addOutgoing(CadseGCST.PAGE_lt_FIELDS, this._fields);
+		if (linkType == CadseGCST.PAGE_lt_ATTRIBUTES) {
+			ret.addOutgoing(CadseGCST.PAGE_lt_ATTRIBUTES, this._attributes);
 		}
 		/*
 		 * if (linkType == CadseGCST.PAGE_lt_LISTENER) {
@@ -765,10 +360,6 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 		}
 		if (CadseGCST.PAGE_at_DESCRIPTION_ == type) {
 			this._description = Convert.toString(value);
-			return true;
-		}
-		if (CadseGCST.PAGE_at_HSPAN_ == type) {
-			this._hspan = Convert.toInt(value, type);
 			return true;
 		}
 		if (CadseGCST.PAGE_at_TITLE_ == type) {
@@ -797,9 +388,6 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 		if (CadseGCST.PAGE_at_DESCRIPTION_ == type) {
 			return (T) this._description;
 		}
-		if (CadseGCST.PAGE_at_HSPAN_ == type) {
-			return (T) new Integer(this._hspan);
-		}
 		if (CadseGCST.PAGE_at_TITLE_ == type) {
 			return (T) this._title;
 		}
@@ -817,18 +405,6 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 		return _parentItemType;
 	}
 
-	public LogicalWorkspaceTransaction getCopy() {
-		return this._pages.getCopy();
-	}
-
-	public void setItem(String it_id, Item item) {
-		putLocal(it_id, item);
-	}
-
-	public void setItem(Item item) {
-		String it_id = getContextItemKey();
-		this.setItem(it_id, item);
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -836,25 +412,35 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	 * @see fr.imag.adele.cadse.core.ui.IPage#isModificationPage()
 	 */
 	public boolean isModificationPage() {
-		return getPartParentLinkType() == CadseGCST.ITEM_TYPE_lt_MODIFICATION_PAGES;
+		return getPartParentLinkType() == CadseGCST.TYPE_DEFINITION_lt_MODIFICATION_PAGES;
 	}
 
 	@Override
 	public boolean commitMove(OrderWay kind, Link l1, Link l2) {
-		if (l1.getLinkType() == CadseGCST.PAGE_lt_FIELDS && l2.getLinkType() == CadseGCST.PAGE_lt_FIELDS
+		if (l1.getLinkType() == CadseGCST.PAGE_lt_ATTRIBUTES && l2.getLinkType() == CadseGCST.PAGE_lt_ATTRIBUTES
 				&& l1.isLinkResolved() && l2.isLinkResolved()) {
-			return moveField(kind, (UIField) l1.getDestination(), (UIField) l2.getDestination());
+			return moveField(kind, (IAttributeType<?>) l1.getDestination(), (IAttributeType<?>) l2.getDestination());
 		}
 		return super.commitMove(kind, l1, l2);
 	}
 
-	private boolean moveField(OrderWay kind, UIField f1, UIField f2) {
-		if (_fields == null) {
+	private boolean moveField(OrderWay kind, IAttributeType f1, IAttributeType f2) {
+		if (_attributes == null) {
 			return false;
 		}
-		return ArraysUtil.move(kind, _fields, f1, f2);
+		return ArraysUtil.move(kind, _attributes, f1, f2);
 	}
 
+	@Override
+	public boolean isEmptyPage() {
+		return _attributes == null || _attributes.length == 0;
+	}
+
+	@Override
+	public IPage[] getOverwritePage() {
+		return _owPages;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -862,86 +448,12 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	 * fr.imag.adele.cadse.core.ui.IPage#isLast(fr.imag.adele.cadse.core.ui.
 	 * UIField)
 	 */
-	public boolean isLast(UIField field) {
-		if (_fields == null) {
+	public boolean isLast(IAttributeType<?> field) {
+		if (_attributes == null) {
 			return false;
-		}
-		if (((UIFieldImpl) field)._ui != null) {
-			field = ((UIFieldImpl) field)._ui;
-		}
+		}	
 
-		return _fields[_fields.length - 1] == field;
+		return _attributes[_attributes.length - 1] == field;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.imag.adele.cadse.core.ui.IPage#isFirst(fr.imag.adele.cadse.core.ui
-	 * .UIField)
-	 */
-	public boolean isFirst(UIField field) {
-		if (_fields == null) {
-			return false;
-		}
-		if (((UIFieldImpl) field)._ui != null) {
-			field = ((UIFieldImpl) field)._ui;
-		}
-
-		return _fields[0] == field;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IPage#setMessageError(java.lang.String)
-	 */
-	public void setMessageError(String msg) {
-		getPageController().setMessage(msg, IPageController.ERROR);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.imag.adele.cadse.core.ui.IPage#setMessageWarning(java.lang.String)
-	 */
-	public void setMessageWarning(String msg) {
-		getPageController().setMessage(msg, IPageController.WARNING);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IPage#setMessageInfo(java.lang.String)
-	 */
-	public void setMessageInfo(String msg) {
-		getPageController().setMessage(msg, IPageController.INFORMATION);
-	}
-
-	public FilterContext getFilterContext() {
-		if (_filterContext == null) {
-			_filterContext = new FilterContext(getPages().getFilterContext(), this);
-		}
-		return _filterContext;
-	}
-
-	public void setFilterContext(FilterContext filterContext) {
-		this._filterContext = filterContext;
-	}
-
-	@Override
-	public boolean isEmpty() {
-		return _fields == null || _fields.length == 0;
-	}
-
-	@Override
-	public List<UIField> getGoodFields() {
-		return Arrays.asList(getFields());
-	}
-
-	@Override
-	public IPage[] getSuperPage() {
-		return _superPages;
-	}
 }

@@ -68,6 +68,8 @@ import fr.imag.adele.cadse.core.internal.InternalItem;
 import fr.imag.adele.cadse.core.key.AbstractSpaceKey;
 import fr.imag.adele.cadse.core.key.ISpaceKey;
 import fr.imag.adele.cadse.core.key.SpaceKeyType;
+import fr.imag.adele.cadse.core.ui.Pages;
+import fr.imag.adele.cadse.core.ui.view.FilterContext;
 import fr.imag.adele.cadse.core.util.ArraysUtil;
 import fr.imag.adele.cadse.core.util.Assert;
 import fr.imag.adele.cadse.core.util.Convert;
@@ -1836,4 +1838,8 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		return getType().getOutgoingLinkTypes();
 	}
 
+	@Override
+	public Pages getInstanceModificationPages(Item selectedItem) {
+		return getType().getGoodModificationPage(selectedItem);
+	}
 }

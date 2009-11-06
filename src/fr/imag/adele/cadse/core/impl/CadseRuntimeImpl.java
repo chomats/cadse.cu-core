@@ -77,7 +77,7 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 	}
 
 	public ItemType getType() {
-		return CadseGCST.CADSE_RUNTIME;
+		return CadseGCST.CADSE;
 	}
 
 	public void setParent(Item parent, LinkType lt) {
@@ -123,11 +123,11 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 
 	@Override
 	protected void collectOutgoingLinks(LinkType linkType, CollectedReflectLink ret) {
-		if (linkType == CadseGCST.CADSE_RUNTIME_lt_ITEM_TYPES) {
-			ret.addOutgoing(CadseGCST.CADSE_RUNTIME_lt_ITEM_TYPES, _itemTypes);
+		if (linkType == CadseGCST.CADSE_lt_ITEM_TYPES) {
+			ret.addOutgoing(CadseGCST.CADSE_lt_ITEM_TYPES, _itemTypes);
 		}
-		if (linkType == CadseGCST.CADSE_RUNTIME_lt_EXTENDS) {
-			ret.addOutgoing(CadseGCST.CADSE_RUNTIME_lt_EXTENDS, _requiredCadses);
+		if (linkType == CadseGCST.CADSE_lt_EXTENDS) {
+			ret.addOutgoing(CadseGCST.CADSE_lt_EXTENDS, _requiredCadses);
 		}
 		super.collectOutgoingLinks(linkType, ret);
 	}
@@ -146,11 +146,11 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 		// Ne pas apeler cette methode à l'interieur de la methode commit...
 		// sinon les liens incomings vont etre creer deux fois...
 		if (extendsCadse != null) {
-			if (CadseGCST.CADSE_RUNTIME_lt_EXTENDS == null) {
+			if (CadseGCST.CADSE_lt_EXTENDS == null) {
 				throw new CadseIllegalArgumentException("Cadse root is not loaded");
 			}
 			for (CadseRuntime c : extendsCadse) {
-				c.addIncomingLink(new ReflectLink(CadseGCST.CADSE_RUNTIME_lt_EXTENDS, this, c, -1), false);
+				c.addIncomingLink(new ReflectLink(CadseGCST.CADSE_lt_EXTENDS, this, c, -1), false);
 			}
 		}
 	}
@@ -167,7 +167,7 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 	@Override
 	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
 
-		if (CadseGCST.CADSE_RUNTIME_at_ID_DEFINITION_ == type) {
+		if (CadseGCST.CADSE_at_ID_DEFINITION_ == type) {
 			return (T) _idCadseDefinition.toString();
 		}
 		if (CadseGCST.ITEM_at_NAME_ == type) {
@@ -176,19 +176,19 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 		if (CadseGCST.ITEM_at_QUALIFIED_NAME_ == type) {
 			return (T) _qname;
 		}
-		if (CadseGCST.CADSE_RUNTIME_at_DESCRIPTION_ == type) {
+		if (CadseGCST.CADSE_at_DESCRIPTION_ == type) {
 			return (T) _description;
 		}
-		if (CadseGCST.CADSE_RUNTIME_at_ITEM_REPO_LOGIN_ == type) {
+		if (CadseGCST.CADSE_at_ITEM_REPO_LOGIN_ == type) {
 			return (T) _repoLogin;
 		}
-		if (CadseGCST.CADSE_RUNTIME_at_ITEM_REPO_URL_ == type) {
+		if (CadseGCST.CADSE_at_ITEM_REPO_URL_ == type) {
 			return (T) _item_repos_url;
 		}
-		if (CadseGCST.CADSE_RUNTIME_at_DEFAULT_CONTENT_REPO_URL_ == type) {
+		if (CadseGCST.CADSE_at_DEFAULT_CONTENT_REPO_URL_ == type) {
 			return (T) _defaultContentRepoURL;
 		}
-		if (CadseGCST.CADSE_RUNTIME_at_EXECUTED_ == type) {
+		if (CadseGCST.CADSE_at_EXECUTED_ == type) {
 			return (T) Boolean.valueOf(_executed);
 		}
 		if (type == CadseGCST.ITEM_at_DISPLAY_NAME_) {
@@ -215,13 +215,13 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 			return true;
 		}
 		// TODO
-		if (CadseGCST.CADSE_RUNTIME_at_ITEM_REPO_LOGIN_ == type) {
+		if (CadseGCST.CADSE_at_ITEM_REPO_LOGIN_ == type) {
 			return false;
 		}
-		if (CadseGCST.CADSE_RUNTIME_at_ITEM_REPO_URL_ == type) {
+		if (CadseGCST.CADSE_at_ITEM_REPO_URL_ == type) {
 			return false;
 		}
-		if (CadseGCST.CADSE_RUNTIME_at_DEFAULT_CONTENT_REPO_URL_ == type) {
+		if (CadseGCST.CADSE_at_DEFAULT_CONTENT_REPO_URL_ == type) {
 			return false;
 		}
 		return super.commitSetAttribute(type, value);
@@ -229,11 +229,11 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 
 	@Override
 	public Link commitLoadCreateLink(LinkType lt, Item destination) throws CadseException {
-		if (lt == CadseGCST.CADSE_RUNTIME_lt_ITEM_TYPES) {
+		if (lt == CadseGCST.CADSE_lt_ITEM_TYPES) {
 			this._itemTypes = ArraysUtil.add(ItemType.class, this._itemTypes, (ItemType) destination);
 			return new ReflectLink(lt, this, destination, this._itemTypes.length - 1);
 		}
-		if (lt == CadseGCST.CADSE_RUNTIME_lt_EXTENDS) {
+		if (lt == CadseGCST.CADSE_lt_EXTENDS) {
 			this._requiredCadses = ArraysUtil.add(CadseRuntime.class, this._requiredCadses, (CadseRuntime) destination);
 			return new ReflectLink(lt, this, destination, this._requiredCadses.length - 1);
 		}

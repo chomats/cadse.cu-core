@@ -19,6 +19,8 @@
 
 package fr.imag.adele.cadse.core.impl.attribute;
 
+import com.sun.java.swing.plaf.gtk.GTKConstants.PositionType;
+
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.Item;
@@ -26,7 +28,11 @@ import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.attribute.CheckStatus;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.delta.ItemDelta;
+import fr.imag.adele.cadse.core.impl.ui.UIFieldImpl;
+import fr.imag.adele.cadse.core.impl.ui.mc.MC_StringToBoolean;
+import fr.imag.adele.cadse.core.ui.EPosLabel;
 import fr.imag.adele.cadse.core.ui.IPageController;
+import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.util.Convert;
 
 /**
@@ -137,4 +143,8 @@ public class BooleanAttributeType extends AttributeType implements
 		return null;
 	}
 
+	@Override
+	public UIField generateDefaultField() {
+		return new UIFieldImpl(CadseGCST.DCHECK_BOX, CompactUUID.randomUUID(), this, getDisplayName(), EPosLabel.none, null, null);
+	}
 }

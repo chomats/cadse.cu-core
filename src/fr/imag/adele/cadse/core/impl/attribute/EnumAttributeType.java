@@ -21,6 +21,8 @@ package fr.imag.adele.cadse.core.impl.attribute;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CompactUUID;
@@ -32,8 +34,12 @@ import fr.imag.adele.cadse.core.attribute.CheckStatus;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.delta.ItemDelta;
 import fr.imag.adele.cadse.core.impl.CadseIllegalArgumentException;
+import fr.imag.adele.cadse.core.impl.ui.MC_AttributesItem;
+import fr.imag.adele.cadse.core.impl.ui.UIFieldImpl;
 import fr.imag.adele.cadse.core.CadseGCST;
+import fr.imag.adele.cadse.core.ui.EPosLabel;
 import fr.imag.adele.cadse.core.ui.IPageController;
+import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.util.Convert;
 import fr.imag.adele.cadse.core.util.NLS;
 
@@ -52,6 +58,8 @@ public class EnumAttributeType<X extends Enum<X>> extends AttributeType implemen
 	Class<X>	clazz;
 
 	String[]	values;
+
+	private Map<String, X> enumConstantDirectory;
 
 	/**
 	 * Instantiates a new enum attribute type.
@@ -240,5 +248,24 @@ public class EnumAttributeType<X extends Enum<X>> extends AttributeType implemen
 			}
 		}
 		return values;
+	}
+	
+	public Map<String, X> enumConstantDirectory() {
+		if (enumConstantDirectory == null) {
+            X[] universe = clazz.getEnumConstants();  // Does unnecessary clone
+            if (universe == null)
+                throw new IllegalArgumentException(
+                		clazz.getName() + " is not an enum type");
+            Map<String, X> m = new HashMap<String, X>(2 * universe.length);
+            for (X constant : universe)
+                m.put(((Enum)constant).name(), constant);
+            enumConstantDirectory = m;
+        }
+        return enumConstantDirectory;
+	}
+
+	@Override
+	public UIField generateDefaultField() {
+		return new UIFieldImpl(CadseGCST.DBROWSER, CompactUUID.randomUUID(), this, getDisplayName(), EPosLabel.defaultpos, new MC_AttributesItem(), null);
 	}
 }

@@ -26,6 +26,7 @@ import fr.imag.adele.cadse.core.attribute.CheckStatus;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.delta.ItemDelta;
 import fr.imag.adele.cadse.core.ui.IPageController;
+import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.util.Convert;
 import fr.imag.adele.cadse.core.util.NLS;
 
@@ -127,5 +128,11 @@ public class LongAttributeType extends AttributeType implements fr.imag.adele.ca
 			return v;
 		}
 		throw new ClassCastException(NLS.bind(Messages.cannot_convert_to_long, v.getClass()));
+	}
+
+	@Override
+	public UIField generateDefaultField() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

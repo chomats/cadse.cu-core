@@ -27,11 +27,9 @@ import fr.imag.adele.cadse.core.ContentChangeInfo;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.LinkType;
-import fr.imag.adele.cadse.core.WorkspaceListener;
 import fr.imag.adele.cadse.core.attribute.CheckStatus;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
-import fr.imag.adele.cadse.core.delta.ImmutableItemDelta;
-import fr.imag.adele.cadse.core.delta.ImmutableWorkspaceDelta;
+import fr.imag.adele.cadse.core.attribute.IntegerAttributeType;
 import fr.imag.adele.cadse.core.delta.ItemDelta;
 import fr.imag.adele.cadse.core.delta.LinkDelta;
 import fr.imag.adele.cadse.core.delta.MappingOperation;
@@ -49,25 +47,24 @@ import fr.imag.adele.cadse.core.ui.UIField;
  * @author <a href="mailto:stephane.chomat@imag.fr">Stephane Chomat</a>
  * @version 2.0
  */
-public class MC_AttributesItem extends AbstractModelController implements IModelController,
-		LogicalWorkspaceTransactionListener {
+public class MC_AttributesItem extends AbstractModelController implements IModelController {
 
-	class Listener extends WorkspaceListener {
-
-		private ImmutableItemDelta	itemDelta;
-
-		@Override
-		public void workspaceChanged(ImmutableWorkspaceDelta delta) {
-			itemDelta = delta.getItem(getItem());
-			if (itemDelta == null) {
-				return;
-			}
-			if ((itemDelta.getSetAttributes() != null)
-					&& (itemDelta.getSetAttributes().get(getAttributeName()) != null)) {
-				getUIField().resetVisualValue();
-			}
-		}
-	}
+//	class Listener extends WorkspaceListener {
+//
+//		private ImmutableItemDelta	itemDelta;
+//		IPageController uiPlatform;
+//		@Override
+//		public void workspaceChanged(ImmutableWorkspaceDelta delta) {
+//			itemDelta = delta.getItem(uiPlatform.getItem(getUIField()));
+//			if (itemDelta == null) {
+//				return;
+//			}
+//			if ((itemDelta.getSetAttributes() != null)
+//					&& (itemDelta.getSetAttributes().get(getAttributeDefinition()) != null)) {
+//				uiPlatform.resetVisualValue(getUIField());
+//			}
+//		}
+//	}
 
 	boolean			_anonymous	= true;
 	private boolean	_inibNotification;
@@ -86,26 +83,22 @@ public class MC_AttributesItem extends AbstractModelController implements IModel
 	 * 
 	 * @see fr.imag.adele.cadse.core.ui.IModelController#getValue()
 	 */
-	public Object getValue() {
-		Item item = getItem();
+	public Object getValue(IPageController uiPlatform) {
+		Item item = uiPlatform.getItem(getUIField());
 		if (item == null) {
 			return null;
 		}
 		if (item instanceof ItemDelta) {
-			return ((ItemDelta) item).getAttribute(getAttributeName(), false);
+			return ((ItemDelta) item).getAttribute(getAttributeDefinition(), false);
 		}
-		return item.getAttribute(getAttributeName());
+		return item.getAttribute(getAttributeDefinition());
 	}
 
 	@Override
-	public void init() throws CadseException {
-		super.init();
-		LogicalWorkspaceTransaction copy = getUIField().getPages().getCopy();
-		if (copy != null) {
-			copy.addLogicalWorkspaceTransactionListener(this);
-		}
+	public void init(IPageController uiPlatform) throws CadseException {
+		uiPlatform.addLogicalWorkspaceTransactionListener(new MYWCWL(uiPlatform));
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -113,42 +106,37 @@ public class MC_AttributesItem extends AbstractModelController implements IModel
 	 * fr.imag.adele.cadse.core.ui.IEventListener#notifieValueChanged(fr.imag
 	 * .adele.cadse.core.ui.UIField, java.lang.Object)
 	 */
-	public void notifieValueChanged(UIField field, Object value) {
-		Item item = getItem();
+	public void notifieValueChanged(IPageController uiPlatform, UIField field, Object value) {
+		Item item = uiPlatform.getItem(getUIField());
 		if (item.isReadOnly() || item.isStatic())
 			return;
 		// item.setAttribute(getUIField().getKey(),value);
 		IAttributeType<?> attrType = getUIField().getAttributeDefinition();
 		if (attrType != null) {
 			value = attrType.convertTo(value);
-		}
-
-		_inibNotification = true;
-		try {
-			if (attrType != null) {
+			_inibNotification = true;
+			try {
 				item.setAttribute(attrType, value);
-			} else {
-				item.setAttribute(getUIField().getAttributeName(), value);
+			} catch (CadseException e) {
+				e.printStackTrace();
+			} finally {
+				_inibNotification = false;
 			}
-		} catch (CadseException e) {
-			e.printStackTrace();
-		} finally {
-			_inibNotification = false;
 		}
 	}
 
 	@Override
-	public boolean validValueChanged(UIField field, Object visualValue) {
+	public boolean validValueChanged(IPageController uiPlatform, UIField field, Object visualValue) {
 		IAttributeType<?> attRef = field.getAttributeDefinition();
 		if (attRef != null) {
 			Object value = convertToModelValue(visualValue);
-			CheckStatus status = attRef.check(getItem(), value);
+			CheckStatus status = attRef.check(uiPlatform.getItem(getUIField()), value);
 			if (status != null) {
 				if (status.getType() == IPageController.ERROR) {
-					setMessageError(attRef.getName() + ": " + status.getFormatedMessage());
+					uiPlatform.setMessage(attRef.getName() + ": " + status.getFormatedMessage(), IPageController.ERROR);
 					return true;
 				} else {
-					getUIField().getPageController().setMessage(attRef.getName() + ": " + status.getFormatedMessage(),
+					uiPlatform.setMessage(attRef.getName() + ": " + status.getFormatedMessage(),
 							status.getType());
 				}
 			}
@@ -169,6 +157,11 @@ public class MC_AttributesItem extends AbstractModelController implements IModel
 	public boolean isAnonymous() {
 		return _anonymous;
 	}
+	class MYWCWL implements LogicalWorkspaceTransactionListener {
+		IPageController uiPlatform;
+	public MYWCWL(IPageController uiPlatformParam) {
+		uiPlatform = uiPlatformParam;
+		}
 
 	public void notifyAddMappingOperation(LogicalWorkspaceTransaction workspaceLogiqueWorkingCopy, ItemDelta item,
 			MappingOperation mappingOperation) {
@@ -193,14 +186,14 @@ public class MC_AttributesItem extends AbstractModelController implements IModel
 			return;
 		}
 
-		if (getItem() != item) {
+		if (uiPlatform.getItem(getUIField()) != item) {
 			return;
 		}
 
 		IAttributeType<?> attRef = getUIField().getAttributeDefinition();
 		if (attRef != null) {
 			if (attOperation.getAttributeDefinition() == attRef) {
-				getUIField().setVisualValue(attOperation.getCurrentValue(), false);
+				uiPlatform.setVisualValue(getAttributeDefinition(), attOperation.getCurrentValue(), false);
 			}
 		}
 	}
@@ -309,5 +302,6 @@ public class MC_AttributesItem extends AbstractModelController implements IModel
 			LinkType lt, LinkDelta newPartLink, LinkDelta oldPartLink) {
 		// TODO Auto-generated method stub
 
+	}
 	}
 }

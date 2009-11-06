@@ -48,17 +48,6 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 
 	}
 
-	@Override
-	public void addCreationPages(List<IPageFactory> creationPages) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void addModificationPages(List<IPageFactory> modificationPages) {
-		// TODO Auto-generated method stub
-
-	}
 
 	@Override
 	public LinkType createLinkType(CompactUUID id, int intID, String name, int kind, int min, int max,
@@ -77,11 +66,11 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 		ItemDelta linktypedelta = null;
 		LogicalWorkspaceTransaction copy = _delta.getCopy();
 		if (id == null) {
-			linktypedelta = copy.createItem(CadseGCST.LINK, _delta, CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES);
+			linktypedelta = copy.createItem(CadseGCST.LINK, _delta, CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES);
 			linktypedelta.createLink(CadseGCST.LINK_lt_DESTINATION, destination);
 		} else {
 			linktypedelta = copy.loadItem(id, CadseGCST.LINK.getId());
-			linktypedelta.setParent(_delta, CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES);
+			linktypedelta.setParent(_delta, CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES);
 			linktypedelta.loadLink(CadseGCST.LINK_lt_DESTINATION.getName(), copy.loadItem(destination));
 
 		}
@@ -112,16 +101,24 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 		return _delta.getAttribute(CadseGCST.CADSE_DEFINITION_at_CADSE_NAME_);
 	}
 
+	/**
+	 * @deprecated Use {@link #getCadse()} instead
+	 */
 	@Override
 	public CadseRuntime getCadseRuntime() {
-		ItemDelta cadseDelta = _delta.getOutgoingItem(CadseGCST.ITEM_TYPE_lt_CADSE_RUNTIME, true);
+		return getCadse();
+	}
+
+	@Override
+	public CadseRuntime getCadse() {
+		ItemDelta cadseDelta = _delta.getOutgoingItem(CadseGCST.TYPE_DEFINITION_lt_CADSE, true);
 		if (cadseDelta == null)
 			return null;
 		return cadseDelta.getAdapter(CadseRuntime.class);
 	}
 
 	@Override
-	public IPageFactory[] getCreationPage() {
+	public IPage[] getCreationPage() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -131,17 +128,6 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 		return _delta.getCadseDomain();
 	}
 
-	@Override
-	public IPage getFirstCreatedPage() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public IPage getFirstModificationPage() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public Pages getGoodCreationPage(Item parent, ItemType type, LinkType lt) throws CadseException {
@@ -230,7 +216,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 	}
 
 	@Override
-	public IPageFactory[] getModificationPage() {
+	public IPage[] getModificationPage() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -275,7 +261,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 	@Override
 	public List<LinkType> getOwnerOutgoingLinkTypes() {
 		List<LinkType> ret = new ArrayList<LinkType>();
-		List<LinkDelta> deltaLinks = _delta.getOutgoingLinkOperations(CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES);
+		List<LinkDelta> deltaLinks = _delta.getOutgoingLinkOperations(CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES);
 		for (LinkDelta linkDelta : deltaLinks) {
 			ItemDelta destination = linkDelta.getDestination();
 			if (destination.isInstanceOf(CadseGCST.LINK)) {
@@ -507,11 +493,6 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 
 	}
 
-	@Override
-	public void computegetGoodCreationPage(Map<String, IPageFactory> map, List<IPageFactory> list) {
-		// TODO Auto-generated method stub
-
-	}
 
 	@Override
 	public void removeSubItemType(ItemType itemType) {
@@ -588,7 +569,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 	@Override
 	public Link addOutgoingLinkType(LinkType ret) {
 		try {
-			return _delta.createLink(CadseGCST.ABSTRACT_ITEM_TYPE_lt_ATTRIBUTES, ret);
+			return _delta.createLink(CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES, ret);
 		} catch (CadseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -671,6 +652,24 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 	public boolean canCreateItem(NewContext newContext, LinkType lt, Item src) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public void addCreationPages(List<IPage> creationPages) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addModificationPages(List<IPage> modificationPages) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void computegetGoodCreationPage(List<IPage> list) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

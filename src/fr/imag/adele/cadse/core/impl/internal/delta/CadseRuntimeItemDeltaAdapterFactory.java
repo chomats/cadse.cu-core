@@ -9,7 +9,7 @@ public class CadseRuntimeItemDeltaAdapterFactory implements
 
 	@Override
 	public CadseRuntime getAdapter(ItemDelta itemDelta) {
-		if (itemDelta.isInstanceOf(CadseGCST.CADSE_RUNTIME))
+		if (itemDelta.isInstanceOf(CadseGCST.CADSE))
 			return new CadseRuntimeItemDeltaAdapter(itemDelta);
 		return null;
 	}

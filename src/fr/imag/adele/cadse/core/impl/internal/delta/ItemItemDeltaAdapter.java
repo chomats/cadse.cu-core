@@ -31,6 +31,7 @@ import fr.imag.adele.cadse.core.delta.ItemDelta;
 import fr.imag.adele.cadse.core.internal.IWorkingLoadingItems;
 import fr.imag.adele.cadse.core.internal.IWorkspaceNotifier;
 import fr.imag.adele.cadse.core.key.ISpaceKey;
+import fr.imag.adele.cadse.core.ui.Pages;
 import fr.imag.adele.cadse.core.util.IErrorCollector;
 import fr.imag.adele.cadse.core.util.OrderWay;
 
@@ -662,6 +663,12 @@ public class ItemItemDeltaAdapter implements Item {
 	@Override
 	public List<LinkType> getInstanceOutgoingLinkTypes() {
 		return _delta.getInstanceOutgoingLinkTypes();
+	}
+
+	@Override
+	public Pages getInstanceModificationPages(Item selectedItem) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

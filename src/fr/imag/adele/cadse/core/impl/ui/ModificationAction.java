@@ -19,10 +19,12 @@
 
 package fr.imag.adele.cadse.core.impl.ui;
 
+import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.IItemNode;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.ui.IActionPage;
+import fr.imag.adele.cadse.core.ui.IPageController;
 
 /**
  * The Class ModificationAction.
@@ -32,6 +34,7 @@ import fr.imag.adele.cadse.core.ui.IActionPage;
 public class ModificationAction extends AbstractActionPage implements IActionPage {
 
 	private ItemType	it;
+	private Item item;
 
 	/**
 	 * Instantiates a new modification action.
@@ -40,7 +43,7 @@ public class ModificationAction extends AbstractActionPage implements IActionPag
 	 *            the node
 	 */
 	public ModificationAction(Item item) {
-		super(item);
+		this.item = item;
 		this.it = item.getType();
 	}
 
@@ -71,6 +74,11 @@ public class ModificationAction extends AbstractActionPage implements IActionPag
 
 	public ItemType getItemType() {
 		return it;
+	}
+	
+	@Override
+	public void init(IPageController uiPlatform) throws CadseException {
+		uiPlatform.setVariable(getTypeId(), item);
 	}
 
 }
