@@ -23,9 +23,9 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import fr.imag.adele.cadse.core.CompactUUID;
+import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
-import fr.imag.adele.cadse.core.impl.ui.MC_AttributesItem;
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.ui.IPageController;
 import fr.imag.adele.cadse.core.ui.UIField;
@@ -39,7 +39,7 @@ public class MC_Date extends MC_AttributesItem {
 	public MC_Date() {
 	}
 
-	public MC_Date(CompactUUID id) {
+	public MC_Date(Item id) {
 		super(id);
 	}
 
@@ -48,8 +48,8 @@ public class MC_Date extends MC_AttributesItem {
 	}
 
 	@Override
-	public Object getValue(IPageController uiPlatform) {
-		Object value = super.getValue(uiPlatform);
+	public Object getValue() {
+		Object value = super.getValue();
 		if (value == null) {
 			IAttributeType<?> attDef = getUIField().getAttributeDefinition();
 			if (attDef != null) {
@@ -63,7 +63,7 @@ public class MC_Date extends MC_AttributesItem {
 	}
 
 	@Override
-	public boolean validValueChanged(IPageController uiPlatform, UIField field, Object value) {
+	public boolean validValueChanged( UIField field, Object value) {
 		if (getUIField().getAttributeDefinition().canBeUndefined() && (value == null || value.equals(""))) {
 			value = null;
 			return false;// it's ok
@@ -71,10 +71,10 @@ public class MC_Date extends MC_AttributesItem {
 		try {
 			value = getDateFormat().parse((String) value);
 		} catch (ParseException e) {
-			uiPlatform.setMessageError(field.getName() + ": invalid date," + e.getMessage() + ", " + _pattern);
+			_uiPlatform.setMessageError(field.getName() + ": invalid date," + e.getMessage() + ", " + _pattern);
 			return true;
 		}
-		return super.validValueChanged(uiPlatform, field, value);
+		return super.validValueChanged(field, value);
 	}
 
 	protected SimpleDateFormat getDateFormat() {
@@ -85,28 +85,5 @@ public class MC_Date extends MC_AttributesItem {
 		return Locale.getDefault();
 	}
 
-	@Override
-	public boolean commitSetAttribute(IAttributeType<?> type, Object value) {
-		if (type == CadseGCST.MC_DATE_at_PATTERN_) {
-			if (value == null || value.equals("")) {
-				value = DD_MM_YY;
-			}
-			_pattern = Convert.toString(value, CadseGCST.MC_DATE_at_PATTERN_, DD_MM_YY);
-		}
-		return super.commitSetAttribute(type, value);
-	}
-
-	@Override
-	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
-		if (type == CadseGCST.MC_DATE_at_PATTERN_) {
-			return (T) _pattern;
-		}
-		return super.internalGetOwnerAttribute(type);
-	}
-
-	@Override
-	public ItemType getType() {
-		return CadseGCST.MC_DATE;
-	}
 
 }

@@ -78,6 +78,7 @@ import fr.imag.adele.cadse.core.ui.IPage;
 import fr.imag.adele.cadse.core.ui.IPageFactory;
 import fr.imag.adele.cadse.core.ui.Pages;
 import fr.imag.adele.cadse.core.ui.UIField;
+import fr.imag.adele.cadse.core.ui.UIRunningValidator;
 import fr.imag.adele.cadse.core.ui.UIValidator;
 import fr.imag.adele.cadse.core.ui.view.NewContext;
 import fr.imag.adele.cadse.core.util.ArraysUtil;
@@ -1845,7 +1846,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 		context.setDefaultName(_defaultShortNameAction);
 		List<UIValidator> validators = new ArrayList<UIValidator>();
 		computeValidators(validators);
-		return new PagesImpl(false, createDefaultCreationAction(context), computeGoodFields(), getGoodCreationPage_(), validators);
+		return new PagesImpl(false, createDefaultCreationAction(context), computeGoodFields(), getGoodCreationPage_(), createRunning(validators));
 	}
 
 	/*
@@ -1878,7 +1879,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 	protected Pages createCreationPage(Item parent, ItemType type, LinkType lt) throws CadseException {
 		List<UIValidator> validators = new ArrayList<UIValidator>();
 		computeValidators(validators);
-		return new PagesImpl(false, createDefaultCreationAction(parent, type, lt), computeGoodFields(), getGoodCreationPage_(), validators);
+		return new PagesImpl(false, createDefaultCreationAction(parent, type, lt), computeGoodFields(), getGoodCreationPage_(), createRunning(validators));
 	}
 
 	/**
@@ -2033,7 +2034,15 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 	public Pages getGoodModificationPage(Item selected) {
 		List<UIValidator> validators = new ArrayList<UIValidator>();
 		computeValidators(validators);
-		return new PagesImpl(true, createDefaultModificationAction(this, selected), computeGoodFields(), getGoodModificationPage_(), validators);
+		return new PagesImpl(true, createDefaultModificationAction(this, selected), computeGoodFields(), getGoodModificationPage_(), createRunning(validators));
+	}
+
+	private List<UIRunningValidator> createRunning(List<UIValidator> validators) {
+		ArrayList<UIRunningValidator> ret = new ArrayList<UIRunningValidator>();
+		for (UIValidator v : validators) {
+			ret.add(v.create());
+		}
+		return ret;
 	}
 
 	/*
@@ -2046,7 +2055,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 	public Pages getGoodModificationPage(IItemNode node) {
 		List<UIValidator> validators = new ArrayList<UIValidator>();
 		computeValidators(validators);
-		return new PagesImpl(true, createDefaultModificationAction(this, node), computeGoodFields(), getGoodModificationPage_(), validators);
+		return new PagesImpl(true, createDefaultModificationAction(this, node), computeGoodFields(), getGoodModificationPage_(), createRunning(validators));
 	}
 
 	

@@ -27,29 +27,32 @@ import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
-import fr.imag.adele.cadse.core.ui.IModelController;
+import fr.imag.adele.cadse.core.ui.AbstractUIRunningValidator;
+import fr.imag.adele.cadse.core.ui.RunningModelController;
 import fr.imag.adele.cadse.core.ui.IPageController;
 import fr.imag.adele.cadse.core.ui.UIField;
+import fr.imag.adele.cadse.core.ui.UIValidator;
 
 /**
  * The Class AbstractModelController.
  * 
  * @author <a href="mailto:stephane.chomat@imag.fr">Stephane Chomat</a>
  */
-public abstract class AbstractModelController extends AbstractGeneratedItem implements IModelController {
+public class AbstractModelController extends AbstractUIRunningValidator implements RunningModelController {
 
+	public Item _mc;
+	public IPageController _uiPlatform;
 	
-	public AbstractModelController() {
-		// TODO Auto-generated constructor stub
+	
+	public AbstractModelController(Item desc) {
+		super(desc);
 	}
 	
 	@Override
-	public void init() throws CadseException {			
+	public void init(IPageController uiPlatform) {	
+		_uiPlatform = uiPlatform;
 	}
 	
-	public AbstractModelController(CompactUUID id) {
-		super(id);
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -57,43 +60,19 @@ public abstract class AbstractModelController extends AbstractGeneratedItem impl
 	 * @see fr.imag.adele.cadse.core.ui.IModelController#getUIField()
 	 */
 	public UIField getUIField() {
-		return (UIField) _parent;
+		if (_mc == null)
+			return null;
+		return (UIField) _mc.getPartParent();
 	}
 
-	public void setParent(Item parent, LinkType lt) {
-		_parent = (UIField) parent;
-	}
 
-	@Override
-	public String getName() {
-		return "mc";
-	}
-
-	@Override
-	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
-		if (CadseGCST.ITEM_at_DISPLAY_NAME_ == type) {
-			return (T) ("Mode controller " + (getType() == null ? "Anonymous" : getType().getDisplayName()));
-		}
-		if (CadseGCST.ITEM_at_NAME_ == type) {
-			return (T) "mc";
-		}
-		return super.internalGetOwnerAttribute(type);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IModelController#init()
-	 */
-	public void init(IPageController uiPlatform) throws CadseException {
-	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see fr.imag.adele.cadse.core.ui.IModelController#initAfterUI()
 	 */
-	public void initAfterUI(IPageController uiPlatform) {
+	public void initAfterUI() {
 	}
 
 	/*
@@ -101,7 +80,7 @@ public abstract class AbstractModelController extends AbstractGeneratedItem impl
 	 * 
 	 * @see fr.imag.adele.cadse.core.ui.IModelController#dispose()
 	 */
-	public void dispose(IPageController uiPlatform) {
+	public void dispose() {
 	}
 
 	/*
@@ -127,48 +106,8 @@ public abstract class AbstractModelController extends AbstractGeneratedItem impl
 	 * @see fr.imag.adele.cadse.core.ui.IValidateContributor#validValue(fr.imag.adele.cadse.core.ui.UIField,
 	 *      java.lang.Object)
 	 */
-	public boolean validValue(IPageController uiPlatform, UIField field, Object value) {
-		return validValueChanged(uiPlatform, field, value);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IValidateContributor#validSubValueAdded(fr.imag.adele.cadse.core.ui.UIField,
-	 *      java.lang.Object)
-	 */
-	public boolean validSubValueAdded(IPageController uiPlatform, UIField field, Object added) {
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IValidateContributor#validSubValueRemoved(fr.imag.adele.cadse.core.ui.UIField,
-	 *      java.lang.Object)
-	 */
-	public boolean validSubValueRemoved(IPageController uiPlatform, UIField field, Object removed) {
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IValidateContributor#validValueChanged(fr.imag.adele.cadse.core.ui.UIField,
-	 *      java.lang.Object)
-	 */
-	public boolean validValueChanged(IPageController uiPlatform, UIField field, Object value) {
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IValidateContributor#validValueDeleted(fr.imag.adele.cadse.core.ui.UIField,
-	 *      java.lang.Object)
-	 */
-	public boolean validValueDeleted(IPageController uiPlatform, UIField field, Object removed) {
-		return false;
+	public boolean validValue(UIField field, Object value) {
+		return validValueChanged(field, value);
 	}
 
 	/*
@@ -177,7 +116,7 @@ public abstract class AbstractModelController extends AbstractGeneratedItem impl
 	 * @see fr.imag.adele.cadse.core.ui.IEventListener#notifieSubValueAdded(fr.imag.adele.cadse.core.ui.UIField,
 	 *      java.lang.Object)
 	 */
-	public void notifieSubValueAdded(IPageController uiPlatform, UIField field, Object added) {
+	public void notifieSubValueAdded(UIField field, Object added) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -187,7 +126,7 @@ public abstract class AbstractModelController extends AbstractGeneratedItem impl
 	 * @see fr.imag.adele.cadse.core.ui.IEventListener#notifieSubValueRemoved(fr.imag.adele.cadse.core.ui.UIField,
 	 *      java.lang.Object)
 	 */
-	public void notifieSubValueRemoved(IPageController uiPlatform, UIField field, Object removed) {
+	public void notifieSubValueRemoved(UIField field, Object removed) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -197,28 +136,27 @@ public abstract class AbstractModelController extends AbstractGeneratedItem impl
 	 * @see fr.imag.adele.cadse.core.ui.IEventListener#notifieValueDeleted(fr.imag.adele.cadse.core.ui.UIField,
 	 *      java.lang.Object)
 	 */
-	public void notifieValueDeleted(IPageController uiPlatform, UIField field, Object oldvalue) {
+	public void notifieValueDeleted(UIField field, Object oldvalue) {
 		throw new UnsupportedOperationException();
 	}
 
-	/**
-	 * Gets the key.
-	 * 
-	 * @return the key
-	 */
-	public IAttributeType<?> getAttributeDefinition() {
-		return ((UIField) _parent).getAttributeDefinition();
-	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.ui.IEventListener#init(fr.imag.adele.cadse.core.ui.UIField)
-	 */
-	public void init(IPageController uiPlatform, UIField field) {
-	}
 
 	public boolean isAnonymous() {
 		return false;
 	}
-}
+
+	@Override
+	public Object getValue() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void initAfterUI(UIField field) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	}

@@ -36,13 +36,13 @@ public class MC_DestLink extends LinkModelController {
 		super(mandatory, msg);
 	}
 
-	public MC_DestLink(CompactUUID id) {
+	public MC_DestLink(Item id) {
 		super(id);
 	}
 
 	@Override
-	public Object getValue(IPageController uiPlatform) {
-		Object ret = super.getValue(uiPlatform);
+	public Object getValue() {
+		Object ret = super.getValue();
 		if (ret == null) {
 			return null;
 		}
@@ -65,13 +65,13 @@ public class MC_DestLink extends LinkModelController {
 	 *      java.lang.Object)
 	 */
 	@Override
-	public void notifieSubValueRemoved(IPageController uiPlatform, UIField field, Object removed) {
+	public void notifieSubValueRemoved(UIField field, Object removed) {
 		try {
-			Item item = uiPlatform.getItem(field);
+			Item item = _uiPlatform.getItem(field);
 			LinkType lt = (LinkType) getAttributeDefinition();
 			if (removed instanceof Object[]) {
 				Object[] arrayremoved = (Object[]) removed;
-				LogicalWorkspaceTransaction copy = getLogicalWorkspace().createTransaction();
+				LogicalWorkspaceTransaction copy = item.getLogicalWorkspace().createTransaction();
 				ItemDelta copyItem = copy.getItem(item.getId());
 				for (int i = 0; i < arrayremoved.length; i++) {
 					Item dest = (Item) arrayremoved[i];
@@ -82,7 +82,7 @@ public class MC_DestLink extends LinkModelController {
 				}
 				copy.commit();
 			} else {
-				LogicalWorkspaceTransaction copy = getLogicalWorkspace().createTransaction();
+				LogicalWorkspaceTransaction copy = item.getLogicalWorkspace().createTransaction();
 				ItemDelta copyItem = copy.getItem(item.getId());
 				Item dest = (Item) removed;
 				Link l = copyItem.getOutgoingLink(lt, dest.getId());
@@ -98,13 +98,13 @@ public class MC_DestLink extends LinkModelController {
 	}
 
 	@Override
-	public void notifieSubValueAdded(IPageController uiPlatform, UIField field, Object added) {
+	public void notifieSubValueAdded(UIField field, Object added) {
 		try {
-			Item item = uiPlatform.getItem(field);
+			Item item = _uiPlatform.getItem(field);
 			LinkType lt = (LinkType) getAttributeDefinition();
 			if (added instanceof Object[]) {
 				Object[] arrayadded = (Object[]) added;
-				LogicalWorkspaceTransaction copy = getLogicalWorkspace().createTransaction();
+				LogicalWorkspaceTransaction copy = item.getLogicalWorkspace().createTransaction();
 				ItemDelta copyItem = copy.getItem(item.getId());
 				for (int i = 0; i < arrayadded.length; i++) {
 					Item dest = (Item) arrayadded[i];
@@ -112,7 +112,7 @@ public class MC_DestLink extends LinkModelController {
 				}
 				copy.commit();
 			} else {
-				LogicalWorkspaceTransaction copy = getLogicalWorkspace().createTransaction();
+				LogicalWorkspaceTransaction copy = item.getLogicalWorkspace().createTransaction();
 				ItemDelta copyItem = copy.getItem(item.getId());
 				Item dest = (Item) added;
 				copyItem.createLink(lt, dest);

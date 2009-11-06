@@ -37,6 +37,7 @@ import fr.imag.adele.cadse.core.ui.IPageController;
 import fr.imag.adele.cadse.core.ui.IPageObject;
 import fr.imag.adele.cadse.core.ui.Pages;
 import fr.imag.adele.cadse.core.ui.UIField;
+import fr.imag.adele.cadse.core.ui.UIRunningValidator;
 import fr.imag.adele.cadse.core.ui.UIValidator;
 import fr.imag.adele.cadse.core.ui.view.FilterContext;
 import fr.imag.adele.cadse.core.util.ObjectMap;
@@ -60,7 +61,7 @@ public final class PagesImpl implements Pages {
 
 	private Map<IAttributeType<?>, UIField> _fields;
 
-	private List<UIValidator> _validators;
+	private List<UIRunningValidator> _validators;
 
 	/**
 	 * Instantiates a new pages.
@@ -73,7 +74,7 @@ public final class PagesImpl implements Pages {
 	 *            the pages
 	 * @param validators 
 	 */
-	public PagesImpl(boolean ismodificationpage, IActionPage action, Map<IAttributeType<?>, UIField> fiedls, IPage[] pages, List<UIValidator> validators) {
+	public PagesImpl(boolean ismodificationpage, IActionPage action, Map<IAttributeType<?>, UIField> fiedls, IPage[] pages, List<UIRunningValidator> validators) {
 		this._pages = pages;
 		this.action = action;
 		this._ismodificationpage = ismodificationpage;
@@ -163,7 +164,7 @@ public final class PagesImpl implements Pages {
 	}
 
 	@Override
-	public List<UIValidator> getUIValidators() {
+	public List<UIRunningValidator> getUIValidators() {
 		return _validators;
 	}
 
