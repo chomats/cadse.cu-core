@@ -26,7 +26,7 @@ import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.attribute.CheckStatus;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.delta.ItemDelta;
-import fr.imag.adele.cadse.core.ui.IPageController;
+import fr.imag.adele.cadse.core.ui.UIPlatform;
 import fr.imag.adele.cadse.core.util.Convert;
 
 /**
@@ -160,7 +160,7 @@ public class DoubleAttributeType extends AttributeType implements
 		}
 
 		if (!getFlag(CAN_BE_UNDEFINED) && value == null) {
-			return new CheckStatus(IPageController.ERROR, Messages.cannot_be_undefined);
+			return new CheckStatus(UIPlatform.ERROR, Messages.cannot_be_undefined);
 		}
 		if (value == null) {
 			return null;
@@ -169,21 +169,21 @@ public class DoubleAttributeType extends AttributeType implements
 			try {
 				value = Double.parseDouble((String) value);
 			} catch (NumberFormatException e) {
-				return new CheckStatus(IPageController.ERROR, e.getMessage());
+				return new CheckStatus(UIPlatform.ERROR, e.getMessage());
 			}
 		}
 		if (!(value instanceof Double)) {
-			return new CheckStatus(IPageController.ERROR, Messages.must_be_a_double);
+			return new CheckStatus(UIPlatform.ERROR, Messages.must_be_a_double);
 		}
 		double v = ((Double) value).doubleValue();
 		if (minValue != null) {
 			if (v < minValue.doubleValue()) {
-				return new CheckStatus(IPageController.ERROR, Messages.value_must_be_upper , minValue);
+				return new CheckStatus(UIPlatform.ERROR, Messages.value_must_be_upper , minValue);
 			}
 		}
 		if (maxValue != null) {
 			if (v > maxValue.doubleValue()) {
-				return new CheckStatus(IPageController.ERROR, Messages.value_must_be_lower , maxValue);
+				return new CheckStatus(UIPlatform.ERROR, Messages.value_must_be_lower , maxValue);
 			}
 		}
 

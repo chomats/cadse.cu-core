@@ -34,7 +34,7 @@ import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.delta.ItemDelta;
 import fr.imag.adele.cadse.core.impl.CollectedReflectLink;
 import fr.imag.adele.cadse.core.impl.ReflectLink;
-import fr.imag.adele.cadse.core.ui.IPageController;
+import fr.imag.adele.cadse.core.ui.UIPlatform;
 
 /**
  * The Class ListAttributeType.
@@ -174,7 +174,7 @@ public class ListAttributeType<X> extends AttributeType implements
 			}
 			return null; // no error
 		}
-		return new CheckStatus(IPageController.ERROR, "Must be a list of {0}", subtype.getClass().getSimpleName());
+		return new CheckStatus(UIPlatform.ERROR, "Must be a list of {0}", subtype.getClass().getSimpleName());
 	}
 
 	public ItemType getType() {

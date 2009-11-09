@@ -31,7 +31,7 @@ import fr.imag.adele.cadse.core.delta.ItemDelta;
 import fr.imag.adele.cadse.core.impl.ui.UIFieldImpl;
 import fr.imag.adele.cadse.core.impl.ui.mc.MC_StringToBoolean;
 import fr.imag.adele.cadse.core.ui.EPosLabel;
-import fr.imag.adele.cadse.core.ui.IPageController;
+import fr.imag.adele.cadse.core.ui.UIPlatform;
 import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.util.Convert;
 
@@ -138,7 +138,7 @@ public class BooleanAttributeType extends AttributeType implements
 			value = Boolean.parseBoolean((String) value);
 		}
 		if (!(value instanceof Boolean)) {
-			return new CheckStatus(IPageController.ERROR, Messages.must_be_a_boolean);
+			return new CheckStatus(UIPlatform.ERROR, Messages.must_be_a_boolean);
 		}
 		return null;
 	}

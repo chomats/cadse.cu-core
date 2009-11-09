@@ -26,7 +26,7 @@ import fr.imag.adele.cadse.core.attribute.CheckStatus;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.delta.ItemDelta;
 import fr.imag.adele.cadse.core.CadseGCST;
-import fr.imag.adele.cadse.core.ui.IPageController;
+import fr.imag.adele.cadse.core.ui.UIPlatform;
 import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.util.Convert;
 
@@ -140,16 +140,16 @@ public class StringAttributeType extends AttributeType implements fr.imag.adele.
 	@Override
 	public CheckStatus check(Item item, Object value) {
 		if (!getFlag(CAN_BE_UNDEFINED) && value == null) {
-			return new CheckStatus(IPageController.ERROR, Messages.cannot_be_undefined);
+			return new CheckStatus(UIPlatform.ERROR, Messages.cannot_be_undefined);
 		}
 		if (value == null) {
 			return null;
 		}
 		if (!(value instanceof String)) {
-			return new CheckStatus(IPageController.ERROR, Messages.must_be_a_string);
+			return new CheckStatus(UIPlatform.ERROR, Messages.must_be_a_string);
 		}
 		if (getFlag(NOT_EMPTY) && value.toString().length() == 0) {
-			return new CheckStatus(IPageController.ERROR, Messages.cannot_be_empty);
+			return new CheckStatus(UIPlatform.ERROR, Messages.cannot_be_empty);
 		}
 		return null;
 	}

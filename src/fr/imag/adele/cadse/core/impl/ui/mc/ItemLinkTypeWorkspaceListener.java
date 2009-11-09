@@ -9,16 +9,16 @@ import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.WorkspaceListener;
 import fr.imag.adele.cadse.core.delta.ImmutableItemDelta;
 import fr.imag.adele.cadse.core.delta.ImmutableWorkspaceDelta;
-import fr.imag.adele.cadse.core.ui.IPageController;
+import fr.imag.adele.cadse.core.ui.UIPlatform;
 import fr.imag.adele.cadse.core.ui.UIField;
 
 public class ItemLinkTypeWorkspaceListener extends WorkspaceListener {
 	Item		item;
 	UIField		uifield;
 	LinkType	lt;
-	IPageController uiPlatform;
+	UIPlatform uiPlatform;
 	
-	public ItemLinkTypeWorkspaceListener(IPageController uiPlatform, Item item, UIField uifield, LinkType lt) {
+	public ItemLinkTypeWorkspaceListener(UIPlatform uiPlatform, Item item, UIField uifield, LinkType lt) {
 		super();
 		this.item = item;
 		this.uifield = uifield;

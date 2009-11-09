@@ -31,7 +31,7 @@ import fr.imag.adele.cadse.core.attribute.CheckStatus;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.delta.ItemDelta;
 import fr.imag.adele.cadse.core.CadseGCST;
-import fr.imag.adele.cadse.core.ui.IPageController;
+import fr.imag.adele.cadse.core.ui.UIPlatform;
 
 public class DateAttributeType extends AttributeType implements fr.imag.adele.cadse.core.attribute.DateAttributeType {
 
@@ -148,10 +148,10 @@ public class DateAttributeType extends AttributeType implements fr.imag.adele.ca
 				getFormat().parse((String) value);
 				return null;
 			} catch (ParseException e) {
-				new CheckStatus(IPageController.ERROR, "Date attribute ''{0}'' : {1}" , getName(), e.getMessage());
+				new CheckStatus(UIPlatform.ERROR, "Date attribute ''{0}'' : {1}" , getName(), e.getMessage());
 			}
 		}
-		return new CheckStatus(IPageController.ERROR, "Date attribute ''{0}'' : invalid value ''{1}''" , getName(), value);
+		return new CheckStatus(UIPlatform.ERROR, "Date attribute ''{0}'' : invalid value ''{1}''" , getName(), value);
 
 	}
 
