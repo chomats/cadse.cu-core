@@ -39,7 +39,7 @@ import fr.imag.adele.cadse.core.impl.ui.mc.MC_AttributesItem;
 import fr.imag.adele.cadse.core.impl.ui.mc.MC_Descriptor;
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.ui.EPosLabel;
-import fr.imag.adele.cadse.core.ui.IPageController;
+import fr.imag.adele.cadse.core.ui.UIPlatform;
 import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.util.Convert;
 import fr.imag.adele.cadse.core.util.NLS;
@@ -209,7 +209,7 @@ public class EnumAttributeType<X extends Enum<X>> extends AttributeType implemen
 	@Override
 	public CheckStatus check(Item item, Object value) {
 		if (!getFlag(CAN_BE_UNDEFINED) && value == null) {
-			return new CheckStatus(IPageController.ERROR, Messages.cannot_be_undefined);
+			return new CheckStatus(UIPlatform.ERROR, Messages.cannot_be_undefined);
 		}
 		if (value == null) {
 			return null;
@@ -218,11 +218,11 @@ public class EnumAttributeType<X extends Enum<X>> extends AttributeType implemen
 		if (value instanceof String) {
 			value = find(clazz.getEnumConstants(), (String) value);
 			if (value == null) {
-				return new CheckStatus(IPageController.ERROR, Messages.unkown_value, value);
+				return new CheckStatus(UIPlatform.ERROR, Messages.unkown_value, value);
 			}
 		}
 		if (!clazz.isInstance(value)) {
-			return new CheckStatus(IPageController.ERROR, Messages.bad_type, value.getClass());
+			return new CheckStatus(UIPlatform.ERROR, Messages.bad_type, value.getClass());
 		}
 
 		return null;

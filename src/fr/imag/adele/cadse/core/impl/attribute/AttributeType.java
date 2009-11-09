@@ -31,7 +31,7 @@ import fr.imag.adele.cadse.core.enumdef.TWEvol;
 import fr.imag.adele.cadse.core.enumdef.TWUpdateKind;
 import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
 import fr.imag.adele.cadse.core.internal.attribute.IInternalTWAttribute;
-import fr.imag.adele.cadse.core.ui.IPageController;
+import fr.imag.adele.cadse.core.ui.UIPlatform;
 import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.util.Convert;
 
@@ -255,7 +255,7 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 
 	public CheckStatus check(Item item, Object value) {
 		if (!getFlag(CAN_BE_UNDEFINED) && value == null) {
-			return new CheckStatus(IPageController.ERROR, Messages.cannot_be_undefined);
+			return new CheckStatus(UIPlatform.ERROR, Messages.cannot_be_undefined);
 		}
 
 		return null;

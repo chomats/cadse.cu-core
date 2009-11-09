@@ -29,7 +29,7 @@ import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.impl.CadseCore;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
 import fr.imag.adele.cadse.core.ui.IActionPage;
-import fr.imag.adele.cadse.core.ui.IPageController;
+import fr.imag.adele.cadse.core.ui.UIPlatform;
 import fr.imag.adele.cadse.core.ui.IPageObject;
 import fr.imag.adele.cadse.core.ui.view.NewContext;
 
@@ -118,7 +118,7 @@ public class CreationAction extends AbstractActionPage implements IActionPage {
 	 * @see fr.imag.adele.cadse.core.impl.ui.AbstractActionPage#doCancel(java.lang.Object)
 	 */
 	@Override
-	public void doCancel(IPageController uiPlatform, Object monitor) {
+	public void doCancel(UIPlatform uiPlatform, Object monitor) {
 		Item item = uiPlatform.getItem(null);
 		
 		if (item.getState() == ItemState.NOT_IN_WORKSPACE) {
@@ -162,7 +162,7 @@ public class CreationAction extends AbstractActionPage implements IActionPage {
 	 * @see fr.imag.adele.cadse.core.impl.ui.AbstractActionPage#doFinish(java.lang.Object)
 	 */
 	@Override
-	public void doFinish(IPageController uiPlatform, Object monitor) throws Exception {
+	public void doFinish(UIPlatform uiPlatform, Object monitor) throws Exception {
 		String shortname = getFinishAutomaticShortName();
 		if (shortname != null) {
 			CadseCore.setName(uiPlatform.getItem(null), shortname);
@@ -175,7 +175,7 @@ public class CreationAction extends AbstractActionPage implements IActionPage {
 	 * @see fr.imag.adele.cadse.core.impl.ui.AbstractActionPage#init(fr.imag.adele.cadse.core.ui.IPageObject)
 	 */
 	@Override
-	public void init(IPageController uiPlatform) throws CadseException {
+	public void init(UIPlatform uiPlatform) throws CadseException {
 		parentItem = getParentItem();
 
 		if (type.isPartType()) {
@@ -242,7 +242,7 @@ public class CreationAction extends AbstractActionPage implements IActionPage {
 	 * @throws CadseException
 	 *             the melusine exception
 	 */
-	protected Item createItem(IPageController uiPlatform) throws CadseException {
+	protected Item createItem(UIPlatform uiPlatform) throws CadseException {
 		if (this._context != null)
 			return uiPlatform.getCopy().createItem(_context);
 		return uiPlatform.getCopy().createItem(type, parentItem, parentLT);

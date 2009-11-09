@@ -24,7 +24,7 @@ import java.util.List;
 import fr.imag.adele.cadse.core.attribute.CheckStatus;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.attribute.ListAttributeType;
-import fr.imag.adele.cadse.core.ui.IPageController;
+import fr.imag.adele.cadse.core.ui.UIPlatform;
 import fr.imag.adele.cadse.core.ui.UIField;
 
 public class MC_DefaultForList extends MC_AttributesItem {
@@ -86,7 +86,7 @@ public class MC_DefaultForList extends MC_AttributesItem {
 			for (Object o : l) {
 				CheckStatus error = subatt.check(_uiPlatform.getItem(getUIField()), o);
 				if (error != null) {
-					if (error.getType() == IPageController.ERROR) {
+					if (error.getType() == UIPlatform.ERROR) {
 						_uiPlatform.setMessageError(error.getFormatedMessage());
 						return true;
 					}

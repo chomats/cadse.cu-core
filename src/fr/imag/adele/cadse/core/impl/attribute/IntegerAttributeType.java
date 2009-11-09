@@ -31,7 +31,7 @@ import fr.imag.adele.cadse.core.impl.ui.UIFieldImpl;
 import fr.imag.adele.cadse.core.impl.ui.mc.MC_Descriptor;
 import fr.imag.adele.cadse.core.impl.ui.mc.MC_Integer;
 import fr.imag.adele.cadse.core.ui.EPosLabel;
-import fr.imag.adele.cadse.core.ui.IPageController;
+import fr.imag.adele.cadse.core.ui.UIPlatform;
 import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.util.Convert;
 import fr.imag.adele.cadse.core.util.NLS;
@@ -166,7 +166,7 @@ public class IntegerAttributeType extends AttributeType implements
 	@Override
 	public CheckStatus check(Item item, Object value) {
 		if (!getFlag(CAN_BE_UNDEFINED) && (value == null || value.toString().length() == 0 || value.equals("null"))) { //$NON-NLS-1$
-			return new CheckStatus(IPageController.ERROR, Messages.cannot_be_undefined);
+			return new CheckStatus(UIPlatform.ERROR, Messages.cannot_be_undefined);
 		}
 		if (value == null) {
 			return null;
@@ -179,21 +179,21 @@ public class IntegerAttributeType extends AttributeType implements
 			try {
 				value = Integer.parseInt((String) value);
 			} catch (NumberFormatException e) {
-				return new CheckStatus(IPageController.ERROR, e.getMessage());
+				return new CheckStatus(UIPlatform.ERROR, e.getMessage());
 			}
 		}
 		if (!(value instanceof Integer)) {
-			return new CheckStatus(IPageController.ERROR, Messages.must_be_an_integer);
+			return new CheckStatus(UIPlatform.ERROR, Messages.must_be_an_integer);
 		}
 		int v = ((Integer) value).intValue();
 		if (minValue != null) {
 			if (v < minValue.intValue()) {
-				return new CheckStatus(IPageController.ERROR, Messages.value_must_be_upper , minValue.intValue());
+				return new CheckStatus(UIPlatform.ERROR, Messages.value_must_be_upper , minValue.intValue());
 			}
 		}
 		if (maxValue != null) {
 			if (v > maxValue.intValue()) {
-				return new CheckStatus(IPageController.ERROR, Messages.value_must_be_lower , maxValue.intValue());
+				return new CheckStatus(UIPlatform.ERROR, Messages.value_must_be_lower , maxValue.intValue());
 			}
 		}
 

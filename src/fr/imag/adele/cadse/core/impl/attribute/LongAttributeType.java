@@ -25,7 +25,7 @@ import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.attribute.CheckStatus;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.delta.ItemDelta;
-import fr.imag.adele.cadse.core.ui.IPageController;
+import fr.imag.adele.cadse.core.ui.UIPlatform;
 import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.util.Convert;
 import fr.imag.adele.cadse.core.util.NLS;
@@ -82,7 +82,7 @@ public class LongAttributeType extends AttributeType implements fr.imag.adele.ca
 	@Override
 	public CheckStatus check(Item item, Object value) {
 		if (!getFlag(CAN_BE_UNDEFINED) && (value == null || value.toString().length() == 0 || value.equals("null"))) { //$NON-NLS-1$
-			return new CheckStatus(IPageController.ERROR, Messages.cannot_be_undefined);
+			return new CheckStatus(UIPlatform.ERROR, Messages.cannot_be_undefined);
 		}
 		if (value == null) {
 			return null;
@@ -95,21 +95,21 @@ public class LongAttributeType extends AttributeType implements fr.imag.adele.ca
 			try {
 				value = Long.parseLong((String) value);
 			} catch (NumberFormatException e) {
-				return new CheckStatus(IPageController.ERROR, e.getMessage());
+				return new CheckStatus(UIPlatform.ERROR, e.getMessage());
 			}
 		}
 		if (!(value instanceof Long)) {
-			return new CheckStatus(IPageController.ERROR, Messages.must_be_a_long);
+			return new CheckStatus(UIPlatform.ERROR, Messages.must_be_a_long);
 		}
 		long v = ((Long) value).longValue();
 		if (minValue != null) {
 			if (v < minValue.longValue()) {
-				return new CheckStatus(IPageController.ERROR, Messages.value_must_be_upper , minValue.intValue());
+				return new CheckStatus(UIPlatform.ERROR, Messages.value_must_be_upper , minValue.intValue());
 			}
 		}
 		if (maxValue != null) {
 			if (v > maxValue.longValue()) {
-				return new CheckStatus(IPageController.ERROR, Messages.value_must_be_lower, maxValue.intValue());
+				return new CheckStatus(UIPlatform.ERROR, Messages.value_must_be_lower, maxValue.intValue());
 			}
 		}
 

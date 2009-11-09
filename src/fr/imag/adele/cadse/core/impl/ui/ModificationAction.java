@@ -24,7 +24,7 @@ import fr.imag.adele.cadse.core.IItemNode;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.ui.IActionPage;
-import fr.imag.adele.cadse.core.ui.IPageController;
+import fr.imag.adele.cadse.core.ui.UIPlatform;
 
 /**
  * The Class ModificationAction.
@@ -77,7 +77,7 @@ public class ModificationAction extends AbstractActionPage implements IActionPag
 	}
 	
 	@Override
-	public void init(IPageController uiPlatform) throws CadseException {
+	public void init(UIPlatform uiPlatform) throws CadseException {
 		uiPlatform.setVariable(getTypeId(), item);
 	}
 

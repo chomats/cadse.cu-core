@@ -39,7 +39,7 @@ import fr.imag.adele.cadse.core.impl.ui.AbstractModelController;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransactionListener;
 import fr.imag.adele.cadse.core.ui.RunningModelController;
-import fr.imag.adele.cadse.core.ui.IPageController;
+import fr.imag.adele.cadse.core.ui.UIPlatform;
 import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.ui.UIValidator;
 
@@ -104,7 +104,7 @@ public class MC_AttributesItem extends AbstractModelController implements Runnin
 	}
 
 	@Override
-	public void init(IPageController uiPlatform) {
+	public void init(UIPlatform uiPlatform) {
 		super.init(uiPlatform);
 		_uiPlatform.addLogicalWorkspaceTransactionListener(new MYWCWL(_uiPlatform));
 	}
@@ -142,8 +142,8 @@ public class MC_AttributesItem extends AbstractModelController implements Runnin
 			Object value = convertToModelValue(visualValue);
 			CheckStatus status = attRef.check(_uiPlatform.getItem(getUIField()), value);
 			if (status != null) {
-				if (status.getType() == IPageController.ERROR) {
-					_uiPlatform.setMessage(attRef.getName() + ": " + status.getFormatedMessage(), IPageController.ERROR);
+				if (status.getType() == UIPlatform.ERROR) {
+					_uiPlatform.setMessage(attRef.getName() + ": " + status.getFormatedMessage(), UIPlatform.ERROR);
 					return true;
 				} else {
 					_uiPlatform.setMessage(attRef.getName() + ": " + status.getFormatedMessage(),
@@ -165,8 +165,8 @@ public class MC_AttributesItem extends AbstractModelController implements Runnin
 		return _anonymous;
 	}
 	class MYWCWL implements LogicalWorkspaceTransactionListener {
-		IPageController _uiPlatform;
-	public MYWCWL(IPageController uiPlatformParam) {
+		UIPlatform _uiPlatform;
+	public MYWCWL(UIPlatform uiPlatformParam) {
 		_uiPlatform = uiPlatformParam;
 		}
 

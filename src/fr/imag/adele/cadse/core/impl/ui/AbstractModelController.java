@@ -29,7 +29,7 @@ import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
 import fr.imag.adele.cadse.core.ui.AbstractUIRunningValidator;
 import fr.imag.adele.cadse.core.ui.RunningModelController;
-import fr.imag.adele.cadse.core.ui.IPageController;
+import fr.imag.adele.cadse.core.ui.UIPlatform;
 import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.ui.UIValidator;
 
@@ -41,7 +41,7 @@ import fr.imag.adele.cadse.core.ui.UIValidator;
 public class AbstractModelController extends AbstractUIRunningValidator implements RunningModelController {
 
 	public Item _mc;
-	public IPageController _uiPlatform;
+	public UIPlatform _uiPlatform;
 	
 	
 	public AbstractModelController(Item desc) {
@@ -53,7 +53,7 @@ public class AbstractModelController extends AbstractUIRunningValidator implemen
 	}
 	
 	@Override
-	public void init(IPageController uiPlatform) {	
+	public void init(UIPlatform uiPlatform) {	
 		_uiPlatform = uiPlatform;
 	}
 	

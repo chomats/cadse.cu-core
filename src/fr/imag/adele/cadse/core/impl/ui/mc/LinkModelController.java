@@ -35,7 +35,7 @@ import fr.imag.adele.cadse.core.impl.CadseIllegalArgumentException;
 import fr.imag.adele.cadse.core.impl.ui.AbstractModelController;
 import fr.imag.adele.cadse.core.oper.WSODeleteLink;
 import fr.imag.adele.cadse.core.ui.RunningModelController;
-import fr.imag.adele.cadse.core.ui.IPageController;
+import fr.imag.adele.cadse.core.ui.UIPlatform;
 import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.ui.UIValidator;
 import fr.imag.adele.cadse.core.util.Convert;
@@ -58,7 +58,7 @@ public class LinkModelController extends MC_AttributesItem implements RunningMod
 		init = true;
 	}
 	@Override
-	public void init(IPageController uiPlatform) {
+	public void init(UIPlatform uiPlatform) {
 		super.init(uiPlatform);
 		Item item = _uiPlatform.getItem(getUIField());
 		if (item == null) {
