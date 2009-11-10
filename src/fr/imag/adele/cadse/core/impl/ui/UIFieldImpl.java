@@ -69,9 +69,11 @@ public class UIFieldImpl extends AbstractGeneratedItem implements
 	/** The _pos label. */
 	protected EPosLabel _posLabel;
 
-	IAttributeType<?> _attributeRef;
+	public IAttributeType<?> _attributeRef;
 	
 	ItemType _it;
+	
+	public UIField[] _children = null;
 
 	/**
 	 * Instantiates a new uI field.
@@ -90,7 +92,7 @@ public class UIFieldImpl extends AbstractGeneratedItem implements
 	public UIFieldImpl(ItemType it, CompactUUID uuid, IAttributeType<?> attr, String label,
 			EPosLabel poslabel, Item mc, Item ic) {
 		super(uuid);
-		assert mc != null;
+		//assert mc != null;
 		this._ic = ic;
 		this._mc = mc;
 		this._label = label;
@@ -368,7 +370,7 @@ public class UIFieldImpl extends AbstractGeneratedItem implements
 	 */
 
 	public UIField[] getChildren() {
-		return null;
+		return _children;
 	}
 
 	@Override
