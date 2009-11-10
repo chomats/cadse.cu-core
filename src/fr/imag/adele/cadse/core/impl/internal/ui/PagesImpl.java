@@ -19,6 +19,7 @@
 
 package fr.imag.adele.cadse.core.impl.internal.ui;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,7 @@ import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.ui.UIRunningValidator;
 import fr.imag.adele.cadse.core.ui.UIValidator;
 import fr.imag.adele.cadse.core.ui.view.FilterContext;
+import fr.imag.adele.cadse.core.util.ArraysUtil;
 import fr.imag.adele.cadse.core.util.ObjectMap;
 
 /**
@@ -53,7 +55,7 @@ public final class PagesImpl implements Pages {
 	IPage[]								_pages;
 
 	/** The action. */
-	IActionPage							action;
+	IActionPage							_action;
 
 	private FilterContext				_filterContext;
 	
@@ -76,12 +78,15 @@ public final class PagesImpl implements Pages {
 	 */
 	public PagesImpl(boolean ismodificationpage, IActionPage action, Map<IAttributeType<?>, UIField> fiedls, IPage[] pages, List<UIRunningValidator> validators) {
 		this._pages = pages;
-		this.action = action;
+		this._action = action;
 		this._ismodificationpage = ismodificationpage;
 		this._fields = fiedls;
 		if (this._fields == null)
 			this._fields = new HashMap<IAttributeType<?>, UIField>();
 		this._validators = validators;
+	}
+
+	public PagesImpl() {
 	}
 
 	/*
@@ -170,6 +175,23 @@ public final class PagesImpl implements Pages {
 
 	@Override
 	public IActionPage getAction() {
-		return this.action;
+		return this._action;
+	}
+
+	@Override
+	public void addPage(IPage page) {
+		_pages = ArraysUtil.add(IPage.class, _pages, page);
+	}
+
+	@Override
+	public void setAction(IActionPage newAction) {
+		this._action = newAction;
+	}
+
+	@Override
+	public void addUIValidator(UIRunningValidator v) {
+		if (_validators == null)
+			_validators = new ArrayList<UIRunningValidator>();
+		_validators.add(v);
 	}
 }

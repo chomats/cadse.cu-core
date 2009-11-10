@@ -29,6 +29,8 @@ import fr.imag.adele.cadse.core.attribute.CheckStatus;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.delta.ItemDelta;
 import fr.imag.adele.cadse.core.impl.ui.UIFieldImpl;
+import fr.imag.adele.cadse.core.impl.ui.mc.MC_AttributesItem;
+import fr.imag.adele.cadse.core.impl.ui.mc.MC_Descriptor;
 import fr.imag.adele.cadse.core.impl.ui.mc.MC_StringToBoolean;
 import fr.imag.adele.cadse.core.ui.EPosLabel;
 import fr.imag.adele.cadse.core.ui.UIPlatform;
@@ -145,6 +147,6 @@ public class BooleanAttributeType extends AttributeType implements
 
 	@Override
 	public UIField generateDefaultField() {
-		return new UIFieldImpl(CadseGCST.DCHECK_BOX, CompactUUID.randomUUID(), this, getDisplayName(), EPosLabel.none, null, null);
+		return new UIFieldImpl(CadseGCST.DCHECK_BOX, CompactUUID.randomUUID(), this, getDisplayName(), EPosLabel.none, new MC_Descriptor(CadseGCST.STRING_TO_BOOLEAN_MODEL_CONTROLLER), null);
 	}
 }
