@@ -62,7 +62,7 @@ public class AbstractActionPage implements IActionPage {
 	}
 
 	@Override
-	public void init(UIPlatform uiPlatform) throws CadseException {
+	public void init(UIPlatform uiPlatform) throws CadseException  {
 		_uiPlatform = uiPlatform;
 	}
 
