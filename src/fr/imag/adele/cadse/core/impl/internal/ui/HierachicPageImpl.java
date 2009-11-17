@@ -2,20 +2,25 @@ package fr.imag.adele.cadse.core.impl.internal.ui;
 
 import java.util.List;
 
+import fr.imag.adele.cadse.core.CadseGCST;
+import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
 import fr.imag.adele.cadse.core.impl.ui.PageImpl;
+import fr.imag.adele.cadse.core.impl.ui.UIFieldImpl;
+import fr.imag.adele.cadse.core.ui.HierarchicPage;
 import fr.imag.adele.cadse.core.ui.IActionPage;
 import fr.imag.adele.cadse.core.ui.IPage;
+import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.util.ArraysUtil;
 
-public class HierachicPage extends AbstractGeneratedItem implements IPage {
+public class HierachicPageImpl extends AbstractGeneratedItem implements IPage, HierarchicPage {
 	protected IPage[] _bloc = null;
 	private ItemType _it;
 	boolean _modificationPage;
 	
-	public HierachicPage(ItemType it, boolean modificationPage) {
+	public HierachicPageImpl(ItemType it, boolean modificationPage) {
 		_it = it;
 	}
 	
@@ -120,14 +125,17 @@ public class HierachicPage extends AbstractGeneratedItem implements IPage {
 	}
 
 
-	public IPage[] getBlocs() {
-		return _bloc;
-	}
-
-
 	@Override
 	public boolean isLast(IAttributeType<?> attributeDefinition) {
 		return false;
 	}
+
+
+	@Override
+	public IPage[] getBlocks() {
+		return _bloc;
+	}
+	
+	
 	
 }

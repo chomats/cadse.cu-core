@@ -31,6 +31,7 @@ import fr.imag.adele.cadse.core.ui.AbstractUIRunningValidator;
 import fr.imag.adele.cadse.core.ui.RunningModelController;
 import fr.imag.adele.cadse.core.ui.UIPlatform;
 import fr.imag.adele.cadse.core.ui.UIField;
+import fr.imag.adele.cadse.core.ui.UIRunningValidator;
 import fr.imag.adele.cadse.core.ui.UIValidator;
 
 /**
@@ -40,7 +41,7 @@ import fr.imag.adele.cadse.core.ui.UIValidator;
  */
 public class AbstractModelController extends AbstractUIRunningValidator implements RunningModelController {
 
-	public Item _mc;
+	public UIField _uiField;
 	public UIPlatform _uiPlatform;
 	
 	
@@ -67,9 +68,11 @@ public class AbstractModelController extends AbstractUIRunningValidator implemen
 	 * @see fr.imag.adele.cadse.core.ui.IModelController#getUIField()
 	 */
 	public UIField getUIField() {
-		if (_mc == null)
+		if (_uiField != null)
+			return _uiField;
+		if (_desc == null)
 			return null;
-		return (UIField) _mc.getPartParent();
+		return (UIField) _desc.getPartParent();
 	}
 
 

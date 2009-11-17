@@ -20,7 +20,7 @@ import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.delta.ItemDelta;
 import fr.imag.adele.cadse.core.impl.ReflectLink;
-import fr.imag.adele.cadse.core.impl.internal.ui.HierachicPage;
+import fr.imag.adele.cadse.core.impl.internal.ui.HierachicPageImpl;
 import fr.imag.adele.cadse.core.ui.IPage;
 import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.ui.UIValidator;
@@ -203,7 +203,7 @@ public class TypeDefinitionImpl extends ItemImpl {
 		
 	}
 	
-	public void computegetGoodCreationPage(List<IPage> list) {
+	public void recurcifComputeGoodCreationPage(List<IPage> list) {
 		if (_creationPages != null) {
 			for (IPage f : _creationPages) {
 				IPage[] owPages = f.getOverwritePage();
@@ -286,7 +286,7 @@ public class TypeDefinitionImpl extends ItemImpl {
 		}
 	}
 	
-	protected void computeGenericPage(HierachicPage genericPage,
+	protected void computeGenericPage(HierachicPageImpl genericPage,
 			HashSet<IAttributeType<?>> inSpecificPages) {
 		if (_attributesDefinitions != null) {
 			ArrayList<IAttributeType> notPutAttr = new ArrayList<IAttributeType>();
@@ -312,7 +312,7 @@ public class TypeDefinitionImpl extends ItemImpl {
 		return null;
 	}
 
-	protected boolean canBeAddedInGenericPage(HierachicPage genericPage,
+	protected boolean canBeAddedInGenericPage(HierachicPageImpl genericPage,
 			IAttributeType<?> attr) {
 		return true;
 	}
