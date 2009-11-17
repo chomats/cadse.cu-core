@@ -64,7 +64,7 @@ import fr.imag.adele.cadse.core.impl.CadseIllegalArgumentException;
 import fr.imag.adele.cadse.core.impl.CollectedReflectLink;
 import fr.imag.adele.cadse.core.impl.ItemFactory;
 import fr.imag.adele.cadse.core.impl.ReflectLink;
-import fr.imag.adele.cadse.core.impl.internal.ui.HierachicPage;
+import fr.imag.adele.cadse.core.impl.internal.ui.HierachicPageImpl;
 import fr.imag.adele.cadse.core.impl.internal.ui.PagesImpl;
 import fr.imag.adele.cadse.core.impl.ui.CreationAction;
 import fr.imag.adele.cadse.core.impl.ui.ModificationAction;
@@ -1708,7 +1708,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 		if (__creationPages == null) {
 			
 			List<IPage> list = new ArrayList<IPage>();
-			computegetGoodCreationPage(list);
+			computeGoodCreationPage(list);
 			int count = list.size();
 			for (IPage factory : list) {
 				if (factory.isEmptyPage()) {
@@ -1740,17 +1740,30 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 	 * @param list
 	 *            the list
 	 */
-	public void computegetGoodCreationPage(List<IPage> list) {
+	public void recurcifComputeGoodCreationPage(List<IPage> list) {
 		if (_superType != null) {
-			_superType.computegetGoodCreationPage(list);
+			_superType.recurcifComputeGoodCreationPage(list);
 		}
-		super.computegetGoodCreationPage(list);
+		super.recurcifComputeGoodCreationPage(list);
 		if (_extendedBy != null) {
 			for (TypeDefinitionImpl ext : _extendedBy) {
-				ext.computegetGoodCreationPage(list);
+				ext.recurcifComputeGoodCreationPage(list);
 			}
 		}
 	}
+	
+	protected void computeGoodCreationPage(List<IPage> list) {
+		recurcifComputeGoodCreationPage(list);
+		HashSet<IAttributeType<?>> inSpecificPages = new HashSet<IAttributeType<?>>();
+		for (IPage iPage : list) {
+			inSpecificPages.addAll(Arrays.asList(iPage.getAttributes()));
+		}
+		
+		HierachicPageImpl genericPage = new HierachicPageImpl(this, true);
+		computeGenericPage(genericPage, inSpecificPages);
+		list.add(0, genericPage);
+	}
+
 
 	/**
 	 * Compute good modification page.
@@ -1833,11 +1846,13 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 			inSpecificPages.addAll(Arrays.asList(iPage.getAttributes()));
 		}
 		
-		HierachicPage genericPage = new HierachicPage(this, true);
+		HierachicPageImpl genericPage = new HierachicPageImpl(this, true);
 		computeGenericPage(genericPage, inSpecificPages);
 		list.add(0, genericPage);
 	}
-
+	
+	
+	
 	
 	
 
@@ -2090,7 +2105,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 	}
 
 	@Override
-	protected void computeGenericPage(HierachicPage genericPage,
+	protected void computeGenericPage(HierachicPageImpl genericPage,
 			HashSet<IAttributeType<?>> inSpecificPages) {
 		super.computeGenericPage(genericPage, inSpecificPages);
 		if (_extendedBy != null) {

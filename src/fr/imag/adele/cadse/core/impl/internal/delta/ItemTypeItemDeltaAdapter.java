@@ -665,9 +665,9 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 		// TODO Auto-generated method stub
 		
 	}
-
+	
 	@Override
-	public void computegetGoodCreationPage(List<IPage> list) {
+	public void recurcifComputeGoodCreationPage(List<IPage> list) {
 		// TODO Auto-generated method stub
 		
 	}

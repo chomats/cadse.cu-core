@@ -25,7 +25,9 @@ import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.attribute.CheckStatus;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.delta.ItemDelta;
+import fr.imag.adele.cadse.core.impl.ui.UIFieldImpl;
 import fr.imag.adele.cadse.core.CadseGCST;
+import fr.imag.adele.cadse.core.ui.EPosLabel;
 import fr.imag.adele.cadse.core.ui.UIPlatform;
 import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.util.Convert;
@@ -164,7 +166,6 @@ public class StringAttributeType extends AttributeType implements fr.imag.adele.
 
 	@Override
 	public UIField generateDefaultField() {
-		// TODO Auto-generated method stub
-		return null;
+		return new UIFieldImpl(CadseGCST.DTEXT, CompactUUID.randomUUID(),this, getDisplayName(), EPosLabel.left, null, null);
 	}
 }
