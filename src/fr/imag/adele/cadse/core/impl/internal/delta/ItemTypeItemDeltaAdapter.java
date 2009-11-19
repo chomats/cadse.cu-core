@@ -128,25 +128,6 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 		return _delta.getCadseDomain();
 	}
 
-
-	@Override
-	public Pages getGoodCreationPage(Item parent, ItemType type, LinkType lt) throws CadseException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Pages getGoodModificationPage(Item selected) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Pages getGoodModificationPage(IItemNode selected) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	@Override
 	public URL getImage() {
 		// TODO Auto-generated method stub
@@ -507,19 +488,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 	}
 
 	@Override
-	public void resetCreationPages() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void resetIncomingLinkType() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void resetModificationPages() {
 		// TODO Auto-generated method stub
 
 	}
@@ -625,11 +594,6 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 		return false;
 	}
 
-	@Override
-	public Pages getGoodCreationPage(NewContext context) throws CadseException {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public ItemType[] getAllSubGroupType() {
@@ -665,11 +629,11 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 		// TODO Auto-generated method stub
 		
 	}
-	
+
 	@Override
-	public void recurcifComputeGoodCreationPage(List<IPage> list) {
+	public String getDefaultInstanceName() {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 }

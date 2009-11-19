@@ -25,6 +25,7 @@ import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.ui.IActionPage;
 import fr.imag.adele.cadse.core.ui.UIPlatform;
+import fr.imag.adele.cadse.core.ui.view.FilterContext;
 
 /**
  * The Class ModificationAction.
@@ -33,8 +34,7 @@ import fr.imag.adele.cadse.core.ui.UIPlatform;
  */
 public class ModificationAction extends AbstractActionPage implements IActionPage {
 
-	private ItemType	it;
-	private Item item;
+	private FilterContext _context;
 
 	/**
 	 * Instantiates a new modification action.
@@ -42,43 +42,23 @@ public class ModificationAction extends AbstractActionPage implements IActionPag
 	 * @param node
 	 *            the node
 	 */
-	public ModificationAction(Item item) {
-		this.item = item;
-		this.it = item.getType();
+	public ModificationAction(FilterContext context) {
+		this._context = context;
 	}
 
-	/**
-	 * Instantiates a new modification action.
-	 * 
-	 * @param node
-	 *            the node
-	 */
-	public ModificationAction(ItemType it, IItemNode node) {
-		this.it = it;
-	}
-
-	/**
-	 * Instantiates a new modification action.
-	 * 
-	 * @param selected
-	 *            the selected
-	 */
-	public ModificationAction(ItemType it, Item selected) {
-		this.it = it;
-	}
 
 	@Override
 	public String getTypeId() {
-		return it.getId().toString();
+		return _context.getDestinationType().getId().toString();
 	}
 
 	public ItemType getItemType() {
-		return it;
+		return _context.getDestinationType();
 	}
 	
 	@Override
 	public void init(UIPlatform uiPlatform) throws CadseException {
-		uiPlatform.setVariable(getTypeId(), item);
+		uiPlatform.setVariable(getTypeId(), _context.getItemSource());
 	}
 
 }

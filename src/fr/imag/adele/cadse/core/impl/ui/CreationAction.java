@@ -27,10 +27,8 @@ import fr.imag.adele.cadse.core.ItemState;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.impl.CadseCore;
-import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
 import fr.imag.adele.cadse.core.ui.IActionPage;
 import fr.imag.adele.cadse.core.ui.UIPlatform;
-import fr.imag.adele.cadse.core.ui.IPageObject;
 import fr.imag.adele.cadse.core.ui.view.NewContext;
 
 /**
@@ -40,17 +38,6 @@ import fr.imag.adele.cadse.core.ui.view.NewContext;
  */
 public class CreationAction extends AbstractActionPage implements IActionPage {
 
-	/** The default name. */
-	private final String	defaultName;
-
-	/** The parent item. */
-	private Item			parentItem;
-
-	/** The parent lt. */
-	private LinkType		parentLT;
-
-	/** The type. */
-	private final ItemType	type;
 
 	private NewContext _context;
 
@@ -66,50 +53,12 @@ public class CreationAction extends AbstractActionPage implements IActionPage {
 	 * @param defaultName
 	 *            the default name
 	 */
-	public CreationAction(Item parent, ItemType type, LinkType lt, final String defaultName) {
-		super();
-		this.defaultName = defaultName;
-		this.type = type;
-		this.parentLT = lt;
-		this.parentItem = parent;
-	}
-
-	/**
-	 * Instantiates a new creation action.
-	 * 
-	 * @param parent
-	 *            the parent
-	 * @param type
-	 *            the type
-	 * @param lt
-	 *            the lt
-	 */
-	public CreationAction(Item parent, ItemType type, LinkType lt) {
-		super();
-		this.defaultName = null;
-		this.type = type;
-		this.parentLT = lt;
-		this.parentItem = parent;
-	}
-	
-	/**
-	 * Instantiates a new creation action.
-	 * 
-	 * @param parent
-	 *            the parent
-	 * @param type
-	 *            the type
-	 * @param lt
-	 *            the lt
-	 */
 	public CreationAction(NewContext c) {
 		super();
-		this.defaultName = null;
-		this.type = c.getDestinationType();
-		this.parentLT = c.getPartLinkType();
-		this.parentItem = c.getPartParent();
 		this._context = c;
 	}
+
+	
 
 	// TODO : il faut garder avant
 	/*
@@ -153,7 +102,7 @@ public class CreationAction extends AbstractActionPage implements IActionPage {
 	 * @see fr.imag.adele.cadse.core.impl.ui.AbstractActionPage#getParentItem()
 	 */
 	protected Item getParentItem() {
-		return parentItem;
+		return _context.getPartParent();
 	}
 
 	/*
@@ -176,8 +125,9 @@ public class CreationAction extends AbstractActionPage implements IActionPage {
 	 */
 	@Override
 	public void init(UIPlatform uiPlatform) throws CadseException {
-		parentItem = getParentItem();
+		Item parentItem = _context.getPartParent();
 
+		ItemType type = _context.getDestinationType();
 		if (type.isPartType()) {
 			if (parentItem == null) {
 				ItemType[] parentsTypes = CadseUtil.getIncomingPartsType(type);
@@ -195,14 +145,14 @@ public class CreationAction extends AbstractActionPage implements IActionPage {
 				throw new CadseException("Not find an item parent of typed {0}", sb.toString());
 
 			}
-			if (parentLT == null) {
-				parentLT = type.getIncomingPart(parentItem.getType());
+			if ( _context.getPartLinkType() == null) {
+				//_context.set = type.getIncomingPart(parentItem.getType());
 			}
-			if (parentLT == null) {
+			if ( _context.getPartLinkType() == null) {
 				throw new CadseException("Not find a linktype from {0} to {1} of type part.", parentItem.getType()
 						.getName(), type.getName());
 			}
-			if (!parentLT.isPart()) {
+			if (! _context.getPartLinkType().isPart()) {
 				throw new CadseException("Not find a linktype from {0} to {1} of type part.", parentItem.getType()
 						.getName(), type.getName());
 			}
@@ -222,7 +172,7 @@ public class CreationAction extends AbstractActionPage implements IActionPage {
 	 * @return the inits the automatic short name
 	 */
 	protected String getInitAutomaticShortName() {
-		return this.defaultName;
+		return _context.getDefaultName();
 	}
 
 	/**
@@ -243,9 +193,7 @@ public class CreationAction extends AbstractActionPage implements IActionPage {
 	 *             the melusine exception
 	 */
 	protected Item createItem(UIPlatform uiPlatform) throws CadseException {
-		if (this._context != null)
-			return uiPlatform.getCopy().createItem(_context);
-		return uiPlatform.getCopy().createItem(type, parentItem, parentLT);
+		return this._context.getNewItem();
 	}
 
 	/**
@@ -257,21 +205,21 @@ public class CreationAction extends AbstractActionPage implements IActionPage {
 	 *             the melusine exception
 	 */
 	public ItemType getItemType() {
-		return type;
+		return _context.getDestinationType();
 	}
 
 	public String getDefaultName() {
-		return defaultName;
+		return _context.getDefaultName();
 	}
 
 	public LinkType getParentLT() {
-		return parentLT;
+		return _context.getPartLinkType();
 	}
 	
 
 	@Override
 	public String getTypeId() {
-		return type.getId().toString();
+		return _context.getDestinationType().getId().toString();
 	}
 
 	public NewContext getContext() {

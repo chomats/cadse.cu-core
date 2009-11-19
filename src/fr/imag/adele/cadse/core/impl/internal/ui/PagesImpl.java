@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.Item;
@@ -41,6 +42,7 @@ import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.ui.UIRunningValidator;
 import fr.imag.adele.cadse.core.ui.UIValidator;
 import fr.imag.adele.cadse.core.ui.view.FilterContext;
+import fr.imag.adele.cadse.core.ui.view.NewContext;
 import fr.imag.adele.cadse.core.util.ArraysUtil;
 import fr.imag.adele.cadse.core.util.ObjectMap;
 
@@ -64,6 +66,10 @@ public final class PagesImpl implements Pages {
 	private Map<IAttributeType<?>, UIField> _fields;
 
 	private List<UIRunningValidator> _validators;
+	
+	private Set<IAttributeType<?>> _readOnlyAttributes;
+	
+	private FilterContext	_context;
 
 	/**
 	 * Instantiates a new pages.
@@ -76,7 +82,8 @@ public final class PagesImpl implements Pages {
 	 *            the pages
 	 * @param validators 
 	 */
-	public PagesImpl(boolean ismodificationpage, IActionPage action, Map<IAttributeType<?>, UIField> fiedls, IPage[] pages, List<UIRunningValidator> validators) {
+	public PagesImpl(FilterContext	context, boolean ismodificationpage, 
+			IActionPage action, Map<IAttributeType<?>, UIField> fiedls, IPage[] pages, List<UIRunningValidator> validators,Set<IAttributeType<?>> ro) {
 		this._pages = pages;
 		this._action = action;
 		this._ismodificationpage = ismodificationpage;
@@ -84,6 +91,8 @@ public final class PagesImpl implements Pages {
 		if (this._fields == null)
 			this._fields = new HashMap<IAttributeType<?>, UIField>();
 		this._validators = validators;
+		this._context = context;
+		this._readOnlyAttributes = ro;
 	}
 
 	public PagesImpl() {
@@ -193,5 +202,12 @@ public final class PagesImpl implements Pages {
 		if (_validators == null)
 			_validators = new ArrayList<UIRunningValidator>();
 		_validators.add(v);
+	}
+	
+	@Override
+	public NewContext getContext() {
+		if (_context instanceof NewContext)
+			return (NewContext) _context;
+		return null;
 	}
 }

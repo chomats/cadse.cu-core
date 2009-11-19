@@ -218,6 +218,23 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 	public boolean setIsTransient(boolean v) {
 		return setFlag(TRANSIENT, v);
 	}
+	
+	public boolean isFinal() {
+		return getFlag(FINAL);
+	}
+
+	public boolean isHiddenInComputedPages() {
+		return getFlag(HIDDEN_IN_COMPUTED_PAGES);
+	}
+
+	public void setFinal(boolean flag) {
+		setFlag(FINAL, flag);
+	}
+
+	public void setHiddenInComputedPages(boolean flag) {
+		setFlag(HIDDEN_IN_COMPUTED_PAGES, flag);
+		
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -254,7 +271,7 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 	}
 
 	public CheckStatus check(Item item, Object value) {
-		if (!getFlag(CAN_BE_UNDEFINED) && value == null) {
+		if (!getFlag(CAN_BE_UNDEFINED) && value == IAttributeType.NULL) {
 			return new CheckStatus(UIPlatform.ERROR, Messages.cannot_be_undefined);
 		}
 

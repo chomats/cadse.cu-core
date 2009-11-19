@@ -81,7 +81,7 @@ public class LongAttributeType extends AttributeType implements fr.imag.adele.ca
 
 	@Override
 	public CheckStatus check(Item item, Object value) {
-		if (!getFlag(CAN_BE_UNDEFINED) && (value == null || value.toString().length() == 0 || value.equals("null"))) { //$NON-NLS-1$
+		if (!getFlag(CAN_BE_UNDEFINED) && (value == NULL || value.toString().length() == 0 || value.equals("null"))) { //$NON-NLS-1$
 			return new CheckStatus(UIPlatform.ERROR, Messages.cannot_be_undefined);
 		}
 		if (value == null) {
