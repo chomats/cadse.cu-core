@@ -80,6 +80,7 @@ import fr.imag.adele.cadse.core.ui.Pages;
 import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.ui.UIRunningValidator;
 import fr.imag.adele.cadse.core.ui.UIValidator;
+import fr.imag.adele.cadse.core.ui.view.FilterContext;
 import fr.imag.adele.cadse.core.ui.view.NewContext;
 import fr.imag.adele.cadse.core.util.ArraysUtil;
 import fr.imag.adele.cadse.core.util.Convert;
@@ -188,7 +189,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 	private Class<? extends IActionPage>		_clazzAction;
 
 	/** The default short name action. */
-	protected String							_defaultShortNameAction;
+	protected String							_defaultInstanceName;
 
 	private String								_cadseName					= NO_VALUE_STRING;
 
@@ -203,9 +204,6 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 
 	private String								_managerClass;
 
-	private IPage[] __creationPages;
-
-	private IPage[] __modificationPages;
 
 	/*
 	 * (non-Javadoc)
@@ -1576,17 +1574,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 
 	
 
-	/**
-	 * reset du cache de modification de pages.
-	 */
-	public void resetModificationPages() {
-		__modificationPages = null;
-		if (_subTypes != null) {
-			for (ItemType subT : _subTypes) {
-				subT.resetModificationPages();
-			}
-		}
-	}
+	
 
 	/**
 	 * reset du cache de outgoing link type.
@@ -1620,18 +1608,6 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 		}
 	}
 
-	/**
-	 * reset du cache des pages de creation.
-	 */
-	public void resetCreationPages() {
-		__creationPages = null;
-		if (_subTypes != null) {
-			for (ItemType subT : _subTypes) {
-				subT.resetCreationPages();
-
-			}
-		}
-	}
 
 	/**
 	 * reset du cache des contributions.
@@ -1660,7 +1636,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 	 */
 	public void setCreationAction(Class<? extends IActionPage> clazz, String defaultShortName) {
 		this._clazzAction = clazz;
-		this._defaultShortNameAction = defaultShortName;
+		this._defaultInstanceName = defaultShortName;
 	}
 
 	/**
@@ -1698,72 +1674,26 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 		return __actionContributors;
 	}
 
-	
 	/**
-	 * Gets the good creation page_.
-	 * 
-	 * @return the good creation page_
-	 */
-	public IPage[] getGoodCreationPage_() {
-		if (__creationPages == null) {
-			
-			List<IPage> list = new ArrayList<IPage>();
-			computeGoodCreationPage(list);
-			int count = list.size();
-			for (IPage factory : list) {
-				if (factory.isEmptyPage()) {
-					count--;
-				}
-			}
-			if (count == 0) {
-				__creationPages = EMPTY_PAGE;
-			} else {
-				__creationPages = new IPage[count];
-				int i = 0;
-				for (IPage factory : list) {
-					if (factory.isEmptyPage()) {
-						continue;
-					}
-					__creationPages[i++] = factory;
-				}
-				assert i == count;
-			}
-		}
-		return __creationPages;
-	}
-
-	/**
-	 * Computeget good creation page.
+	 * Cette method est appeler pour calculer l'ensemble des pages spécifique à afficher.
 	 * 
 	 * @param map
 	 *            the map
 	 * @param list
 	 *            the list
 	 */
-	public void recurcifComputeGoodCreationPage(List<IPage> list) {
+	protected void recurcifComputeCreationPage(FilterContext context, List<IPage> list, Set<IAttributeType<?>> ro) {
 		if (_superType != null) {
-			_superType.recurcifComputeGoodCreationPage(list);
+			((ItemTypeImpl) _superType).recurcifComputeCreationPage(context, list, ro);
 		}
-		super.recurcifComputeGoodCreationPage(list);
+		super.recurcifComputeCreationPage(context, list, ro);
 		if (_extendedBy != null) {
 			for (TypeDefinitionImpl ext : _extendedBy) {
-				ext.recurcifComputeGoodCreationPage(list);
+				ext.recurcifComputeCreationPage(context, list, ro);
 			}
 		}
 	}
 	
-	protected void computeGoodCreationPage(List<IPage> list) {
-		recurcifComputeGoodCreationPage(list);
-		HashSet<IAttributeType<?>> inSpecificPages = new HashSet<IAttributeType<?>>();
-		for (IPage iPage : list) {
-			inSpecificPages.addAll(Arrays.asList(iPage.getAttributes()));
-		}
-		
-		HierachicPageImpl genericPage = new HierachicPageImpl(this, true);
-		computeGenericPage(genericPage, inSpecificPages);
-		list.add(0, genericPage);
-	}
-
 
 	/**
 	 * Compute good modification page.
@@ -1773,228 +1703,31 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 	 * @param list
 	 *            the list
 	 */
-	protected void recurcifComputeGoodModificationPage(List<IPage> list) {
+	protected void recurcifComputeModificationPage(FilterContext context, List<IPage> list, Set<IAttributeType<?>> ro) {
 		if (_superType != null) {
-			((ItemTypeImpl) _superType).recurcifComputeGoodModificationPage(list);
+			((ItemTypeImpl) _superType).recurcifComputeModificationPage(context, list, ro);
 		}
-		super.recurcifComputeGoodModificationPage(list);
+		super.recurcifComputeModificationPage(context, list, ro);
 		if (_extendedBy != null) {
 			for (TypeDefinitionImpl ext : _extendedBy) {
-				ext.recurcifComputeGoodModificationPage(list);
+				ext.recurcifComputeModificationPage(context, list, ro);
 			}
 		}
 	}
 	
 	@Override
-	protected void computeValidators(List<UIValidator> validators) {
+	protected void computeValidators(FilterContext context, List<UIValidator> validators) {
 		if (_superType != null) {
-			((ItemTypeImpl) _superType).computeValidators(validators);
+			((ItemTypeImpl) _superType).computeValidators(context, validators);
 		}
-		super.computeValidators(validators);
+		super.computeValidators(context, validators);
 		if (_extendedBy != null) {
 			for (TypeDefinitionImpl ext : _extendedBy) {
-				ext.computeValidators(validators);
+				ext.computeValidators(context, validators);
 			}
 		}
-	}
-
-	/**
-	 * Gets the good modification page_.
-	 * 
-	 * @return the good modification page_
-	 */
-	public IPage[] getGoodModificationPage_() {
-		if (__modificationPages == null) {
-			List<IPage> list = new ArrayList<IPage>();
-			computeGoodModificationPage(list);
-			
-			int count = list.size();
-			for (IPage factory : list) {
-				if (factory.isEmptyPage()) {
-					count--;
-				}
-			}
-			if (count == 0) {
-				__modificationPages = EMPTY_PAGE;
-			} else {
-				__modificationPages = new IPage[count];
-			//	IPageFactory evolPage = null;
-				int i = 0;
-				for (IPage factory : list) {
-					if (factory.isEmptyPage()) {
-						continue;
-					}
-//					if (factory.getName().equals("evolution-page")) {
-//						evolPage = factory;
-//						continue;
-//					}
-					__modificationPages[i++] = factory;
-				}
-			//	if (evolPage != null) {
-			//		__modificationPages[i++] = evolPage;
-			//	}
-				assert i == count;
-			}
-		}
-		return __modificationPages;
-	}
-
-	protected void computeGoodModificationPage(List<IPage> list) {
-		recurcifComputeGoodModificationPage(list);
-		HashSet<IAttributeType<?>> inSpecificPages = new HashSet<IAttributeType<?>>();
-		for (IPage iPage : list) {
-			inSpecificPages.addAll(Arrays.asList(iPage.getAttributes()));
-		}
-		
-		HierachicPageImpl genericPage = new HierachicPageImpl(this, true);
-		computeGenericPage(genericPage, inSpecificPages);
-		list.add(0, genericPage);
 	}
 	
-	
-	
-	
-	
-
-	@Override
-	public Pages getGoodCreationPage(NewContext context) throws CadseException {
-		context.setDefaultName(_defaultShortNameAction);
-		List<UIValidator> validators = new ArrayList<UIValidator>();
-		computeValidators(validators);
-		return new PagesImpl(false, createDefaultCreationAction(context), computeGoodFields(), getGoodCreationPage_(), createRunning(validators));
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.imag.adele.cadse.core.ItemType#getGoodCreationPage(fr.imag.adele.cadse
-	 * .core.Item, fr.imag.adele.cadse.core.ItemType,
-	 * fr.imag.adele.cadse.core.LinkType)
-	 */
-	public Pages getGoodCreationPage(Item parent, ItemType type, LinkType lt) throws CadseException {
-		return createCreationPage(parent, type, lt);
-	}
-
-	/**
-	 * Creates the creation page.
-	 * 
-	 * @param parent
-	 *            the parent
-	 * @param type
-	 *            the type
-	 * @param lt
-	 *            the lt
-	 * 
-	 * @return the pages
-	 * 
-	 * @throws CadseException
-	 *             the melusine exception
-	 */
-	protected Pages createCreationPage(Item parent, ItemType type, LinkType lt) throws CadseException {
-		List<UIValidator> validators = new ArrayList<UIValidator>();
-		computeValidators(validators);
-		return new PagesImpl(false, createDefaultCreationAction(parent, type, lt), computeGoodFields(), getGoodCreationPage_(), createRunning(validators));
-	}
-
-	/**
-	 * Creates the pages.
-	 * 
-	 * @param cas
-	 *            the cas
-	 * @param item
-	 *            the item
-	 * @param node
-	 *            the node
-	 * @param type
-	 *            the type
-	 * @param lt
-	 *            the lt
-	 * @param pf
-	 *            the pf
-	 * 
-	 * @return the i page[]
-	 */
-	protected IPage[] createPages(int cas, Item item, IItemNode node, ItemType type, LinkType lt, IPageFactory[] pf) {
-		ArrayList<IPage> ret = new ArrayList<IPage>();
-		for (int i = 0; i < pf.length; i++) {
-			try {
-				IPage createdPage = pf[i].createPage(cas, null, item, node, type, lt);
-				if (createdPage != null && !createdPage.isEmptyPage()) {
-					createdPage.setParent(type, CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES);
-					ret.add(createdPage);
-				}
-			} catch (Throwable e) {
-				_wl.getCadseDomain().log("error", "Cannot create page " + pf[i], e);
-			}
-		}
-		return ret.toArray(new IPage[ret.size()]);
-	}
-
-	/**
-	 * Creates the default creation action.
-	 * 
-	 * @param parent
-	 *            the parent
-	 * @param type
-	 *            the type
-	 * @param lt
-	 *            the lt
-	 * 
-	 * @return the i action page
-	 * 
-	 * @throws CadseException
-	 *             the melusine exception
-	 */
-	protected IActionPage createDefaultCreationAction(Item parent, ItemType type, LinkType lt) throws CadseException {
-		if (_clazzAction == null) {
-			if (_defaultShortNameAction == null) {
-				return new CreationAction(parent, type, lt);
-			} else {
-				return new CreationAction(parent, type, lt, _defaultShortNameAction);
-			}
-		}
-		Constructor<?> c = null;
-		if (_defaultShortNameAction != null) {
-			try {
-				c = _clazzAction.getConstructor(Item.class, ItemType.class, LinkType.class, String.class);
-				return (IActionPage) c.newInstance(parent, type, lt, _defaultShortNameAction);
-			} catch (NoSuchMethodException e) {
-
-			} catch (IllegalArgumentException e) {
-				throw new CadseException("Cannot create creation action {1} : {0}.", e, _clazzAction, c);
-			} catch (InstantiationException e) {
-				throw new CadseException("Cannot create creation action {1} : {0}.", e, _clazzAction, c);
-			} catch (IllegalAccessException e) {
-				throw new CadseException("Cannot create creation action {1} : {0}.", e, _clazzAction, c);
-			} catch (InvocationTargetException e) {
-				throw new CadseException("Cannot create creation action {1} : {0}.", e, _clazzAction, c);
-			}
-		}
-		if (_defaultShortNameAction == null) {
-			try {
-				c = _clazzAction.getConstructor(Item.class, ItemType.class, LinkType.class);
-				return (IActionPage) c.newInstance(parent, type, lt);
-			} catch (NoSuchMethodException e) {
-
-			} catch (IllegalArgumentException e) {
-				throw new CadseException("Cannot create creation action {1} : {0}.", e, _clazzAction, c);
-			} catch (InstantiationException e) {
-				throw new CadseException("Cannot create creation action {1} : {0}.", e, _clazzAction, c);
-			} catch (IllegalAccessException e) {
-				throw new CadseException("Cannot create creation action {1} : {0}.", e, _clazzAction, c);
-			} catch (InvocationTargetException e) {
-				throw new CadseException("Cannot create creation action {1} : {0}.", e, _clazzAction, c);
-			}
-		}
-		try {
-			return _clazzAction.newInstance();
-		} catch (InstantiationException e) {
-			throw new CadseException("Cannot create creation action {1} with default constructor.", e, _clazzAction);
-		} catch (IllegalAccessException e) {
-			throw new CadseException("Cannot create creation action {1} with default constructor.", e, _clazzAction);
-		}
-	}
 
 	/**
 	 * Creates the default creation action.
@@ -2023,68 +1756,8 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 	 * 
 	 * @return the i action page
 	 */
-	protected IActionPage createDefaultModificationAction(ItemType it, IItemNode node) {
-		return new ModificationAction(it, node);
-	}
-
-	/**
-	 * Creates the default modification action.
-	 * 
-	 * @param selected
-	 *            the selected
-	 * 
-	 * @return the i action page
-	 */
-	protected IActionPage createDefaultModificationAction(ItemType it, Item selected) {
-		return new ModificationAction(it, selected);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.imag.adele.cadse.core.ItemType#getGoodModificationPage(fr.imag.adele
-	 * .cadse.core.Item)
-	 */
-	public Pages getGoodModificationPage(Item selected) {
-		List<UIValidator> validators = new ArrayList<UIValidator>();
-		computeValidators(validators);
-		return new PagesImpl(true, createDefaultModificationAction(this, selected), computeGoodFields(), getGoodModificationPage_(), createRunning(validators));
-	}
-
-	private List<UIRunningValidator> createRunning(List<UIValidator> validators) {
-		ArrayList<UIRunningValidator> ret = new ArrayList<UIRunningValidator>();
-		for (UIValidator v : validators) {
-			ret.add(v.create());
-		}
-		return ret;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.imag.adele.cadse.core.ItemType#getGoodModificationPage(fr.imag.adele
-	 * .cadse.core.IItemNode)
-	 */
-	public Pages getGoodModificationPage(IItemNode node) {
-		List<UIValidator> validators = new ArrayList<UIValidator>();
-		computeValidators(validators);
-		return new PagesImpl(true, createDefaultModificationAction(this, node), computeGoodFields(), getGoodModificationPage_(), createRunning(validators));
-	}
-
-	
-
-	protected Map<IAttributeType<?>, UIField> computeGoodFields() {
-		Map<IAttributeType<?>, UIField> fiedls = new HashMap<IAttributeType<?>, UIField>();
-		for (IAttributeType<?> att : getAllAttributeTypes()) {
-			UIField f = findField(att);
-			if (f == null)
-				f = att.generateDefaultField();
-			if (f != null)
-				fiedls.put(att, f);
-		}
-		return fiedls;
+	protected IActionPage createDefaultModificationAction(FilterContext context) {
+		return new ModificationAction(context);
 	}
 
 
@@ -2105,16 +1778,16 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 	}
 
 	@Override
-	protected void computeGenericPage(HierachicPageImpl genericPage,
-			HashSet<IAttributeType<?>> inSpecificPages) {
-		super.computeGenericPage(genericPage, inSpecificPages);
+	protected void computeGenericPage(FilterContext context, HierachicPageImpl genericPage,
+			HashSet<IAttributeType<?>> inSpecificPages, Set<IAttributeType<?>> ro) {
+		super.computeGenericPage(context, genericPage, inSpecificPages, ro);
 		if (_extendedBy != null) {
 			for (TypeDefinitionImpl ext : _extendedBy) {
-				ext.computeGenericPage(genericPage, inSpecificPages);
+				ext.computeGenericPage(context, genericPage, inSpecificPages, ro);
 			}
 		}
 		if (_superType != null) {
-			((ItemTypeImpl) _superType).computeGenericPage(genericPage, inSpecificPages);
+			((ItemTypeImpl) _superType).computeGenericPage(context, genericPage, inSpecificPages, ro);
 		}
 	}
 	
@@ -2423,5 +2096,9 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 			}
 		}
 		return true;
+	}
+	
+	public String getDefaultInstanceName() {
+		return _defaultInstanceName;
 	}
 }

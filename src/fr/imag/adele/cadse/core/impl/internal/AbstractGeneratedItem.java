@@ -25,6 +25,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -62,14 +64,21 @@ import fr.imag.adele.cadse.core.impl.CadseIllegalArgumentException;
 import fr.imag.adele.cadse.core.impl.CollectedReflectLink;
 import fr.imag.adele.cadse.core.impl.ReflectLink;
 import fr.imag.adele.cadse.core.impl.internal.delta.ItemTypeItemDeltaAdapter;
+import fr.imag.adele.cadse.core.impl.internal.ui.HierachicPageImpl;
+import fr.imag.adele.cadse.core.impl.internal.ui.PagesImpl;
 import fr.imag.adele.cadse.core.internal.IWorkingLoadingItems;
 import fr.imag.adele.cadse.core.internal.IWorkspaceNotifier;
 import fr.imag.adele.cadse.core.internal.InternalItem;
 import fr.imag.adele.cadse.core.key.AbstractSpaceKey;
 import fr.imag.adele.cadse.core.key.ISpaceKey;
 import fr.imag.adele.cadse.core.key.SpaceKeyType;
+import fr.imag.adele.cadse.core.ui.IPage;
 import fr.imag.adele.cadse.core.ui.Pages;
+import fr.imag.adele.cadse.core.ui.UIField;
+import fr.imag.adele.cadse.core.ui.UIRunningValidator;
+import fr.imag.adele.cadse.core.ui.UIValidator;
 import fr.imag.adele.cadse.core.ui.view.FilterContext;
+import fr.imag.adele.cadse.core.ui.view.NewContext;
 import fr.imag.adele.cadse.core.util.ArraysUtil;
 import fr.imag.adele.cadse.core.util.Assert;
 import fr.imag.adele.cadse.core.util.Convert;
@@ -77,6 +86,9 @@ import fr.imag.adele.cadse.core.util.IErrorCollector;
 import fr.imag.adele.cadse.core.util.OrderWay;
 
 public abstract class AbstractGeneratedItem implements Item, InternalItem {
+	public static final IPage[]			EMPTY_PAGE		= new IPage[0];
+	
+	
 	protected CompactUUID					_id;
 	// listener attributes
 	protected WorkspaceListener[]			_listeners				= null;
@@ -1839,7 +1851,159 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	}
 
 	@Override
-	public Pages getInstanceModificationPages(Item selectedItem) {
-		return getType().getGoodModificationPage(selectedItem);
+	public Pages getModificationPages(FilterContext context) {
+		Set<IAttributeType<?>> ro = new HashSet<IAttributeType<?>>();
+		List<UIValidator> validators = new ArrayList<UIValidator>();
+		iComputeValidators(context, validators);
+		
+		return new PagesImpl(context, true, 
+				((ItemTypeImpl) getType()).createDefaultModificationAction(context), 
+				iComputeFields(), 
+				iGetAllModificationPage(context, ro), 
+				createRunning(validators), ro);
+	}
+	
+	
+	@Override
+	public Pages getCreationPages(NewContext context) throws CadseException {
+		Set<IAttributeType<?>> ro = new HashSet<IAttributeType<?>>();
+		context.setDefaultName(getType().getDefaultInstanceName());
+		List<UIValidator> validators = new ArrayList<UIValidator>();
+		iComputeValidators(context, validators);
+		return new PagesImpl(context, false, 
+				((ItemTypeImpl) getType()).createDefaultCreationAction(context), 
+				iComputeFields(), 
+				iGetAllCreationPage(context, ro), 
+				createRunning(validators), ro);
+	}
+	
+	
+	/**
+	 * Gets the good creation page_.
+	 * 
+	 * @return the good creation page_
+	 */
+	protected IPage[] iGetAllModificationPage(FilterContext context, Set<IAttributeType<?>> ro) {
+		List<IPage> list = new ArrayList<IPage>();
+		iComputeModificationPage(context, list, ro);
+		int count = list.size();
+		for (IPage factory : list) {
+			if (factory.isEmptyPage()) {
+				count--;
+			}
+		}
+		if (count == 0) {
+			return EMPTY_PAGE;
+		} else {
+			IPage[] creationPages = new IPage[count];
+			int i = 0;
+			for (IPage factory : list) {
+				if (factory.isEmptyPage()) {
+					continue;
+				}
+				creationPages[i++] = factory;
+			}
+			assert i == count;
+			return creationPages;
+		}
+	}
+	
+	/**
+	 * Gets the good creation page_.
+	 * 
+	 * @return the good creation page_
+	 */
+	protected IPage[] iGetAllCreationPage(FilterContext context, Set<IAttributeType<?>> ro) {
+		List<IPage> list = new ArrayList<IPage>();
+		iComputeCreationPage(context, list, ro);
+		int count = list.size();
+		for (IPage factory : list) {
+			if (factory.isEmptyPage()) {
+				count--;
+			}
+		}
+		if (count == 0) {
+			return EMPTY_PAGE;
+		} else {
+			IPage[] creationPages = new IPage[count];
+			int i = 0;
+			for (IPage factory : list) {
+				if (factory.isEmptyPage()) {
+					continue;
+				}
+				creationPages[i++] = factory;
+			}
+			assert i == count;
+			return creationPages;
+		}
+	}
+	
+	protected void iComputeCreationPage(FilterContext context, List<IPage> list, Set<IAttributeType<?>> ro) {
+		iRecurcifComputeCreationPage(context, list, ro);
+		HashSet<IAttributeType<?>> inSpecificPages = new HashSet<IAttributeType<?>>();
+		for (IPage iPage : list) {
+			inSpecificPages.addAll(Arrays.asList(iPage.getAttributes()));
+		}
+		
+		HierachicPageImpl genericPage = new HierachicPageImpl(getType(), true);
+		iComputeGenericPage(context, genericPage, inSpecificPages, ro);
+		list.add(0, genericPage);
+	}
+	
+	protected void iComputeModificationPage(FilterContext context, List<IPage> list, Set<IAttributeType<?>> ro) {
+		iRecurcifComputeModificationPage(context, list, ro);
+		HashSet<IAttributeType<?>> inSpecificPages = new HashSet<IAttributeType<?>>();
+		for (IPage iPage : list) {
+			inSpecificPages.addAll(Arrays.asList(iPage.getAttributes()));
+		}
+		
+		HierachicPageImpl genericPage = new HierachicPageImpl(getType(), true);
+		iComputeGenericPage(context, genericPage, inSpecificPages, ro);
+		list.add(0, genericPage);
+	}
+	
+	protected void iRecurcifComputeCreationPage(FilterContext context, List<IPage> list, Set<IAttributeType<?>> ro) {
+		((TypeDefinitionImpl) getType()).recurcifComputeCreationPage(context, list, ro);
+	}
+	
+	protected void iRecurcifComputeModificationPage(FilterContext context, List<IPage> list, Set<IAttributeType<?>> ro) {
+		((TypeDefinitionImpl) getType()).recurcifComputeModificationPage(context, list, ro);
+	}
+	
+	protected void iComputeGenericPage(FilterContext context, HierachicPageImpl genericPage,
+			HashSet<IAttributeType<?>> inSpecificPages, Set<IAttributeType<?>> ro) {
+		((TypeDefinitionImpl) getType()).computeGenericPage(context, genericPage, inSpecificPages, ro);
+	}
+	
+	
+	protected void iComputeValidators(FilterContext context, List<UIValidator> validators) {
+		((TypeDefinitionImpl) getType()).computeValidators(context, validators);
+	}
+	
+	protected Map<IAttributeType<?>, UIField> iComputeFields() {
+		Map<IAttributeType<?>, UIField> fiedls = new HashMap<IAttributeType<?>, UIField>();
+		for (IAttributeType<?> att : getLocalAllAttributeTypes()) {
+			UIField f = iFindField(att);
+			if (f == null)
+				f = att.generateDefaultField();
+			if (f != null)
+				fiedls.put(att, f);
+		}
+		return fiedls;
+	}
+	
+	
+	protected UIField iFindField(IAttributeType<?> att) {
+		UIField ret = null;
+		ret = ((TypeDefinitionImpl) getType()).findField(att);
+		return ret;
+	}
+
+	protected List<UIRunningValidator> createRunning(List<UIValidator> validators) {
+		ArrayList<UIRunningValidator> ret = new ArrayList<UIRunningValidator>();
+		for (UIValidator v : validators) {
+			ret.add(v.create());
+		}
+		return ret;
 	}
 }

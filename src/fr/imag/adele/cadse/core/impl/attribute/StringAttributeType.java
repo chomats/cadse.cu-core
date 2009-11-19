@@ -141,7 +141,7 @@ public class StringAttributeType extends AttributeType implements fr.imag.adele.
 
 	@Override
 	public CheckStatus check(Item item, Object value) {
-		if (!getFlag(CAN_BE_UNDEFINED) && value == null) {
+		if (!getFlag(CAN_BE_UNDEFINED) && value == NULL) {
 			return new CheckStatus(UIPlatform.ERROR, Messages.cannot_be_undefined);
 		}
 		if (value == null) {

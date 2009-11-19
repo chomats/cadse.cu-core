@@ -1361,4 +1361,28 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements Li
 		return null;
 	}
 
+	@Override
+	public boolean isFinal() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isHiddenInComputedPages() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setFinal(boolean flag) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setHiddenInComputedPages(boolean flag) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

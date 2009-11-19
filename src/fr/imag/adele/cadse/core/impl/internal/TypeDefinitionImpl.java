@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
@@ -24,10 +25,10 @@ import fr.imag.adele.cadse.core.impl.internal.ui.HierachicPageImpl;
 import fr.imag.adele.cadse.core.ui.IPage;
 import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.ui.UIValidator;
+import fr.imag.adele.cadse.core.ui.view.FilterContext;
 import fr.imag.adele.cadse.core.util.ArraysUtil;
 
 public class TypeDefinitionImpl extends ItemImpl {
-	public static final IPage[]			EMPTY_PAGE		= new IPage[0];
 	
 	
 	public TypeDefinitionImpl(LogicalWorkspace wl, CompactUUID id,
@@ -82,12 +83,10 @@ public class TypeDefinitionImpl extends ItemImpl {
 			throws CadseException {
 		if (lt == CadseGCST.TYPE_DEFINITION_lt_CREATION_PAGES) {
 			this._creationPages = ArraysUtil.add(IPage.class, this._creationPages, (IPage) destination);
-			resetCreationPages();
 			return new ReflectLink(lt, this, destination, this._creationPages.length - 1);
 		}
 		if (lt == CadseGCST.TYPE_DEFINITION_lt_MODIFICATION_PAGES) {
 			this._modificationPages = ArraysUtil.add(IPage.class, this._modificationPages, (IPage) destination);
-			resetModificationPages();
 			return new ReflectLink(lt, this, destination, this._modificationPages.length - 1);
 		}
 		return super.commitLoadCreateLink(lt, destination);
@@ -99,12 +98,10 @@ public class TypeDefinitionImpl extends ItemImpl {
 		Item destination = link.getDestination();
 		if (lt == CadseGCST.TYPE_DEFINITION_lt_CREATION_PAGES && destination.isResolved()) {
 			this._creationPages = ArraysUtil.remove(IPage.class, this._creationPages, (IPage) destination);
-			resetCreationPages();
 			return;
 		}
 		if (lt == CadseGCST.TYPE_DEFINITION_lt_MODIFICATION_PAGES && destination.isResolved()) {
 			this._modificationPages = ArraysUtil.remove(IPage.class, this._modificationPages, (IPage) destination);
-			resetModificationPages();
 			return;
 		}
 		super.removeOutgoingLink(link, notifie);
@@ -122,7 +119,6 @@ public class TypeDefinitionImpl extends ItemImpl {
 		}
 		this._creationPages = ArraysUtil.addList(IPage.class, this._creationPages,
 				creationPages);
-		resetCreationPages();
 	}
 
 	/**
@@ -137,7 +133,6 @@ public class TypeDefinitionImpl extends ItemImpl {
 		}
 		this._modificationPages = ArraysUtil.addList(IPage.class, this._modificationPages,
 				modificationPages);
-		resetModificationPages();
 	}
 	
 	public <T> Link addAttributeType(IAttributeType<T> type) {
@@ -194,16 +189,8 @@ public class TypeDefinitionImpl extends ItemImpl {
 	}
 
 	
-	protected void resetModificationPages() {
 		
-	}
-
-	protected void resetCreationPages() {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	public void recurcifComputeGoodCreationPage(List<IPage> list) {
+	protected void recurcifComputeCreationPage(FilterContext context, List<IPage> list, Set<IAttributeType<?>> ro) {
 		if (_creationPages != null) {
 			for (IPage f : _creationPages) {
 				IPage[] owPages = f.getOverwritePage();
@@ -240,7 +227,7 @@ public class TypeDefinitionImpl extends ItemImpl {
 		}
 	}
 	
-	protected void computeValidators(List<UIValidator> validators) {
+	protected void computeValidators(FilterContext context, List<UIValidator> validators) {
 		if (_validators != null) {
 			for (UIValidator f : _validators) {
 				UIValidator[] owValidators = f.getOverwriteValidator();
@@ -263,7 +250,7 @@ public class TypeDefinitionImpl extends ItemImpl {
 		}
 	}
 	
-	protected void recurcifComputeGoodModificationPage(List<IPage> list) {
+	protected void recurcifComputeModificationPage(FilterContext context, List<IPage> list, Set<IAttributeType<?>> ro) {
 		if (_modificationPages != null) {
 			for (IPage f : _modificationPages) {
 				IPage[] owPages = f.getOverwritePage();
@@ -286,8 +273,8 @@ public class TypeDefinitionImpl extends ItemImpl {
 		}
 	}
 	
-	protected void computeGenericPage(HierachicPageImpl genericPage,
-			HashSet<IAttributeType<?>> inSpecificPages) {
+	protected void computeGenericPage(FilterContext context, HierachicPageImpl genericPage,
+			HashSet<IAttributeType<?>> inSpecificPages, Set<IAttributeType<?>> ro) {
 		if (_attributesDefinitions != null) {
 			ArrayList<IAttributeType> notPutAttr = new ArrayList<IAttributeType>();
 			for (IAttributeType<?> attr : _attributesDefinitions) {

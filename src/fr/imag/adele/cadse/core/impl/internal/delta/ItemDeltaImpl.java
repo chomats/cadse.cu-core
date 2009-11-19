@@ -82,6 +82,8 @@ import fr.imag.adele.cadse.core.key.SpaceKey;
 import fr.imag.adele.cadse.core.key.SpaceKeyType;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
 import fr.imag.adele.cadse.core.ui.Pages;
+import fr.imag.adele.cadse.core.ui.view.FilterContext;
+import fr.imag.adele.cadse.core.ui.view.NewContext;
 import fr.imag.adele.cadse.core.util.ArraysUtil;
 import fr.imag.adele.cadse.core.util.Assert;
 import fr.imag.adele.cadse.core.util.Convert;
@@ -4032,9 +4034,16 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	public List<LinkType> getInstanceOutgoingLinkTypes() {
 		return getType().getOutgoingLinkTypes();
 	}
+	
 
 	@Override
-	public Pages getInstanceModificationPages(Item selectedItem) {
+	public Pages getCreationPages(NewContext context) throws CadseException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Pages getModificationPages(FilterContext context) {
 		// TODO Auto-generated method stub
 		return null;
 	}
