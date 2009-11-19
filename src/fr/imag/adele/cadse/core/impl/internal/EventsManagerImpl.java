@@ -412,9 +412,8 @@ public class EventsManagerImpl extends Thread implements EventsManager {
 		}
 
 		public void notifie() throws Throwable {
-			if (CadseDomainImpl.isStarted())
-				l.workspaceChanged(delta);
-	
+			l.workspaceChanged(delta);
+
 		}
 
 		public ListenerKind getKind() {
