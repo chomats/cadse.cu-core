@@ -20,15 +20,20 @@ import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.delta.ItemDelta;
+import fr.imag.adele.cadse.core.impl.PageRuntimeModel;
 import fr.imag.adele.cadse.core.impl.ReflectLink;
 import fr.imag.adele.cadse.core.impl.internal.ui.HierachicPageImpl;
+import fr.imag.adele.cadse.core.impl.ui.CreationAction;
+import fr.imag.adele.cadse.core.impl.ui.ModificationAction;
+import fr.imag.adele.cadse.core.ui.IActionPage;
 import fr.imag.adele.cadse.core.ui.IPage;
 import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.ui.UIValidator;
 import fr.imag.adele.cadse.core.ui.view.FilterContext;
+import fr.imag.adele.cadse.core.ui.view.NewContext;
 import fr.imag.adele.cadse.core.util.ArraysUtil;
 
-public class TypeDefinitionImpl extends ItemImpl {
+public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition {
 	
 	
 	public TypeDefinitionImpl(LogicalWorkspace wl, CompactUUID id,
@@ -65,8 +70,11 @@ public class TypeDefinitionImpl extends ItemImpl {
 	 * 
 	 * @see fr.imag.adele.cadse.core.ItemType#getCreationPage()
 	 */
+	/* (non-Javadoc)
+	 * @see fr.imag.adele.cadse.core.impl.internal.TypeDefinition#getCreationPage()
+	 */
 	public IPage[] getCreationPage() {
-		return this._creationPages == null ? EMPTY_PAGE : this._creationPages;
+		return this._creationPages == null ? PageRuntimeModel.EMPTY_PAGE : this._creationPages;
 	}
 
 	/*
@@ -74,8 +82,11 @@ public class TypeDefinitionImpl extends ItemImpl {
 	 * 
 	 * @see fr.imag.adele.cadse.core.ItemType#getModificationPage()
 	 */
+	/* (non-Javadoc)
+	 * @see fr.imag.adele.cadse.core.impl.internal.TypeDefinition#getModificationPage()
+	 */
 	public IPage[] getModificationPage() {
-		return this._modificationPages == null ? EMPTY_PAGE : this._modificationPages;
+		return this._modificationPages == null ? PageRuntimeModel.EMPTY_PAGE : this._modificationPages;
 	}
 	
 	@Override
@@ -190,7 +201,10 @@ public class TypeDefinitionImpl extends ItemImpl {
 
 	
 		
-	protected void recurcifComputeCreationPage(FilterContext context, List<IPage> list, Set<IAttributeType<?>> ro) {
+	/* (non-Javadoc)
+	 * @see fr.imag.adele.cadse.core.impl.internal.TypeDefinition#recurcifComputeCreationPage(fr.imag.adele.cadse.core.ui.view.FilterContext, java.util.List, java.util.Set)
+	 */
+	public void recurcifComputeCreationPage(FilterContext context, List<IPage> list, Set<IAttributeType<?>> ro) {
 		if (_creationPages != null) {
 			for (IPage f : _creationPages) {
 				IPage[] owPages = f.getOverwritePage();
@@ -213,6 +227,9 @@ public class TypeDefinitionImpl extends ItemImpl {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see fr.imag.adele.cadse.core.impl.internal.TypeDefinition#getAllAttributeTypes(java.util.List, fr.imag.adele.cadse.core.ItemFilter)
+	 */
 	public void getAllAttributeTypes(List<IAttributeType<?>> all, ItemFilter filter) {
 		if (_attributesDefinitions != null) {
 			if (filter == null) {
@@ -227,7 +244,10 @@ public class TypeDefinitionImpl extends ItemImpl {
 		}
 	}
 	
-	protected void computeValidators(FilterContext context, List<UIValidator> validators) {
+	/* (non-Javadoc)
+	 * @see fr.imag.adele.cadse.core.impl.internal.TypeDefinition#computeValidators(fr.imag.adele.cadse.core.ui.view.FilterContext, java.util.List)
+	 */
+	public void computeValidators(FilterContext context, List<UIValidator> validators) {
 		if (_validators != null) {
 			for (UIValidator f : _validators) {
 				UIValidator[] owValidators = f.getOverwriteValidator();
@@ -250,7 +270,10 @@ public class TypeDefinitionImpl extends ItemImpl {
 		}
 	}
 	
-	protected void recurcifComputeModificationPage(FilterContext context, List<IPage> list, Set<IAttributeType<?>> ro) {
+	/* (non-Javadoc)
+	 * @see fr.imag.adele.cadse.core.impl.internal.TypeDefinition#recurcifComputeModificationPage(fr.imag.adele.cadse.core.ui.view.FilterContext, java.util.List, java.util.Set)
+	 */
+	public void recurcifComputeModificationPage(FilterContext context, List<IPage> list, Set<IAttributeType<?>> ro) {
 		if (_modificationPages != null) {
 			for (IPage f : _modificationPages) {
 				IPage[] owPages = f.getOverwritePage();
@@ -273,7 +296,10 @@ public class TypeDefinitionImpl extends ItemImpl {
 		}
 	}
 	
-	protected void computeGenericPage(FilterContext context, HierachicPageImpl genericPage,
+	/* (non-Javadoc)
+	 * @see fr.imag.adele.cadse.core.impl.internal.TypeDefinition#computeGenericPage(fr.imag.adele.cadse.core.ui.view.FilterContext, fr.imag.adele.cadse.core.impl.internal.ui.HierachicPageImpl, java.util.HashSet, java.util.Set)
+	 */
+	public void computeGenericPage(FilterContext context, HierachicPageImpl genericPage,
 			HashSet<IAttributeType<?>> inSpecificPages, Set<IAttributeType<?>> ro) {
 		if (_attributesDefinitions != null) {
 			ArrayList<IAttributeType> notPutAttr = new ArrayList<IAttributeType>();
@@ -289,7 +315,10 @@ public class TypeDefinitionImpl extends ItemImpl {
 		}
 	}
 	
-	protected UIField findField(IAttributeType<?> att) {
+	/* (non-Javadoc)
+	 * @see fr.imag.adele.cadse.core.impl.internal.TypeDefinition#findField(fr.imag.adele.cadse.core.attribute.IAttributeType)
+	 */
+	public UIField findField(IAttributeType<?> att) {
 		if (_fields != null) {
 			for (UIField f : _fields) {
 				if (f.getAttributeDefinition() == att)
@@ -302,5 +331,35 @@ public class TypeDefinitionImpl extends ItemImpl {
 	protected boolean canBeAddedInGenericPage(HierachicPageImpl genericPage,
 			IAttributeType<?> attr) {
 		return true;
+	}
+	/**
+	 * Creates the default creation action.
+	 * 
+	 * @param parent
+	 *            the parent
+	 * @param type
+	 *            the type
+	 * @param lt
+	 *            the lt
+	 * 
+	 * @return the i action page
+	 * 
+	 * @throws CadseException
+	 *             the melusine exception
+	 */
+	public IActionPage createDefaultCreationAction(NewContext context) throws CadseException {
+		return new CreationAction(context);
+	}
+
+	/**
+	 * Creates the default modification action.
+	 * 
+	 * @param node
+	 *            the node
+	 * 
+	 * @return the i action page
+	 */
+	public IActionPage createDefaultModificationAction(FilterContext context) {
+		return new ModificationAction(context);
 	}
 }
