@@ -342,6 +342,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition {
 			return true;
 		return false;
 	}
+	
 	/**
 	 * Creates the default creation action.
 	 * 

@@ -28,16 +28,16 @@ import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
 import fr.imag.adele.cadse.core.ui.RunningModelController;
 import fr.imag.adele.cadse.core.ui.UIField;
 
-public class IC_Abstract extends AbstractGeneratedItem  {
+public class IC_Descriptor extends AbstractGeneratedItem  {
 	
 	ItemType _it;
 	
-	public IC_Abstract(CompactUUID id, ItemType it) {
+	public IC_Descriptor(CompactUUID id, ItemType it) {
 		super(id);
 		_it = it;
 	}
 
-	public IC_Abstract() {
+	public IC_Descriptor() {
 	}
 
 	@Override
