@@ -20,6 +20,7 @@ Export-Package: fr.imag.adele.cadse.core.impl;version="2.2.1";
   x-internal:="true",
  fr.imag.adele.cadse.core.impl.internal.ui;version="2.2.1";
   x-internal:="true",
+ fr.imag.adele.cadse.core.impl.script,
  fr.imag.adele.cadse.core.impl.ui;version="2.2.1";
   uses:="fr.imag.adele.cadse.core.impl,
    fr.imag.adele.cadse.core.impl.code,

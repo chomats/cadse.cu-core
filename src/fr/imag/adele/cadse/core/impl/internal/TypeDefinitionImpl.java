@@ -132,6 +132,10 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition {
 				creationPages);
 	}
 
+	
+	public synchronized void addValidators(UIValidator v) {
+		_validators = ArraysUtil.add(UIValidator.class, _validators, v);
+	}
 	/**
 	 * Ajoute des pages de modification.
 	 * 

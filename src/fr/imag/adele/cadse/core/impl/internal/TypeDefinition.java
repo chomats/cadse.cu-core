@@ -58,4 +58,6 @@ public interface TypeDefinition {
 	 * @return the i action page
 	 */
 	public IActionPage createDefaultModificationAction(FilterContext context) ;
+	
+	public void addValidators(UIValidator v);
 }
