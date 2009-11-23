@@ -44,9 +44,13 @@ import fr.imag.adele.cadse.core.impl.ReflectLink;
 import fr.imag.adele.cadse.core.impl.attribute.AttributeType;
 import fr.imag.adele.cadse.core.impl.internal.delta.ItemTypeItemDeltaAdapter;
 import fr.imag.adele.cadse.core.impl.internal.delta.LinkTypeItemDeltaAdapter;
+import fr.imag.adele.cadse.core.impl.ui.UIFieldImpl;
+import fr.imag.adele.cadse.core.impl.ui.ic.IC_Descriptor;
+import fr.imag.adele.cadse.core.impl.ui.mc.MC_Descriptor;
 import fr.imag.adele.cadse.core.internal.attribute.IInternalTWLink;
 import fr.imag.adele.cadse.core.path.EvaluatePath;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransactionListener;
+import fr.imag.adele.cadse.core.ui.EPosLabel;
 import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.util.ArraysUtil;
 import fr.imag.adele.cadse.core.util.Convert;
@@ -1031,8 +1035,9 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 	@Override
 	public UIField generateDefaultField() {
-		// TODO Auto-generated method stub
-		return null;
+		return new UIFieldImpl(CadseGCST.DBROWSER, CompactUUID.randomUUID(), this, getDisplayName(), EPosLabel.defaultpos, 
+				new MC_Descriptor(CadseGCST.LINK_MODEL_CONTROLLER), 
+				new IC_Descriptor(CompactUUID.randomUUID(), CadseGCST.IC_LINK_FOR_BROWSER_COMBO_LIST));
 	}
 	
 	
