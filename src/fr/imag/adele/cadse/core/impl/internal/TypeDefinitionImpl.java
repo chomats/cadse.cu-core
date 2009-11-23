@@ -334,7 +334,13 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition {
 
 	protected boolean canBeAddedInGenericPage(HierachicPageImpl genericPage,
 			IAttributeType<?> attr) {
-		return true;
+		if (attr.isHiddenInComputedPages())
+			return false;
+		if (genericPage.isModificationPage())
+			return true;
+		if (attr.mustBeInitializedAtCreationTime())
+			return true;
+		return false;
 	}
 	/**
 	 * Creates the default creation action.
