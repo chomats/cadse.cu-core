@@ -200,7 +200,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 	/**
 	 * implementation of extension ...
 	 */
-	private TypeDefinitionImpl[]							_extendedBy;
+	private TypeDefinition[]							_extendedBy;
 
 	private String								_managerClass;
 
@@ -1420,7 +1420,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 			_superType.getAllAttributeTypes(all, filter);
 		}
 		if (_extendedBy != null) {
-			for (TypeDefinitionImpl ext : _extendedBy) {
+			for (TypeDefinition ext : _extendedBy) {
 				ext.getAllAttributeTypes(all, filter);
 			}
 		}
@@ -1682,13 +1682,13 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 	 * @param list
 	 *            the list
 	 */
-	protected void recurcifComputeCreationPage(FilterContext context, List<IPage> list, Set<IAttributeType<?>> ro) {
+	public void recurcifComputeCreationPage(FilterContext context, List<IPage> list, Set<IAttributeType<?>> ro) {
 		if (_superType != null) {
 			((ItemTypeImpl) _superType).recurcifComputeCreationPage(context, list, ro);
 		}
 		super.recurcifComputeCreationPage(context, list, ro);
 		if (_extendedBy != null) {
-			for (TypeDefinitionImpl ext : _extendedBy) {
+			for (TypeDefinition ext : _extendedBy) {
 				ext.recurcifComputeCreationPage(context, list, ro);
 			}
 		}
@@ -1703,68 +1703,39 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 	 * @param list
 	 *            the list
 	 */
-	protected void recurcifComputeModificationPage(FilterContext context, List<IPage> list, Set<IAttributeType<?>> ro) {
+	public void recurcifComputeModificationPage(FilterContext context, List<IPage> list, Set<IAttributeType<?>> ro) {
 		if (_superType != null) {
 			((ItemTypeImpl) _superType).recurcifComputeModificationPage(context, list, ro);
 		}
 		super.recurcifComputeModificationPage(context, list, ro);
 		if (_extendedBy != null) {
-			for (TypeDefinitionImpl ext : _extendedBy) {
+			for (TypeDefinition ext : _extendedBy) {
 				ext.recurcifComputeModificationPage(context, list, ro);
 			}
 		}
 	}
 	
 	@Override
-	protected void computeValidators(FilterContext context, List<UIValidator> validators) {
+	public void computeValidators(FilterContext context, List<UIValidator> validators) {
 		if (_superType != null) {
 			((ItemTypeImpl) _superType).computeValidators(context, validators);
 		}
 		super.computeValidators(context, validators);
 		if (_extendedBy != null) {
-			for (TypeDefinitionImpl ext : _extendedBy) {
+			for (TypeDefinition ext : _extendedBy) {
 				ext.computeValidators(context, validators);
 			}
 		}
 	}
 	
 
-	/**
-	 * Creates the default creation action.
-	 * 
-	 * @param parent
-	 *            the parent
-	 * @param type
-	 *            the type
-	 * @param lt
-	 *            the lt
-	 * 
-	 * @return the i action page
-	 * 
-	 * @throws CadseException
-	 *             the melusine exception
-	 */
-	protected IActionPage createDefaultCreationAction(NewContext context) throws CadseException {
-		return new CreationAction(context);
-	}
-
-	/**
-	 * Creates the default modification action.
-	 * 
-	 * @param node
-	 *            the node
-	 * 
-	 * @return the i action page
-	 */
-	protected IActionPage createDefaultModificationAction(FilterContext context) {
-		return new ModificationAction(context);
-	}
+	
 
 
-	protected UIField findField(IAttributeType<?> att) {
+	public UIField findField(IAttributeType<?> att) {
 		UIField ret;
 		if (_extendedBy != null) {
-			for (TypeDefinitionImpl ext : _extendedBy) {
+			for (TypeDefinition ext : _extendedBy) {
 				ret = ext.findField(att);
 				if (ret != null) return ret;
 			}
@@ -1778,11 +1749,11 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 	}
 
 	@Override
-	protected void computeGenericPage(FilterContext context, HierachicPageImpl genericPage,
+	public void computeGenericPage(FilterContext context, HierachicPageImpl genericPage,
 			HashSet<IAttributeType<?>> inSpecificPages, Set<IAttributeType<?>> ro) {
 		super.computeGenericPage(context, genericPage, inSpecificPages, ro);
 		if (_extendedBy != null) {
-			for (TypeDefinitionImpl ext : _extendedBy) {
+			for (TypeDefinition ext : _extendedBy) {
 				ext.computeGenericPage(context, genericPage, inSpecificPages, ro);
 			}
 		}

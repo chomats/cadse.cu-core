@@ -45,6 +45,7 @@ import fr.imag.adele.cadse.core.DerivedLink;
 import fr.imag.adele.cadse.core.DerivedLinkDescription;
 import fr.imag.adele.cadse.core.EventFilter;
 import fr.imag.adele.cadse.core.GroupType;
+import fr.imag.adele.cadse.core.IItemAttributableType;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemDescription;
 import fr.imag.adele.cadse.core.ItemDescriptionRef;
@@ -71,6 +72,7 @@ import fr.imag.adele.cadse.core.delta.OperationTypeCst;
 import fr.imag.adele.cadse.core.delta.OrderOperation;
 import fr.imag.adele.cadse.core.delta.SetAttributeOperation;
 import fr.imag.adele.cadse.core.impl.CadseIllegalArgumentException;
+import fr.imag.adele.cadse.core.impl.PageRuntimeModel;
 import fr.imag.adele.cadse.core.impl.internal.Accessor;
 import fr.imag.adele.cadse.core.impl.internal.ItemTypeImpl;
 import fr.imag.adele.cadse.core.impl.internal.LogicalWorkspaceImpl;
@@ -1305,8 +1307,13 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * ()
 	 */
 	public IAttributeType<?>[] getLocalAllAttributeTypes() {
-		// TODO Auto-generated method stub
-		return null;
+		if (_group != null) {
+			ArrayList<IAttributeType<?>> ret = new ArrayList<IAttributeType<?>>();
+			ret.addAll(Arrays.asList(getType().getAllAttributeTypes()));
+			ret.addAll(Arrays.asList(((ItemType) _group).getLocalAllAttributeTypes()));
+			return (IAttributeType<?>[]) ret.toArray(new IAttributeType<?>[ret.size()]);
+		}
+		return getType().getAllAttributeTypes();
 	}
 
 	/*
@@ -4038,14 +4045,12 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 
 	@Override
 	public Pages getCreationPages(NewContext context) throws CadseException {
-		// TODO Auto-generated method stub
-		return null;
+		return PageRuntimeModel.INSTANCE.getCreationPages(this, context);
 	}
 
 	@Override
 	public Pages getModificationPages(FilterContext context) {
-		// TODO Auto-generated method stub
-		return null;
+		return PageRuntimeModel.INSTANCE.getModificationPages(this, context);
 	}
 
 }
