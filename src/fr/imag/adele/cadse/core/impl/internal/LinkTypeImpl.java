@@ -508,7 +508,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	@Override
 	public boolean mustBeInitializedAtCreationTime() {
 		if (isDefinedFlag(MUST_BE_INITIALIZED_AT_CREATION_TIME))
-			return super.mustBeCreateNewValueAtCreationTimeOfItem();
+			return super.mustBeInitializedAtCreationTime();
 		return getMin() > 0;
 	}
 
