@@ -36,8 +36,7 @@ public class MC_DestLink extends LinkModelController {
 		super(mandatory, msg);
 	}
 
-	public MC_DestLink(Item id) {
-		super(id);
+	public MC_DestLink() {
 	}
 
 	@Override

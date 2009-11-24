@@ -56,10 +56,10 @@ public class LinkModelController extends MC_AttributesItem implements RunningMod
 		init = false;
 	}
 
-	public LinkModelController(Item desc) {
-		super(desc);
+	public LinkModelController() {
 		init = true;
 	}
+	
 	@Override
 	public void init(UIPlatform uiPlatform) {
 		super.init(uiPlatform);
