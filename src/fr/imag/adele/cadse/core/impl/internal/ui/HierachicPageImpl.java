@@ -22,6 +22,7 @@ public class HierachicPageImpl extends AbstractGeneratedItem implements IPage, H
 	
 	public HierachicPageImpl(ItemType it, boolean modificationPage) {
 		_it = it;
+		_modificationPage = modificationPage;
 	}
 	
 	

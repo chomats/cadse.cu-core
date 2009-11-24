@@ -60,4 +60,6 @@ public interface TypeDefinition {
 	public IActionPage createDefaultModificationAction(FilterContext context) ;
 	
 	public void addValidators(UIValidator v);
+	
+	public void addField(UIField v);
 }

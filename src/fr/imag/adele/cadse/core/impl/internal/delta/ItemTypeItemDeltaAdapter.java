@@ -34,6 +34,7 @@ import fr.imag.adele.cadse.core.ui.IActionPage;
 import fr.imag.adele.cadse.core.ui.IPage;
 import fr.imag.adele.cadse.core.ui.IPageFactory;
 import fr.imag.adele.cadse.core.ui.Pages;
+import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.ui.UIValidator;
 import fr.imag.adele.cadse.core.ui.view.NewContext;
 
@@ -639,6 +640,12 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 
 	@Override
 	public void addValidators(UIValidator v) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addField(UIField v) {
 		// TODO Auto-generated method stub
 		
 	}
