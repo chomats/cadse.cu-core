@@ -75,6 +75,8 @@ public class UIFieldImpl extends AbstractGeneratedItem implements
 	
 	public UIField[] _children = null;
 
+	private int	_hspan;
+
 	/**
 	 * Instantiates a new uI field.
 	 * 
@@ -94,16 +96,24 @@ public class UIFieldImpl extends AbstractGeneratedItem implements
 		super(uuid);
 		//assert mc != null;
 		this._ic = ic;
+		if (_ic != null)
+			_ic.setParent(this, CadseGCST.FIELD_lt_IC);
 		this._mc = mc;
 		this._label = label;
 		this._posLabel = poslabel;
 		this._attributeRef = attr;
 		this._it = it;
+		_hspan = 1;
+		if (_it == CadseGCST.DBROWSER)
+			_hspan = 2;
 	}
 
 	public UIFieldImpl(ItemType it, CompactUUID id) {
 		super(id);
 		_it = it;
+		_hspan = 1;
+		if (_it == CadseGCST.DBROWSER)
+			_hspan = 2;
 	}
 
 	/*
@@ -183,7 +193,7 @@ public class UIFieldImpl extends AbstractGeneratedItem implements
 	 * @see fr.imag.adele.cadse.core.ui.UIField#getHSpan()
 	 */
 	public int getHSpan() {
-		return 1;
+		return _hspan;
 	}
 
 	/*
