@@ -121,7 +121,7 @@ public class PageRuntimeModel {
 			inSpecificPages.addAll(Arrays.asList(iPage.getAttributes()));
 		}
 		
-		HierachicPageImpl genericPage = new HierachicPageImpl(item.getType(), true);
+		HierachicPageImpl genericPage = new HierachicPageImpl(item.getType(), false);
 		iComputeGenericPage(item, context, genericPage, inSpecificPages, ro);
 		list.add(0, genericPage);
 	}
