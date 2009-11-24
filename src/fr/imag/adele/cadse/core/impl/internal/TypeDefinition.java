@@ -42,7 +42,7 @@ public interface TypeDefinition {
 			Set<IAttributeType<?>> ro);
 
 	public abstract void computeGenericPage(FilterContext context, HierachicPageImpl genericPage,
-			HashSet<IAttributeType<?>> inSpecificPages, Set<IAttributeType<?>> ro);
+			HashSet<IAttributeType<?>> inSpecificPages, Set<IAttributeType<?>> ro, IAttributeType<?>... firstAttributes);
 
 	public abstract UIField findField(IAttributeType<?> att);
 

@@ -1750,8 +1750,8 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 
 	@Override
 	public void computeGenericPage(FilterContext context, HierachicPageImpl genericPage,
-			HashSet<IAttributeType<?>> inSpecificPages, Set<IAttributeType<?>> ro) {
-		super.computeGenericPage(context, genericPage, inSpecificPages, ro);
+			HashSet<IAttributeType<?>> inSpecificPages, Set<IAttributeType<?>> ro, IAttributeType<?>... firstAttributes) {
+		super.computeGenericPage(context, genericPage, inSpecificPages, ro, firstAttributes);
 		if (_extendedBy != null) {
 			for (TypeDefinition ext : _extendedBy) {
 				ext.computeGenericPage(context, genericPage, inSpecificPages, ro);
