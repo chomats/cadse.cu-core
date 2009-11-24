@@ -136,6 +136,13 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition {
 	public synchronized void addValidators(UIValidator v) {
 		_validators = ArraysUtil.add(UIValidator.class, _validators, v);
 	}
+	
+	public synchronized void addField(UIField v) {
+		_fields = ArraysUtil.add(UIField.class, _fields, v);
+	}
+	
+	
+	
 	/**
 	 * Ajoute des pages de modification.
 	 * 
