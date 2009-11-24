@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import fr.imag.adele.cadse.core.CadseException;
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.impl.internal.TypeDefinition;
@@ -26,6 +27,7 @@ import fr.imag.adele.cadse.core.ui.view.NewContext;
 public class PageRuntimeModel {
 	public static final IPage[]			EMPTY_PAGE		= new IPage[0];
 	public static PageRuntimeModel	INSTANCE = new PageRuntimeModel();
+	
 	
 	
 	public Pages getModificationPages(Item item, FilterContext context) {
@@ -148,7 +150,8 @@ public class PageRuntimeModel {
 	
 	protected void iComputeGenericPage(Item item, FilterContext context, HierachicPageImpl genericPage,
 			HashSet<IAttributeType<?>> inSpecificPages, Set<IAttributeType<?>> ro) {
-		((TypeDefinition) item.getType()).computeGenericPage(context, genericPage, inSpecificPages, ro);
+		((TypeDefinition) item.getType()).computeGenericPage(context, genericPage, inSpecificPages, ro, 
+				CadseGCST.ITEM_at_NAME_);
 	}
 	
 	
