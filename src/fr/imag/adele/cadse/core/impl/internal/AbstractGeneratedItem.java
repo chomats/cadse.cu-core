@@ -1507,6 +1507,10 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		}
 		return (_flag & f) != 0;
 	}
+	
+	public boolean isDefinedFlag(int f) {
+		return (_definedflag & f) != 0;
+	}
 
 	@Deprecated
 	public boolean setflag(boolean flag, int f) {
