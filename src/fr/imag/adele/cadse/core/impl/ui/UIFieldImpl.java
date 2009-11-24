@@ -104,7 +104,7 @@ public class UIFieldImpl extends AbstractGeneratedItem implements
 		this._attributeRef = attr;
 		this._it = it;
 		_hspan = 1;
-		if (_it == CadseGCST.DBROWSER)
+		if (_it == CadseGCST.DBROWSER || it == CadseGCST.DLIST)
 			_hspan = 2;
 	}
 
@@ -112,7 +112,7 @@ public class UIFieldImpl extends AbstractGeneratedItem implements
 		super(id);
 		_it = it;
 		_hspan = 1;
-		if (_it == CadseGCST.DBROWSER)
+		if (_it == CadseGCST.DBROWSER || it == CadseGCST.DLIST)
 			_hspan = 2;
 	}
 

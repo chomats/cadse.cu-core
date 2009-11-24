@@ -2147,7 +2147,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 					return ret;
 				}
 				if (ownerOnly) {
-					return null;
+					return type.getDefaultValue();
 				}
 				iterpro = s.propagateValue(type);
 			}
@@ -2158,7 +2158,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 
 			if (iterpro == null) {
 				if (stack.isEmpty()) {
-					return null;
+					return type.getDefaultValue();
 				}
 				iterpro = stack.pollLast();
 			}

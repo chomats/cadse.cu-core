@@ -14,6 +14,7 @@ import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.impl.internal.TypeDefinition;
 import fr.imag.adele.cadse.core.impl.internal.ui.HierachicPageImpl;
 import fr.imag.adele.cadse.core.impl.internal.ui.PagesImpl;
+import fr.imag.adele.cadse.core.ui.AbstractUIRunningValidator;
 import fr.imag.adele.cadse.core.ui.IPage;
 import fr.imag.adele.cadse.core.ui.Pages;
 import fr.imag.adele.cadse.core.ui.UIField;
@@ -177,7 +178,9 @@ public class PageRuntimeModel {
 	protected List<UIRunningValidator> createRunning(List<UIValidator> validators) {
 		ArrayList<UIRunningValidator> ret = new ArrayList<UIRunningValidator>();
 		for (UIValidator v : validators) {
-			ret.add(v.create());
+			AbstractUIRunningValidator rv = (AbstractUIRunningValidator) v.create();
+			rv._desc = v;
+			ret.add(rv);
 		}
 		return ret;
 	}

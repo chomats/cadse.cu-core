@@ -7,15 +7,19 @@ Bundle-Version: 2.2.1.qualifier
 Bundle-Localization: plugin
 Bundle-ClassPath: .
 Bundle-Description: Bundle fr.imag.adele.cadse.cu.workspace.workspace
-Export-Package: fr.imag.adele.cadse.core.impl;version="2.2.1";uses:="fr.imag.adele.cadse.core.impl.internal",
+Export-Package: fr.imag.adele.cadse.core.impl;version="2.2.1";
+  uses:="fr.imag.adele.cadse.core.impl.internal",
  fr.imag.adele.cadse.core.impl.attribute;version="2.2.1";
   uses:="fr.imag.adele.cadse.core.impl,
    fr.imag.adele.cadse.core.impl.internal,
    fr.imag.adele.cadse.core.impl.internal.delta,
    fr.imag.adele.cadse.core.attribute",
- fr.imag.adele.cadse.core.impl.internal;version="2.2.1";x-internal:=true,
- fr.imag.adele.cadse.core.impl.internal.delta;version="2.2.1";x-internal:=true,
- fr.imag.adele.cadse.core.impl.internal.ui;version="2.2.1";x-internal:=true,
+ fr.imag.adele.cadse.core.impl.internal;version="2.2.1";
+  x-internal:="true",
+ fr.imag.adele.cadse.core.impl.internal.delta;version="2.2.1";
+  x-internal:="true",
+ fr.imag.adele.cadse.core.impl.internal.ui;version="2.2.1";
+  x-internal:="true",
  fr.imag.adele.cadse.core.impl.script,
  fr.imag.adele.cadse.core.impl.ui;version="2.2.1";
   uses:="fr.imag.adele.cadse.core.impl,
@@ -25,8 +29,11 @@ Export-Package: fr.imag.adele.cadse.core.impl;version="2.2.1";uses:="fr.imag.ade
    fr.imag.adele.cadse.core.impl.internal.delta",
  fr.imag.adele.cadse.core.impl.ui.ic,
  fr.imag.adele.cadse.core.impl.ui.mc,
- fr.imag.adele.cadse.core.impl.ui.view;version="2.2.1";uses:="fr.imag.adele.cadse.core.impl.internal",
- fr.imag.adele.cadse.core.impl.var;version="2.2.1";uses:="fr.imag.adele.cadse.core.var,fr.imag.adele.cadse.core.impl.attribute"
+ fr.imag.adele.cadse.core.impl.ui.view;version="2.2.1";
+  uses:="fr.imag.adele.cadse.core.impl.internal",
+ fr.imag.adele.cadse.core.impl.var;version="2.2.1";
+  uses:="fr.imag.adele.cadse.core.var,
+   fr.imag.adele.cadse.core.impl.attribute"
 Import-Package: com.sun.xml.bind.v2.runtime.reflect;version="2.1.5",
  com.sun.xml.bind.v2.runtime.reflect.opt;version="2.1.5",
  fede.workspace.role.initmodel;version="1.0.0",
