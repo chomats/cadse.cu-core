@@ -18,6 +18,7 @@
  */
 package fr.imag.adele.cadse.core.impl.ui.ic;
 
+
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.Item;
@@ -25,7 +26,6 @@ import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
-import fr.imag.adele.cadse.core.ui.RunningModelController;
 import fr.imag.adele.cadse.core.ui.UIField;
 
 public class IC_Descriptor extends AbstractGeneratedItem  {
@@ -36,9 +36,15 @@ public class IC_Descriptor extends AbstractGeneratedItem  {
 		super(id);
 		_it = it;
 	}
+	
+	public IC_Descriptor(ItemType it) {
+		super(CompactUUID.randomUUID());
+		_it = it;
+	}
 
 	public IC_Descriptor() {
 	}
+
 
 	@Override
 	public String getName() {
