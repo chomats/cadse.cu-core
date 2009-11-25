@@ -592,17 +592,17 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 			// set field and store in this parentItem and link part
 			ret.setParent(getOrCreateItemOperation(parent), context.getPartLinkType(), false, false);
 		}
-		validateCreatedItem(ret);
+		
 		
 		{
 			LinkType[] inLT = context.getIncomingLinkType();
-		Item[] inSrc = context.getIncomingSources();
-		if (inLT != null) {
-			for (int i = 0; i < inSrc.length; i++) {
-				ItemDeltaImpl deltaSrc = (ItemDeltaImpl) getOrCreateItemOperation(inSrc[i]);
-				linkToNotifie.add(deltaSrc.createLink(inLT[i], ret, false));
+			Item[] inSrc = context.getIncomingSources();
+			if (inLT != null) {
+				for (int i = 0; i < inSrc.length; i++) {
+					ItemDeltaImpl deltaSrc = (ItemDeltaImpl) getOrCreateItemOperation(inSrc[i]);
+					linkToNotifie.add(deltaSrc.createLink(inLT[i], ret, false));
+				}
 			}
-		}
 		}
 		List<SetAttributeOperation> setAttToNotifie = new ArrayList<SetAttributeOperation>();
 		SetAttrVal<?>[] setAttrs = context.getSetAttrs();
@@ -612,9 +612,12 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 				Object v = setAttrs[i].getValue();
 				SetAttributeOperation setAtt = ret.setAttribute(def, setAttrs[i].getAttrName(), v, true, false);
 				if (setAtt == null) continue;
-				validateChangeAttribute(ret, setAtt);
 				setAttToNotifie.add(setAtt);
 			}
+		}
+		validateCreatedItem(ret);
+		for (SetAttributeOperation setAtt : setAttToNotifie) {
+			validateChangeAttribute(ret, setAtt);
 		}
 		notifyCreatedItem(ret);
 		
