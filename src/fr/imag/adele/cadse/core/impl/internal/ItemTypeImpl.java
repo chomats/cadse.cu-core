@@ -1344,7 +1344,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 	@Override
 	public boolean commitSetAttribute(IAttributeType<?> type, Object value) {
 		if (CadseGCST.ITEM_at_DISPLAY_NAME_ == type) {
-			_displayName = Convert.toString(value);
+			_displayName = Convert.toString(value); if (_displayName != null && _displayName.length() == 0) _displayName = null;
 			return true;
 		}
 		if (CadseGCST.ITEM_TYPE_at_HAS_CONTENT_ == type) {
