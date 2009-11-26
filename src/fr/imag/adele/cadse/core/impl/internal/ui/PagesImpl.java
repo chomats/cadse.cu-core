@@ -101,7 +101,9 @@ public final class PagesImpl implements Pages {
 		this._readOnlyAttributes = ro;
 		this._groups = groups;
 	}
-
+	
+	public PagesImpl() {
+	}
 	
 	public Set<GroupOfAttributes>	getGroupOfAttributes() {
 		return _groups;
