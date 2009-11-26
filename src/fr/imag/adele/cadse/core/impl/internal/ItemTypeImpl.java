@@ -72,6 +72,7 @@ import fr.imag.adele.cadse.core.internal.IWorkingLoadingItems;
 import fr.imag.adele.cadse.core.internal.ItemTypeInternal;
 import fr.imag.adele.cadse.core.key.SpaceKeyType;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransactionListener;
+import fr.imag.adele.cadse.core.ui.GroupOfAttributes;
 import fr.imag.adele.cadse.core.ui.IActionContributor;
 import fr.imag.adele.cadse.core.ui.IActionPage;
 import fr.imag.adele.cadse.core.ui.IPage;
@@ -1761,6 +1762,19 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 			((ItemTypeImpl) _superType).computeGenericPage(context, genericPage, inSpecificPages, ro);
 		}
 	}
+	
+	public void computeGroup(Set<GroupOfAttributes> groups) {
+		super.computeGroup(groups);
+		if (_extendedBy != null) {
+			for (TypeDefinition ext : _extendedBy) {
+				ext.computeGroup(groups);
+			}
+		}
+		if (_superType != null) {
+			((ItemTypeImpl) _superType).computeGroup(groups);
+		}
+	}
+		
 	
 
 	/*

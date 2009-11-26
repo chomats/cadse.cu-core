@@ -16,6 +16,7 @@ import fr.imag.adele.cadse.core.impl.internal.TypeDefinition;
 import fr.imag.adele.cadse.core.impl.internal.ui.HierachicPageImpl;
 import fr.imag.adele.cadse.core.impl.internal.ui.PagesImpl;
 import fr.imag.adele.cadse.core.ui.AbstractUIRunningValidator;
+import fr.imag.adele.cadse.core.ui.GroupOfAttributes;
 import fr.imag.adele.cadse.core.ui.IPage;
 import fr.imag.adele.cadse.core.ui.Pages;
 import fr.imag.adele.cadse.core.ui.UIField;
@@ -35,11 +36,13 @@ public class PageRuntimeModel {
 		List<UIValidator> validators = new ArrayList<UIValidator>();
 		iComputeValidators(item, context, validators);
 		
+		HashSet<GroupOfAttributes> groups = new HashSet<GroupOfAttributes>();
+		iComputeGroup(item, groups);
 		return new PagesImpl(context, true, 
 				((TypeDefinition) item.getType()).createDefaultModificationAction(context), 
 				iComputeFields(item), 
 				iGetAllModificationPage(item, context, ro), 
-				createRunning(validators), ro);
+				createRunning(validators), ro, groups);
 	}
 	
 	
@@ -48,14 +51,21 @@ public class PageRuntimeModel {
 		context.setDefaultName(item.getType().getDefaultInstanceName());
 		List<UIValidator> validators = new ArrayList<UIValidator>();
 		iComputeValidators(item, context, validators);
+		HashSet<GroupOfAttributes> groups = new HashSet<GroupOfAttributes>();
+		iComputeGroup(item, groups);
 		return new PagesImpl(context, false, 
 				((TypeDefinition) item.getType()).createDefaultCreationAction(context), 
 				iComputeFields(item), 
 				iGetAllCreationPage(item, context, ro), 
-				createRunning(validators), ro);
+				createRunning(validators), ro, groups);
 	}
 	
 	
+	private void iComputeGroup(Item item, HashSet<GroupOfAttributes> groups) {
+		((TypeDefinition) item.getType()).computeGroup(groups);
+	}
+
+
 	/**
 	 * Gets the good creation page_.
 	 * 

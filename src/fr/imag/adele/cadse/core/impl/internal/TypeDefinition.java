@@ -9,6 +9,7 @@ import fr.imag.adele.cadse.core.ItemFilter;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.impl.internal.ui.HierachicPageImpl;
 import fr.imag.adele.cadse.core.impl.ui.CreationAction;
+import fr.imag.adele.cadse.core.ui.GroupOfAttributes;
 import fr.imag.adele.cadse.core.ui.IActionPage;
 import fr.imag.adele.cadse.core.ui.IPage;
 import fr.imag.adele.cadse.core.ui.UIField;
@@ -44,6 +45,8 @@ public interface TypeDefinition {
 	public abstract void computeGenericPage(FilterContext context, HierachicPageImpl genericPage,
 			HashSet<IAttributeType<?>> inSpecificPages, Set<IAttributeType<?>> ro, IAttributeType<?>... firstAttributes);
 
+	public void computeGroup(Set<GroupOfAttributes> groups);
+	
 	public abstract UIField findField(IAttributeType<?> att);
 
 	

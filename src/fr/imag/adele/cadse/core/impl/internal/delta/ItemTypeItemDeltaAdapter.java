@@ -29,6 +29,7 @@ import fr.imag.adele.cadse.core.impl.internal.ItemTypeImpl;
 import fr.imag.adele.cadse.core.key.SpaceKeyType;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransactionListener;
+import fr.imag.adele.cadse.core.ui.GroupOfAttributes;
 import fr.imag.adele.cadse.core.ui.IActionContributor;
 import fr.imag.adele.cadse.core.ui.IActionPage;
 import fr.imag.adele.cadse.core.ui.IPage;
@@ -648,6 +649,18 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 	public void addField(UIField v) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void addGroupOfAttributes(GroupOfAttributes g) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public GroupOfAttributes[] getGroupOfAttributes() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
