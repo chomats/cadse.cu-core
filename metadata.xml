@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ipojo>
+	<component immediate="true" classname="fr.imag.adele.cadse.core.impl.internal.CadseDomainImpl" factory="fr.imag.adele.cadse.core.impl.internal.CadseDomainImpl" architecture="true">
+		<callback transition="validate" method="start"/>
+		<callback transition="invalidate" method="stop"/>
+		<provides specification="fr.imag.adele.cadse.core.CadseDomain">
+			<property name="sam.domain.root" value="Workspace" type="java.lang.String"/>
+		</provides>
+	</component>
+	<instance component="fr.imag.adele.cadse.core.impl.internal.CadseDomainImpl" name="fr.imag.adele.cadse.core.impl.internal.CadseDomainImpl"/>
+</ipojo>
