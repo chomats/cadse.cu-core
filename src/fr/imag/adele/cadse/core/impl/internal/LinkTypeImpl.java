@@ -1047,6 +1047,11 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 				new IC_Descriptor(CadseGCST.IC_LINK_FOR_BROWSER_COMBO_LIST));
 	}
 	
+	@Override
+	public Link convertTo(Object v) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 
 }

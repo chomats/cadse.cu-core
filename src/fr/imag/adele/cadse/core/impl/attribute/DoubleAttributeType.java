@@ -191,11 +191,15 @@ public class DoubleAttributeType extends AttributeType implements
 	}
 
 	@Override
-	public Object convertTo(Object v) {
+	public Double convertTo(Object v) {
 		if (v instanceof String) {
 			return new Double((String) v);
 		}
-		return v;
+		if (v instanceof Double)
+			return (Double) v;
+		if (v instanceof Number)
+			return ((Number)v).doubleValue();
+		return null;
 	}
 
 }

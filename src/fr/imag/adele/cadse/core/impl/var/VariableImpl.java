@@ -94,8 +94,8 @@ public abstract class VariableImpl extends AttributeType implements fr.imag.adel
 	}
 
 	@Override
-	public Object convertTo(Object v) {
-		return v;
+	public String convertTo(Object v) {
+		return (String) v;
 	}
 
 	@Override
