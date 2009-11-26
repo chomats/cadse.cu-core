@@ -29,6 +29,7 @@ import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.impl.CollectedReflectLink;
+import fr.imag.adele.cadse.core.impl.Item_Descriptor;
 import fr.imag.adele.cadse.core.impl.ReflectLink;
 import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
 import fr.imag.adele.cadse.core.ui.EPosLabel;
@@ -50,7 +51,7 @@ import fr.imag.adele.cadse.core.util.Convert;
  * 
  * @author chomats
  */
-public class UIFieldImpl extends AbstractGeneratedItem implements
+public class UIFieldImpl extends Item_Descriptor implements
 		UIField {
 
 	private int					_style	= 0;
@@ -71,7 +72,6 @@ public class UIFieldImpl extends AbstractGeneratedItem implements
 
 	public IAttributeType<?> _attributeRef;
 	
-	ItemType _it;
 	
 	public UIField[] _children = null;
 
@@ -92,8 +92,8 @@ public class UIFieldImpl extends AbstractGeneratedItem implements
 	 *            the ic
 	 */
 	public UIFieldImpl(ItemType it, CompactUUID uuid, IAttributeType<?> attr, String label,
-			EPosLabel poslabel, Item mc, Item ic) {
-		super(uuid);
+			EPosLabel poslabel, Item mc, Item ic, Object ... keyvalues) {
+		super(uuid, it, keyvalues);
 		//assert mc != null;
 		this._ic = ic;
 		if (_ic != null)
@@ -102,17 +102,16 @@ public class UIFieldImpl extends AbstractGeneratedItem implements
 		this._label = label;
 		this._posLabel = poslabel;
 		this._attributeRef = attr;
-		this._it = it;
 		_hspan = 1;
-		if (_it == CadseGCST.DBROWSER || it == CadseGCST.DLIST)
+		if (it == CadseGCST.DBROWSER || it == CadseGCST.DLIST)
 			_hspan = 2;
 	}
 
 	public UIFieldImpl(ItemType it, CompactUUID id) {
-		super(id);
-		_it = it;
+		super(id, it);
+		_id = id;
 		_hspan = 1;
-		if (_it == CadseGCST.DBROWSER || it == CadseGCST.DLIST)
+		if (it == CadseGCST.DBROWSER || it == CadseGCST.DLIST)
 			_hspan = 2;
 	}
 
@@ -388,10 +387,6 @@ public class UIFieldImpl extends AbstractGeneratedItem implements
 		return editable;
 	}
 
-	@Override
-	public ItemType getType() {
-		return _it;
-	}
 
 	/**
 	 * return a desciption of this field

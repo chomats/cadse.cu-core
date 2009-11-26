@@ -3564,7 +3564,8 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 			throws CadseException {
 		if (parent != null) {
 			if (parent == _parentItem) {
-				this._parentLinkType = lt;
+				if (lt != null)
+					this._parentLinkType = lt;
 				return;
 			}
 
