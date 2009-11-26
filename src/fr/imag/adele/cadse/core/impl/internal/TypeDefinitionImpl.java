@@ -25,6 +25,7 @@ import fr.imag.adele.cadse.core.impl.ReflectLink;
 import fr.imag.adele.cadse.core.impl.internal.ui.HierachicPageImpl;
 import fr.imag.adele.cadse.core.impl.ui.CreationAction;
 import fr.imag.adele.cadse.core.impl.ui.ModificationAction;
+import fr.imag.adele.cadse.core.ui.GroupOfAttributes;
 import fr.imag.adele.cadse.core.ui.IActionPage;
 import fr.imag.adele.cadse.core.ui.IPage;
 import fr.imag.adele.cadse.core.ui.UIField;
@@ -56,7 +57,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition {
 		super(wl, type);
 	}
 
-	protected IAttributeType<?>[]							_attributesDefinitions		= null;
+	protected IAttributeType<?>[]						_attributesDefinitions		= null;
 
 
 	protected IPage[]									_creationPages				= null;
@@ -65,6 +66,9 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition {
 	protected UIField[]									_fields						= null;
 	
 	protected UIValidator[]								_validators					= null;
+	
+	protected GroupOfAttributes[]						_groupOfAttributes			= null;
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -332,6 +336,17 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition {
 		}
 	}
 	
+	public void computeGroup(Set<GroupOfAttributes> groups) {
+		if (_groupOfAttributes != null) {
+			ONE: for (GroupOfAttributes g : _groupOfAttributes) {
+				if (g.getOverWriteGroup() != null)
+					groups.remove(g.getOverWriteGroup());
+				groups.add(g);
+				continue ONE;
+			}
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see fr.imag.adele.cadse.core.impl.internal.TypeDefinition#findField(fr.imag.adele.cadse.core.attribute.IAttributeType)
 	 */
@@ -385,5 +400,13 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition {
 	 */
 	public IActionPage createDefaultModificationAction(FilterContext context) {
 		return new ModificationAction(context);
+	}
+	
+	public void addGroupOfAttributes( GroupOfAttributes g) {
+		_groupOfAttributes = ArraysUtil.add(GroupOfAttributes.class, _groupOfAttributes, g);
+	}
+	
+	public GroupOfAttributes[] getGroupOfAttributes() {
+		return _groupOfAttributes;
 	}
 }

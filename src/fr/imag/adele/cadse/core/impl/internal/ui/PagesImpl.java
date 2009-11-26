@@ -21,6 +21,7 @@ package fr.imag.adele.cadse.core.impl.internal.ui;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,6 +34,7 @@ import fr.imag.adele.cadse.core.impl.CadseCore;
 import fr.imag.adele.cadse.core.impl.ui.CreationAction;
 import fr.imag.adele.cadse.core.impl.ui.ModificationAction;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
+import fr.imag.adele.cadse.core.ui.GroupOfAttributes;
 import fr.imag.adele.cadse.core.ui.IActionPage;
 import fr.imag.adele.cadse.core.ui.IPage;
 import fr.imag.adele.cadse.core.ui.UIPlatform;
@@ -71,6 +73,8 @@ public final class PagesImpl implements Pages {
 	
 	private FilterContext	_context;
 
+	private Set<GroupOfAttributes>	_groups;
+
 	/**
 	 * Instantiates a new pages.
 	 * 
@@ -83,7 +87,9 @@ public final class PagesImpl implements Pages {
 	 * @param validators 
 	 */
 	public PagesImpl(FilterContext	context, boolean ismodificationpage, 
-			IActionPage action, Map<IAttributeType<?>, UIField> fiedls, IPage[] pages, List<UIRunningValidator> validators,Set<IAttributeType<?>> ro) {
+			IActionPage action, Map<IAttributeType<?>, UIField> fiedls, IPage[] pages, 
+			List<UIRunningValidator> validators,Set<IAttributeType<?>> ro,
+			Set<GroupOfAttributes> groups) {
 		this._pages = pages;
 		this._action = action;
 		this._ismodificationpage = ismodificationpage;
@@ -93,9 +99,12 @@ public final class PagesImpl implements Pages {
 		this._validators = validators;
 		this._context = context;
 		this._readOnlyAttributes = ro;
+		this._groups = groups;
 	}
 
-	public PagesImpl() {
+	
+	public Set<GroupOfAttributes>	getGroupOfAttributes() {
+		return _groups;
 	}
 
 	/*
