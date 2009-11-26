@@ -121,7 +121,7 @@ public class BooleanAttributeType extends AttributeType implements
 	}
 
 	@Override
-	public Object convertTo(Object v) {
+	public Boolean convertTo(Object v) {
 		return Convert.toBoolean(v);
 	}
 

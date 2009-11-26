@@ -117,7 +117,7 @@ public class LongAttributeType extends AttributeType implements fr.imag.adele.ca
 	}
 
 	@Override
-	public Object convertTo(Object v) {
+	public Long convertTo(Object v) {
 		if (v == null || "".equals(v) || "null".equals(v)) { //$NON-NLS-1$ //$NON-NLS-2$
 			return null;
 		}
@@ -125,8 +125,10 @@ public class LongAttributeType extends AttributeType implements fr.imag.adele.ca
 			return new Long((String) v);
 		}
 		if (v instanceof Long) {
-			return v;
+			return (Long) v;
 		}
+		if (v instanceof Number)
+			return ((Number)v).longValue();
 		throw new ClassCastException(NLS.bind(Messages.cannot_convert_to_long, v.getClass()));
 	}
 

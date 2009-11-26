@@ -80,7 +80,13 @@ public class ObjectAttributType<X> extends AttributeType implements IAttributeTy
 	public boolean mustBeCreateNewValueAtCreationTimeOfItem() {
 		return _constructor != null;
 	}
-
+	
+	@Override
+	public X convertTo(Object v) {
+		// TODO Auto-generated method stub
+		return (X) super.convertTo(v);
+	}
+	
 	protected Object[] getArgsFromItem(Item anItem) {
 		if (_args == null) {
 			return null;

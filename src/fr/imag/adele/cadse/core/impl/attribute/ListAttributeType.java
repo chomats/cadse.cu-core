@@ -211,4 +211,9 @@ public class ListAttributeType<X> extends AttributeType implements
 		super.removeOutgoingLink(link, notifie);
 	}
 
+	@Override
+	public List convertTo(Object v) {
+		// TODO Auto-generated method stub
+		return (List) v;
+	}
 }

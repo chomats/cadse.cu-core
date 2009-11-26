@@ -157,9 +157,9 @@ public class StringAttributeType extends AttributeType implements fr.imag.adele.
 	}
 
 	@Override
-	public Object convertTo(Object v) {
+	public String convertTo(Object v) {
 		if (v instanceof String) {
-			return v;
+			return (String) v;
 		}
 		return null;
 	}

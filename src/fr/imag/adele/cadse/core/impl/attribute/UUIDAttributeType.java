@@ -18,6 +18,8 @@
  */
 package fr.imag.adele.cadse.core.impl.attribute;
 
+import java.util.UUID;
+
 import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.impl.internal.delta.ItemDeltaImpl;
@@ -57,5 +59,11 @@ public class UUIDAttributeType extends AttributeType implements fr.imag.adele.ca
 			return CompactUUID.randomUUID();
 		}
 		return null;
+	}
+	
+	@Override
+	public CompactUUID convertTo(Object v) {
+		// TODO Auto-generated method stub
+		return (CompactUUID) super.convertTo(v);
 	}
 }

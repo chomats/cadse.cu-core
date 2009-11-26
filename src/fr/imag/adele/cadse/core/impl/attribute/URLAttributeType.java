@@ -51,4 +51,9 @@ public class URLAttributeType extends AttributeType implements fr.imag.adele.cad
 		return null;
 	}
 
+	@Override
+	public URL convertTo(Object v) {
+		// TODO Auto-generated method stub
+		return (URL) super.convertTo(v);
+	}
 }

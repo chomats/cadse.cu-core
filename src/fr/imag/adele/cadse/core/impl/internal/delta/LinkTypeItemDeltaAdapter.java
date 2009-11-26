@@ -188,7 +188,7 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements Li
 	}
 
 	@Override
-	public Object convertTo(Object value) {
+	public Link convertTo(Object value) {
 		// TODO Auto-generated method stub
 		return null;
 	}

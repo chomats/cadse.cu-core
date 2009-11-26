@@ -201,7 +201,7 @@ public class IntegerAttributeType extends AttributeType implements
 	}
 
 	@Override
-	public Object convertTo(Object v) {
+	public Integer convertTo(Object v) {
 		if (v == null || "".equals(v) || "null".equals(v)) { //$NON-NLS-1$ //$NON-NLS-2$
 			return null;
 		}
@@ -209,8 +209,10 @@ public class IntegerAttributeType extends AttributeType implements
 			return new Integer((String) v);
 		}
 		if (v instanceof Integer) {
-			return v;
+			return (Integer) v;
 		}
+		if (v instanceof Number)
+			return ((Number)v).intValue();
 		throw new ClassCastException(NLS.bind(Messages.cannot_convert_to_int, v.getClass()));
 	}
 
