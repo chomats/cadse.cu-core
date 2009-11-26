@@ -52,11 +52,11 @@ public class MC_Integer extends MC_AttributesItem {
 	@Override
 	public void init(UIPlatform uiPlatform) {
 		super.init(uiPlatform);
-		min = _desc.getAttributeWithDefaultValue(CadseGCST.INT_MODEL_CONTROLLER_at_MIN_, Integer.MIN_VALUE);
-		max = _desc.getAttributeWithDefaultValue(CadseGCST.INT_MODEL_CONTROLLER_at_MAX_, Integer.MAX_VALUE);
-		msg_min = _desc.getAttribute(CadseGCST.INT_MODEL_CONTROLLER_at_ERROR_MSG_MIN_);
-		msg_max = _desc.getAttribute(CadseGCST.INT_MODEL_CONTROLLER_at_ERROR_MSG_MAX_);
-		defaultValue = _desc.getAttribute(CadseGCST.INT_MODEL_CONTROLLER_at_DEFAULT_VALUE_);
+		min = _desc.getAttributeWithDefaultValue(CadseGCST.MC_INTEGER_at_MIN_, Integer.MIN_VALUE);
+		max = _desc.getAttributeWithDefaultValue(CadseGCST.MC_INTEGER_at_MAX_, Integer.MAX_VALUE);
+		msg_min = _desc.getAttribute(CadseGCST.MC_INTEGER_at_ERROR_MSG_MIN_);
+		msg_max = _desc.getAttribute(CadseGCST.MC_INTEGER_at_ERROR_MSG_MAX_);
+		defaultValue = _desc.getAttribute(CadseGCST.MC_INTEGER_at_DEFAULT_VALUE_);
 	}
 
 	@Override

@@ -82,7 +82,7 @@ public class LinkModelController extends MC_AttributesItem implements RunningMod
 			
 			if (init) {
 				mandatory = lt.getMin()>0;
-				msg = _desc == null ? null : _desc.getAttribute(CadseGCST.LINK_MODEL_CONTROLLER_at_ERROR_MESSAGE_);
+				msg = _desc == null ? null : _desc.getAttribute(CadseGCST.MC_LINK_at_ERROR_MESSAGE_);
 				if (msg == null || msg.length() == 0)
 					msg = "The link " + lt.getName() + " must be set";
 			}
@@ -204,7 +204,7 @@ public class LinkModelController extends MC_AttributesItem implements RunningMod
 	}
 
 	public ItemType getType() {
-		return CadseGCST.LINK_MODEL_CONTROLLER;
+		return CadseGCST.MC_LINK;
 	}
 
 	@Override

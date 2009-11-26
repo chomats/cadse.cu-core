@@ -1039,11 +1039,11 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	public UIField generateDefaultField() {
 		if (getMax() != 1) {
 			return new UIFieldImpl(CadseGCST.DLIST, CompactUUID.randomUUID(), this, getDisplayName(), EPosLabel.defaultpos, 
-					new MC_Descriptor(CadseGCST.LINK_MODEL_CONTROLLER), 
+					new MC_Descriptor(CadseGCST.MC_LINK), 
 					new IC_Descriptor(CadseGCST.IC_LINK_FOR_BROWSER_COMBO_LIST));
 		}
 		return new UIFieldImpl(CadseGCST.DBROWSER, CompactUUID.randomUUID(), this, getDisplayName(), EPosLabel.defaultpos, 
-				new MC_Descriptor(CadseGCST.LINK_MODEL_CONTROLLER), 
+				new MC_Descriptor(CadseGCST.MC_LINK), 
 				new IC_Descriptor(CadseGCST.IC_LINK_FOR_BROWSER_COMBO_LIST));
 	}
 	
