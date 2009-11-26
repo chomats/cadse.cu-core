@@ -30,7 +30,7 @@ import fr.imag.adele.cadse.core.ui.UIPlatform;
 import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.util.Convert;
 
-public final class MC_Integer extends MC_AttributesItem {
+public class MC_Integer extends MC_AttributesItem {
 	int		min;
 	int		max;
 	String	msg_min;
@@ -45,8 +45,18 @@ public final class MC_Integer extends MC_AttributesItem {
 		this.defaultValue = defaultValue;
 	}
 
-	public MC_Integer(Item id) {
-		super(id);
+	public MC_Integer() {
+		super();
+	}
+	
+	@Override
+	public void init(UIPlatform uiPlatform) {
+		super.init(uiPlatform);
+		min = _desc.getAttributeWithDefaultValue(CadseGCST.INT_MODEL_CONTROLLER_at_MIN_, Integer.MIN_VALUE);
+		max = _desc.getAttributeWithDefaultValue(CadseGCST.INT_MODEL_CONTROLLER_at_MAX_, Integer.MAX_VALUE);
+		msg_min = _desc.getAttribute(CadseGCST.INT_MODEL_CONTROLLER_at_ERROR_MSG_MIN_);
+		msg_max = _desc.getAttribute(CadseGCST.INT_MODEL_CONTROLLER_at_ERROR_MSG_MAX_);
+		defaultValue = _desc.getAttribute(CadseGCST.INT_MODEL_CONTROLLER_at_DEFAULT_VALUE_);
 	}
 
 	@Override

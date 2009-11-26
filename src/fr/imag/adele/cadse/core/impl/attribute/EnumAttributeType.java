@@ -269,6 +269,7 @@ public class EnumAttributeType<X extends Enum<X>> extends AttributeType implemen
 	@Override
 	public UIField generateDefaultField() {
 		return new UIFieldImpl(CadseGCST.DBROWSER, CompactUUID.randomUUID(), this, getDisplayName(), EPosLabel.defaultpos, 
-				new MC_Descriptor(CadseGCST.STRING_TO_ENUM_MODEL_CONTROLLER), new IC_Descriptor(CadseGCST.IC_ENUM_FOR_BROWSER_COMBO));
+				new MC_Descriptor(CadseGCST.STRING_TO_ENUM_MODEL_CONTROLLER), 
+				new IC_Descriptor(CadseGCST.IC_ENUM_FOR_BROWSER_COMBO));
 	}
 }

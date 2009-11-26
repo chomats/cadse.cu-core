@@ -25,26 +25,18 @@ import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
+import fr.imag.adele.cadse.core.impl.Item_Descriptor;
 import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
 import fr.imag.adele.cadse.core.ui.UIField;
 
-public class IC_Descriptor extends AbstractGeneratedItem  {
+public class IC_Descriptor extends Item_Descriptor  {
 	
-	ItemType _it;
 	
-	public IC_Descriptor(CompactUUID id, ItemType it) {
-		super(id);
-		_it = it;
-	}
-	
-	public IC_Descriptor(ItemType it) {
-		super(CompactUUID.randomUUID());
-		_it = it;
-	}
 
-	public IC_Descriptor() {
-	}
 
+	public IC_Descriptor(ItemType it, Object... keyvalues) {
+		super(it, keyvalues);
+	}
 
 	@Override
 	public String getName() {
@@ -69,11 +61,6 @@ public class IC_Descriptor extends AbstractGeneratedItem  {
 			return (T) "ic";
 		}
 		return super.internalGetOwnerAttribute(type);
-	}
-	
-	@Override
-	public ItemType getType() {
-		return _it;
 	}
 
 }

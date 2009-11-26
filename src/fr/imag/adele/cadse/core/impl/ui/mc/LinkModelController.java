@@ -73,13 +73,18 @@ public class LinkModelController extends MC_AttributesItem implements RunningMod
 					getUIField().getLabel(), item.getType().getName());
 		}			
 		
-		if (init) {
-			mandatory = attRef.mustBeInitializedAtCreationTime();
-		}
+		
 		if (attRef.getType() == CadseGCST.LINK) {
 			LinkType lt = (LinkType)attRef;
 			if (!item.isInstanceOf(lt.getSource())) {
 				throw new CadseIllegalArgumentException("The link type {0} in the item type {1} is bad.", attRef.getName(), item.getType().getName());
+			}
+			
+			if (init) {
+				mandatory = lt.getMin()>0;
+				msg = _desc == null ? null : _desc.getAttribute(CadseGCST.LINK_MODEL_CONTROLLER_at_ERROR_MESSAGE_);
+				if (msg == null || msg.length() == 0)
+					msg = "The link " + lt.getName() + " must be set";
 			}
 			// removed old api
 			// item.getWorkspaceDomain().addListener(this);
