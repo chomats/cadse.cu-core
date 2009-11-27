@@ -139,7 +139,7 @@ public class MC_AttributesItem extends AbstractModelController implements Runnin
 	public boolean validValueChanged( UIField field, Object visualValue) {
 		IAttributeType<?> attRef = field.getAttributeDefinition();
 		if (attRef != null) {
-			Object value = convertToModelValue(visualValue);
+			Object value = visualToModel(visualValue);
 			CheckStatus status = attRef.check(_uiPlatform.getItem(getUIField()), value);
 			if (status != null) {
 				if (status.getType() == UIPlatform.ERROR) {
@@ -154,11 +154,6 @@ public class MC_AttributesItem extends AbstractModelController implements Runnin
 		// return super.validValueChanged(field, value);
 		return false;
 	}
-
-	public Object convertToModelValue(Object visualValue) {
-		return visualValue;
-	}
-
 
 	@Override
 	public boolean isAnonymous() {

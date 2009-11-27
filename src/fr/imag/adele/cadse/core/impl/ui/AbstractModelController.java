@@ -167,5 +167,9 @@ public class AbstractModelController extends AbstractUIRunningValidator implemen
 		
 	}
 
+	public Object visualToModel(Object ret) {
+		return ret;
+	}
+
 
 	}
