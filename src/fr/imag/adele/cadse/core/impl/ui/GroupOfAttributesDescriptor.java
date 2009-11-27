@@ -3,22 +3,29 @@ package fr.imag.adele.cadse.core.impl.ui;
 
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CompactUUID;
+import fr.imag.adele.cadse.core.ItemType;
+import fr.imag.adele.cadse.core.attribute.GroupOfAttributes;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
-import fr.imag.adele.cadse.core.impl.Item_Descriptor;
-import fr.imag.adele.cadse.core.ui.GroupOfAttributes;
+import fr.imag.adele.cadse.core.impl.attribute.AttributeType;
+import fr.imag.adele.cadse.core.ui.EPosLabel;
+import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.util.ArraysUtil;
 
-public class GroupOfAttributesDescriptor extends Item_Descriptor implements GroupOfAttributes {
+public class GroupOfAttributesDescriptor extends AttributeType implements GroupOfAttributes {
 
 	private GroupOfAttributes _ow = null;
 	private IAttributeType<?>[]          _attr = null;
+	private int	_column;
+	private String	_label;
 	
-	public GroupOfAttributesDescriptor(CompactUUID id, Object[] keyvalues) {
-		super(id, CadseGCST.GROUP_OF_ATTRIBUTES, keyvalues);
+	public GroupOfAttributesDescriptor(CompactUUID id, String label, int column, Object[] keyvalues) {
+		super(id, label, 0);
+		_column = column;
+		_label = label;
 	}
 
-	public GroupOfAttributesDescriptor(Object... keyvalues) {
-		super(CadseGCST.GROUP_OF_ATTRIBUTES, keyvalues);
+	public GroupOfAttributesDescriptor(String label, int column, Object... keyvalues) {
+		this(CompactUUID.randomUUID(), label, column, keyvalues);
 	}
 	
 	/* (non-Javadoc)
@@ -49,4 +56,46 @@ public class GroupOfAttributesDescriptor extends Item_Descriptor implements Grou
 		_ow = ow;
 	}
 
+	@Override
+	public int getColumn() {
+		return _column;
+	}
+
+	@Override
+	public String getLabel() {
+		return _label;
+	}
+
+	@Override
+	public String getName() {
+		return _label;
+	}
+	
+	@Override
+	public String getDisplayName() {
+		return _label;
+	}
+
+	@Override
+	public Class<Object> getAttributeType() {
+		return Object.class;
+	}
+
+	@Override
+	public ItemType getType() {
+		return CadseGCST.GROUP_OF_ATTRIBUTES;
+	}
+	
+	@Override
+	public IAttributeType<?>[] getChildren() {
+		return _attr;
+	}
+	
+	@Override
+	public UIField generateDefaultField() {
+		return new UIFieldImpl(CadseGCST.DGROUP, 
+				CompactUUID.randomUUID(), this, getName(), EPosLabel.none, null, null,
+				CadseGCST.DGROUP_at_COLUMN_, _column,
+				CadseGCST.DGROUP_at_MAKE_COLUMNS_EQUAL_WIDTH_, false);
+	}
 }

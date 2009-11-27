@@ -11,12 +11,12 @@ import java.util.Set;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.Item;
+import fr.imag.adele.cadse.core.TypeDefinition;
+import fr.imag.adele.cadse.core.attribute.GroupOfAttributes;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
-import fr.imag.adele.cadse.core.impl.internal.TypeDefinition;
 import fr.imag.adele.cadse.core.impl.internal.ui.HierachicPageImpl;
 import fr.imag.adele.cadse.core.impl.internal.ui.PagesImpl;
 import fr.imag.adele.cadse.core.ui.AbstractUIRunningValidator;
-import fr.imag.adele.cadse.core.ui.GroupOfAttributes;
 import fr.imag.adele.cadse.core.ui.IPage;
 import fr.imag.adele.cadse.core.ui.Pages;
 import fr.imag.adele.cadse.core.ui.UIField;
@@ -39,7 +39,7 @@ public class PageRuntimeModel {
 		HashSet<GroupOfAttributes> groups = new HashSet<GroupOfAttributes>();
 		iComputeGroup(item, groups);
 		return new PagesImpl(context, true, 
-				((TypeDefinition) item.getType()).createDefaultModificationAction(context), 
+				((TypeDefinition.Internal) item.getType()).createDefaultModificationAction(context), 
 				iComputeFields(item), 
 				iGetAllModificationPage(item, context, ro), 
 				createRunning(validators), ro, groups);
@@ -54,7 +54,7 @@ public class PageRuntimeModel {
 		HashSet<GroupOfAttributes> groups = new HashSet<GroupOfAttributes>();
 		iComputeGroup(item, groups);
 		return new PagesImpl(context, false, 
-				((TypeDefinition) item.getType()).createDefaultCreationAction(context), 
+				((TypeDefinition.Internal) item.getType()).createDefaultCreationAction(context), 
 				iComputeFields(item), 
 				iGetAllCreationPage(item, context, ro), 
 				createRunning(validators), ro, groups);
@@ -62,7 +62,7 @@ public class PageRuntimeModel {
 	
 	
 	private void iComputeGroup(Item item, HashSet<GroupOfAttributes> groups) {
-		((TypeDefinition) item.getType()).computeGroup(groups);
+		((TypeDefinition.Internal) item.getType()).computeGroup(groups);
 	}
 
 
@@ -151,22 +151,22 @@ public class PageRuntimeModel {
 	}
 	
 	protected void iRecurcifComputeCreationPage(Item item, FilterContext context, List<IPage> list, Set<IAttributeType<?>> ro) {
-		((TypeDefinition) item.getType()).recurcifComputeCreationPage(context, list, ro);
+		((TypeDefinition.Internal) item.getType()).recurcifComputeCreationPage(context, list, ro);
 	}
 	
 	protected void iRecurcifComputeModificationPage(Item item, FilterContext context, List<IPage> list, Set<IAttributeType<?>> ro) {
-		((TypeDefinition) item.getType()).recurcifComputeModificationPage(context, list, ro);
+		((TypeDefinition.Internal) item.getType()).recurcifComputeModificationPage(context, list, ro);
 	}
 	
 	protected void iComputeGenericPage(Item item, FilterContext context, HierachicPageImpl genericPage,
 			HashSet<IAttributeType<?>> inSpecificPages, Set<IAttributeType<?>> ro) {
-		((TypeDefinition) item.getType()).computeGenericPage(context, genericPage, inSpecificPages, ro, 
+		((TypeDefinition.Internal) item.getType()).computeGenericPage(context, genericPage, inSpecificPages, ro, 
 				CadseGCST.ITEM_at_NAME_);
 	}
 	
 	
 	protected void iComputeValidators(Item item, FilterContext context, List<UIValidator> validators) {
-		((TypeDefinition) item.getType()).computeValidators(context, validators);
+		((TypeDefinition.Internal) item.getType()).computeValidators(context, validators);
 	}
 	
 	protected Map<IAttributeType<?>, UIField> iComputeFields(Item item) {
@@ -180,7 +180,6 @@ public class PageRuntimeModel {
 		}
 		return fiedls;
 	}
-	
 	
 	protected UIField iFindField(Item item, IAttributeType<?> att) {
 		UIField ret = null;

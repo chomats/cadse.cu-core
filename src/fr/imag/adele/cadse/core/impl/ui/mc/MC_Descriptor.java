@@ -10,7 +10,7 @@ public class MC_Descriptor extends Item_Descriptor {
 	static {
 		CreatedObjectManager.DEFAULTObjectMANAGER.register(CadseGCST.MC_LINK, LinkModelController.class);
 		CreatedObjectManager.DEFAULTObjectMANAGER.register(CadseGCST.MC_DATE, MC_Date.class);
-		CreatedObjectManager.DEFAULTObjectMANAGER.register(CadseGCST.STRING_TO_BOOLEAN_MODEL_CONTROLLER, MC_StringToBoolean.class);
+		CreatedObjectManager.DEFAULTObjectMANAGER.register(CadseGCST.MC_BOOLEAN, MC_StringToBoolean.class);
 		CreatedObjectManager.DEFAULTObjectMANAGER.register(CadseGCST.MC_NAME_ATTRIBUTE, MC_Name.class);
 		CreatedObjectManager.DEFAULTObjectMANAGER.register(CadseGCST.MC_INTEGER, MC_Integer.class);
 	}
