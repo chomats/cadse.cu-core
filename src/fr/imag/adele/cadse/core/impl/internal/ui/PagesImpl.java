@@ -20,6 +20,7 @@
 package fr.imag.adele.cadse.core.impl.internal.ui;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -106,6 +107,8 @@ public final class PagesImpl implements Pages {
 	}
 	
 	public Set<GroupOfAttributes>	getGroupOfAttributes() {
+		if (_groups == null)
+			return Collections.emptySet();
 		return _groups;
 	}
 
