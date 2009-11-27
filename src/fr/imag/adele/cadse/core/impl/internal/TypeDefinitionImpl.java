@@ -340,11 +340,10 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 	
 	public void computeGroup(Set<GroupOfAttributes> groups) {
 		if (_groupOfAttributes != null) {
-			ONE: for (GroupOfAttributes g : _groupOfAttributes) {
+			for (GroupOfAttributes g : _groupOfAttributes) {
 				if (g.getOverWriteGroup() != null)
 					groups.remove(g.getOverWriteGroup());
 				groups.add(g);
-				continue ONE;
 			}
 		}
 	}

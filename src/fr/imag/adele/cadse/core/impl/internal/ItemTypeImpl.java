@@ -1766,15 +1766,15 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 	}
 	
 	public void computeGroup(Set<GroupOfAttributes> groups) {
-		super.computeGroup(groups);
+		if (_superType != null) {
+			((ItemTypeImpl) _superType).computeGroup(groups);
+		}
 		if (_extendedBy != null) {
 			for (TypeDefinition ext : _extendedBy) {
 				((TypeDefinition.Internal) ext).computeGroup(groups);
 			}
 		}
-		if (_superType != null) {
-			((ItemTypeImpl) _superType).computeGroup(groups);
-		}
+		super.computeGroup(groups);
 	}
 		
 	
