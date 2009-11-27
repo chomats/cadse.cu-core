@@ -147,6 +147,6 @@ public class BooleanAttributeType extends AttributeType implements
 
 	@Override
 	public UIField generateDefaultField() {
-		return new UIFieldImpl(CadseGCST.DCHECK_BOX, CompactUUID.randomUUID(), this, getDisplayName(), EPosLabel.none, new MC_Descriptor(CadseGCST.STRING_TO_BOOLEAN_MODEL_CONTROLLER), null);
+		return new UIFieldImpl(CadseGCST.DCHECK_BOX, CompactUUID.randomUUID(), this, getDisplayName(), EPosLabel.none, new MC_Descriptor(CadseGCST.MC_BOOLEAN), null);
 	}
 }

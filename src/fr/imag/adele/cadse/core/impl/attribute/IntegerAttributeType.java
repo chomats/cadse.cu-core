@@ -219,6 +219,6 @@ public class IntegerAttributeType extends AttributeType implements
 	@Override
 	public UIField generateDefaultField() {
 		return new UIFieldImpl(CadseGCST.DTEXT, CompactUUID.randomUUID(), this, getDisplayName(), EPosLabel.defaultpos, 
-				new MC_Descriptor(CadseGCST.INT_MODEL_CONTROLLER), null);
+				new MC_Descriptor(CadseGCST.MC_INTEGER), null);
 	}
 }
