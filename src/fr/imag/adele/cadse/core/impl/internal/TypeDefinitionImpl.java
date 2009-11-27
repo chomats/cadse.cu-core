@@ -317,25 +317,25 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 	 * @see fr.imag.adele.cadse.core.impl.internal.TypeDefinition#computeGenericPage(fr.imag.adele.cadse.core.ui.view.FilterContext, fr.imag.adele.cadse.core.impl.internal.ui.HierachicPageImpl, java.util.HashSet, java.util.Set)
 	 */
 	public void computeGenericPage(FilterContext context, HierarchicPage genericPage,
-			HashSet<IAttributeType<?>> inSpecificPages, Set<IAttributeType<?>> ro, IAttributeType<?>... firstAttributes) {
-		if (_attributesDefinitions != null) {
-			ArrayList<IAttributeType> notPutAttr = new ArrayList<IAttributeType>();
-			for (IAttributeType firstAtt : firstAttributes) {
-				if (!inSpecificPages.contains(firstAtt)) {
-					notPutAttr.add(firstAtt);
-				}
-				inSpecificPages.add(firstAtt);
+		HashSet<IAttributeType<?>> inSpecificPages, Set<IAttributeType<?>> ro, IAttributeType<?>... firstAttributes) {
+		ArrayList<IAttributeType> notPutAttr = new ArrayList<IAttributeType>();
+		for (IAttributeType firstAtt : firstAttributes) {
+			if (!inSpecificPages.contains(firstAtt)) {
+				notPutAttr.add(firstAtt);
 			}
+			inSpecificPages.add(firstAtt);
+		}
+		if (_attributesDefinitions != null) {
 			for (IAttributeType<?> attr : _attributesDefinitions) {
 				if (!inSpecificPages.contains(attr) && canBeAddedInGenericPage(genericPage, attr)) {
 					notPutAttr.add(attr);
 				}
 			}
-			if (notPutAttr.isEmpty())
-				return;
-			IPage bloc = genericPage.insertNewBloc(getDisplayName());
-			bloc.addLast(notPutAttr);
 		}
+		if (notPutAttr.isEmpty())
+			return;
+		IPage bloc = genericPage.insertNewBloc(getDisplayName());
+		bloc.addLast(notPutAttr);
 	}
 	
 	public void computeGroup(Set<GroupOfAttributes> groups) {
