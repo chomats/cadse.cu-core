@@ -57,6 +57,8 @@ import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.Messages;
+import fr.imag.adele.cadse.core.TypeDefinition;
+import fr.imag.adele.cadse.core.attribute.GroupOfAttributes;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.delta.ItemDelta;
 import fr.imag.adele.cadse.core.impl.CadseCore;
@@ -72,7 +74,7 @@ import fr.imag.adele.cadse.core.internal.IWorkingLoadingItems;
 import fr.imag.adele.cadse.core.internal.ItemTypeInternal;
 import fr.imag.adele.cadse.core.key.SpaceKeyType;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransactionListener;
-import fr.imag.adele.cadse.core.ui.GroupOfAttributes;
+import fr.imag.adele.cadse.core.ui.HierarchicPage;
 import fr.imag.adele.cadse.core.ui.IActionContributor;
 import fr.imag.adele.cadse.core.ui.IActionPage;
 import fr.imag.adele.cadse.core.ui.IPage;
@@ -1690,7 +1692,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 		super.recurcifComputeCreationPage(context, list, ro);
 		if (_extendedBy != null) {
 			for (TypeDefinition ext : _extendedBy) {
-				ext.recurcifComputeCreationPage(context, list, ro);
+				((TypeDefinition.Internal) ext).recurcifComputeCreationPage(context, list, ro);
 			}
 		}
 	}
@@ -1711,7 +1713,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 		super.recurcifComputeModificationPage(context, list, ro);
 		if (_extendedBy != null) {
 			for (TypeDefinition ext : _extendedBy) {
-				ext.recurcifComputeModificationPage(context, list, ro);
+				((TypeDefinition.Internal) ext).recurcifComputeModificationPage(context, list, ro);
 			}
 		}
 	}
@@ -1724,7 +1726,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 		super.computeValidators(context, validators);
 		if (_extendedBy != null) {
 			for (TypeDefinition ext : _extendedBy) {
-				ext.computeValidators(context, validators);
+				((TypeDefinition.Internal) ext).computeValidators(context, validators);
 			}
 		}
 	}
@@ -1750,12 +1752,12 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 	}
 
 	@Override
-	public void computeGenericPage(FilterContext context, HierachicPageImpl genericPage,
+	public void computeGenericPage(FilterContext context, HierarchicPage genericPage,
 			HashSet<IAttributeType<?>> inSpecificPages, Set<IAttributeType<?>> ro, IAttributeType<?>... firstAttributes) {
 		super.computeGenericPage(context, genericPage, inSpecificPages, ro, firstAttributes);
 		if (_extendedBy != null) {
 			for (TypeDefinition ext : _extendedBy) {
-				ext.computeGenericPage(context, genericPage, inSpecificPages, ro);
+				((TypeDefinition.Internal) ext).computeGenericPage(context, genericPage, inSpecificPages, ro);
 			}
 		}
 		if (_superType != null) {
@@ -1767,7 +1769,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 		super.computeGroup(groups);
 		if (_extendedBy != null) {
 			for (TypeDefinition ext : _extendedBy) {
-				ext.computeGroup(groups);
+				((TypeDefinition.Internal) ext).computeGroup(groups);
 			}
 		}
 		if (_superType != null) {

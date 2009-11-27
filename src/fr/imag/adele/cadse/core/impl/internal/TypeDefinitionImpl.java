@@ -18,6 +18,8 @@ import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.LogicalWorkspace;
+import fr.imag.adele.cadse.core.TypeDefinition;
+import fr.imag.adele.cadse.core.attribute.GroupOfAttributes;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.delta.ItemDelta;
 import fr.imag.adele.cadse.core.impl.PageRuntimeModel;
@@ -25,7 +27,7 @@ import fr.imag.adele.cadse.core.impl.ReflectLink;
 import fr.imag.adele.cadse.core.impl.internal.ui.HierachicPageImpl;
 import fr.imag.adele.cadse.core.impl.ui.CreationAction;
 import fr.imag.adele.cadse.core.impl.ui.ModificationAction;
-import fr.imag.adele.cadse.core.ui.GroupOfAttributes;
+import fr.imag.adele.cadse.core.ui.HierarchicPage;
 import fr.imag.adele.cadse.core.ui.IActionPage;
 import fr.imag.adele.cadse.core.ui.IPage;
 import fr.imag.adele.cadse.core.ui.UIField;
@@ -34,7 +36,7 @@ import fr.imag.adele.cadse.core.ui.view.FilterContext;
 import fr.imag.adele.cadse.core.ui.view.NewContext;
 import fr.imag.adele.cadse.core.util.ArraysUtil;
 
-public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition {
+public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, TypeDefinition.Internal {
 	
 	
 	public TypeDefinitionImpl(LogicalWorkspace wl, CompactUUID id,
@@ -314,7 +316,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition {
 	/* (non-Javadoc)
 	 * @see fr.imag.adele.cadse.core.impl.internal.TypeDefinition#computeGenericPage(fr.imag.adele.cadse.core.ui.view.FilterContext, fr.imag.adele.cadse.core.impl.internal.ui.HierachicPageImpl, java.util.HashSet, java.util.Set)
 	 */
-	public void computeGenericPage(FilterContext context, HierachicPageImpl genericPage,
+	public void computeGenericPage(FilterContext context, HierarchicPage genericPage,
 			HashSet<IAttributeType<?>> inSpecificPages, Set<IAttributeType<?>> ro, IAttributeType<?>... firstAttributes) {
 		if (_attributesDefinitions != null) {
 			ArrayList<IAttributeType> notPutAttr = new ArrayList<IAttributeType>();
@@ -360,7 +362,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition {
 		return null;
 	}
 
-	protected boolean canBeAddedInGenericPage(HierachicPageImpl genericPage,
+	protected boolean canBeAddedInGenericPage(HierarchicPage genericPage,
 			IAttributeType<?> attr) {
 		if (attr.isHiddenInComputedPages())
 			return false;
