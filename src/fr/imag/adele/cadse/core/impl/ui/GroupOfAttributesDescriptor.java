@@ -3,7 +3,9 @@ package fr.imag.adele.cadse.core.impl.ui;
 
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CompactUUID;
+import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
+import fr.imag.adele.cadse.core.attribute.CheckStatus;
 import fr.imag.adele.cadse.core.attribute.GroupOfAttributes;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.impl.attribute.AttributeType;
@@ -89,6 +91,11 @@ public class GroupOfAttributesDescriptor extends AttributeType implements GroupO
 	@Override
 	public IAttributeType<?>[] getChildren() {
 		return _attr;
+	}
+	
+	@Override
+	public CheckStatus check(Item item, Object value) {
+		return null;
 	}
 	
 	@Override
