@@ -20,6 +20,7 @@
 package fr.imag.adele.cadse.core.impl.ui;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -454,6 +455,12 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 		}	
 
 		return _attributes[_attributes.length - 1] == field;
+	}
+
+	@Override
+	public void getAllAttributes(HashSet<IAttributeType<?>> allAttributes) {
+		if (_attributes != null)
+			allAttributes.addAll(Arrays.asList(_attributes));
 	}
 
 }
