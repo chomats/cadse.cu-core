@@ -1,5 +1,6 @@
 package fr.imag.adele.cadse.core.impl.internal.ui;
 
+import java.util.HashSet;
 import java.util.List;
 
 import fr.imag.adele.cadse.core.CadseGCST;
@@ -136,7 +137,14 @@ public class HierachicPageImpl extends AbstractGeneratedItem implements IPage, H
 	public IPage[] getBlocks() {
 		return _bloc;
 	}
-	
-	
+
+
+	@Override
+	public void getAllAttributes(HashSet<IAttributeType<?>> allAttributes) {
+		if (_bloc != null)
+			for (IPage p : _bloc) {
+				p.getAllAttributes(allAttributes);
+			}
+	}
 	
 }
