@@ -26,7 +26,7 @@ import java.util.Collection;
 
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.ILinkTypeManager;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
@@ -124,7 +124,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	 * 
 	 * @version 2.0
 	 */
-	LinkTypeImpl(CompactUUID id, int kind, ItemType source, String name, int intID, int min, int max, String selection,
+	LinkTypeImpl(UUID id, int kind, ItemType source, String name, int intID, int min, int max, String selection,
 			ItemType destination) {
 		super(id, name, min != 0 ? MUST_BE_INITIALIZED_AT_CREATION_TIME : 0);
 
@@ -167,7 +167,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	 * @param selection
 	 *            the selection
 	 */
-	LinkTypeImpl(CompactUUID id, int kind, ItemType source, String name, int min, int max, String selection,
+	LinkTypeImpl(UUID id, int kind, ItemType source, String name, int min, int max, String selection,
 			ItemType destination) {
 		super(id, name, min != 0 ? MUST_BE_INITIALIZED_AT_CREATION_TIME : 0);
 
@@ -186,7 +186,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 		}
 	}
 
-	public LinkTypeImpl(CompactUUID id, ItemType source, String name) {
+	public LinkTypeImpl(UUID id, ItemType source, String name) {
 		super(id, name, 0);
 
 		this._linkType = CadseCore.theLinkType;
@@ -733,7 +733,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	 * 
 	 * @return id source.
 	 */
-	public CompactUUID getSourceId() {
+	public UUID getSourceId() {
 		return getSource().getId();
 	}
 
@@ -742,7 +742,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	 * 
 	 * @return id destination
 	 */
-	public CompactUUID getDestinationId() {
+	public UUID getDestinationId() {
 		if (_destination == null)
 			return null;
 		return _destination.getId();
@@ -1038,11 +1038,11 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	@Override
 	public UIField generateDefaultField() {
 		if (getMax() != 1) {
-			return new UIFieldImpl(CadseGCST.DLIST, CompactUUID.randomUUID(), this, getDisplayName(), EPosLabel.defaultpos, 
+			return new UIFieldImpl(CadseGCST.DLIST, UUID.randomUUID(), this, getDisplayName(), EPosLabel.defaultpos, 
 					new MC_Descriptor(CadseGCST.MC_LINK), 
 					new IC_Descriptor(CadseGCST.IC_LINK_FOR_BROWSER_COMBO_LIST));
 		}
-		return new UIFieldImpl(CadseGCST.DBROWSER, CompactUUID.randomUUID(), this, getDisplayName(), EPosLabel.defaultpos, 
+		return new UIFieldImpl(CadseGCST.DBROWSER, UUID.randomUUID(), this, getDisplayName(), EPosLabel.defaultpos, 
 				new MC_Descriptor(CadseGCST.MC_LINK), 
 				new IC_Descriptor(CadseGCST.IC_LINK_FOR_BROWSER_COMBO_LIST));
 	}

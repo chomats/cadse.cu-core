@@ -19,7 +19,7 @@
 package fr.imag.adele.cadse.core.impl.internal.delta;
 
 import fr.imag.adele.cadse.core.CadseException;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemDescriptionRef;
 import fr.imag.adele.cadse.core.ItemType;
@@ -179,7 +179,7 @@ public final class LinkDeltaImpl extends ItemOrLinkDeltaImpl implements Link, Li
 	 * 
 	 * @see fr.imag.adele.cadse.core.internal.delta.LinkOperation#getDestinationId()
 	 */
-	public CompactUUID getDestinationId() {
+	public UUID getDestinationId() {
 		return this._destination.getId();
 	}
 
@@ -277,7 +277,7 @@ public final class LinkDeltaImpl extends ItemOrLinkDeltaImpl implements Link, Li
 	 * 
 	 * @see fr.imag.adele.cadse.core.internal.delta.LinkOperation#getSourceId()
 	 */
-	public CompactUUID getSourceId() {
+	public UUID getSourceId() {
 		return getSource().getId();
 	}
 

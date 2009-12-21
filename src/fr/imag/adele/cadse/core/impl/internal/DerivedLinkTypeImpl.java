@@ -19,7 +19,7 @@
 
 package fr.imag.adele.cadse.core.impl.internal;
 
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.DerivedLinkType;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.LinkType;
@@ -51,7 +51,7 @@ public class DerivedLinkTypeImpl extends LinkTypeImpl implements DerivedLinkType
 	 * @param destination
 	 *            the destination
 	 */
-	public DerivedLinkTypeImpl(CompactUUID id, int kind, ItemType source, String name, int intID, int min, int max,
+	public DerivedLinkTypeImpl(UUID id, int kind, ItemType source, String name, int intID, int min, int max,
 			String selection, LinkType destination) {
 		super(id, kind, source, name, intID, min, max, selection, (ItemTypeImpl) destination.getDestination());
 		lt = destination;
@@ -75,7 +75,7 @@ public class DerivedLinkTypeImpl extends LinkTypeImpl implements DerivedLinkType
 	 * @param destination
 	 *            the destination
 	 */
-	public DerivedLinkTypeImpl(CompactUUID id, int kind, ItemType source, String name, int min, int max,
+	public DerivedLinkTypeImpl(UUID id, int kind, ItemType source, String name, int min, int max,
 			String selection, LinkType destination) {
 		super(id, kind, source, name, min, max, selection, (ItemTypeImpl) destination.getDestination());
 		lt = destination;

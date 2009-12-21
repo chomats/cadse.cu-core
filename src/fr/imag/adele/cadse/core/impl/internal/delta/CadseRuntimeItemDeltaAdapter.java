@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CadseRuntime;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.delta.ItemDelta;
@@ -36,7 +36,7 @@ public class CadseRuntimeItemDeltaAdapter extends ItemItemDeltaAdapter implement
 	}
 
 	@Override
-	public CompactUUID getIdCadseDefinition() {
+	public UUID getIdCadseDefinition() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -131,7 +131,7 @@ public class CadseRuntimeItemDeltaAdapter extends ItemItemDeltaAdapter implement
 	}
 
 	@Override
-	public void setIdCadseDefinition(CompactUUID idCadseDefintiion) {
+	public void setIdCadseDefinition(UUID idCadseDefintiion) {
 		// TODO Auto-generated method stub
 
 	}

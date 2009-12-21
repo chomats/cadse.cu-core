@@ -19,7 +19,7 @@
 
 package fr.imag.adele.cadse.core.impl.attribute;
 
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.attribute.CheckStatus;
@@ -52,7 +52,7 @@ public class StringAttributeType extends AttributeType implements fr.imag.adele.
 	 * @param value
 	 *            the value
 	 */
-	public StringAttributeType(CompactUUID id, String name, int min, String value) {
+	public StringAttributeType(UUID id, String name, int min, String value) {
 		this(id, min != 0 ? MUST_BE_INITIALIZED_AT_CREATION_TIME : 0, name, value);
 	}
 
@@ -66,7 +66,7 @@ public class StringAttributeType extends AttributeType implements fr.imag.adele.
 	 * @param value
 	 *            the value
 	 */
-	public StringAttributeType(CompactUUID id, int flag, String name, String value) {
+	public StringAttributeType(UUID id, int flag, String name, String value) {
 		super(id, name, flag);
 		this.value = value;
 	}
@@ -166,6 +166,6 @@ public class StringAttributeType extends AttributeType implements fr.imag.adele.
 
 	@Override
 	public UIField generateDefaultField() {
-		return new UIFieldImpl(CadseGCST.DTEXT, CompactUUID.randomUUID(),this, getDisplayName(), EPosLabel.left, null, null);
+		return new UIFieldImpl(CadseGCST.DTEXT, UUID.randomUUID(),this, getDisplayName(), EPosLabel.left, null, null);
 	}
 }

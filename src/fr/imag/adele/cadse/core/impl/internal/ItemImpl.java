@@ -38,7 +38,7 @@ import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.ChangeID;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.DerivedLink;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemDescriptionRef;
@@ -235,7 +235,7 @@ public class ItemImpl extends AbstractItem implements Item {
 
 
 	/** The composants. */
-	Map<CompactUUID, Item>		_composants	= null;
+	Map<UUID, Item>		_composants	= null;
 
 	///** The derived links. */
 	//Set<DerivedLink>			_derivedLinks;
@@ -258,7 +258,7 @@ public class ItemImpl extends AbstractItem implements Item {
 	 * @param item
 	 *            the short name
 	 */
-	public ItemImpl(LogicalWorkspace wl, CompactUUID id, ItemType it, String uniqueName, String shortName) {
+	public ItemImpl(LogicalWorkspace wl, UUID id, ItemType it, String uniqueName, String shortName) {
 		super(wl, id, it, uniqueName, shortName);
 		// this.incomings = new ArrayList<Link>();
 		this.m_outgoings = new ArrayList<Link>();
@@ -267,7 +267,7 @@ public class ItemImpl extends AbstractItem implements Item {
 		setIsStatic(false);
 	}
 
-	public ItemImpl(LogicalWorkspace wl, CompactUUID id, ItemType type, String uniqueName, String shortName,
+	public ItemImpl(LogicalWorkspace wl, UUID id, ItemType type, String uniqueName, String shortName,
 			Item parent, LinkType lt) throws CadseException {
 		super(wl, id, type, uniqueName, shortName);
 		// this.incomings = new ArrayList<Link>();
@@ -478,7 +478,7 @@ public class ItemImpl extends AbstractItem implements Item {
 	}
 
 	@Override
-	public Link getIncomingLink(LinkType lt, CompactUUID srcId) {
+	public Link getIncomingLink(LinkType lt, UUID srcId) {
 		List<Link> links = _incomings;
 		for (Link l : links) {
 			if (l.getLinkType() == lt && l.getSourceId().equals(srcId)) {
@@ -1094,10 +1094,10 @@ public class ItemImpl extends AbstractItem implements Item {
 	 * (non-Javadoc)
 	 * 
 	 * @see fr.imag.adele.cadse.core.Item#getOutgoingLink(fr.imag.adele.cadse.core.LinkType,
-	 *      fr.imag.adele.cadse.core.CompactUUID)
+	 *      fr.imag.adele.cadse.core.UUID)
 	 */
 	@Override
-	public Link getOutgoingLink(LinkType lt, CompactUUID destId) {
+	public Link getOutgoingLink(LinkType lt, UUID destId) {
 		List<Link> links = getOutgoingLinks(lt);
 		for (Link l : links) {
 			if (l.getLinkType() == lt && l.getDestinationId().equals(destId)) {
@@ -1211,7 +1211,7 @@ public class ItemImpl extends AbstractItem implements Item {
 	 * @throws CadseIllegalArgumentException
 	 *             the melusine error
 	 */
-	public Map<CompactUUID, Item> computeComponents(boolean notThrow) throws CadseIllegalArgumentException {
+	public Map<UUID, Item> computeComponents(boolean notThrow) throws CadseIllegalArgumentException {
 		// if (!isOpen) {
 		// if (notThrow)
 		// return null;
@@ -1219,7 +1219,7 @@ public class ItemImpl extends AbstractItem implements Item {
 		// getId());
 		// //$NON-NLS-1$
 		// }
-		HashMap<CompactUUID, Item> ret = new HashMap<CompactUUID, Item>();
+		HashMap<UUID, Item> ret = new HashMap<UUID, Item>();
 
 		for (Link link : getOutgoingLinks()) {
 			if (link.getLinkType().isComposition()) {
@@ -1233,7 +1233,7 @@ public class ItemImpl extends AbstractItem implements Item {
 					continue;
 				}
 				((ItemImpl) dest).tryToRecomputeComponent();
-				Map<CompactUUID, Item> composantsDest = ((ItemImpl) dest)._composants;
+				Map<UUID, Item> composantsDest = ((ItemImpl) dest)._composants;
 				if (composantsDest != null) {
 					ret.putAll(composantsDest);
 				}
@@ -1733,7 +1733,7 @@ public class ItemImpl extends AbstractItem implements Item {
 //		Object value = getAttribute(CadseGCST.ITEM_at_PARENT_ITEM_ID_);
 //		if (value instanceof UUID) {
 //			// migration
-//			value = new CompactUUID((UUID) value);
+//			value = new UUID((UUID) value);
 //			// try {
 //			// remove this lines : use outgoing link instead
 //			// setAttribute(CadseGCST.ITEM_at_PARENT_ITEM_ID_,
@@ -1743,7 +1743,7 @@ public class ItemImpl extends AbstractItem implements Item {
 //			// e.printStackTrace();
 //			// }
 //		}
-//		CompactUUID parentId = (CompactUUID) value;
+//		UUID parentId = (UUID) value;
 //		if (parentId == null) {
 //			return null;
 //		}
@@ -1861,9 +1861,9 @@ public class ItemImpl extends AbstractItem implements Item {
 	 * @see fr.imag.adele.cadse.core.Item#getComponentsId()
 	 */
 	@Override
-	public Set<CompactUUID> getComponentIds() {
+	public Set<UUID> getComponentIds() {
 		Set<Item> c = getComponents();
-		Set<CompactUUID> ids = new HashSet<CompactUUID>();
+		Set<UUID> ids = new HashSet<UUID>();
 		for (Item il : c) {
 			ids.add(il.getId());
 		}
@@ -1903,7 +1903,7 @@ public class ItemImpl extends AbstractItem implements Item {
 			_composants = null;
 			return;
 		}
-		_composants = new HashMap<CompactUUID, Item>();
+		_composants = new HashMap<UUID, Item>();
 		for (ItemDescriptionRef c : comp) {
 			try {
 				Item i = this._wl.loadItem(c);
@@ -1918,10 +1918,10 @@ public class ItemImpl extends AbstractItem implements Item {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.Item#containsComponent(fr.imag.adele.cadse.core.CompactUUID)
+	 * @see fr.imag.adele.cadse.core.Item#containsComponent(fr.imag.adele.cadse.core.UUID)
 	 */
 	@Override
-	public boolean containsComponent(CompactUUID id) {
+	public boolean containsComponent(UUID id) {
 		tryToRecomputeComponent();
 		return _composants == null ? false : _composants.containsKey(id);
 	}
@@ -1957,10 +1957,10 @@ public class ItemImpl extends AbstractItem implements Item {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.Item#getComponentInfo(fr.imag.adele.cadse.core.CompactUUID)
+	 * @see fr.imag.adele.cadse.core.Item#getComponentInfo(fr.imag.adele.cadse.core.UUID)
 	 */
 	@Override
-	public Item getComponentInfo(CompactUUID id) {
+	public Item getComponentInfo(UUID id) {
 		return _composants == null ? null : _composants.get(id);
 	}
 
@@ -1979,10 +1979,10 @@ public class ItemImpl extends AbstractItem implements Item {
 	 * (non-Javadoc)
 	 * 
 	 * @see fr.imag.adele.cadse.core.Item#canCreateLink(fr.imag.adele.cadse.core.LinkType,
-	 *      fr.imag.adele.cadse.core.CompactUUID)
+	 *      fr.imag.adele.cadse.core.UUID)
 	 */
 	@Override
-	public boolean canCreateLink(LinkType lt, CompactUUID destination) {
+	public boolean canCreateLink(LinkType lt, UUID destination) {
 		return true;
 	}
 

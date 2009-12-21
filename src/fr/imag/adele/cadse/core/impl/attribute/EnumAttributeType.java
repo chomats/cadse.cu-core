@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import fr.imag.adele.cadse.core.CadseException;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
@@ -75,7 +75,7 @@ public class EnumAttributeType<X extends Enum<X>> extends AttributeType implemen
 	 * @param value
 	 *            the value
 	 */
-	public EnumAttributeType(CompactUUID id, int flag, String name, Class<X> clazz, String value) {
+	public EnumAttributeType(UUID id, int flag, String name, Class<X> clazz, String value) {
 		super(id, name, flag);
 		assert clazz != null;
 		this.defaultValue = value;
@@ -268,7 +268,7 @@ public class EnumAttributeType<X extends Enum<X>> extends AttributeType implemen
 
 	@Override
 	public UIField generateDefaultField() {
-		return new UIFieldImpl(CadseGCST.DBROWSER, CompactUUID.randomUUID(), this, getDisplayName(), EPosLabel.defaultpos, 
+		return new UIFieldImpl(CadseGCST.DBROWSER, UUID.randomUUID(), this, getDisplayName(), EPosLabel.defaultpos, 
 				new MC_Descriptor(CadseGCST.MC_ENUM), 
 				new IC_Descriptor(CadseGCST.IC_ENUM_FOR_BROWSER_COMBO));
 	}

@@ -43,7 +43,7 @@ import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CadseRuntime;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.DerivedLinkType;
 import fr.imag.adele.cadse.core.GroupType;
 import fr.imag.adele.cadse.core.IItemFactory;
@@ -241,7 +241,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 	 * @param displayName
 	 *            the display name
 	 */
-	protected ItemTypeImpl(ItemType metaType, LogicalWorkspace wl, ItemTypeImpl superType, CompactUUID id, int intId,
+	protected ItemTypeImpl(ItemType metaType, LogicalWorkspace wl, ItemTypeImpl superType, UUID id, int intId,
 			boolean hasContent, boolean isAbstract, String shortname, String displayName) {
 		super(wl, id, metaType, null, shortname);
 		if (id == null) {
@@ -533,7 +533,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 	 *                values min and max.<br/>
 	 * <br/>
 	 */
-	public LinkType createLinkType(CompactUUID uuid, int intID, String name, int _kind, int min, int max,
+	public LinkType createLinkType(UUID uuid, int intID, String name, int _kind, int min, int max,
 			String selection, ItemType destination) {
 		LinkType ret = null;
 		if (_superType != null) {
@@ -577,7 +577,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 	 * 
 	 * @return the derived link type
 	 */
-	public DerivedLinkType createDerivedLinkType(CompactUUID uuid, int intID, String name, int _kind, int min, int max,
+	public DerivedLinkType createDerivedLinkType(UUID uuid, int intID, String name, int _kind, int min, int max,
 			String selection, LinkType lt) {
 		DerivedLinkTypeImpl ret = null;
 		preconditions_createLinkType(name, _kind, min, max, lt.getDestination());
@@ -593,7 +593,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 	 * java.lang.String, int, int, int, java.lang.String,
 	 * fr.imag.adele.cadse.core.LinkType)
 	 */
-	public LinkType createLinkType(CompactUUID uuid, int intID, String id, int kind, int min, int max,
+	public LinkType createLinkType(UUID uuid, int intID, String id, int kind, int min, int max,
 			String selection, LinkType inverse) throws CadseException {
 		if (!inverse.getDestination().equals(this)) {
 			throw new CadseException(Messages.error_destination_bad_inverse_link, getName(), inverse.getDestination()
@@ -625,7 +625,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 	 * 
 	 * @return the link type
 	 */
-	public LinkType createLinkType(CompactUUID uuid, String id, int kind, int min, int max, String selection,
+	public LinkType createLinkType(UUID uuid, String id, int kind, int min, int max, String selection,
 			ItemType destination) {
 		return createLinkType(uuid, -1, id, kind, min, max, selection, destination);
 	}
@@ -651,7 +651,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 	 * @return the link type
 	 * @throws CadseException
 	 */
-	public LinkType createLinkType(CompactUUID uuid, String id, int kind, int min, int max, String selection,
+	public LinkType createLinkType(UUID uuid, String id, int kind, int min, int max, String selection,
 			LinkType inverse) throws CadseException {
 		return createLinkType(uuid, -1, id, kind, min, max, selection, inverse);
 	}

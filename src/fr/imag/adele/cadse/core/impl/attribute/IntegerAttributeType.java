@@ -20,7 +20,7 @@
 package fr.imag.adele.cadse.core.impl.attribute;
 
 import fr.imag.adele.cadse.core.CadseGCST;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.attribute.CheckStatus;
@@ -62,7 +62,7 @@ public class IntegerAttributeType extends AttributeType implements
 	 * @param value
 	 *            the value
 	 */
-	public IntegerAttributeType(CompactUUID id, int flag, String name, Integer min, Integer max, String value) {
+	public IntegerAttributeType(UUID id, int flag, String name, Integer min, Integer max, String value) {
 		super(id, name, flag);
 		this.value = value == null ? null : Convert.toInteger(value);
 		this.minValue = min;
@@ -218,7 +218,7 @@ public class IntegerAttributeType extends AttributeType implements
 
 	@Override
 	public UIField generateDefaultField() {
-		return new UIFieldImpl(CadseGCST.DTEXT, CompactUUID.randomUUID(), this, getDisplayName(), EPosLabel.defaultpos, 
+		return new UIFieldImpl(CadseGCST.DTEXT, UUID.randomUUID(), this, getDisplayName(), EPosLabel.defaultpos, 
 				new MC_Descriptor(CadseGCST.MC_INTEGER), null);
 	}
 }

@@ -2,7 +2,7 @@ package fr.imag.adele.cadse.core.impl.ui;
 
 
 import fr.imag.adele.cadse.core.CadseGCST;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.attribute.CheckStatus;
@@ -20,14 +20,14 @@ public class GroupOfAttributesDescriptor extends AttributeType implements GroupO
 	private int	_column;
 	private String	_label;
 	
-	public GroupOfAttributesDescriptor(CompactUUID id, String label, int column, Object[] keyvalues) {
+	public GroupOfAttributesDescriptor(UUID id, String label, int column, Object[] keyvalues) {
 		super(id, label, 0);
 		_column = column;
 		_label = label;
 	}
 
 	public GroupOfAttributesDescriptor(String label, int column, Object... keyvalues) {
-		this(CompactUUID.randomUUID(), label, column, keyvalues);
+		this(UUID.randomUUID(), label, column, keyvalues);
 	}
 	
 	/* (non-Javadoc)
@@ -101,7 +101,7 @@ public class GroupOfAttributesDescriptor extends AttributeType implements GroupO
 	@Override
 	public UIField generateDefaultField() {
 		return new UIFieldImpl(CadseGCST.DGROUP, 
-				CompactUUID.randomUUID(), this, getName(), EPosLabel.none, null, null,
+				UUID.randomUUID(), this, getName(), EPosLabel.none, null, null,
 				CadseGCST.DGROUP_at_COLUMN_, _column,
 				CadseGCST.DGROUP_at_MAKE_COLUMNS_EQUAL_WIDTH_, false);
 	}

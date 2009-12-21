@@ -29,7 +29,7 @@ import java.util.Set;
 
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.ContentItem;
 import fr.imag.adele.cadse.core.GenContext;
 import fr.imag.adele.cadse.core.GenStringBuilder;
@@ -91,7 +91,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	/**
 	 * Instantiates a new content manager.
 	 */
-	protected ContentItemImpl(CompactUUID id) {
+	protected ContentItemImpl(UUID id) {
 		super(id);
 		_ownerItem = null;
 		_parent = null;

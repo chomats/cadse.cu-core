@@ -19,7 +19,7 @@
 
 package fr.imag.adele.cadse.core.impl.var;
 
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.var.ContextVariable;
 
@@ -52,7 +52,7 @@ public class AttributeVariable extends VariableImpl {
 	 * @param key
 	 *            the key
 	 */
-	public AttributeVariable(CompactUUID id, String name, String key) {
+	public AttributeVariable(UUID id, String name, String key) {
 		super(id, name);
 		this.key = key;
 	}

@@ -25,7 +25,7 @@ import java.util.ArrayList;
 
 import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.IItemManager;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
@@ -197,7 +197,7 @@ public class CadseCore {
 
 		LogicalWorkspaceTransaction copy = wl.createTransaction();
 		ItemDelta newItem = copy.createItemIfNeed(uniqueName, shortname, it, parent, lt, attributes);
-		CompactUUID id = newItem.getId();
+		UUID id = newItem.getId();
 		if (newItem.isAdded()) {
 			copy.commit();
 		} else {

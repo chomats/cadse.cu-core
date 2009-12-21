@@ -20,7 +20,7 @@ package fr.imag.adele.cadse.core.impl.attribute;
 
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemState;
 import fr.imag.adele.cadse.core.attribute.CheckStatus;
@@ -44,7 +44,7 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 	private TWCommitKind	_TWCommitKind	= TWCommitKind.conflict;
 	private TWUpdateKind	_TWUpdateKind	= TWUpdateKind.merge;
 
-	public AttributeType(CompactUUID id, String name, int flag) {
+	public AttributeType(UUID id, String name, int flag) {
 		super(id, flag);
 		this._name = name;
 		if ((flag & DEFAULT_FLAG) != 0) {

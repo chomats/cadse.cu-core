@@ -14,7 +14,7 @@ import java.util.Map;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.ChangeID;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.ContentItem;
 import fr.imag.adele.cadse.core.DefaultItemManager;
 import fr.imag.adele.cadse.core.IContentItemFactory;
@@ -77,7 +77,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 	final LogicalWorkspaceImpl		wl;
 	LogicalWorkspaceTransactionImpl	copy;
 
-	Map<CompactUUID, Item>			visited			= new HashMap<CompactUUID, Item>();
+	Map<UUID, Item>			visited			= new HashMap<UUID, Item>();
 
 	final boolean					update;
 	final boolean					forceToSave;
@@ -87,7 +87,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 	HashMap<ItemDelta, Item>		itemsDeleted	= new HashMap<ItemDelta, Item>();
 	HashMap<ItemDelta, Item>		itemsLoaded		= new HashMap<ItemDelta, Item>();
 
-	HashMap<CompactUUID, ProjectAssociation>	projectAssociationSet;
+	HashMap<UUID, ProjectAssociation>	projectAssociationSet;
 	RegisterWorkspanceNotififier	notifie;
 
 	public TransactionItemsProcess(LogicalWorkspaceImpl wl, LogicalWorkspaceTransactionImpl copy) {
@@ -97,7 +97,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 		this.update = copy.isUpdate();
 		this.forceToSave = copy.isForceToSave();
 		this.copy = copy;
-		this.projectAssociationSet = new HashMap<CompactUUID, ProjectAssociation>();
+		this.projectAssociationSet = new HashMap<UUID, ProjectAssociation>();
 		if (copy.getProjectAssociationSet() != null)
 			for (ProjectAssociation p : copy.getProjectAssociationSet()) {
 				projectAssociationSet.put(p.getItemref(), p);
@@ -140,7 +140,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 		}
 	}
 
-	public void addError(CompactUUID id, String msg) {
+	public void addError(UUID id, String msg) {
 		addError(copy.getItem(id), msg);
 	}
 
@@ -168,9 +168,9 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.IWorkingLoadingItems#getItem(fr.imag.adele.cadse.core.CompactUUID)
+	 * @see fr.imag.adele.cadse.core.internal.IWorkingLoadingItems#getItem(fr.imag.adele.cadse.core.UUID)
 	 */
-	public Item getItem(CompactUUID id) {
+	public Item getItem(UUID id) {
 		Item ret = visited.get(id);
 		if (ret != null) {
 			return ret;
@@ -453,7 +453,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 			}
 			ContentItem contentItem = null;
 			try {
-				CompactUUID idContent = CompactUUID.randomUUID();
+				UUID idContent = UUID.randomUUID();
 				ItemDelta contentDelta = loadedOperation.getOutgoingItem(CadseGCST.ITEM_lt_CONTENTS, false);
 				if (contentDelta != null)
 					idContent = contentDelta.getId();
@@ -638,7 +638,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 
 		if (it == null) {
 			// recupere l'id du type de l'item
-			CompactUUID itemTypeID = item.getItemTypeId();
+			UUID itemTypeID = item.getItemTypeId();
 			// on l'a deja creer pr��c��dement ?
 			Item anItem = visited.get(itemTypeID);
 			if (anItem == null) {
@@ -690,7 +690,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 			return CadseGCST.ITEM;
 		}
 		// recupere l'id du super type de l'item
-		CompactUUID itemTypeID = superItem.getId();
+		UUID itemTypeID = superItem.getId();
 
 		// est-ce qu'il existe d��j�� ?
 		ItemType it = wl.getItemType(superItem.getId());
@@ -752,7 +752,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 			}
 			if (goodItem.itemHasContent()) {
 				try {
-					ContentItem contentItem = createContentItem(goodItem.getType(), goodItem, CompactUUID.randomUUID());
+					ContentItem contentItem = createContentItem(goodItem.getType(), goodItem, UUID.randomUUID());
 					setContent(notifie, goodItem, contentItem);
 				} catch (CadseException e) {
 					addError(item, e.getMessage());
@@ -783,7 +783,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 	
 	
 	
-	public ContentItem createContentItem(ItemType it, Item ownerItem, CompactUUID idContent) {
+	public ContentItem createContentItem(ItemType it, Item ownerItem, UUID idContent) {
 		try {
 			final IItemManager itemManager = it.getItemManager();
 			final IContentItemFactory contentItemFactory = itemManager.getContentItemFactory();

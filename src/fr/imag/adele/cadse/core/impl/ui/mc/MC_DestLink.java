@@ -21,7 +21,7 @@ package fr.imag.adele.cadse.core.impl.ui.mc;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;

@@ -9,7 +9,7 @@ import java.util.Set;
 
 import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.ContentItem;
 import fr.imag.adele.cadse.core.DerivedLink;
 import fr.imag.adele.cadse.core.DerivedLinkDescription;
@@ -65,7 +65,7 @@ public class ItemItemDeltaAdapter implements Item {
 		_delta.buildComposite();
 	}
 
-	public boolean canCreateLink(LinkType linkType, CompactUUID destItemId) {
+	public boolean canCreateLink(LinkType linkType, UUID destItemId) {
 		return _delta.canCreateLink(linkType, destItemId);
 	}
 
@@ -97,7 +97,7 @@ public class ItemItemDeltaAdapter implements Item {
 		_delta.computeAttributes();
 	}
 
-	public boolean containsComponent(CompactUUID itemId) {
+	public boolean containsComponent(UUID itemId) {
 		return _delta.containsComponent(itemId);
 	}
 
@@ -177,11 +177,11 @@ public class ItemItemDeltaAdapter implements Item {
 		return _delta.getCadseDomain();
 	}
 
-	public Set<CompactUUID> getComponentIds() {
+	public Set<UUID> getComponentIds() {
 		return _delta.getComponentIds();
 	}
 
-	public Item getComponentInfo(CompactUUID itemId) {
+	public Item getComponentInfo(UUID itemId) {
 		return _delta.getComponentInfo(itemId);
 	}
 
@@ -209,7 +209,7 @@ public class ItemItemDeltaAdapter implements Item {
 		return _delta.getDisplayName();
 	}
 
-	public CompactUUID getId() {
+	public UUID getId() {
 		return _delta.getId();
 	}
 
@@ -225,7 +225,7 @@ public class ItemItemDeltaAdapter implements Item {
 		return _delta.getIncomingItems(linkType);
 	}
 
-	public Link getIncomingLink(LinkType linkType, CompactUUID srcId) {
+	public Link getIncomingLink(LinkType linkType, UUID srcId) {
 		return _delta.getIncomingLink(linkType, srcId);
 	}
 
@@ -306,7 +306,7 @@ public class ItemItemDeltaAdapter implements Item {
 		return _delta.getOutgoingItem(linkNameID, resovledOnly);
 	}
 
-	public Item getOutgoingItem(String linkTypeName, CompactUUID itemId, boolean resolvedOnly) {
+	public Item getOutgoingItem(String linkTypeName, UUID itemId, boolean resolvedOnly) {
 		return _delta.getOutgoingItem(linkTypeName, itemId, resolvedOnly);
 	}
 
@@ -326,7 +326,7 @@ public class ItemItemDeltaAdapter implements Item {
 		return _delta.getOutgoingLink(item);
 	}
 
-	public Link getOutgoingLink(LinkType lt, CompactUUID destId) {
+	public Link getOutgoingLink(LinkType lt, UUID destId) {
 		return _delta.getOutgoingLink(lt, destId);
 	}
 
@@ -342,7 +342,7 @@ public class ItemItemDeltaAdapter implements Item {
 		return _delta.getOutgoingLinks(linkType);
 	}
 
-	public Item getPartChild(CompactUUID destItemId) {
+	public Item getPartChild(UUID destItemId) {
 		return _delta.getPartChild(destItemId);
 	}
 

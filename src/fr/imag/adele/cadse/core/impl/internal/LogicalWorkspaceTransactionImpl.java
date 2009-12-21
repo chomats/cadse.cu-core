@@ -36,7 +36,7 @@ import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CadseRuntime;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.ContentChangeInfo;
 import fr.imag.adele.cadse.core.EventFilter;
 import fr.imag.adele.cadse.core.IItemManager;
@@ -89,15 +89,15 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 
 	private final InternalLogicalWorkspace		base;
 
-	private Map<CompactUUID, WLWCOperationImpl>	all_operations;
+	private Map<UUID, WLWCOperationImpl>	all_operations;
 
-	private Map<CompactUUID, ItemDelta>			_operations;
-
-	/** The items. */
-	private Map<CompactUUID, ItemDelta>			items;
+	private Map<UUID, ItemDelta>			_operations;
 
 	/** The items. */
-	private Map<CompactUUID, ItemDelta>			items_deleted;
+	private Map<UUID, ItemDelta>			items;
+
+	/** The items. */
+	private Map<UUID, ItemDelta>			items_deleted;
 
 	/** The items_by_key. */
 	private Map<ISpaceKey, ItemDelta>			items_by_key_deleted;
@@ -134,11 +134,11 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	public LogicalWorkspaceTransactionImpl(InternalLogicalWorkspace base,
 			LogicalWorkspaceTransactionListener[] workspaceLogiqueCopyListeners) {
 		this.base = base;
-		_operations = new HashMap<CompactUUID, ItemDelta>();
-		this.items_deleted = new HashMap<CompactUUID, ItemDelta>();
+		_operations = new HashMap<UUID, ItemDelta>();
+		this.items_deleted = new HashMap<UUID, ItemDelta>();
 		this.items_by_key_deleted = new HashMap<ISpaceKey, ItemDelta>();
 		this.items_by_unique_name_deleted = new HashMap<String, ItemDelta>();
-		this.items = new HashMap<CompactUUID, ItemDelta>();
+		this.items = new HashMap<UUID, ItemDelta>();
 		this.items_by_key = new HashMap<ISpaceKey, ItemDelta>();
 		this.items_by_unique_name = new HashMap<String, ItemDelta>();
 		this._logicalWorkspaceTransactionListeners = workspaceLogiqueCopyListeners;
@@ -157,7 +157,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	/**
 	 * ajout un item, et eventuellement un lien entre le parent et l'item creer.
 	 */
-	public ItemDelta createItem(ItemType it, Item parent, LinkType lt, CompactUUID id, String uniqueName,
+	public ItemDelta createItem(ItemType it, Item parent, LinkType lt, UUID id, String uniqueName,
 			String shortName) throws CadseException {
 		check_write();
 		ItemDelta ret = actionAddItem(new ItemDescriptionRef(id, it.getId(), uniqueName, shortName),
@@ -172,7 +172,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 
 	public ItemDelta createItem(ItemType it, Item parent, LinkType lt) throws CadseException {
 		check_write();
-		ItemDelta ret = actionAddItem(new ItemDescriptionRef(CompactUUID.randomUUID(), it.getId(), null, null),
+		ItemDelta ret = actionAddItem(new ItemDescriptionRef(UUID.randomUUID(), it.getId(), null, null),
 				parent == null ? null : parent.getId(), lt);
 		return ret;
 	}
@@ -274,7 +274,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		return base.getCadseVersion();
 	}
 
-	public ItemDelta getItem(CompactUUID id) {
+	public ItemDelta getItem(UUID id) {
 		return getItem(id, false);
 	}
 
@@ -283,9 +283,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	 * 
 	 * @see
 	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
-	 * #getItemOperation(fr.imag.adele.cadse.core.CompactUUID)
+	 * #getItemOperation(fr.imag.adele.cadse.core.UUID)
 	 */
-	public ItemDelta getItemOperation(CompactUUID id) {
+	public ItemDelta getItemOperation(UUID id) {
 		return _operations.get(id);
 	}
 
@@ -298,9 +298,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	 * 
 	 * @see
 	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
-	 * #getItem(fr.imag.adele.cadse.core.CompactUUID, boolean)
+	 * #getItem(fr.imag.adele.cadse.core.UUID, boolean)
 	 */
-	public ItemDelta getItem(CompactUUID id, boolean showDeleteItem) {
+	public ItemDelta getItem(UUID id, boolean showDeleteItem) {
 		ItemDelta oper = this._operations.get(id);
 		if (oper != null) {
 			if (oper.isDeleted() && !showDeleteItem) {
@@ -371,7 +371,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		return base.getItems(it);
 	}
 
-	public ItemType getItemType(CompactUUID id) {
+	public ItemType getItemType(UUID id) {
 		return getItemType(id, true);
 	}
 
@@ -380,9 +380,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	 * 
 	 * @see
 	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
-	 * #getItemType(fr.imag.adele.cadse.core.CompactUUID, boolean)
+	 * #getItemType(fr.imag.adele.cadse.core.UUID, boolean)
 	 */
-	public ItemType getItemType(CompactUUID id, boolean createUnresolvedType) {
+	public ItemType getItemType(UUID id, boolean createUnresolvedType) {
 		ItemType itemType = base.getItemType(id);
 		if (createUnresolvedType && itemType == null) {
 			// TODO call this method specifiquement in commit process
@@ -413,7 +413,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		return base.getUnresolvedItem();
 	}
 
-	public List<Link> getUnresolvedLink(CompactUUID id) {
+	public List<Link> getUnresolvedLink(UUID id) {
 		return base.getUnresolvedLink(id);
 	}
 
@@ -501,7 +501,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	}
 
 	public Collection<Item> loadItems(Collection<ItemDescription> itemdescription, boolean update, boolean forceToSave,
-			boolean forceLoad, IWorkspaceNotifier notifier, Map<CompactUUID, String> unresolvedType,
+			boolean forceLoad, IWorkspaceNotifier notifier, Map<UUID, String> unresolvedType,
 			Collection<ProjectAssociation> projectAssociationSet) {
 		throw new UnsupportedOperationException();
 	}
@@ -525,7 +525,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		this.state = state;
 	}
 
-	public void actionAddAttribute(CompactUUID itemId, String key, Object value) throws CadseException, CadseException {
+	public void actionAddAttribute(UUID itemId, String key, Object value) throws CadseException, CadseException {
 		check_write();
 		if (log != null) {
 			log.actionAddAttribute(itemId, key, value);
@@ -562,7 +562,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	public ItemDelta actionAddItem(NewContext context)
 	throws CadseException {
 		check_write();
-		CompactUUID itemId = CompactUUID.randomUUID();
+		UUID itemId = UUID.randomUUID();
 		ItemDeltaImpl ret = new ItemDeltaImpl(this, itemId, context.getDestinationType(), false);
 		
 		if (ret.isAdded()) {
@@ -639,7 +639,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		
 		return ret;
 }
-	public ItemDelta actionAddItem(ItemDescriptionRef itemDescriptionRef, CompactUUID parent, LinkType lt)
+	public ItemDelta actionAddItem(ItemDescriptionRef itemDescriptionRef, UUID parent, LinkType lt)
 			throws CadseException {
 		check_write();
 		ItemDelta ret = getOrCreateItemOperation(itemDescriptionRef.getId(), itemDescriptionRef.getType(), false);
@@ -717,7 +717,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		itemOper.createLink(lt, destination);
 	}
 
-	public void actionChangeAttribute(CompactUUID itemId, String key, Object value) throws CadseException,
+	public void actionChangeAttribute(UUID itemId, String key, Object value) throws CadseException,
 			CadseException {
 		check_write();
 		if (log != null) {
@@ -746,7 +746,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		linkOper.add(attOper);
 	}
 
-	public void actionRemoveAttribute(CompactUUID itemId, String key) throws CadseException {
+	public void actionRemoveAttribute(UUID itemId, String key) throws CadseException {
 		check_write();
 		if (log != null) {
 			log.actionRemoveAttribute(itemId, key);
@@ -798,10 +798,10 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	 * 
 	 * @see
 	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
-	 * #getOrCreateItemOperation(fr.imag.adele.cadse.core.CompactUUID,
-	 * fr.imag.adele.cadse.core.CompactUUID)
+	 * #getOrCreateItemOperation(fr.imag.adele.cadse.core.UUID,
+	 * fr.imag.adele.cadse.core.UUID)
 	 */
-	public ItemDelta getOrCreateItemOperation(CompactUUID id, CompactUUID type) throws CadseException, CadseException {
+	public ItemDelta getOrCreateItemOperation(UUID id, UUID type) throws CadseException, CadseException {
 		return getOrCreateItemOperation(id, type, true);
 	}
 
@@ -810,10 +810,10 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	 * 
 	 * @see
 	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
-	 * #getOrCreateItemOperation(fr.imag.adele.cadse.core.CompactUUID,
-	 * fr.imag.adele.cadse.core.CompactUUID, boolean)
+	 * #getOrCreateItemOperation(fr.imag.adele.cadse.core.UUID,
+	 * fr.imag.adele.cadse.core.UUID, boolean)
 	 */
-	public ItemDelta getOrCreateItemOperation(CompactUUID id, CompactUUID type, boolean add) throws CadseException,
+	public ItemDelta getOrCreateItemOperation(UUID id, UUID type, boolean add) throws CadseException,
 			CadseException {
 		ItemDelta ret = _operations.get(id);
 		if (ret != null) {
@@ -832,9 +832,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	 * 
 	 * @see
 	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
-	 * #getOrCreateItemOperation(fr.imag.adele.cadse.core.CompactUUID)
+	 * #getOrCreateItemOperation(fr.imag.adele.cadse.core.UUID)
 	 */
-	public ItemDelta getOrCreateItemOperation(CompactUUID id) throws CadseException {
+	public ItemDelta getOrCreateItemOperation(UUID id) throws CadseException {
 		ItemDelta ret = _operations.get(id);
 		if (ret != null) {
 			return ret;
@@ -1015,9 +1015,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	 * 
 	 * @see
 	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
-	 * #getBaseItem(fr.imag.adele.cadse.core.CompactUUID)
+	 * #getBaseItem(fr.imag.adele.cadse.core.UUID)
 	 */
-	public Item getBaseItem(CompactUUID id) {
+	public Item getBaseItem(UUID id) {
 		return base.getItem(id);
 	}
 
@@ -1069,7 +1069,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 			log.actionAddOperation(operation);
 		}
 		if (all_operations == null) {
-			all_operations = new HashMap<CompactUUID, WLWCOperationImpl>();
+			all_operations = new HashMap<UUID, WLWCOperationImpl>();
 		}
 		all_operations.put(operation.getOperationId(), operation);
 		if (operation.getOperationType() == OperationTypeCst.ITEM_OPERATION) {
@@ -2389,7 +2389,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		return _logicalWorkspaceTransactionListeners;
 	}
 
-	public CadseRuntime createCadseRuntime(String name, CompactUUID runtimeId, CompactUUID definitionId) {
+	public CadseRuntime createCadseRuntime(String name, UUID runtimeId, UUID definitionId) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -2398,7 +2398,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	}
 
 	public ItemType createItemType(ItemType metaType, CadseRuntime cadseName, ItemType superType, int intID,
-			CompactUUID id, String shortName, String displayName, boolean hasContent, boolean isAbstract,
+			UUID id, String shortName, String displayName, boolean hasContent, boolean isAbstract,
 			IItemManager manager) {
 		ItemType acc = null;
 
@@ -2409,7 +2409,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		return acc;
 	}
 
-	public ItemDelta loadItem(CompactUUID id, CompactUUID type) {
+	public ItemDelta loadItem(UUID id, UUID type) {
 
 		ItemDelta loadingItem = _operations.get(id);
 		if (loadingItem != null) {

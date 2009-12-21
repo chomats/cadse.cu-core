@@ -19,7 +19,7 @@
 package fr.imag.adele.cadse.core.impl.attribute;
 
 import fr.imag.adele.cadse.core.CadseGCST;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.attribute.CheckStatus;
@@ -37,7 +37,7 @@ public class LongAttributeType extends AttributeType implements fr.imag.adele.ca
 	private Long	minValue;
 	private Long	maxValue;
 
-	public LongAttributeType(CompactUUID id, String name, int flag) {
+	public LongAttributeType(UUID id, String name, int flag) {
 		super(id, name, flag);
 	}
 

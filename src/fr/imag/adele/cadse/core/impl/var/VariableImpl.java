@@ -19,7 +19,7 @@
 
 package fr.imag.adele.cadse.core.impl.var;
 
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.impl.attribute.AttributeType;
 import fr.imag.adele.cadse.core.ui.UIField;
@@ -38,7 +38,7 @@ public abstract class VariableImpl extends AttributeType implements fr.imag.adel
 	 * @param id
 	 *            the id
 	 */
-	public VariableImpl(CompactUUID id, String name) {
+	public VariableImpl(UUID id, String name) {
 		super(id, name, 0);
 	}
 

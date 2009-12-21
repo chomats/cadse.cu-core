@@ -19,7 +19,7 @@
 
 package fr.imag.adele.cadse.core.impl.var;
 
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.var.ContextVariable;
 
@@ -41,7 +41,7 @@ public class StringVariable extends VariableImpl {
 	 * @param cst
 	 *            the cst
 	 */
-	public StringVariable(CompactUUID id, String name, String cst) {
+	public StringVariable(UUID id, String name, String cst) {
 		super(id, name);
 		this.cst = cst;
 	}

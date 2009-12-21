@@ -20,7 +20,7 @@ package fr.imag.adele.cadse.core.impl.attribute;
 
 import java.util.UUID;
 
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.impl.internal.delta.ItemDeltaImpl;
 import fr.imag.adele.cadse.core.CadseGCST;
@@ -29,7 +29,7 @@ public class UUIDAttributeType extends AttributeType implements fr.imag.adele.ca
 
 	boolean	automatic_generate	= false;
 
-	public UUIDAttributeType(CompactUUID id, String name, int flag) {
+	public UUIDAttributeType(UUID id, String name, int flag) {
 		super(id, name, flag);
 	}
 
@@ -37,12 +37,12 @@ public class UUIDAttributeType extends AttributeType implements fr.imag.adele.ca
 		super(item);
 	}
 
-	public UUIDAttributeType(CompactUUID id, String shortName) {
+	public UUIDAttributeType(UUID id, String shortName) {
 		this(id, shortName, 0);
 	}
 
-	public Class<CompactUUID> getAttributeType() {
-		return CompactUUID.class;
+	public Class<UUID> getAttributeType() {
+		return UUID.class;
 	}
 
 	public ItemType getType() {
@@ -54,16 +54,16 @@ public class UUIDAttributeType extends AttributeType implements fr.imag.adele.ca
 	}
 
 	@Override
-	public CompactUUID getDefaultValue() {
+	public UUID getDefaultValue() {
 		if (automatic_generate) {
-			return CompactUUID.randomUUID();
+			return UUID.randomUUID();
 		}
 		return null;
 	}
 	
 	@Override
-	public CompactUUID convertTo(Object v) {
+	public UUID convertTo(Object v) {
 		// TODO Auto-generated method stub
-		return (CompactUUID) super.convertTo(v);
+		return (UUID) super.convertTo(v);
 	}
 }

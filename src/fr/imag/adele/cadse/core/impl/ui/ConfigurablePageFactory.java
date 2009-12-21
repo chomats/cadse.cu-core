@@ -23,7 +23,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import fr.imag.adele.cadse.core.CadseGCST;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.IItemNode;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
@@ -60,7 +60,7 @@ public class ConfigurablePageFactory extends PageImpl implements IPageFactory {
 	 * @throws NoSuchMethodException
 	 *             the no such method exception
 	 */
-	public ConfigurablePageFactory(ItemType parent, CompactUUID id, int cas, String shortname,
+	public ConfigurablePageFactory(ItemType parent, UUID id, int cas, String shortname,
 			Class<? extends IPage> clazz) throws SecurityException, NoSuchMethodException {
 		super(id, shortname, parent);
 		this.cas = cas;

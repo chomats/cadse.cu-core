@@ -27,7 +27,7 @@ import java.util.NoSuchElementException;
 
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
@@ -85,7 +85,7 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 
 	private IPage[]			_owPages;
 
-	public PageImpl(CompactUUID id, String name, ItemType parent) {
+	public PageImpl(UUID id, String name, ItemType parent) {
 		super(id);
 		this.shortName = name;
 		this._parentItemType = parent;
@@ -111,7 +111,7 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	 * @param fields
 	 *            the fields
 	 */
-	public PageImpl(CompactUUID id, String name, String label, String title, String description,
+	public PageImpl(UUID id, String name, String label, String title, String description,
 			boolean isPageComplete, IActionPage action, IAttributeType<?>... fields) {
 		super(id);
 		_attributes = fields;
@@ -148,7 +148,7 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 
 	}
 
-	public PageImpl(CompactUUID id, String name, String label, String title, String description,
+	public PageImpl(UUID id, String name, String label, String title, String description,
 			boolean isPageComplete, int hspan) {
 		super(id);
 		_attributes = EMPTY_UIFIELD;

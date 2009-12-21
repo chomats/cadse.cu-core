@@ -19,7 +19,7 @@
 package fr.imag.adele.cadse.core.impl;
 
 import fr.imag.adele.cadse.core.CadseGCST;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.IItemFactory;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
@@ -53,7 +53,7 @@ public class ItemFactory implements IItemFactory {
 		if (isThisOrSubType(it, CadseGCST.ITEM_TYPE)) {
 			return new ItemTypeImpl(wl, it, item);
 		}
-		CompactUUID id = item.getId();
+		UUID id = item.getId();
 		String shortName = item.getName();
 		if (it == CadseGCST.BOOLEAN) {
 			return new BooleanAttributeType(item);

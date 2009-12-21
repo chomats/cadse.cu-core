@@ -24,7 +24,7 @@ package fr.imag.adele.cadse.core.impl.internal;
 
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CommonMethods;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
@@ -196,7 +196,7 @@ public class LinkImpl implements Link {
 	 * 
 	 * @return id source.
 	 */
-	public CompactUUID getSourceId() {
+	public UUID getSourceId() {
 		return source.getId();
 	}
 
@@ -205,7 +205,7 @@ public class LinkImpl implements Link {
 	 * 
 	 * @return id destination
 	 */
-	public CompactUUID getDestinationId() {
+	public UUID getDestinationId() {
 		return destination.getId();
 	}
 

@@ -38,7 +38,7 @@ import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CadseRuntime;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.ContentChangeInfo;
 import fr.imag.adele.cadse.core.ContentItem;
 import fr.imag.adele.cadse.core.DerivedLink;
@@ -129,8 +129,8 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	private final LogicalWorkspaceTransactionImpl	_copy;
 
 	/** The id. */
-	private CompactUUID								_id;
-	private CompactUUID								_itemTypeId;
+	private UUID								_id;
+	private UUID								_itemTypeId;
 	/** The type. */
 	private ItemType								_itemType;
 	private boolean									_update;
@@ -142,7 +142,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	private ISpaceKey								_nextKey;
 	private GroupType _group;
 
-	public ItemDeltaImpl(LogicalWorkspaceTransactionImpl copy, CompactUUID id, CompactUUID type, boolean add) {
+	public ItemDeltaImpl(LogicalWorkspaceTransactionImpl copy, UUID id, UUID type, boolean add) {
 		super(OperationTypeCst.ITEM_OPERATION, null);
 		Assert.isNotNull(id);
 		Assert.isNotNull(type);
@@ -155,7 +155,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 
 	}
 
-	public ItemDeltaImpl(LogicalWorkspaceTransactionImpl copy, CompactUUID id, ItemType itemType, boolean add)
+	public ItemDeltaImpl(LogicalWorkspaceTransactionImpl copy, UUID id, ItemType itemType, boolean add)
 			throws CadseException {
 		super(OperationTypeCst.ITEM_OPERATION, null);
 		Assert.isNotNull(id);
@@ -268,9 +268,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * 
 	 * @see
 	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#canCreateLink(fr.imag
-	 * .adele.cadse.core.LinkType, fr.imag.adele.cadse.core.CompactUUID)
+	 * .adele.cadse.core.LinkType, fr.imag.adele.cadse.core.UUID)
 	 */
-	public boolean canCreateLink(LinkType lt, CompactUUID destination) {
+	public boolean canCreateLink(LinkType lt, UUID destination) {
 		return true;
 	}
 
@@ -384,10 +384,10 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * 
 	 * @see
 	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#containsComponent(fr.
-	 * imag.adele.cadse.core.CompactUUID)
+	 * imag.adele.cadse.core.UUID)
 	 */
 	@Deprecated
-	public boolean containsComponent(CompactUUID id) {
+	public boolean containsComponent(UUID id) {
 		return false;
 		// throw new UnsupportedOperationException();
 		/*
@@ -916,9 +916,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * 
 	 * @see
 	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getComponentInfo(fr.imag
-	 * .adele.cadse.core.CompactUUID)
+	 * .adele.cadse.core.UUID)
 	 */
-	public Item getComponentInfo(CompactUUID id) {
+	public Item getComponentInfo(UUID id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -937,7 +937,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * 
 	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getComponentsId()
 	 */
-	public Set<CompactUUID> getComponentIds() {
+	public Set<UUID> getComponentIds() {
 		throw new UnsupportedOperationException();
 	}
 
@@ -1030,7 +1030,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * 
 	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getId()
 	 */
-	public CompactUUID getId() {
+	public UUID getId() {
 		return _id;
 	}
 
@@ -1216,7 +1216,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		return getIncomingLinks(lt, false, true);
 	}
 
-	public Link getIncomingLink(LinkType lt, CompactUUID srcId) {
+	public Link getIncomingLink(LinkType lt, UUID srcId) {
 		List<LinkDelta> links = getIncomingLinks(false, true);
 		for (Link l : links) {
 			if (l.getLinkType() == lt && l.getSourceId().equals(srcId)) {
@@ -1251,7 +1251,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * 
 	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getItemTypeId()
 	 */
-	public CompactUUID getItemTypeId() {
+	public UUID getItemTypeId() {
 		return _itemTypeId;
 	}
 
@@ -1655,9 +1655,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * 
 	 * @see
 	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingItems(java
-	 * .lang.String, fr.imag.adele.cadse.core.CompactUUID, boolean)
+	 * .lang.String, fr.imag.adele.cadse.core.UUID, boolean)
 	 */
-	public Item getOutgoingItem(String linkname, CompactUUID itemId, boolean resovledOnly) {
+	public Item getOutgoingItem(String linkname, UUID itemId, boolean resovledOnly) {
 		Link l = getOutgoingLink(linkname, itemId);
 		if (l == null) {
 			return null;
@@ -1758,9 +1758,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * 
 	 * @see
 	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingLink(fr.imag
-	 * .adele.cadse.core.LinkType, fr.imag.adele.cadse.core.CompactUUID)
+	 * .adele.cadse.core.LinkType, fr.imag.adele.cadse.core.UUID)
 	 */
-	public LinkDelta getOutgoingLink(LinkType lt, CompactUUID destId) {
+	public LinkDelta getOutgoingLink(LinkType lt, UUID destId) {
 		syncOutgoingLinks();
 		if (_links == null) {
 			return null;
@@ -1778,9 +1778,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * 
 	 * @see
 	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingLink(java.
-	 * lang.String, fr.imag.adele.cadse.core.CompactUUID)
+	 * lang.String, fr.imag.adele.cadse.core.UUID)
 	 */
-	public LinkDelta getOutgoingLink(String lt, CompactUUID destId) {
+	public LinkDelta getOutgoingLink(String lt, UUID destId) {
 		syncOutgoingLinks();
 		if (_links == null) {
 			return null;
@@ -1866,9 +1866,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * 
 	 * @see
 	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingLinkOperations
-	 * (fr.imag.adele.cadse.core.CompactUUID)
+	 * (fr.imag.adele.cadse.core.UUID)
 	 */
-	public List<LinkDelta> getOutgoingLinkOperations(CompactUUID destId) {
+	public List<LinkDelta> getOutgoingLinkOperations(UUID destId) {
 		syncOutgoingLinks();
 		if (_links == null) {
 			return Collections.emptyList();
@@ -1951,9 +1951,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * 
 	 * @see
 	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingLinks(fr.imag
-	 * .adele.cadse.core.CompactUUID)
+	 * .adele.cadse.core.UUID)
 	 */
-	public List<LinkDelta> getOutgoingLinks(CompactUUID destId) {
+	public List<LinkDelta> getOutgoingLinks(UUID destId) {
 		syncOutgoingLinks();
 		if (_orders == null) {
 			return Collections.emptyList();
@@ -2009,10 +2009,10 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		Object value = getAttribute(Accessor.ATTR_PARENT_ITEM_ID);
 		if (value instanceof UUID) {
 			// migration
-			value = new CompactUUID((UUID) value);
+			value = new UUID((UUID) value);
 			// setAttribute(ATTR_PARENT_ITEM_ID, value);
 		}
-		CompactUUID parentId = (CompactUUID) value;
+		UUID parentId = (UUID) value;
 		if (parentId == null) {
 			return null;
 		}
@@ -2070,7 +2070,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * @see
 	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#getPart(java.lang.String)
 	 */
-	public Item getPartChild(CompactUUID id) {
+	public Item getPartChild(UUID id) {
 		return Accessor.getParts(getOutgoingLinks(), id);
 	}
 
@@ -2893,12 +2893,12 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#loadDerivedLink(java.
 	 * lang.String, fr.imag.adele.cadse.core.delta.ItemOperationItf, boolean,
 	 * boolean, java.lang.String, java.lang.String,
-	 * fr.imag.adele.cadse.core.CompactUUID,
-	 * fr.imag.adele.cadse.core.CompactUUID, int)
+	 * fr.imag.adele.cadse.core.UUID,
+	 * fr.imag.adele.cadse.core.UUID, int)
 	 */
 	public void loadDerivedLink(String linkType, ItemDelta dest, boolean isAggregation, boolean isRequire,
-			String link_info, String originLinkTypeID, CompactUUID uuidOriginLinkSourceTypeID,
-			CompactUUID uuidOriginLinkDestinationTypeID, int version) {
+			String link_info, String originLinkTypeID, UUID uuidOriginLinkSourceTypeID,
+			UUID uuidOriginLinkDestinationTypeID, int version) {
 		// TODO Auto-generated method stub
 
 	}
@@ -3401,9 +3401,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	void setParentFromAtt(Object value) {
 		if (value instanceof UUID) {
 			// migration
-			value = new CompactUUID((UUID) value);
+			value = new UUID((UUID) value);
 		}
-		CompactUUID parentId = (CompactUUID) value;
+		UUID parentId = (UUID) value;
 		if (parentId != null) {
 			final ItemDelta parent = getWorkingCopy().getItem(parentId);
 			if (parent != null) {

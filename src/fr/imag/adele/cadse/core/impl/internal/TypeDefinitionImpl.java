@@ -11,7 +11,7 @@ import java.util.Set;
 
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemFilter;
 import fr.imag.adele.cadse.core.ItemType;
@@ -39,13 +39,13 @@ import fr.imag.adele.cadse.core.util.ArraysUtil;
 public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, TypeDefinition.Internal {
 	
 	
-	public TypeDefinitionImpl(LogicalWorkspace wl, CompactUUID id,
+	public TypeDefinitionImpl(LogicalWorkspace wl, UUID id,
 			ItemType type, String uniqueName, String shortName, Item parent,
 			LinkType lt) throws CadseException {
 		super(wl, id, type, uniqueName, shortName, parent, lt);
 	}
 
-	public TypeDefinitionImpl(LogicalWorkspace wl, CompactUUID id, ItemType it,
+	public TypeDefinitionImpl(LogicalWorkspace wl, UUID id, ItemType it,
 			String uniqueName, String shortName) {
 		super(wl, id, it, uniqueName, shortName);
 	}

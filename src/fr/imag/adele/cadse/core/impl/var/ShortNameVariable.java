@@ -20,7 +20,7 @@
 package fr.imag.adele.cadse.core.impl.var;
 
 import fr.imag.adele.cadse.core.CadseGCST;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 
 /**
  * The Class ShortNameVariable.
@@ -35,7 +35,7 @@ public class ShortNameVariable extends AttributeVariable {
 	 * @param id
 	 *            the id
 	 */
-	public ShortNameVariable(CompactUUID id, String name) {
+	public ShortNameVariable(UUID id, String name) {
 		super(id, name, CadseGCST.ITEM_at_NAME);
 	}
 

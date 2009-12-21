@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import fr.imag.adele.cadse.core.CadseException;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
@@ -509,7 +509,7 @@ public class Accessor {
 		return ret;
 	}
 
-	public static Item getOutgoingItems(List<Link> links, String linkTypeName, CompactUUID itemId, boolean resovledOnly) {
+	public static Item getOutgoingItems(List<Link> links, String linkTypeName, UUID itemId, boolean resovledOnly) {
 		for (Link l : links) {
 			// Select link has kind Part and destination.
 			if (l.getLinkType().getName().equals(linkTypeName) && l.getDestinationId().equals(itemId)) {
@@ -540,7 +540,7 @@ public class Accessor {
 		return null;
 	}
 
-	public static Link getOutgoingLink(CompactUUID destId, List<Link> links) {
+	public static Link getOutgoingLink(UUID destId, List<Link> links) {
 		for (Link link : links) {
 			if (link.getDestinationId().equals(destId)) {
 				return link;
@@ -599,7 +599,7 @@ public class Accessor {
 		return ret;
 	}
 
-	public static Item getParts(List<Link> links, CompactUUID id) {
+	public static Item getParts(List<Link> links, UUID id) {
 		for (Link l : links) {
 			// If link has kind Containement and its destination's id is equal
 			// id parameter. Return this object destination.

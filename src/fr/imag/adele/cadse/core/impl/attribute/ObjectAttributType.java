@@ -4,7 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import fr.imag.adele.cadse.core.CadseException;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
@@ -16,7 +16,7 @@ public class ObjectAttributType<X> extends AttributeType implements IAttributeTy
 	Constructor<X>		_constructor;
 	IAttributeType<?>[]	_args;
 
-	public ObjectAttributType(CompactUUID id, String name, int flag, Class<X> class_, X defaultValue,
+	public ObjectAttributType(UUID id, String name, int flag, Class<X> class_, X defaultValue,
 			Constructor<X> constructor, IAttributeType<?>... args) {
 		super(id, name, flag);
 		_class = class_;

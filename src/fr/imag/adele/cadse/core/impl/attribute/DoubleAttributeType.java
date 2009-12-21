@@ -20,7 +20,7 @@
 package fr.imag.adele.cadse.core.impl.attribute;
 
 import fr.imag.adele.cadse.core.CadseGCST;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.attribute.CheckStatus;
@@ -53,7 +53,7 @@ public class DoubleAttributeType extends AttributeType implements
 	 * @param value
 	 *            the value
 	 */
-	public DoubleAttributeType(CompactUUID id, int flag, String name, Double minValue, Double maxValue, String value) {
+	public DoubleAttributeType(UUID id, int flag, String name, Double minValue, Double maxValue, String value) {
 		super(id, name, flag);
 		this.value = Convert.toDouble(value, Double.NaN);
 		this.minValue = minValue;

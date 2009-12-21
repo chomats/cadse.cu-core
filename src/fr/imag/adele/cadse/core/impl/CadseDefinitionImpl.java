@@ -1,15 +1,15 @@
 package fr.imag.adele.cadse.core.impl;
 
 import fr.imag.adele.cadse.core.CadseGCST;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.util.Convert;
 
 public class CadseDefinitionImpl extends CadseRuntimeImpl {
 
-	public CadseDefinitionImpl(String name, CompactUUID runtimeId,
-			CompactUUID definitionId) {
+	public CadseDefinitionImpl(String name, UUID runtimeId,
+			UUID definitionId) {
 		super(name, runtimeId, definitionId);
 	}
 

@@ -38,7 +38,7 @@ import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CadseRuntime;
 import fr.imag.adele.cadse.core.ChangeID;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.DefaultItemManager;
 import fr.imag.adele.cadse.core.EventFilter;
 import fr.imag.adele.cadse.core.IItemManager;
@@ -93,7 +93,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 			this.log = log;
 		}
 
-		public void actionAddAttribute(CompactUUID itemId, String key, Object value) throws CadseException {
+		public void actionAddAttribute(UUID itemId, String key, Object value) throws CadseException {
 			if (log != null) {
 				log.actionAddAttribute(itemId, key, value);
 			}
@@ -124,7 +124,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 			addedOperations.add(operation);
 		}
 
-		public void actionChangeAttribute(CompactUUID itemId, String key, Object value) throws CadseException {
+		public void actionChangeAttribute(UUID itemId, String key, Object value) throws CadseException {
 			if (log != null) {
 				log.actionChangeAttribute(itemId, key, value);
 			}
@@ -137,7 +137,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 			}
 		}
 
-		public void actionRemoveAttribute(CompactUUID itemId, String key) throws CadseException {
+		public void actionRemoveAttribute(UUID itemId, String key) throws CadseException {
 			if (log != null) {
 				log.actionRemoveAttribute(itemId, key);
 			}
@@ -180,7 +180,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	WSModelState							_state							= WSModelState.INIT;
 
 	/** The items. */
-	Map<CompactUUID, Item>					_items;
+	Map<UUID, Item>					_items;
 
 	/** The items_by_key. */
 	private Map<ISpaceKey, Item>			_items_by_key;
@@ -306,7 +306,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 *            the wd
 	 */
 	public LogicalWorkspaceImpl(CadseDomain wd) {
-		this._items = new HashMap<CompactUUID, Item>();
+		this._items = new HashMap<UUID, Item>();
 		this._items_by_key = new HashMap<ISpaceKey, Item>();
 		this._items_by_qualified_name = new HashMap<String, Item>();
 		this._wd = wd;
@@ -434,10 +434,10 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 * @see
 	 * fr.imag.adele.cadse.core.IWorkspaceLogique#createItem(fr.imag.adele.cadse
 	 * .core.ItemType, fr.imag.adele.cadse.core.Item,
-	 * fr.imag.adele.cadse.core.LinkType, fr.imag.adele.cadse.core.CompactUUID,
+	 * fr.imag.adele.cadse.core.LinkType, fr.imag.adele.cadse.core.UUID,
 	 * java.lang.String, java.lang.String)
 	 */
-	public Item createItem(ItemType it, Item parent, LinkType lt, CompactUUID id, String longName, String shortName)
+	public Item createItem(ItemType it, Item parent, LinkType lt, UUID id, String longName, String shortName)
 			throws CadseException {
 		LogicalWorkspaceTransaction copy = createTransaction();
 		ItemDelta copyRet = copy.createItem(it, parent, lt, id, longName, shortName);
@@ -490,7 +490,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 * 
 	 * @return an item if found, null if not found.
 	 */
-	public Item getItem(CompactUUID id) {
+	public Item getItem(UUID id) {
 		Item i = _items.get(id);
 		/*
 		 * if (i != null && i.isResolved()) { return i; }
@@ -875,7 +875,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 * 
 	 * @return the unresolved link
 	 */
-	public List<Link> getUnresolvedLink(CompactUUID id) {
+	public List<Link> getUnresolvedLink(UUID id) {
 		List<Link> ret = new ArrayList<Link>();
 		Item item = getItem(id);
 		if (item == null) {
@@ -1047,7 +1047,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 */
 	private void addComponent(ItemImpl source, List<Item> addedsource) {
 		if (source._composants == null) {
-			source._composants = new HashMap<CompactUUID, Item>();
+			source._composants = new HashMap<UUID, Item>();
 		}
 		List<Item> added = new ArrayList<Item>();
 
@@ -1073,7 +1073,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		ItemImpl source = (ItemImpl) cl.getSource();
 
 		if (source._composants == null) {
-			source._composants = new HashMap<CompactUUID, Item>();
+			source._composants = new HashMap<UUID, Item>();
 		}
 		List<Item> added = new ArrayList<Item>();
 
@@ -1099,11 +1099,11 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 */
 	private void removeComponent(ItemImpl source) {
 		if (source._composants == null) {
-			source._composants = new HashMap<CompactUUID, Item>();
+			source._composants = new HashMap<UUID, Item>();
 		}
-		Map<CompactUUID, Item> result = source.computeComponents(true);
+		Map<UUID, Item> result = source.computeComponents(true);
 
-		for (CompactUUID id : result.keySet()) {
+		for (UUID id : result.keySet()) {
 			source._composants.remove(id);
 		}
 		ArrayList<Item> removed = new ArrayList<Item>(source._composants.values());
@@ -1174,7 +1174,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 * @throws CadseException
 	 *             the melusine exception
 	 */
-	synchronized Item getItem(CompactUUID id, ItemType type, String uniqueName, String shortname) throws CadseException {
+	synchronized Item getItem(UUID id, ItemType type, String uniqueName, String shortname) throws CadseException {
 		Item i = _items.get(id);
 
 		if (i == null) {
@@ -1293,7 +1293,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 * @throws CadseException
 	 *             the melusine exception
 	 */
-	public ItemType getItemType(ItemDescriptionRef desc, Map<CompactUUID, String> unresolvedType) throws CadseException {
+	public ItemType getItemType(ItemDescriptionRef desc, Map<UUID, String> unresolvedType) throws CadseException {
 		ItemType itemtype = getItemType(desc.getType());
 		if (itemtype != null) {
 			return itemtype;
@@ -1312,9 +1312,9 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 * 
 	 * @see
 	 * fr.imag.adele.cadse.core.IWorkspaceLogique#getItemType(fr.imag.adele.
-	 * cadse.core.CompactUUID)
+	 * cadse.core.UUID)
 	 */
-	public ItemType getItemType(CompactUUID id) {
+	public ItemType getItemType(UUID id) {
 
 		Item i = _items.get(id);
 		if (i != null) {
@@ -1421,7 +1421,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 *      CadseIllegalArgumentException : Item type $id$ already exist.
 	 */
 	public ItemType createItemType(ItemType metaType, CadseRuntime cadseName, ItemType superType, int intID,
-			CompactUUID id, String shortName, String displayName, boolean hasContent, boolean isAbstract,
+			UUID id, String shortName, String displayName, boolean hasContent, boolean isAbstract,
 			IItemManager manager) {
 		/*
 		 * La convention est de charger d'abord le meta item type en premier
@@ -1473,7 +1473,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	};
 
 	// public ItemType createItemType(CadseRuntime cadseName, ItemType
-	// superType, int intID, CompactUUID id,
+	// superType, int intID, UUID id,
 	// String shortName, String displayName, boolean hasContent, boolean
 	// isAbstract, IItemManager manager) {
 	// return createItemType(null, cadseName, superType, intID, id, shortName,
@@ -1482,7 +1482,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	// }
 
 	// public ItemType createItemType(CadseRuntime cadseName, ItemType
-	// superType, int intID, CompactUUID id,
+	// superType, int intID, UUID id,
 	// String shortName, String displayName, boolean hasContent, boolean
 	// isAbstract) {
 	//
@@ -2024,7 +2024,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		ArrayList<Item> itemsToDelete = new ArrayList<Item>(_items.values());
 		ArrayList<CadseException> ex = new ArrayList<CadseException>();
 		for (Item dItem : itemsToDelete) {
-			CompactUUID id = dItem.getId();
+			UUID id = dItem.getId();
 			Item realItem = getItem(id);
 			if (realItem != null) {
 				try {
@@ -2071,7 +2071,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		return _workspaceLogiqueCopyListeners;
 	}
 
-	public CadseRuntime createCadseRuntime(String name, CompactUUID runtimeId, CompactUUID definitionId) {
+	public CadseRuntime createCadseRuntime(String name, UUID runtimeId, UUID definitionId) {
 		CadseRuntime cadseRuntime = new CadseRuntimeImpl(name, runtimeId, definitionId);
 		this._cadses = ArraysUtil.add(CadseRuntime.class, this._cadses, cadseRuntime);
 		registerItem(cadseRuntime);
@@ -2175,7 +2175,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 			if (att != null) {
 				return att;
 			}
-			CompactUUID unresolvedid = getUnresolvedId(itemType.getId() + attName);
+			UUID unresolvedid = getUnresolvedId(itemType.getId() + attName);
 			att = new AttributeTypeUnresolved(unresolvedid, attName, Item.UNRESOLVED);
 			_unresolvedAttribute.put(attName, att);
 			return att;
@@ -2197,7 +2197,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	synchronized public LinkType createUnresolvedLinkType(String linktypeName, ItemType sourcetype, ItemType desttype) {
 		try {
 			// getCadseDomain().beginOperation("Create unresolved link type");
-			CompactUUID unresolvedid = getUnresolvedId(sourcetype + ":" + linktypeName);
+			UUID unresolvedid = getUnresolvedId(sourcetype + ":" + linktypeName);
 			Item foundItem = getItem(unresolvedid);
 			if (foundItem != null) {
 				return (LinkType) foundItem;
@@ -2217,9 +2217,9 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 
 	// Properties unresolvedObject = null;
 
-	protected CompactUUID getUnresolvedId(String key) {
+	protected UUID getUnresolvedId(String key) {
 		return ((CadseDomainImpl) getCadseDomain()).getUnresolvedId(key);
-		// CompactUUID randomUUID = CompactUUID.randomUUID();
+		// UUID randomUUID = UUID.randomUUID();
 		// System.out.println("*** create unresolved object " + key + ":" +
 		// randomUUID);
 		// return randomUUID;
@@ -2232,7 +2232,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 * @return
 	 * @throws CadseException
 	 */
-	ItemType createUnresolvedItemType(CompactUUID id, String sn, String un) throws CadseException {
+	ItemType createUnresolvedItemType(UUID id, String sn, String un) throws CadseException {
 		CadseRuntime cr = getCadseRuntimeForUnresolvedItemType();
 		ItemTypeImpl itemTypeImpl = (ItemTypeImpl) createItemType(null, cr, null, 0, id, sn, "Unresolved Item type"
 				+ id, false, true, _unresolveManager);

@@ -1,6 +1,6 @@
 package fr.imag.adele.cadse.core.impl;
 
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
@@ -9,7 +9,7 @@ public class Item_Descriptor extends AbstractGeneratedItem {
 	protected ItemType _it;
 	
 	
-	public Item_Descriptor(CompactUUID id, ItemType it, Object ... keyvalues) {
+	public Item_Descriptor(UUID id, ItemType it, Object ... keyvalues) {
 		super(id);
 		_it = it;
 		for (int i = 0; i < keyvalues.length; i++) {
@@ -20,7 +20,7 @@ public class Item_Descriptor extends AbstractGeneratedItem {
 	}
 	
 	public Item_Descriptor(ItemType it, Object ... keyvalues) {
-		this(CompactUUID.randomUUID(), it, keyvalues);
+		this(UUID.randomUUID(), it, keyvalues);
 	}
 	
 	

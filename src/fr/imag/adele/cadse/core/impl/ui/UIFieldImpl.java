@@ -22,7 +22,7 @@ package fr.imag.adele.cadse.core.impl.ui;
 
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
@@ -91,7 +91,7 @@ public class UIFieldImpl extends Item_Descriptor implements
 	 * @param ic
 	 *            the ic
 	 */
-	public UIFieldImpl(ItemType it, CompactUUID uuid, IAttributeType<?> attr, String label,
+	public UIFieldImpl(ItemType it, UUID uuid, IAttributeType<?> attr, String label,
 			EPosLabel poslabel, Item mc, Item ic, Object ... keyvalues) {
 		super(uuid, it, keyvalues);
 		//assert mc != null;
@@ -107,7 +107,7 @@ public class UIFieldImpl extends Item_Descriptor implements
 			_hspan = 2;
 	}
 
-	public UIFieldImpl(ItemType it, CompactUUID id) {
+	public UIFieldImpl(ItemType it, UUID id) {
 		super(id, it);
 		_id = id;
 		_hspan = 1;

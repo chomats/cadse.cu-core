@@ -10,7 +10,7 @@ import java.util.Set;
 import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.ContentItem;
 import fr.imag.adele.cadse.core.DerivedLink;
 import fr.imag.adele.cadse.core.DerivedLinkDescription;
@@ -291,7 +291,7 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements Li
 	}
 
 	@Override
-	public boolean canCreateLink(LinkType linkType, CompactUUID destItemId) {
+	public boolean canCreateLink(LinkType linkType, UUID destItemId) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -309,7 +309,7 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements Li
 	}
 
 	@Override
-	public boolean containsComponent(CompactUUID itemId) {
+	public boolean containsComponent(UUID itemId) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -377,13 +377,13 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements Li
 	}
 
 	@Override
-	public Set<CompactUUID> getComponentIds() {
+	public Set<UUID> getComponentIds() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Item getComponentInfo(CompactUUID itemId) {
+	public Item getComponentInfo(UUID itemId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -426,7 +426,7 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements Li
 	}
 
 	@Override
-	public CompactUUID getId() {
+	public UUID getId() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -450,7 +450,7 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements Li
 	}
 
 	@Override
-	public Link getIncomingLink(LinkType linkType, CompactUUID srcId) {
+	public Link getIncomingLink(LinkType linkType, UUID srcId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -510,7 +510,7 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements Li
 	}
 
 	@Override
-	public Item getOutgoingItem(String linkTypeName, CompactUUID itemId,
+	public Item getOutgoingItem(String linkTypeName, UUID itemId,
 			boolean resolvedOnly) {
 		// TODO Auto-generated method stub
 		return null;
@@ -560,7 +560,7 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements Li
 	}
 
 	@Override
-	public Link getOutgoingLink(LinkType lt, CompactUUID destId) {
+	public Link getOutgoingLink(LinkType lt, UUID destId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -578,7 +578,7 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements Li
 	}
 
 	@Override
-	public Item getPartChild(CompactUUID destItemId) {
+	public Item getPartChild(UUID destItemId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -1197,7 +1197,7 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements Li
 	}
 
 	@Override
-	public CompactUUID getDestinationId() {
+	public UUID getDestinationId() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -1245,7 +1245,7 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements Li
 	}
 
 	@Override
-	public CompactUUID getSourceId() {
+	public UUID getSourceId() {
 		// TODO Auto-generated method stub
 		return null;
 	}

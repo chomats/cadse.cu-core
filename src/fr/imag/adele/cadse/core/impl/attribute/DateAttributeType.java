@@ -24,7 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.attribute.CheckStatus;
@@ -38,11 +38,11 @@ public class DateAttributeType extends AttributeType implements fr.imag.adele.ca
 	Date	_defaultValue;
 	String	_format	= "EEE MMM dd HH:mm:ss zzz yyyy";
 
-	public DateAttributeType(CompactUUID id, String name, int flag) {
+	public DateAttributeType(UUID id, String name, int flag) {
 		super(id, name, flag);
 	}
 
-	public DateAttributeType(CompactUUID id, int flag, String name, String defaultValue) {
+	public DateAttributeType(UUID id, int flag, String name, String defaultValue) {
 		super(id, name, flag);
 		if (defaultValue != null) {
 			this._defaultValue = convertTo(defaultValue);

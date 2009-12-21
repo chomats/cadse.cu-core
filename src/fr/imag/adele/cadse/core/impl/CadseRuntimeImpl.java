@@ -23,7 +23,7 @@ import java.net.URL;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CadseRuntime;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
@@ -41,7 +41,7 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 	private ItemType[]		_itemTypes;
 	private CadseRuntime[]	_requiredCadses;
 	private TreeView		_views;
-	private CompactUUID		_idCadseDefinition;
+	private UUID		_idCadseDefinition;
 	protected String		_name;
 	protected String		_qname;
 	protected String		_description;
@@ -56,7 +56,7 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 	private String			_cstClassName;
 	DefineNewContext[]		_defineNewContext;
 
-	public CadseRuntimeImpl(String name, CompactUUID runtimeId, CompactUUID definitionId) {
+	public CadseRuntimeImpl(String name, UUID runtimeId, UUID definitionId) {
 		super(runtimeId);
 		_idCadseDefinition = definitionId;
 		internalSetName(name);
@@ -362,11 +362,11 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 		this._cadseName = displayName;
 	}
 
-	public CompactUUID getIdCadseDefinition() {
+	public UUID getIdCadseDefinition() {
 		return _idCadseDefinition;
 	}
 
-	public void setIdCadseDefinition(CompactUUID idCadseDefintiion) {
+	public void setIdCadseDefinition(UUID idCadseDefintiion) {
 		_idCadseDefinition = idCadseDefintiion;
 	}
 

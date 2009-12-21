@@ -20,13 +20,13 @@ package fr.imag.adele.cadse.core.impl.attribute;
 
 import java.net.URL;
 
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.impl.internal.delta.ItemDeltaImpl;
 import fr.imag.adele.cadse.core.CadseGCST;
 
 public class URLAttributeType extends AttributeType implements fr.imag.adele.cadse.core.attribute.URLAttributeType {
-	public URLAttributeType(CompactUUID id, String name, int flag) {
+	public URLAttributeType(UUID id, String name, int flag) {
 		super(id, name, flag);
 	}
 

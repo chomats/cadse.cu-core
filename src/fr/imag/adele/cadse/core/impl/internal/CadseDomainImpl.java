@@ -35,7 +35,7 @@ import org.osgi.framework.BundleContext;
 import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.ChangeID;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.IWorkspaceOperation;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemDescriptionRef;
@@ -275,7 +275,7 @@ public class CadseDomainImpl implements CadseDomain {
 
 	private File	propFile;
 
-	public CompactUUID getUnresolvedId(String key) {
+	public UUID getUnresolvedId(String key) {
 		if (unresolvedObject == null) {
 			File l = getLocation();
 			unresolvedObject = new Properties();
@@ -294,16 +294,16 @@ public class CadseDomainImpl implements CadseDomain {
 		}
 
 		String id = unresolvedObject.getProperty(key);
-		CompactUUID randomUUID = null;
+		UUID randomUUID = null;
 		if (id != null) {
 			try {
-				return new CompactUUID(id);
+				return new UUID(id);
 			} catch (IllegalArgumentException e) {
 
 			}
 		}
 
-		randomUUID = CompactUUID.randomUUID();
+		randomUUID = UUID.randomUUID();
 		unresolvedObject.put(key, randomUUID.toString());
 		System.out.println("*** create unresolved object " + key + ":" + randomUUID);
 		return randomUUID;
@@ -425,8 +425,8 @@ public class CadseDomainImpl implements CadseDomain {
 	 * 
 	 * @return the compact uuid
 	 */
-	public static CompactUUID generateUUID() {
-		CompactUUID uuid = CompactUUID.randomUUID();
+	public static UUID generateUUID() {
+		UUID uuid = UUID.randomUUID();
 		return uuid;
 	}
 
@@ -502,7 +502,7 @@ public class CadseDomainImpl implements CadseDomain {
 	
 	@Override
 	public Item createUnresolvedItem(ItemType itemType, String name,
-			CompactUUID id) throws CadseException {
+			UUID id) throws CadseException {
 		return this._logicalWorkspace.loadItem(new ItemDescriptionRef(id, itemType.getId(), name, name));
 	}
 

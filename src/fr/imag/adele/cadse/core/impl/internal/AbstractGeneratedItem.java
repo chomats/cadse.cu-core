@@ -38,7 +38,7 @@ import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.ChangeID;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.ContentItem;
 import fr.imag.adele.cadse.core.DerivedLink;
 import fr.imag.adele.cadse.core.DerivedLinkDescription;
@@ -89,7 +89,7 @@ import fr.imag.adele.cadse.core.util.OrderWay;
 public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	
 	
-	protected CompactUUID					_id;
+	protected UUID					_id;
 	// listener attributes
 	protected WorkspaceListener[]			_listeners				= null;
 	protected int[]							_filter					= null;
@@ -130,25 +130,25 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	}
 
 	public AbstractGeneratedItem() {
-		this._id = CompactUUID.randomUUID();
+		this._id = UUID.randomUUID();
 		_wl = (LogicalWorkspaceImpl) CadseCore.getLogicalWorkspace();
 	}
 
-	public AbstractGeneratedItem(LogicalWorkspace wl, CompactUUID id) {
+	public AbstractGeneratedItem(LogicalWorkspace wl, UUID id) {
 		this._id = id;
 		_wl = (LogicalWorkspaceImpl) wl;
 		checkId(id);
 
 	}
 
-	public AbstractGeneratedItem(CompactUUID id) {
+	public AbstractGeneratedItem(UUID id) {
 		this._id = id;
 		_wl = (LogicalWorkspaceImpl) CadseCore.getLogicalWorkspace();
 		checkId(id);
 
 	}
 
-	public AbstractGeneratedItem(CompactUUID id, int flag) {
+	public AbstractGeneratedItem(UUID id, int flag) {
 		this._id = id;
 		_wl = (LogicalWorkspaceImpl) CadseCore.getLogicalWorkspace();
 		_flag = flag;
@@ -156,9 +156,9 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		checkId(id);
 	}
 
-	private void checkId(CompactUUID id) {
+	private void checkId(UUID id) {
 		if (id == null) {
-			this._id = CompactUUID.randomUUID();
+			this._id = UUID.randomUUID();
 		}
 	}
 
@@ -259,7 +259,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 
 	}
 
-	public boolean canCreateLink(LinkType lt, CompactUUID destination) {
+	public boolean canCreateLink(LinkType lt, UUID destination) {
 		if (isReadOnly()) {
 			return false;
 		}
@@ -285,7 +285,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 
 	}
 
-	public boolean containsComponent(CompactUUID id) {
+	public boolean containsComponent(UUID id) {
 		return false;
 	}
 
@@ -435,7 +435,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		return getContentItem();
 	}
 
-	public Item getComponentInfo(CompactUUID id) {
+	public Item getComponentInfo(UUID id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -444,7 +444,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		return Collections.emptySet();
 	}
 
-	public Set<CompactUUID> getComponentIds() {
+	public Set<UUID> getComponentIds() {
 		return Collections.emptySet();
 	}
 
@@ -501,7 +501,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		return null;
 	}
 
-	public CompactUUID getId() {
+	public UUID getId() {
 		return _id;
 	}
 
@@ -636,7 +636,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		return ret;
 	}
 
-	public Link getIncomingLink(LinkType lt, CompactUUID srcId) {
+	public Link getIncomingLink(LinkType lt, UUID srcId) {
 		if (_incomings != null) {
 			for (int i = 0; i < _incomings.length; i += 2) {
 				LinkType incoming_lt = (LinkType) _incomings[i];
@@ -693,9 +693,9 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	 * (non-Javadoc)
 	 * 
 	 * @see fr.imag.adele.cadse.core.Item#getOutgoingItems(java.lang.String,
-	 * fr.imag.adele.cadse.core.CompactUUID, boolean)
+	 * fr.imag.adele.cadse.core.UUID, boolean)
 	 */
-	public Item getOutgoingItem(String attributte_link, CompactUUID itemId, boolean resovledOnly) {
+	public Item getOutgoingItem(String attributte_link, UUID itemId, boolean resovledOnly) {
 		return Accessor.getOutgoingItems(getOutgoingLinks(), attributte_link, itemId, resovledOnly);
 	}
 
@@ -756,7 +756,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		return Accessor.getOutgoingLink(links, item);
 	}
 
-	public Link getOutgoingLink(LinkType lt, CompactUUID destId) {
+	public Link getOutgoingLink(LinkType lt, UUID destId) {
 		List<Link> links = getOutgoingLinks(lt);
 		return Accessor.getOutgoingLink(destId, links);
 	}
@@ -934,7 +934,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	 *       destination's id equal to id parameter, then return this object
 	 *       destination. - If not found, return null.
 	 */
-	public Item getPartChild(CompactUUID id) {
+	public Item getPartChild(UUID id) {
 		return Accessor.getParts(getOutgoingLinks(), id);
 	}
 

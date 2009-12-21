@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemDescriptionRef;
 import fr.imag.adele.cadse.core.ItemType;
@@ -91,7 +91,7 @@ public abstract class AbstractItem extends AbstractGeneratedItem implements Item
 	 * @param shortName
 	 *            the short name
 	 */
-	protected AbstractItem(LogicalWorkspace wl, CompactUUID id, ItemType type, String uniqueName, String shortName) {
+	protected AbstractItem(LogicalWorkspace wl, UUID id, ItemType type, String uniqueName, String shortName) {
 		super(wl, id);
 		this._type = type;
 		this._incomings = new ArrayList<Link>();

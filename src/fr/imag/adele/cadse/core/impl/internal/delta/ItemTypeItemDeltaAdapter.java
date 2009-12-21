@@ -10,7 +10,7 @@ import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CadseRuntime;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.GroupType;
 import fr.imag.adele.cadse.core.IItemFactory;
 import fr.imag.adele.cadse.core.IItemManager;
@@ -53,7 +53,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 
 
 	@Override
-	public LinkType createLinkType(CompactUUID id, int intID, String name, int kind, int min, int max,
+	public LinkType createLinkType(UUID id, int intID, String name, int kind, int min, int max,
 			String selection, LinkType inverse) throws CadseException {
 		// TODO Auto-generated method stub
 		return null;
@@ -64,7 +64,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 	 * id-runtime == id if item is static else attribute 'id-runtime'
 	 */
 	@Override
-	public LinkType createLinkType(CompactUUID id, int intID, String name, int kind, int min, int max,
+	public LinkType createLinkType(UUID id, int intID, String name, int kind, int min, int max,
 			String selection, ItemType destination) throws CadseException {
 		ItemDelta linktypedelta = null;
 		LogicalWorkspaceTransaction copy = _delta.getCopy();

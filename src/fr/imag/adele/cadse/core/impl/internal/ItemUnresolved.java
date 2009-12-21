@@ -22,7 +22,7 @@ package fr.imag.adele.cadse.core.impl.internal;
 import java.util.Set;
 
 import fr.imag.adele.cadse.core.CadseException;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.ContentItem;
 import fr.imag.adele.cadse.core.DerivedLinkDescription;
 import fr.imag.adele.cadse.core.Item;
@@ -50,7 +50,7 @@ public class ItemUnresolved extends AbstractItem implements Item {
 	 * @param shortName
 	 *            the short name
 	 */
-	public ItemUnresolved(LogicalWorkspaceImpl modelInstance, CompactUUID id, ItemType type, String uniqueName,
+	public ItemUnresolved(LogicalWorkspaceImpl modelInstance, UUID id, ItemType type, String uniqueName,
 			String shortName) {
 		super(modelInstance, id, type, uniqueName, shortName);
 	}

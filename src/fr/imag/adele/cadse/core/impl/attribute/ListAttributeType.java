@@ -24,7 +24,7 @@ import java.util.List;
 
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
-import fr.imag.adele.cadse.core.CompactUUID;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
@@ -68,7 +68,7 @@ public class ListAttributeType<X> extends AttributeType implements
 	 * @param subtype
 	 *            the subtype
 	 */
-	public ListAttributeType(CompactUUID id, int flag, String name, int min, int max, IAttributeType<X> subtype) {
+	public ListAttributeType(UUID id, int flag, String name, int min, int max, IAttributeType<X> subtype) {
 		super(id, name, min > 0 ? MUST_BE_INITIALIZED_AT_CREATION_TIME : 0 | flag);
 		this.min = min;
 		this.max = max;
