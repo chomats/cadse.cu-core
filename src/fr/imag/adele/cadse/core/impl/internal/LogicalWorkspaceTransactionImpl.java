@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 import org.eclipse.core.runtime.Platform;
@@ -36,7 +37,6 @@ import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CadseRuntime;
-import java.util.UUID;
 import fr.imag.adele.cadse.core.ContentChangeInfo;
 import fr.imag.adele.cadse.core.EventFilter;
 import fr.imag.adele.cadse.core.IItemManager;
@@ -53,15 +53,6 @@ import fr.imag.adele.cadse.core.WSModelState;
 import fr.imag.adele.cadse.core.WorkspaceListener;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.attribute.SetAttrVal;
-import fr.imag.adele.cadse.core.delta.DeleteOperation;
-import fr.imag.adele.cadse.core.delta.ImmutableWorkspaceDelta;
-import fr.imag.adele.cadse.core.delta.ItemDelta;
-import fr.imag.adele.cadse.core.delta.LinkDelta;
-import fr.imag.adele.cadse.core.delta.MappingOperation;
-import fr.imag.adele.cadse.core.delta.OperationTypeCst;
-import fr.imag.adele.cadse.core.delta.OrderOperation;
-import fr.imag.adele.cadse.core.delta.SetAttributeOperation;
-import fr.imag.adele.cadse.core.delta.WLWCOperationImpl;
 import fr.imag.adele.cadse.core.impl.CadseCore;
 import fr.imag.adele.cadse.core.impl.internal.delta.CreateOperationImpl;
 import fr.imag.adele.cadse.core.impl.internal.delta.DeleteOperationImpl;
@@ -70,20 +61,27 @@ import fr.imag.adele.cadse.core.impl.internal.delta.ItemOrLinkDeltaImpl;
 import fr.imag.adele.cadse.core.impl.internal.delta.SetAttributeOperationImpl;
 import fr.imag.adele.cadse.core.internal.ILoggableAction;
 import fr.imag.adele.cadse.core.internal.IWorkspaceNotifier;
-import fr.imag.adele.cadse.core.key.ISpaceKey;
-import fr.imag.adele.cadse.core.key.SpaceKeyType;
+import fr.imag.adele.cadse.core.key.Key;
 import fr.imag.adele.cadse.core.transaction.AbstractLogicalWorkspaceTransactionListener;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransactionListener;
+import fr.imag.adele.cadse.core.transaction.delta.DeleteOperation;
+import fr.imag.adele.cadse.core.transaction.delta.ImmutableWorkspaceDelta;
+import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
+import fr.imag.adele.cadse.core.transaction.delta.LinkDelta;
+import fr.imag.adele.cadse.core.transaction.delta.MappingOperation;
+import fr.imag.adele.cadse.core.transaction.delta.OperationTypeCst;
+import fr.imag.adele.cadse.core.transaction.delta.OrderOperation;
+import fr.imag.adele.cadse.core.transaction.delta.SetAttributeOperation;
+import fr.imag.adele.cadse.core.transaction.delta.WLWCOperationImpl;
 import fr.imag.adele.cadse.core.ui.view.FilterContext;
 import fr.imag.adele.cadse.core.ui.view.NewContext;
-import fr.imag.adele.cadse.core.util.ArraysUtil;
 import fr.imag.adele.cadse.core.util.ComputeElementOrder;
 import fr.imag.adele.cadse.core.util.Convert;
 import fr.imag.adele.cadse.core.util.ElementsOrder;
 import fr.imag.adele.cadse.core.util.HashList;
-import fr.imag.adele.cadse.core.util.NLS;
 import fr.imag.adele.cadse.core.var.ContextVariable;
+import fr.imag.adele.cadse.util.ArraysUtil;
 
 public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransaction, InternalLogicalWorkspace {
 
@@ -100,10 +98,10 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	private Map<UUID, ItemDelta>			items_deleted;
 
 	/** The items_by_key. */
-	private Map<ISpaceKey, ItemDelta>			items_by_key_deleted;
+	private Map<Key, ItemDelta>			items_by_key_deleted;
 
 	/** The items_by_key. */
-	private Map<ISpaceKey, ItemDelta>			items_by_key;
+	private Map<Key, ItemDelta>			items_by_key;
 
 	/** The items_by_unique_name. */
 	private Map<String, ItemDelta>				items_by_unique_name;
@@ -136,10 +134,10 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		this.base = base;
 		_operations = new HashMap<UUID, ItemDelta>();
 		this.items_deleted = new HashMap<UUID, ItemDelta>();
-		this.items_by_key_deleted = new HashMap<ISpaceKey, ItemDelta>();
+		this.items_by_key_deleted = new HashMap<Key, ItemDelta>();
 		this.items_by_unique_name_deleted = new HashMap<String, ItemDelta>();
 		this.items = new HashMap<UUID, ItemDelta>();
-		this.items_by_key = new HashMap<ISpaceKey, ItemDelta>();
+		this.items_by_key = new HashMap<Key, ItemDelta>();
 		this.items_by_unique_name = new HashMap<String, ItemDelta>();
 		this._logicalWorkspaceTransactionListeners = workspaceLogiqueCopyListeners;
 		addLogicalWorkspaceTransactionListener(new WoLProWCListener());
@@ -192,7 +190,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	}
 
 	public boolean existsItem(Item item, String shortName) {
-		ISpaceKey key = LogicalWorkspaceImpl.getKeyItem(item, shortName, _logger);
+		Key key = LogicalWorkspaceImpl.getKeyItem(item, shortName, _logger);
 		if (key != null) {
 			Item foundItem = getItem(key);
 			if (foundItem == null || foundItem == item)
@@ -234,9 +232,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	 * 
 	 * @see
 	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
-	 * #containsSpaceKey(fr.imag.adele.cadse.core.key.ISpaceKey)
+	 * #containsSpaceKey(fr.imag.adele.cadse.core.key.Key)
 	 */
-	public boolean containsSpaceKey(ISpaceKey key) {
+	public boolean containsSpaceKey(Key key) {
 		if (this.items_by_key.containsKey(key)) {
 			return true;
 		}
@@ -247,7 +245,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	}
 
 	public boolean existsItem(Item item) {
-		ISpaceKey key = LogicalWorkspaceImpl.getKeyItem(item, null, _logger);
+		Key key = LogicalWorkspaceImpl.getKeyItem(item, null, _logger);
 		if (key != null) {
 			Item foundItem = getItem(key);
 			if (foundItem == null || foundItem == item)
@@ -320,7 +318,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		return null;
 	}
 
-	public ItemDelta getItem(ISpaceKey key) {
+	public ItemDelta getItem(Key key) {
 
 		ItemDelta ret = null;
 		if ((ret = this.items_by_key.get(key)) != null) {
@@ -1214,7 +1212,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 				SpaceKeyType keyType = item.getType().getSpaceKeyType();
 				KEY: {
 					if (item.isAdded()) {
-						ISpaceKey key = item.getKey();
+						Key key = item.getKey();
 						if (key == null) {
 							break KEY;
 						}
@@ -1225,7 +1223,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 						for (int i = 0; i < attKeys.length; i++) {
 							if (attKeys[i] == link.getLinkType()) {
 								// Attribute of the key has changed
-								ISpaceKey newK = keyType.computeKey(item);
+								Key newK = keyType.computeKey(item);
 								if (!key.equals(newK))
 									item.setNextKey(newK);
 								break KEY;
@@ -1239,7 +1237,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 					// item is modified
 					Item baseItem = item.getBaseItem();
 					if (baseItem != null) {
-						ISpaceKey key = baseItem.getKey();
+						Key key = baseItem.getKey();
 						if (key == null) {
 							break KEY;
 						}
@@ -1250,7 +1248,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 						for (int i = 0; i < attKeys.length; i++) {
 							if (attKeys[i] == link.getLinkType()) {
 								// Attribute of the key has changed
-								ISpaceKey newK = keyType.computeKey(item);
+								Key newK = keyType.computeKey(item);
 								if (!key.equals(newK))
 									item.setNextKey(newK);
 								break;
@@ -1267,7 +1265,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 				CadseException {
 			ItemDelta item = link.getSource();
 			if (item.getType() != null && item.getType().getSpaceKeyType() != null) {
-				ISpaceKey key = item.getNextKey();
+				Key key = item.getNextKey();
 				if (key != null) {
 					item.setKey(key);
 					item.setNextKey(null);
@@ -1326,7 +1324,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 
 			if (item.getType() != null && item.getType().getSpaceKeyType() != null) {
 				SpaceKeyType keyType = item.getType().getSpaceKeyType();
-				ISpaceKey newK = keyType.computeKey(item);
+				Key newK = keyType.computeKey(item);
 				item.setKey(newK);
 			}
 		}
@@ -1401,7 +1399,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 				SpaceKeyType keyType = item.getType().getSpaceKeyType();
 				KEY: {
 					if (item.isAdded()) {
-						ISpaceKey key = item.getKey();
+						Key key = item.getKey();
 						if (key == null) {
 							break KEY;
 						}
@@ -1412,7 +1410,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 						for (int i = 0; i < attKeys.length; i++) {
 							if (attKeys[i] == attOperation.getAttributeDefinition()) {
 								// Attribute of the key has changed
-								ISpaceKey newK = keyType.computeKey(item);
+								Key newK = keyType.computeKey(item);
 								if (!key.equals(newK))
 									item.setNextKey(newK);
 								break KEY;
@@ -1426,7 +1424,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 					// item is modified
 					Item baseItem = item.getBaseItem();
 					if (baseItem != null) {
-						ISpaceKey key = baseItem.getKey();
+						Key key = baseItem.getKey();
 						if (key == null) {
 							break KEY;
 						}
@@ -1437,7 +1435,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 						for (int i = 0; i < attKeys.length; i++) {
 							if (attKeys[i] == attOperation.getAttributeDefinition()) {
 								// Attribute of the key has changed
-								ISpaceKey newK = keyType.computeKey(item);
+								Key newK = keyType.computeKey(item);
 								if (!key.equals(newK))
 									item.setNextKey(newK);
 								break;
@@ -1454,7 +1452,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 				SetAttributeOperation attOperation) throws CadseException {
 
 			if (item.getType() != null && item.getType().getSpaceKeyType() != null) {
-				ISpaceKey key = item.getNextKey();
+				Key key = item.getNextKey();
 				if (key != null) {
 					item.setKey(key);
 					item.setNextKey(null);
@@ -1695,7 +1693,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	 *             the melusine error
 	 */
 	public void checkUniqueName(Item THIS) throws CadseException {
-		ISpaceKey key = THIS.getKey();
+		Key key = THIS.getKey();
 		if (key != null) {
 			// pre: items->forAll(item | item.id <> id )
 			Item i = items_by_key.get(key);
@@ -2567,7 +2565,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 					throw new CadseException(NLS.bind("Cannot find the value for the attribute definition {0} ({1}).",
 							attribuesDefintions[i].getName(), attribuesDefintions[i].getCSTName()));
 			}
-			ISpaceKey key = keyType.computeKey(shortName, parentDelta, keyvaluse);
+			Key key = keyType.computeKey(shortName, parentDelta, keyvaluse);
 			newItem = getItem(key);
 			if (newItem != null)
 				return newItem;
@@ -2598,7 +2596,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		}
 		ItemDelta findItem = null;
 
-		ISpaceKey key = newItem.getKey();
+		Key key = newItem.getKey();
 		if (key != null) {
 			findItem = getItem(key);
 		}
@@ -2694,7 +2692,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 					throw new CadseException(NLS.bind("Cannot find the value for the attribute definition {0} ({1}).",
 							attribuesDefintions[i].getName(), attribuesDefintions[i].getCSTName()));
 			}
-			ISpaceKey key = keyType.computeKey(shortname, parentDelta, keyvaluse);
+			Key key = keyType.computeKey(shortname, parentDelta, keyvaluse);
 			ItemDelta newItem = getItem(key);
 			if (newItem != null)
 				return newItem;
@@ -2724,7 +2722,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		}
 		ItemDelta findItem = null;
 
-		ISpaceKey key = newItem.getKey();
+		Key key = newItem.getKey();
 		if (key != null) {
 			findItem = getItem(key);
 			if (findItem == newItem)
@@ -2837,7 +2835,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 
 	}
 
-	public void changeKey(ItemDeltaImpl itemDeltaImpl, ISpaceKey oldkey, ISpaceKey newkey) throws CadseException {
+	public void changeKey(ItemDeltaImpl itemDeltaImpl, Key oldkey, Key newkey) throws CadseException {
 		if (itemDeltaImpl.isAdded()) {
 			if (oldkey != null) {
 				items_by_key.remove(oldkey);
@@ -2864,7 +2862,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 				if (oldkey != null) {
 					items_by_key.remove(oldkey);
 				}
-				ISpaceKey baseKey = itemDeltaImpl.getBaseItem().getKey();
+				Key baseKey = itemDeltaImpl.getBaseItem().getKey();
 				if (baseKey != null) {
 					items_by_key_deleted.put(baseKey, itemDeltaImpl);
 				}
@@ -2876,7 +2874,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		}
 	}
 
-	public void checkKey(ItemDeltaImpl itemDeltaImpl, ISpaceKey oldkey, ISpaceKey newkey) throws CadseException {
+	public void checkKey(ItemDeltaImpl itemDeltaImpl, Key oldkey, Key newkey) throws CadseException {
 		if (itemDeltaImpl.isAdded()) {
 			Item findItem = getItem(newkey);
 			if (findItem != null && findItem != itemDeltaImpl) {

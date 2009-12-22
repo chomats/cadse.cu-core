@@ -19,20 +19,12 @@
 
 package fr.imag.adele.cadse.core.impl.ui;
 
-import fr.imag.adele.cadse.core.CadseException;
-import fr.imag.adele.cadse.core.CadseGCST;
-import java.util.UUID;
 import fr.imag.adele.cadse.core.Item;
-import fr.imag.adele.cadse.core.Link;
-import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
-import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
 import fr.imag.adele.cadse.core.ui.AbstractUIRunningValidator;
 import fr.imag.adele.cadse.core.ui.RunningModelController;
-import fr.imag.adele.cadse.core.ui.UIPlatform;
 import fr.imag.adele.cadse.core.ui.UIField;
-import fr.imag.adele.cadse.core.ui.UIRunningValidator;
-import fr.imag.adele.cadse.core.ui.UIValidator;
+import fr.imag.adele.cadse.core.ui.UIPlatform;
 
 /**
  * The Class AbstractModelController.

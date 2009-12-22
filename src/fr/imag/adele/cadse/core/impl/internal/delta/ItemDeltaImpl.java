@@ -38,14 +38,11 @@ import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CadseRuntime;
-import java.util.UUID;
 import fr.imag.adele.cadse.core.ContentChangeInfo;
-import fr.imag.adele.cadse.core.ContentItem;
 import fr.imag.adele.cadse.core.DerivedLink;
 import fr.imag.adele.cadse.core.DerivedLinkDescription;
 import fr.imag.adele.cadse.core.EventFilter;
 import fr.imag.adele.cadse.core.GroupType;
-import fr.imag.adele.cadse.core.IItemAttributableType;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemDescription;
 import fr.imag.adele.cadse.core.ItemDescriptionRef;
@@ -62,15 +59,7 @@ import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.attribute.IntegerAttributeType;
 import fr.imag.adele.cadse.core.attribute.StringAttributeType;
 import fr.imag.adele.cadse.core.attribute.URLAttributeType;
-import fr.imag.adele.cadse.core.delta.DeleteOperation;
-import fr.imag.adele.cadse.core.delta.ImmutableWorkspaceDelta;
-import fr.imag.adele.cadse.core.delta.ItemDelta;
-import fr.imag.adele.cadse.core.delta.LinkDelta;
-import fr.imag.adele.cadse.core.delta.LinkKey;
-import fr.imag.adele.cadse.core.delta.MappingOperation;
-import fr.imag.adele.cadse.core.delta.OperationTypeCst;
-import fr.imag.adele.cadse.core.delta.OrderOperation;
-import fr.imag.adele.cadse.core.delta.SetAttributeOperation;
+import fr.imag.adele.cadse.core.content.ContentItem;
 import fr.imag.adele.cadse.core.impl.CadseIllegalArgumentException;
 import fr.imag.adele.cadse.core.impl.PageRuntimeModel;
 import fr.imag.adele.cadse.core.impl.internal.Accessor;
@@ -79,18 +68,24 @@ import fr.imag.adele.cadse.core.impl.internal.LogicalWorkspaceImpl;
 import fr.imag.adele.cadse.core.impl.internal.LogicalWorkspaceTransactionImpl;
 import fr.imag.adele.cadse.core.internal.IWorkingLoadingItems;
 import fr.imag.adele.cadse.core.internal.IWorkspaceNotifier;
-import fr.imag.adele.cadse.core.key.ISpaceKey;
-import fr.imag.adele.cadse.core.key.SpaceKey;
-import fr.imag.adele.cadse.core.key.SpaceKeyType;
+import fr.imag.adele.cadse.core.key.Key;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
+import fr.imag.adele.cadse.core.transaction.delta.DeleteOperation;
+import fr.imag.adele.cadse.core.transaction.delta.ImmutableWorkspaceDelta;
+import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
+import fr.imag.adele.cadse.core.transaction.delta.LinkDelta;
+import fr.imag.adele.cadse.core.transaction.delta.LinkKey;
+import fr.imag.adele.cadse.core.transaction.delta.MappingOperation;
+import fr.imag.adele.cadse.core.transaction.delta.OperationTypeCst;
+import fr.imag.adele.cadse.core.transaction.delta.OrderOperation;
+import fr.imag.adele.cadse.core.transaction.delta.SetAttributeOperation;
 import fr.imag.adele.cadse.core.ui.Pages;
 import fr.imag.adele.cadse.core.ui.view.FilterContext;
 import fr.imag.adele.cadse.core.ui.view.NewContext;
-import fr.imag.adele.cadse.core.util.ArraysUtil;
-import fr.imag.adele.cadse.core.util.Assert;
 import fr.imag.adele.cadse.core.util.Convert;
 import fr.imag.adele.cadse.core.util.IErrorCollector;
-import fr.imag.adele.cadse.core.util.OrderWay;
+import fr.imag.adele.cadse.util.ArraysUtil;
+import fr.imag.adele.cadse.util.OrderWay;
 
 public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	static Map<Class<?>, ItemDeltaAdapterFactory<?>>	_registerAdapter	= new HashMap<Class<?>, ItemDeltaAdapterFactory<?>>();
@@ -136,10 +131,10 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	private boolean									_update;
 	private boolean									_finishLoad;
 	private boolean									_doubleClick;
-	private ISpaceKey								_key;
+	private Key								_key;
 	private SpaceKeyDeltaImpl						_keyDelta;
 	private Item									_baseItem;
-	private ISpaceKey								_nextKey;
+	private Key								_nextKey;
 	private GroupType _group;
 
 	public ItemDeltaImpl(LogicalWorkspaceTransactionImpl copy, UUID id, UUID type, boolean add) {
@@ -1265,11 +1260,11 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * 
 	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getKey()
 	 */
-	public ISpaceKey getKey() {
+	public Key getKey() {
 		if (_key != null) {
 			return _key;
 		}
-		ISpaceKey key = null;
+		Key key = null;
 		if (getType() == null) {
 			key = null;
 		} else {
@@ -3104,7 +3099,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	}
 
 	@Override
-	public void setNextKey(ISpaceKey newK) throws CadseException {
+	public void setNextKey(Key newK) throws CadseException {
 		if (newK == null) {
 			this._nextKey = null;
 			return;
@@ -3119,7 +3114,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	}
 
 	@Override
-	public ISpaceKey getNextKey() {
+	public Key getNextKey() {
 		return _nextKey;
 	}
 
@@ -3128,9 +3123,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * 
 	 * @see
 	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#recomputeKey(fr.imag.
-	 * adele.cadse.core.key.ISpaceKey)
+	 * adele.cadse.core.key.Key)
 	 */
-	public void setKey(ISpaceKey newkey) throws CadseException {
+	public void setKey(Key newkey) throws CadseException {
 		if (newkey == SpaceKey.INVALID)
 			return;
 		if (_key == null && getBaseItem() != null)

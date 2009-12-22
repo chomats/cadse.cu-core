@@ -2,13 +2,13 @@ package fr.imag.adele.cadse.core.impl.attribute;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.UUID;
 
 import fr.imag.adele.cadse.core.CadseException;
-import java.util.UUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
-import fr.imag.adele.cadse.core.delta.ItemDelta;
+import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
 
 public class ObjectAttributType<X> extends AttributeType implements IAttributeType<X> {
 	private Class<X>	_class;

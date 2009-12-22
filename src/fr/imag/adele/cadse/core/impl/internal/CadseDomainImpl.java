@@ -25,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,14 +36,13 @@ import org.osgi.framework.BundleContext;
 import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.ChangeID;
-import java.util.UUID;
 import fr.imag.adele.cadse.core.IWorkspaceOperation;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemDescriptionRef;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.WSEvent;
-import fr.imag.adele.cadse.core.delta.ImmutableWorkspaceDelta;
+import fr.imag.adele.cadse.core.transaction.delta.ImmutableWorkspaceDelta;
 import fr.imag.adele.fede.workspace.as.eclipse.IEclipse;
 import fr.imag.adele.fede.workspace.as.initmodel.IInitModel;
 import fr.imag.adele.fede.workspace.as.persistence.IPersistence;
@@ -297,7 +297,7 @@ public class CadseDomainImpl implements CadseDomain {
 		UUID randomUUID = null;
 		if (id != null) {
 			try {
-				return new UUID(id);
+				return UUID.fromString(id);
 			} catch (IllegalArgumentException e) {
 
 			}
@@ -503,7 +503,7 @@ public class CadseDomainImpl implements CadseDomain {
 	@Override
 	public Item createUnresolvedItem(ItemType itemType, String name,
 			UUID id) throws CadseException {
-		return this._logicalWorkspace.loadItem(new ItemDescriptionRef(id, itemType.getId(), name, name));
+		return this._logicalWorkspace.loadItem(new ItemDescriptionRef(id, itemType, name, name));
 	}
 
 	public static boolean isStopped() {
@@ -512,5 +512,11 @@ public class CadseDomainImpl implements CadseDomain {
 
 	public static boolean isStarted() {
 		return STARTED;
+	}
+
+	@Override
+	public boolean inDevelopmentMode() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

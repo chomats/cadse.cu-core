@@ -19,11 +19,11 @@
 package fr.imag.adele.cadse.core.impl;
 
 import java.net.URL;
+import java.util.UUID;
 
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CadseRuntime;
-import java.util.UUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
@@ -33,8 +33,8 @@ import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
 import fr.imag.adele.cadse.core.impl.ui.view.TreeView;
 import fr.imag.adele.cadse.core.internal.InternalCadseRuntime;
 import fr.imag.adele.cadse.core.ui.view.DefineNewContext;
-import fr.imag.adele.cadse.core.util.ArraysUtil;
 import fr.imag.adele.cadse.core.util.Convert;
+import fr.imag.adele.cadse.util.ArraysUtil;
 
 public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRuntime, InternalCadseRuntime {
 	protected String		_cadseName;

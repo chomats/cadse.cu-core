@@ -23,7 +23,7 @@ import fr.imag.adele.cadse.core.IItemManager;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemState;
 import fr.imag.adele.cadse.core.impl.CadseCore;
-import fr.imag.adele.cadse.core.key.ISpaceKey;
+import fr.imag.adele.cadse.core.key.Key;
 import fr.imag.adele.cadse.core.ui.UIField;
 
 /**
@@ -64,12 +64,8 @@ public class MC_Name extends MC_AttributesItem {
 	public void notifieValueChanged(UIField field, Object value) {
 		Item item = getItem();
 
-		try {
-			if (isEditable(item)) {
-				item.setName((String) value);
-			}
-		} catch (CadseException e) {
-			CadseCore.getCadseDomain().log("MC_Name", "cannot set name", e);			
+		if (isEditable(item)) {
+			item.setName((String) value);
 		}
 	}
 
@@ -135,7 +131,7 @@ public class MC_Name extends MC_AttributesItem {
 		}
 		
 		if (item.getType().getSpaceKeyType() != null) {
-			ISpaceKey key;
+			Key key;
 			try {
 				key = item.getType().getSpaceKeyType().computeKey(item);
 				key.setName(shortId);

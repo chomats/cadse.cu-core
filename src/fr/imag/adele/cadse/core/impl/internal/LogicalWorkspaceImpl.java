@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -38,7 +39,6 @@ import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CadseRuntime;
 import fr.imag.adele.cadse.core.ChangeID;
-import java.util.UUID;
 import fr.imag.adele.cadse.core.DefaultItemManager;
 import fr.imag.adele.cadse.core.EventFilter;
 import fr.imag.adele.cadse.core.IItemManager;
@@ -54,11 +54,6 @@ import fr.imag.adele.cadse.core.WSEvent;
 import fr.imag.adele.cadse.core.WSModelState;
 import fr.imag.adele.cadse.core.WorkspaceListener;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
-import fr.imag.adele.cadse.core.delta.ImmutableWorkspaceDelta;
-import fr.imag.adele.cadse.core.delta.ItemDelta;
-import fr.imag.adele.cadse.core.delta.OperationType;
-import fr.imag.adele.cadse.core.delta.OperationTypeCst;
-import fr.imag.adele.cadse.core.delta.WLWCOperationImpl;
 import fr.imag.adele.cadse.core.impl.CadseCore;
 import fr.imag.adele.cadse.core.impl.CadseIllegalArgumentException;
 import fr.imag.adele.cadse.core.impl.CadseRuntimeImpl;
@@ -67,15 +62,19 @@ import fr.imag.adele.cadse.core.impl.internal.delta.ItemDeltaImpl;
 import fr.imag.adele.cadse.core.impl.internal.delta.LinkDeltaImpl;
 import fr.imag.adele.cadse.core.internal.ILoggableAction;
 import fr.imag.adele.cadse.core.internal.IWorkspaceNotifier;
-import fr.imag.adele.cadse.core.key.ISpaceKey;
-import fr.imag.adele.cadse.core.key.SpaceKeyType;
+import fr.imag.adele.cadse.core.key.Key;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransactionListener;
+import fr.imag.adele.cadse.core.transaction.delta.ImmutableWorkspaceDelta;
+import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
+import fr.imag.adele.cadse.core.transaction.delta.OperationType;
+import fr.imag.adele.cadse.core.transaction.delta.OperationTypeCst;
+import fr.imag.adele.cadse.core.transaction.delta.WLWCOperationImpl;
 import fr.imag.adele.cadse.core.ui.view.DefineNewContext;
 import fr.imag.adele.cadse.core.ui.view.FilterContext;
 import fr.imag.adele.cadse.core.ui.view.NewContext;
-import fr.imag.adele.cadse.core.util.ArraysUtil;
 import fr.imag.adele.cadse.core.var.ContextVariable;
+import fr.imag.adele.cadse.util.ArraysUtil;
 
 /**
  * The Class WorkspaceLogique.
@@ -183,7 +182,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	Map<UUID, Item>					_items;
 
 	/** The items_by_key. */
-	private Map<ISpaceKey, Item>			_items_by_key;
+	private Map<Key, Item>			_items_by_key;
 
 	/** The items_by_unique_name. */
 	private Map<String, Item>				_items_by_qualified_name;
@@ -307,7 +306,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 */
 	public LogicalWorkspaceImpl(CadseDomain wd) {
 		this._items = new HashMap<UUID, Item>();
-		this._items_by_key = new HashMap<ISpaceKey, Item>();
+		this._items_by_key = new HashMap<Key, Item>();
 		this._items_by_qualified_name = new HashMap<String, Item>();
 		this._wd = wd;
 		_itemTypes = new ArrayList<ItemType>();
@@ -525,7 +524,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		SpaceKeyType spacekeytype = type.getSpaceKeyType();
 		if (spacekeytype != null && spacekeytype.getParentSpaceKeyTypes() == null) {
 			try {
-				ISpaceKey key;
+				Key key;
 				key = spacekeytype.computeKey(name, null);
 				return getItem(key);
 			} catch (CadseException e) {
@@ -615,7 +614,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 *            the new item
 	 */
 	void addKeys(Item aNewItem) {
-		ISpaceKey key = aNewItem.getKey();
+		Key key = aNewItem.getKey();
 		if (key != null) {
 			this._items_by_key.put(key, aNewItem);
 		}
@@ -625,7 +624,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	}
 
 	void removeKeys(Item anItem) {
-		ISpaceKey key = anItem.getKey();
+		Key key = anItem.getKey();
 		if (key != null) {
 			this._items_by_key.remove(key);
 		}
@@ -776,7 +775,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 *             the melusine error
 	 */
 	public void checkUniqueName(Item THIS) throws CadseIllegalArgumentException {
-		ISpaceKey key = THIS.getKey();
+		Key key = THIS.getKey();
 		if (key != null) {
 			// pre: items->forAll(item | item.id <> id )
 			Item i = _items_by_key.get(key);
@@ -817,7 +816,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 			throws CadseIllegalArgumentException, CadseException {
 		SpaceKeyType spacetype = THIS.getType().getSpaceKeyType();
 		if (spacetype != null) {
-			ISpaceKey newkey = spacetype.computeKey(THIS);
+			Key newkey = spacetype.computeKey(THIS);
 			newkey.setName(shortName);
 
 			// pre: items->forAll(item | item.id <> id )
@@ -906,9 +905,9 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 * 
 	 * @see
 	 * fr.imag.adele.cadse.core.IWorkspaceLogique#getItem(fr.imag.adele.cadse
-	 * .core.key.ISpaceKey)
+	 * .core.key.Key)
 	 */
-	public Item getItem(ISpaceKey key) {
+	public Item getItem(Key key) {
 		return _items_by_key.get(key);
 	}
 
@@ -954,7 +953,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 * .core.Item)
 	 */
 	public boolean existsItem(Item item) {
-		ISpaceKey key = getKeyItem(item, null, _logger);
+		Key key = getKeyItem(item, null, _logger);
 		if (key != null) {
 			Item foundItem = this._items_by_key.get(key);
 			if (foundItem == null || foundItem == item)
@@ -986,10 +985,10 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 *            a name or null (to change the name)
 	 * @return a key
 	 */
-	public static ISpaceKey getKeyItem(Item item, String name, Logger logger) {
+	public static Key getKeyItem(Item item, String name, Logger logger) {
 		SpaceKeyType spacetype = item.getType().getSpaceKeyType();
 		if (spacetype != null) {
-			ISpaceKey key = null;
+			Key key = null;
 			try {
 				key = spacetype.computeKey(item);
 			} catch (CadseException e) {
@@ -1012,7 +1011,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 * .core.Item, java.lang.String)
 	 */
 	public boolean existsItem(Item item, String shortName) throws CadseException {
-		ISpaceKey key = getKeyItem(item, shortName, _logger);
+		Key key = getKeyItem(item, shortName, _logger);
 		if (key != null) {
 			return containsSpaceKey(key);
 		}
@@ -1032,7 +1031,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		return this._items_by_qualified_name.containsKey(key);
 	}
 
-	public boolean containsSpaceKey(ISpaceKey key) {
+	public boolean containsSpaceKey(Key key) {
 		return this._items_by_key.containsKey(key);
 	}
 
@@ -1221,7 +1220,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 *            the impl
 	 */
 	public void removeItemInKeyMap(Item impl) {
-		ISpaceKey key = impl.getKey();
+		Key key = impl.getKey();
 		if (key != null) {
 			this._items_by_key.remove(key);
 		}
@@ -1234,7 +1233,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 *            the impl
 	 */
 	public void addItemInKeyMap(Item impl) {
-		ISpaceKey key = impl.getKey();
+		Key key = impl.getKey();
 		if (key != null) {
 			this._items_by_key.put(key, impl);
 		}

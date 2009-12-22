@@ -40,6 +40,7 @@ Import-Package: com.sun.xml.bind.v2.runtime.reflect;version="2.1.5",
  fr.imag.adele.cadse.core,
  fr.imag.adele.cadse.core.attribute;version="2.2.1",
  fr.imag.adele.cadse.core.build;version="2.2.1",
+ fr.imag.adele.cadse.core.content,
  fr.imag.adele.cadse.core.delta;version="2.2.1",
  fr.imag.adele.cadse.core.enumdef;version="2.2.1",
  fr.imag.adele.cadse.core.internal;version="2.2.1",
@@ -49,10 +50,12 @@ Import-Package: com.sun.xml.bind.v2.runtime.reflect;version="2.1.5",
  fr.imag.adele.cadse.core.oper;version="2.2.1",
  fr.imag.adele.cadse.core.path;version="2.2.1",
  fr.imag.adele.cadse.core.transaction;version="2.2.1",
+ fr.imag.adele.cadse.core.transaction.delta,
  fr.imag.adele.cadse.core.ui;version="2.2.1",
  fr.imag.adele.cadse.core.ui.view;version="2.2.1",
  fr.imag.adele.cadse.core.util;version="2.2.1",
  fr.imag.adele.cadse.core.var;version="2.2.1",
+ fr.imag.adele.cadse.util,
  fr.imag.adele.fede.workspace.as.eclipse;version="1.0.0",
  fr.imag.adele.fede.workspace.as.initmodel;version="1.0.0",
  fr.imag.adele.fede.workspace.as.persistence;version="1.0.0",
@@ -71,6 +74,7 @@ Import-Package: com.sun.xml.bind.v2.runtime.reflect;version="2.1.5",
  org.osgi.framework;version="1.4.0",
  org.osgi.service.cm;version="1.2",
  org.osgi.service.log;version="1.3"
+Require-Bundle: fr.imag.adele.cadse.util
 Created-By: envsam & iPOJO
 iPOJO-Components: component { $immediate="true" $classname="fr.imag.ade
  le.cadse.core.impl.internal.CadseDomainImpl" $factory="fr.imag.adele.c

@@ -3,8 +3,7 @@ package fr.imag.adele.cadse.core.impl.internal.delta;
 import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.ItemType;
-import fr.imag.adele.cadse.core.delta.ItemDelta;
-import fr.imag.adele.cadse.core.impl.CadseCore;
+import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
 
 public class ItemTypeItemDeltaAdapterFactory implements ItemDeltaAdapterFactory<ItemType>{
 

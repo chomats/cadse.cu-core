@@ -20,10 +20,10 @@
 package fr.imag.adele.cadse.core.impl.var;
 
 import java.util.UUID;
+
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.impl.attribute.AttributeType;
 import fr.imag.adele.cadse.core.ui.UIField;
-import fr.imag.adele.cadse.core.CadseGCST;
 
 /**
  * The Class Variable.

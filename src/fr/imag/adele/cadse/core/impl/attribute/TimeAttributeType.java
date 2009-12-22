@@ -19,9 +19,10 @@
 package fr.imag.adele.cadse.core.impl.attribute;
 
 import java.util.UUID;
+
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.impl.internal.delta.ItemDeltaImpl;
-import fr.imag.adele.cadse.core.CadseGCST;
 
 public class TimeAttributeType extends LongAttributeType implements fr.imag.adele.cadse.core.attribute.TimeAttributeType {
 

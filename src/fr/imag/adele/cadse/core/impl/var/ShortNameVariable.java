@@ -19,8 +19,9 @@
 
 package fr.imag.adele.cadse.core.impl.var;
 
-import fr.imag.adele.cadse.core.CadseGCST;
 import java.util.UUID;
+
+import fr.imag.adele.cadse.core.CadseGCST;
 
 /**
  * The Class ShortNameVariable.

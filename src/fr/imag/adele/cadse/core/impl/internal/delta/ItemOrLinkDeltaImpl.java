@@ -25,15 +25,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
-import fr.imag.adele.cadse.core.delta.CreateOperation;
-import fr.imag.adele.cadse.core.delta.DeleteOperation;
-import fr.imag.adele.cadse.core.delta.ItemDelta;
-import fr.imag.adele.cadse.core.delta.ItemOrLinkDelta;
-import fr.imag.adele.cadse.core.delta.OperationType;
-import fr.imag.adele.cadse.core.delta.SetAttributeOperation;
-import fr.imag.adele.cadse.core.delta.WLWCOperationImpl;
 import fr.imag.adele.cadse.core.internal.delta.InternalItemOrLinkDelta;
-import fr.imag.adele.cadse.core.util.Assert;
+import fr.imag.adele.cadse.core.transaction.delta.CreateOperation;
+import fr.imag.adele.cadse.core.transaction.delta.DeleteOperation;
+import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
+import fr.imag.adele.cadse.core.transaction.delta.ItemOrLinkDelta;
+import fr.imag.adele.cadse.core.transaction.delta.OperationType;
+import fr.imag.adele.cadse.core.transaction.delta.SetAttributeOperation;
+import fr.imag.adele.cadse.core.transaction.delta.WLWCOperationImpl;
 
 public abstract class ItemOrLinkDeltaImpl extends WLWCOperationImpl implements ItemOrLinkDelta, InternalItemOrLinkDelta {
 

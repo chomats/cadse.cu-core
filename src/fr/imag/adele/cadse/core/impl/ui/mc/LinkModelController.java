@@ -20,10 +20,8 @@ package fr.imag.adele.cadse.core.impl.ui.mc;
 
 import java.util.List;
 
-import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.ChangeID;
-import java.util.UUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
@@ -32,14 +30,11 @@ import fr.imag.adele.cadse.core.attribute.EnumAttributeType;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.impl.CadseCore;
 import fr.imag.adele.cadse.core.impl.CadseIllegalArgumentException;
-import fr.imag.adele.cadse.core.impl.ui.AbstractModelController;
 import fr.imag.adele.cadse.core.oper.WSODeleteLink;
 import fr.imag.adele.cadse.core.ui.RunningModelController;
-import fr.imag.adele.cadse.core.ui.UIPlatform;
 import fr.imag.adele.cadse.core.ui.UIField;
-import fr.imag.adele.cadse.core.ui.UIValidator;
+import fr.imag.adele.cadse.core.ui.UIPlatform;
 import fr.imag.adele.cadse.core.util.Convert;
-import fr.imag.adele.cadse.core.util.CreatedObjectManager;
 
 public class LinkModelController extends MC_AttributesItem implements RunningModelController {
 
@@ -74,7 +69,7 @@ public class LinkModelController extends MC_AttributesItem implements RunningMod
 		}			
 		
 		
-		if (attRef.getType() == CadseGCST.LINK) {
+		if (attRef.getType() == CadseGCST.LINK_TYPE) {
 			LinkType lt = (LinkType)attRef;
 			if (!item.isInstanceOf(lt.getSource())) {
 				throw new CadseIllegalArgumentException("The link type {0} in the item type {1} is bad.", attRef.getName(), item.getType().getName());
@@ -100,7 +95,7 @@ public class LinkModelController extends MC_AttributesItem implements RunningMod
 	@Override
 	public void initAfterUI(UIField field) {
 		IAttributeType<?> attRef = getUIField().getAttributeDefinition();
-		if (attRef.getType() == CadseGCST.LINK) {
+		if (attRef.getType() == CadseGCST.LINK_TYPE) {
 			LinkType lt = (LinkType)attRef;
 			if (lt.isPart()) {
 				_uiPlatform.setEnabled(getUIField(), false);
@@ -116,7 +111,7 @@ public class LinkModelController extends MC_AttributesItem implements RunningMod
 			throw new CadseIllegalArgumentException("No item in the context.");
 		}
 		IAttributeType<?> attRef = getUIField().getAttributeDefinition();
-		if (attRef.getType() == CadseGCST.LINK) {
+		if (attRef.getType() == CadseGCST.LINK_TYPE) {
 			LinkType lt = (LinkType)attRef;
 			List<Link> ret = item.getOutgoingLinks(lt);
 
@@ -183,7 +178,7 @@ public class LinkModelController extends MC_AttributesItem implements RunningMod
 			if (msg != null) {
 				_uiPlatform.setMessageError(msg);
 			} else {
-				if (attRef.getType() == CadseGCST.LINK) {
+				if (attRef.getType() == CadseGCST.LINK_TYPE) {
 					LinkType lt = (LinkType)attRef;
 					_uiPlatform.setMessageError("The link " + lt.getName() + " must be set");
 				}

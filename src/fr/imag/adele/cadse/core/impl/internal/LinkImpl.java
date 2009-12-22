@@ -22,9 +22,10 @@
  */
 package fr.imag.adele.cadse.core.impl.internal;
 
+import java.util.UUID;
+
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CommonMethods;
-import java.util.UUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
@@ -32,8 +33,8 @@ import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
-import fr.imag.adele.cadse.core.util.ArraysUtil;
 import fr.imag.adele.cadse.core.util.Convert;
+import fr.imag.adele.cadse.util.ArraysUtil;
 
 /**
  * A link is a relation between two items. Each link has a type <tt>lt</tt>

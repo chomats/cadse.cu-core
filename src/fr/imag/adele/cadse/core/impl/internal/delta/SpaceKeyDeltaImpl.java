@@ -1,12 +1,11 @@
 package fr.imag.adele.cadse.core.impl.internal.delta;
 
-import fr.imag.adele.cadse.core.delta.ItemDelta;
-import fr.imag.adele.cadse.core.delta.OperationTypeCst;
-import fr.imag.adele.cadse.core.delta.SetAttributeOperation;
-import fr.imag.adele.cadse.core.delta.SpaceKeyDelta;
-import fr.imag.adele.cadse.core.delta.WLWCOperationImpl;
-import fr.imag.adele.cadse.core.key.ISpaceKey;
-import fr.imag.adele.cadse.core.key.SpaceKeyType;
+import fr.imag.adele.cadse.core.key.Key;
+import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
+import fr.imag.adele.cadse.core.transaction.delta.OperationTypeCst;
+import fr.imag.adele.cadse.core.transaction.delta.SetAttributeOperation;
+import fr.imag.adele.cadse.core.transaction.delta.SpaceKeyDelta;
+import fr.imag.adele.cadse.core.transaction.delta.WLWCOperationImpl;
 import fr.imag.adele.cadse.core.util.Convert;
 
 public class SpaceKeyDeltaImpl extends WLWCOperationImpl implements SpaceKeyDelta {
@@ -16,8 +15,8 @@ public class SpaceKeyDeltaImpl extends WLWCOperationImpl implements SpaceKeyDelt
 	}
 
 	SetAttributeOperation[]	_attOperation;
-	ISpaceKey				_newKey;
-	ISpaceKey				_oldKey;
+	Key				_newKey;
+	Key				_oldKey;
 
 	public SetAttributeOperation[] getAttributeOperations() {
 		return _attOperation;
@@ -27,11 +26,11 @@ public class SpaceKeyDeltaImpl extends WLWCOperationImpl implements SpaceKeyDelt
 		return _newKey != null ? _newKey.getType() : _oldKey != null ? _oldKey.getType() : null;
 	}
 
-	public ISpaceKey getNewKey() {
+	public Key getNewKey() {
 		return _newKey;
 	}
 
-	public ISpaceKey getOldKey() {
+	public Key getOldKey() {
 		return _oldKey;
 	}
 
@@ -53,11 +52,11 @@ public class SpaceKeyDeltaImpl extends WLWCOperationImpl implements SpaceKeyDelt
 				|| (_oldKey == null && _newKey != null) || (_oldKey != null && _newKey == null);
 	}
 
-	public void setNewKey(ISpaceKey key) {
+	public void setNewKey(Key key) {
 		_newKey = key;
 	}
 
-	public void setOldKey(ISpaceKey key) {
+	public void setOldKey(Key key) {
 		_oldKey = key;
 	}
 

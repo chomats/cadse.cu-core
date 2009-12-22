@@ -25,21 +25,19 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
+import fr.imag.adele.cadse.core.CadseRuntime;
 import fr.imag.adele.cadse.core.ChangeID;
-import java.util.UUID;
-import fr.imag.adele.cadse.core.ContentItem;
 import fr.imag.adele.cadse.core.DerivedLink;
 import fr.imag.adele.cadse.core.DerivedLinkDescription;
 import fr.imag.adele.cadse.core.EventFilter;
@@ -54,37 +52,34 @@ import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.Messages;
+import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.WorkspaceListener;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
-import fr.imag.adele.cadse.core.delta.ImmutableWorkspaceDelta;
-import fr.imag.adele.cadse.core.delta.ItemDelta;
-import fr.imag.adele.cadse.core.delta.LinkDelta;
+import fr.imag.adele.cadse.core.build.Exporter;
+import fr.imag.adele.cadse.core.content.ContentItem;
 import fr.imag.adele.cadse.core.impl.CadseCore;
 import fr.imag.adele.cadse.core.impl.CadseIllegalArgumentException;
 import fr.imag.adele.cadse.core.impl.CollectedReflectLink;
 import fr.imag.adele.cadse.core.impl.PageRuntimeModel;
 import fr.imag.adele.cadse.core.impl.ReflectLink;
 import fr.imag.adele.cadse.core.impl.internal.delta.ItemTypeItemDeltaAdapter;
-import fr.imag.adele.cadse.core.impl.internal.ui.HierachicPageImpl;
-import fr.imag.adele.cadse.core.impl.internal.ui.PagesImpl;
 import fr.imag.adele.cadse.core.internal.IWorkingLoadingItems;
 import fr.imag.adele.cadse.core.internal.IWorkspaceNotifier;
 import fr.imag.adele.cadse.core.internal.InternalItem;
-import fr.imag.adele.cadse.core.key.AbstractSpaceKey;
-import fr.imag.adele.cadse.core.key.ISpaceKey;
-import fr.imag.adele.cadse.core.key.SpaceKeyType;
-import fr.imag.adele.cadse.core.ui.IPage;
+import fr.imag.adele.cadse.core.key.DefaultKeyImpl;
+import fr.imag.adele.cadse.core.key.Key;
+import fr.imag.adele.cadse.core.key.KeyDefinition;
+import fr.imag.adele.cadse.core.transaction.delta.ImmutableWorkspaceDelta;
+import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
+import fr.imag.adele.cadse.core.transaction.delta.LinkDelta;
 import fr.imag.adele.cadse.core.ui.Pages;
-import fr.imag.adele.cadse.core.ui.UIField;
-import fr.imag.adele.cadse.core.ui.UIRunningValidator;
-import fr.imag.adele.cadse.core.ui.UIValidator;
 import fr.imag.adele.cadse.core.ui.view.FilterContext;
 import fr.imag.adele.cadse.core.ui.view.NewContext;
-import fr.imag.adele.cadse.core.util.ArraysUtil;
-import fr.imag.adele.cadse.core.util.Assert;
 import fr.imag.adele.cadse.core.util.Convert;
 import fr.imag.adele.cadse.core.util.IErrorCollector;
-import fr.imag.adele.cadse.core.util.OrderWay;
+import fr.imag.adele.cadse.util.ArraysUtil;
+import fr.imag.adele.cadse.util.Assert;
+import fr.imag.adele.cadse.util.OrderWay;
 
 public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	
@@ -114,7 +109,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	protected ItemState						_state					= ItemState.NOT_IN_WORKSPACE;
 
 	/** The key. */
-	private ISpaceKey						_key					= AbstractSpaceKey.NO_INIT_KEY;
+	private Key						_key					= DefaultKeyImpl.NO_INIT_KEY;
 
 	/** The wl. */
 	final protected LogicalWorkspaceImpl	_wl;
@@ -656,7 +651,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		return null;
 	}
 
-	public ISpaceKey getKey() {
+	public Key getKey() {
 		_key = Accessor.computekey(_key, getType(), this);
 		return _key;
 	}
@@ -939,7 +934,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	}
 
 	public String getQualifiedDisplayName() {
-		ISpaceKey key = getKey();
+		Key key = getKey();
 		if (key != null) {
 			return key.getQualifiedString();
 		}
@@ -973,7 +968,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 	}
 
 	public String getQualifiedName() {
-		ISpaceKey key = getKey();
+		Key key = getKey();
 		if (key != null) {
 			return key.getQualifiedString();
 		}
@@ -1119,8 +1114,13 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		setName(shortname);
 	}
 
-	public void setName(String name) throws CadseException {
-		setAttribute(CadseGCST.ITEM_at_NAME_, name);
+	public void setName(String name)  {
+		try {
+			setAttribute(CadseGCST.ITEM_at_NAME_, name);
+		} catch (CadseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void setType(ItemType selectedItemType) {
@@ -1128,8 +1128,13 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 
 	}
 
-	public void setQualifiedName(String qualifiedName) throws CadseException {
-		setAttribute(CadseGCST.ITEM_at_QUALIFIED_NAME_, qualifiedName);
+	public void setQualifiedName(String qualifiedName)  {
+		try {
+			setAttribute(CadseGCST.ITEM_at_QUALIFIED_NAME_, qualifiedName);
+		} catch (CadseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void setUniqueName(String uniqueName) throws CadseException {
@@ -1609,7 +1614,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		if (type == null) {
 			_key = null;
 		} else {
-			SpaceKeyType keyType = type.getSpaceKeyType();
+			KeyDefinition keyType = type.getSpaceKeyType();
 			if (keyType != null) {
 				try {
 					_key = keyType.computeKey(this);
@@ -1720,7 +1725,7 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		return super.toString();
 	}
 
-	public void setKey(ISpaceKey newkey) {
+	public void setKey(Key newkey) {
 		this._wl.removeItemInKeyMap(this);
 		this._key = newkey;
 		this._wl.addItemInKeyMap(this);
@@ -1865,6 +1870,42 @@ public abstract class AbstractGeneratedItem implements Item, InternalItem {
 		return PageRuntimeModel.INSTANCE.getCreationPages(this, context);
 	}
 	
+	@Override
+	public CadseRuntime getCadse() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public Exporter[] getExporter(Class<?> exporterType) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public int getIdInPackage() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	@Override
+	public ItemType getType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
+	@Override
+	public boolean isInstanceOf(TypeDefinition it) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	@Override
+	public void setCadse(CadseRuntime cr) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void setIdInPackage(int idInPackage) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }
