@@ -28,12 +28,15 @@ import java.util.Map;
 import java.util.UUID;
 
 import fr.imag.adele.cadse.core.CadseException;
+import fr.imag.adele.cadse.core.ExtendedType;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.Messages;
+import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
+import fr.imag.adele.cadse.core.attribute.StringAttributeType;
 import fr.imag.adele.cadse.core.impl.CadseIllegalArgumentException;
 import fr.imag.adele.cadse.core.impl.internal.delta.DeleteOperationImpl;
 import fr.imag.adele.cadse.core.key.DefaultKeyImpl;

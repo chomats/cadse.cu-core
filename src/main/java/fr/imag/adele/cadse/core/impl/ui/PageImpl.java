@@ -76,7 +76,7 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	private IPage[]			_owPages;
 
 	public PageImpl(UUID id, String name, ItemType parent) {
-		super(id);
+		super(id, 0);
 		this.shortName = name;
 		this._parentItemType = parent;
 	}
@@ -103,7 +103,7 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	 */
 	public PageImpl(UUID id, String name, String label, String title, String description,
 			boolean isPageComplete, IActionPage action, IAttributeType<?>... fields) {
-		super(id);
+		super(id, 0);
 		_attributes = fields;
 		shortName = name;
 		_label = label;
@@ -140,7 +140,7 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 
 	public PageImpl(UUID id, String name, String label, String title, String description,
 			boolean isPageComplete, int hspan) {
-		super(id);
+		super(id, 0);
 		_attributes = EMPTY_UIFIELD;
 		shortName = name;
 		_label = label;

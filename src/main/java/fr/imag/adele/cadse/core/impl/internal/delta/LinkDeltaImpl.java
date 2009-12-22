@@ -21,6 +21,7 @@ package fr.imag.adele.cadse.core.impl.internal.delta;
 import java.util.UUID;
 
 import fr.imag.adele.cadse.core.CadseException;
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
@@ -28,6 +29,7 @@ import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.WSModelState;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.impl.CadseIllegalArgumentException;
+import fr.imag.adele.cadse.core.impl.db.DBObject;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
 import fr.imag.adele.cadse.core.transaction.delta.DeleteOperation;
 import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
@@ -58,10 +60,10 @@ public final class LinkDeltaImpl extends ItemOrLinkDeltaImpl implements Link, Li
 		}
 
 		if (original != null) {
-			setAttribute(CadseGCST.VERSION_KEY, original.getVersion(), original.getVersion(), loaded);
-			setAttribute(CadseGCST.IS_READ_ONLY_KEY, original.isReadOnly(), original.isReadOnly(), loaded);
+			setAttribute(CadseGCST.LINK_TYPE_TYPE_at_VERSION_ , original.getVersion(), original.getVersion(), loaded);
+			setAttribute(CadseGCST.LINK_TYPE_TYPE_at_READ_ONLY_, original.isReadOnly(), original.isReadOnly(), loaded);
 		}
-		this.setAttribute(CadseGCST.LINK_INDEX_KEY, index, index, loaded);
+		this.setAttribute(CadseGCST.LINK_TYPE_TYPE_at_INDEX_OF_, index, index, loaded);
 	}
 
 	/*
@@ -229,7 +231,7 @@ public final class LinkDeltaImpl extends ItemOrLinkDeltaImpl implements Link, Li
 	 * @see fr.imag.adele.cadse.core.internal.delta.LinkOperation#getIndex()
 	 */
 	public int getIndex() {
-		int index = (Integer) getAttribute(Item.LINK_INDEX_KEY, -1);
+		int index = (Integer) getAttributeWithDefaultValue(CadseGCST.LINK_TYPE_TYPE_at_INDEX_OF_, -1);
 		if (index == -1) {
 			index = getItemOperationParent().indexOf(this);
 		}
@@ -243,7 +245,7 @@ public final class LinkDeltaImpl extends ItemOrLinkDeltaImpl implements Link, Li
 	 *      boolean)
 	 */
 	public void setIndex(int index, boolean loaded) {
-		setAttribute(Item.LINK_INDEX_KEY, index, null, loaded);
+		setAttribute(CadseGCST.LINK_TYPE_TYPE_at_INDEX_OF_, index, null, loaded);
 	}
 
 	/*
@@ -303,15 +305,7 @@ public final class LinkDeltaImpl extends ItemOrLinkDeltaImpl implements Link, Li
 	 * @see fr.imag.adele.cadse.core.internal.delta.LinkOperation#getVersion()
 	 */
 	public int getVersion() {
-		return (Integer) getAttribute(Item.VERSION_KEY, 0);
-	}
-
-	private Object getAttribute(String key, Object defaultValue) {
-		Object value = getAttribute(key);
-		if (value != null) {
-			return value;
-		}
-		return defaultValue;
+		return (Integer) getAttributeWithDefaultValue(CadseGCST.LINK_TYPE_TYPE_at_VERSION_, 0);
 	}
 
 	/*
@@ -448,7 +442,7 @@ public final class LinkDeltaImpl extends ItemOrLinkDeltaImpl implements Link, Li
 	 * @see fr.imag.adele.cadse.core.internal.delta.LinkOperation#setHidden(boolean)
 	 */
 	public void setHidden(boolean hidden) {
-		setAttribute(Item.HIDDEN_ATTRIBUTE, hidden, null, false);
+		setAttribute(CadseGCST.LINK_TYPE_TYPE_at_HIDDEN_, hidden, null, false);
 	}
 
 	/*
@@ -474,7 +468,7 @@ public final class LinkDeltaImpl extends ItemOrLinkDeltaImpl implements Link, Li
 	 * @see fr.imag.adele.cadse.core.internal.delta.LinkOperation#setAttribute(java.lang.String,
 	 *      java.lang.Object, java.lang.Object, boolean)
 	 */
-	public void setAttribute(String key, Object v, Object oldValue, boolean loaded) {
+	public void setAttribute(IAttributeType<?> key, Object v, Object oldValue, boolean loaded) {
 		getWorkingCopy().check_write();
 		try {
 			SetAttributeOperation attrOld = getSetAttributeOperation(key);
@@ -500,7 +494,7 @@ public final class LinkDeltaImpl extends ItemOrLinkDeltaImpl implements Link, Li
 	 * @see fr.imag.adele.cadse.core.internal.delta.LinkOperation#setReadOnly(boolean)
 	 */
 	public void setReadOnly(boolean readOnly) {
-		setAttribute(Item.IS_READ_ONLY_KEY, readOnly, null, false);
+		setAttribute(CadseGCST.LINK_TYPE_TYPE_at_READ_ONLY_, readOnly, null, false);
 	}
 
 	/*
@@ -509,7 +503,7 @@ public final class LinkDeltaImpl extends ItemOrLinkDeltaImpl implements Link, Li
 	 * @see fr.imag.adele.cadse.core.internal.delta.LinkOperation#setVersion(int)
 	 */
 	public void setVersion(int version) {
-		setAttribute(Item.VERSION_KEY, version, null, false);
+		setAttribute(CadseGCST.LINK_TYPE_TYPE_at_VERSION_, version, null, false);
 	}
 
 	/*
@@ -519,7 +513,7 @@ public final class LinkDeltaImpl extends ItemOrLinkDeltaImpl implements Link, Li
 	 *      boolean)
 	 */
 	public void setVersion(int version, boolean loaded) {
-		setAttribute(Item.VERSION_KEY, version, null, loaded);
+		setAttribute(CadseGCST.LINK_TYPE_TYPE_at_VERSION_, version, null, loaded);
 	}
 
 	/*
@@ -528,15 +522,13 @@ public final class LinkDeltaImpl extends ItemOrLinkDeltaImpl implements Link, Li
 	 * @see fr.imag.adele.cadse.core.internal.delta.LinkOperation#getLinkType()
 	 */
 	public LinkType getLinkType() {
-		ItemType sourceType = getItemOperationParent().getType();
-		if (sourceType == null) {
-			return null;
-		}
+		return _lt;
+	}
 
-		LinkType _lt_object = sourceType.getOutgoingLinkType(this._lt);
+	public static LinkType getLinkByName(String name, ItemType sourceType, ItemType destType) {
+		LinkType _lt_object = sourceType.getOutgoingLinkType(name);
 		if (_lt_object == null) {
-			ItemType destType = getDestination().getType();
-			return getWLC().createUnresolvedLinkType(_lt, sourceType, destType);
+			return DBObject._dblw.createUnresolvedLinkType(name, sourceType, destType);
 		}
 		return _lt_object;
 	}
@@ -793,6 +785,60 @@ public final class LinkDeltaImpl extends ItemOrLinkDeltaImpl implements Link, Li
 		removeInParent();
 		_destination = getWLC().loadItem(att);
 		addInParent();
+	}
+
+	@Override
+	public UUID getDestinationCadseId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <T> T getLinkAttributeOwner(IAttributeType<T> attDef) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public UUID getSourceCadseId() {
+		if (getSource() == null)
+			return null;
+		if (getSource().getCadse() == null)
+			return null;
+		return getSource().getCadse().getId();
+	}
+
+	@Override
+	public boolean isInterCadseLink() {
+		return false;
+	}
+
+	@Override
+	public UUID getId() {
+		return null;
+	}
+
+	@Override
+	public int getObjectId() {
+		return _objectID;
+	}
+
+	@Override
+	public void setUUID(long uuidMsb, long uuidLsb) {
+	}
+
+	@Override
+	public void setUUID(UUID uuid) {
+	}
+
+	@Override
+	public <T> T adapt(Class<T> clazz) {
+		return null;
+	}
+
+	@Override
+	public void setObjectID(int linkId) {
+		_objectID = linkId;
 	}
 
 }

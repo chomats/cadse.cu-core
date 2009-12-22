@@ -18,11 +18,6 @@
  */
 package fr.imag.adele.cadse.core.impl.internal.delta;
 
-import fr.imag.adele.cadse.core.CadseException;
-import java.util.UUID;
-import fr.imag.adele.cadse.core.build.Composer;
-import fr.imag.adele.cadse.core.build.Exporter;
-import fr.imag.adele.cadse.core.build.IBuildingContext;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
@@ -43,9 +38,8 @@ import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CadseRuntime;
-import java.util.UUID;
+import fr.imag.adele.cadse.core.CompactUUID;
 import fr.imag.adele.cadse.core.ContentChangeInfo;
-import fr.imag.adele.cadse.core.content.ContentItem;
 import fr.imag.adele.cadse.core.DerivedLink;
 import fr.imag.adele.cadse.core.DerivedLinkDescription;
 import fr.imag.adele.cadse.core.EventFilter;
@@ -60,12 +54,16 @@ import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.Messages;
+import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.WorkspaceListener;
 import fr.imag.adele.cadse.core.attribute.BooleanAttributeType;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.attribute.IntegerAttributeType;
 import fr.imag.adele.cadse.core.attribute.StringAttributeType;
 import fr.imag.adele.cadse.core.attribute.URLAttributeType;
+import fr.imag.adele.cadse.core.build.Composer;
+import fr.imag.adele.cadse.core.build.Exporter;
+import fr.imag.adele.cadse.core.build.IBuildingContext;
 import fr.imag.adele.cadse.core.content.ContentItem;
 import fr.imag.adele.cadse.core.impl.CadseIllegalArgumentException;
 import fr.imag.adele.cadse.core.impl.PageRuntimeModel;
@@ -75,7 +73,9 @@ import fr.imag.adele.cadse.core.impl.internal.LogicalWorkspaceImpl;
 import fr.imag.adele.cadse.core.impl.internal.LogicalWorkspaceTransactionImpl;
 import fr.imag.adele.cadse.core.internal.IWorkingLoadingItems;
 import fr.imag.adele.cadse.core.internal.IWorkspaceNotifier;
+import fr.imag.adele.cadse.core.key.DefaultKeyImpl;
 import fr.imag.adele.cadse.core.key.Key;
+import fr.imag.adele.cadse.core.key.KeyDefinition;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
 import fr.imag.adele.cadse.core.transaction.delta.DeleteOperation;
 import fr.imag.adele.cadse.core.transaction.delta.ImmutableWorkspaceDelta;
@@ -86,28 +86,15 @@ import fr.imag.adele.cadse.core.transaction.delta.MappingOperation;
 import fr.imag.adele.cadse.core.transaction.delta.OperationTypeCst;
 import fr.imag.adele.cadse.core.transaction.delta.OrderOperation;
 import fr.imag.adele.cadse.core.transaction.delta.SetAttributeOperation;
-import fr.imag.adele.cadse.core.CadseIllegalArgumentException;
-import fr.imag.adele.cadse.core.CompactUUID;
-import fr.imag.adele.cadse.core.impl.PageRuntimeModel;
-import fr.imag.adele.cadse.core.impl.internal.Accessor;
-import fr.imag.adele.cadse.core.impl.internal.ItemTypeImpl;
-import fr.imag.adele.cadse.core.impl.internal.LogicalWorkspaceImpl;
-import fr.imag.adele.cadse.core.impl.internal.LogicalWorkspaceTransactionImpl;
-import fr.imag.adele.cadse.core.internal.IWorkingLoadingItems;
-import fr.imag.adele.cadse.core.internal.IWorkspaceNotifier;
-import fr.imag.adele.cadse.core.key.Key;
-import fr.imag.adele.cadse.core.key.DefaultKeyDefinitionImpl;
-import fr.imag.adele.cadse.core.key.DefaultKeyImpl;
-import fr.imag.adele.cadse.core.key.KeyDefinition;
-import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
+import fr.imag.adele.cadse.core.transaction.delta.WLWCOperation;
 import fr.imag.adele.cadse.core.ui.Pages;
 import fr.imag.adele.cadse.core.ui.view.FilterContext;
 import fr.imag.adele.cadse.core.ui.view.NewContext;
 import fr.imag.adele.cadse.core.util.Convert;
 import fr.imag.adele.cadse.core.util.IErrorCollector;
 import fr.imag.adele.cadse.util.ArraysUtil;
-import fr.imag.adele.cadse.util.OrderWay;
 import fr.imag.adele.cadse.util.Assert;
+import fr.imag.adele.cadse.util.OrderWay;
 
 public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	static Map<Class<?>, ItemDeltaAdapterFactory<?>>	_registerAdapter	= new HashMap<Class<?>, ItemDeltaAdapterFactory<?>>();
@@ -147,7 +134,8 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	private final LogicalWorkspaceTransactionImpl	_copy;
 
 	/** The id. */
-	private UUID								_id;
+	private UUID									_id;
+	
 	/** The type. */
 	private ItemType								_itemType;
 	private boolean									_update;
@@ -161,6 +149,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	private int	_parentID;
 	private int	_cadseID;
 	private ItemType[]	_types;
+	private CadseRuntime _cadse;
 
 	
 	
@@ -183,7 +172,6 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		this._copy = copy;
 		this._id = id;
 		this._itemType = itemType;
-		this._itemTypeId = itemType.getId();
 
 		addItemType(itemType);
 		if (add) {
@@ -199,8 +187,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		this._copy = copy;
 		this._id = original.getId();
 		this._itemType = original.getType();
-		this._itemTypeId = original.getType().getId();
-		this._localId = original.getObjectID();
+		this._localId = original.getObjectId();
 		addItemType(original.getType());
 		this._baseItem = original;
 		Item partParent = original.getPartParent();
@@ -1426,7 +1413,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 
 		LinkType _lt_object = sourceType.getOutgoingLinkType(lt);
 		if (createUnresolvedObject && _lt_object == null) {
-			return getWorkingCopy().createUnresolvedLinkType(null, lt, sourceType, destType);
+			return getWorkingCopy().createUnresolvedLinkType(lt, sourceType, destType);
 		}
 		return _lt_object;
 	}
@@ -1805,11 +1792,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 			return _links.get(key);
 		}
 		ItemDelta destiDelta;
-		try {
-			destiDelta = getWorkingCopy().loadItem(destination);
-		} catch (CadseException e) {
-			return null;
-		}
+		destiDelta = getWorkingCopy().loadItem(destination);
 
 		return getOrCreateLinkOperation(lt, destiDelta, null, -1, true);
 	}
@@ -3950,24 +3933,12 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 
 	@Override
 	public CadseRuntime getCadse() {
-		// TODO Auto-generated method stub
-		return null;
+		return _cadse;
 	}
 
 	@Override
 	public void setCadse(CadseRuntime cr) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public int getObjectID() {
-		return _localId;
-	}
-
-	@Override
-	public void setObjectID(int localIdentifier) {
-		_localId = localIdentifier;
+		_cadse = cr;
 	}
 	
 	@Override
@@ -3982,12 +3953,12 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	}
 
 	@Override
-	public void setCadseID(int cadseID) {
+	public void setCadseId(int cadseID) {
 		_cadseID = cadseID;
 	}
 
 	@Override
-	public void setParentID(int parentID) {
+	public void setParentId(int parentID) {
 		_parentID = parentID;
 	}
 
@@ -3999,50 +3970,6 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Override
-    public void clean(IBuildingContext context, boolean componentsContent) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void build(IBuildingContext context) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void compose(IBuildingContext context) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Exporter[] getExporters() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Exporter[] getExporter(Class<?> exportedContentType) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void setExporters(Exporter... exporters) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Composer[] getComposers() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void setComposers(Composer... composers) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public int getIdInPackage() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 
     @Override
     public void setIdInPackage(int idInPackage) {
@@ -4053,4 +3980,27 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
     public void setUUID(long itemMsb, long itemLsb) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+	@Override
+	public int getObjectId() {
+		return _localId;
+	}
+
+	@Override
+	public void setUUID(UUID uuid) {		
+	}
+
+	@Override
+	public Exporter[] getExporter(Class<?> exporterType) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getIdInPackage() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	
 }

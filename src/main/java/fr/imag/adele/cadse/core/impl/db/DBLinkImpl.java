@@ -18,9 +18,8 @@ import fr.imag.adele.teamwork.db.ModelVersionDBService2;
 public class DBLinkImpl extends DBObject implements Link {
 	
 
-	public DBLinkImpl(DBLogicalWorkspace dblw,
-			int localId) {
-		super(dblw, localId);
+	public DBLinkImpl(int localId) {
+		super(localId);
 	}
 
 	@Override
@@ -50,9 +49,9 @@ public class DBLinkImpl extends DBObject implements Link {
 	@Override
 	public Item getDestination() {
 		try {
-			return _dblw.item(_db.getLinkDest(_localId));
+			return _dblw.item(_dblw.getDB().getLinkDest(_objectId));
 		} catch (ModelVersionDBException e) {
-			throw new CadseIllegalArgumentException("Cannot get destination from {0}.", e, _localId);
+			throw new CadseIllegalArgumentException("Cannot get destination from {0}.", e, _objectId);
 		}
 	}
 
@@ -72,7 +71,7 @@ public class DBLinkImpl extends DBObject implements Link {
 		CadseRuntime cr = destination.getCadse();
 		if (cr == null)
 			return null;
-		return cr.getID();
+		return cr.getId();
 	}
 
 	@Override
@@ -92,7 +91,7 @@ public class DBLinkImpl extends DBObject implements Link {
 		Item destination = getDestination();
 		if (destination  == null)
 			return null;
-		return destination.getID();
+		return destination.getId();
 	}
 
 	@Override
@@ -157,19 +156,7 @@ public class DBLinkImpl extends DBObject implements Link {
 	}
 
 	@Override
-	public UUID getSourceCadseID() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public UUID getSourceCadseId() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public UUID getSourceID() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -289,22 +276,5 @@ public class DBLinkImpl extends DBObject implements Link {
 		
 	}
 
-	@Override
-	public UUID getID() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public UUID getId() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int getObjectID() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 
 }

@@ -29,9 +29,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.eclipse.core.runtime.Platform;
 
 import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
@@ -40,6 +39,7 @@ import fr.imag.adele.cadse.core.CadseRuntime;
 import fr.imag.adele.cadse.core.ContentChangeInfo;
 import fr.imag.adele.cadse.core.EventFilter;
 import fr.imag.adele.cadse.core.IItemManager;
+import fr.imag.adele.cadse.core.INamedUUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemDescription;
 import fr.imag.adele.cadse.core.ItemDescriptionRef;
@@ -49,6 +49,7 @@ import fr.imag.adele.cadse.core.LinkDescription;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.Messages;
 import fr.imag.adele.cadse.core.ProjectAssociation;
+import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.WSModelState;
 import fr.imag.adele.cadse.core.WorkspaceListener;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
@@ -61,7 +62,9 @@ import fr.imag.adele.cadse.core.impl.internal.delta.ItemOrLinkDeltaImpl;
 import fr.imag.adele.cadse.core.impl.internal.delta.SetAttributeOperationImpl;
 import fr.imag.adele.cadse.core.internal.ILoggableAction;
 import fr.imag.adele.cadse.core.internal.IWorkspaceNotifier;
+import fr.imag.adele.cadse.core.internal.InternalLogicalWorkspace;
 import fr.imag.adele.cadse.core.key.Key;
+import fr.imag.adele.cadse.core.key.KeyDefinition;
 import fr.imag.adele.cadse.core.transaction.AbstractLogicalWorkspaceTransactionListener;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransactionListener;
@@ -73,6 +76,7 @@ import fr.imag.adele.cadse.core.transaction.delta.MappingOperation;
 import fr.imag.adele.cadse.core.transaction.delta.OperationTypeCst;
 import fr.imag.adele.cadse.core.transaction.delta.OrderOperation;
 import fr.imag.adele.cadse.core.transaction.delta.SetAttributeOperation;
+import fr.imag.adele.cadse.core.transaction.delta.WLWCOperation;
 import fr.imag.adele.cadse.core.transaction.delta.WLWCOperationImpl;
 import fr.imag.adele.cadse.core.ui.view.FilterContext;
 import fr.imag.adele.cadse.core.ui.view.NewContext;
@@ -82,6 +86,7 @@ import fr.imag.adele.cadse.core.util.ElementsOrder;
 import fr.imag.adele.cadse.core.util.HashList;
 import fr.imag.adele.cadse.core.var.ContextVariable;
 import fr.imag.adele.cadse.util.ArraysUtil;
+import fr.imag.adele.cadse.util.NLS;
 
 public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransaction, InternalLogicalWorkspace {
 
@@ -158,7 +163,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	public ItemDelta createItem(ItemType it, Item parent, LinkType lt, UUID id, String uniqueName,
 			String shortName) throws CadseException {
 		check_write();
-		ItemDelta ret = actionAddItem(new ItemDescriptionRef(id, it.getId(), uniqueName, shortName),
+		ItemDelta ret = actionAddItem(new ItemDescriptionRef(id, it, uniqueName, shortName),
 				parent == null ? null : parent.getId(), lt);
 		return ret;
 	}
@@ -170,7 +175,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 
 	public ItemDelta createItem(ItemType it, Item parent, LinkType lt) throws CadseException {
 		check_write();
-		ItemDelta ret = actionAddItem(new ItemDescriptionRef(UUID.randomUUID(), it.getId(), null, null),
+		ItemDelta ret = actionAddItem(new ItemDescriptionRef(UUID.randomUUID(), it, null, null),
 				parent == null ? null : parent.getId(), lt);
 		return ret;
 	}
@@ -182,7 +187,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	}
 
 	public LogicalWorkspaceTransaction createTransaction() {
-		if (Platform.inDevelopmentMode()) {
+		if (base.getCadseDomain().inDevelopmentMode()) {
 			return new LogicalWorkspaceTransactionImpl(this, getLogicalWorkspaceTransactionListener());
 		}
 		throw new UnsupportedOperationException();
@@ -353,15 +358,15 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		return getOrCreateItemOperation(item);
 	}
 
-	public ItemDelta getItemByShortName(ItemType type, String uniqueName) {
-		return oper(base.getItemByShortName(type, uniqueName));
+	public ItemDelta getItemByName(TypeDefinition type, String name) {
+		return oper(base.getItemByName(type, name));
 	}
 
 	public Collection<Item> getItems() {
 		return (base.getItems());
 	}
 
-	public List<Item> getItems(ItemType it) {
+	public List<Item> getItems(TypeDefinition it) {
 		return base.getItems(it);
 	}
 
@@ -370,7 +375,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	}
 
 	public ItemType getItemType(UUID id) {
-		return getItemType(id, true);
+		return getItemType(null, id, false);
 	}
 
 	/*
@@ -380,21 +385,45 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
 	 * #getItemType(fr.imag.adele.cadse.core.UUID, boolean)
 	 */
-	public ItemType getItemType(UUID id, boolean createUnresolvedType) {
-		ItemType itemType = base.getItemType(id);
-		if (createUnresolvedType && itemType == null) {
-			// TODO call this method specifiquement in commit process
-			// try {
-			// itemType = base.createUnresolvedItemType(id);
-			// } catch (CadseException e) {
-			// e.printStackTrace();
-			// // cannot throw the exeception,
-			// // after null pointeur
-			// }
+	public ItemType getItemType(UUID cadseId, UUID id, boolean createUnresolvedType) {
+		ItemDelta itemTypeDelta = getItem(id, false);
+		
+		//ItemType itemType = base.getItemType(id);
+		if (createUnresolvedType && itemTypeDelta == null) {
+			try {
+				return createUnresolvedItemType(cadseId, id, null, null);
+			} catch (CadseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return null;
 		}
-		return itemType;
+		if (itemTypeDelta == null)
+			return null;
+	
+		return itemTypeDelta.getAdapter(ItemType.class);
 	}
 
+	public TypeDefinition getTypeDefinition(UUID cadseId, UUID id, boolean createUnresolvedType) {
+		ItemDelta itemTypeDelta = getItem(id, false);
+		
+		//ItemType itemType = base.getItemType(id);
+		if (createUnresolvedType && itemTypeDelta == null) {
+			try {
+				return createUnresolvedItemType(cadseId, id, null, null);
+			} catch (CadseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return null;
+		}
+		if (itemTypeDelta == null)
+			return null;
+	
+		return itemTypeDelta.getAdapter(TypeDefinition.class);
+	}
+	
+	
 	public ItemType getItemTypeByName(String shortName) {
 		return base.getItemTypeByName(shortName);
 	}
@@ -421,6 +450,21 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 
 	public CadseDomain getCadseDomain() {
 		return base.getCadseDomain();
+	}
+	
+	public ItemDelta loadItem(UUID id, UUID type) throws CadseException {
+		TypeDefinition it = findTypeDefinition(type, null, true);
+		return loadItem(id, (ItemType) it);
+	}
+	
+	@Override
+	public ItemDelta loadItem(UUID id, ItemType type) throws CadseException {
+		ItemDelta loadingItem = _operations.get(id);
+		if (loadingItem != null) {
+			return loadingItem;
+		}
+
+		return new ItemDeltaImpl(this, new UUID(id.getMostSignificantBits(), id.getLeastSignificantBits()), type, true);
 	}
 
 	public Item loadItem(ItemDescription desc, boolean update) throws CadseException {
@@ -452,12 +496,12 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 			if (desc.getName() != null) {
 				ret.setName(desc.getName(), true);
 			}
-			for (Map.Entry<String, Object> entry : desc.getAttributes().entrySet()) {
-				String attributeName = entry.getKey();
+			for (Map.Entry<IAttributeType<?>, Object> entry : desc.getAttributes().entrySet()) {
+				IAttributeType<?> attributeName = entry.getKey();
 				if (attributeName.equals(ItemTypeImpl.ATTR_SHORT_NAME)
 						|| attributeName.equals(ItemTypeImpl.SHORT_NAME_KEY)
 						|| attributeName.equals(CadseGCST.ITEM_at_NAME)) {
-					attributeName = CadseGCST.ITEM_at_NAME;
+					attributeName = CadseGCST.ITEM_at_NAME_;
 					if (entry.getValue() == null || Item.NO_VALUE_STRING.equals(entry.getValue())) {
 						System.err.println("short name is overwritten in attribute");
 						continue;
@@ -519,11 +563,13 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 
 	}
 
+	@Override
 	public void setState(WSModelState state) {
 		this.state = state;
 	}
 
-	public void actionAddAttribute(UUID itemId, String key, Object value) throws CadseException, CadseException {
+	@Override
+	public <T> void actionAddAttribute(UUID itemId, IAttributeType<T> key, T value) throws CadseException, CadseException {
 		check_write();
 		if (log != null) {
 			log.actionAddAttribute(itemId, key, value);
@@ -545,7 +591,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		notifyChangeAttribute(itemOper, attOper);
 	}
 
-	public void actionAddAttribute(LinkDescription linkDescription, String key, Object value) throws CadseException,
+	public <T> void actionAddAttribute(LinkDescription linkDescription, IAttributeType<T> key, T value) throws CadseException,
 			CadseException {
 		check_write();
 		if (log != null) {
@@ -608,7 +654,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 			for (int i = 0; i < setAttrs.length; i++) {
 				IAttributeType<?> def = setAttrs[i].getAttrDef();
 				Object v = setAttrs[i].getValue();
-				SetAttributeOperation setAtt = ret.setAttribute(def, setAttrs[i].getAttrName(), v, true, false);
+				SetAttributeOperation setAtt = ret.setAttribute(def, v, true, false);
 				if (setAtt == null) continue;
 				setAttToNotifie.add(setAtt);
 			}
@@ -690,6 +736,11 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		return ret;
 	}
 
+	private UUID findTypeDefinition(ItemDescriptionRef itemDescriptionRef) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	private void addItemOperation(ItemDelta ret) {
 		_operations.put(ret.getId(), ret);
 	}
@@ -698,6 +749,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		this.echec = true;
 	}
 
+	@Override
 	public void actionAddLink(LinkDescription linkDescription) throws CadseException {
 		check_write();
 		LinkDelta linkOper = getLinkOperation(linkDescription, false);
@@ -715,7 +767,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		itemOper.createLink(lt, destination);
 	}
 
-	public void actionChangeAttribute(UUID itemId, String key, Object value) throws CadseException,
+	public <T> void actionChangeAttribute(UUID itemId, IAttributeType<T> key, T value) throws CadseException,
 			CadseException {
 		check_write();
 		if (log != null) {
@@ -733,7 +785,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		((ItemOrLinkDeltaImpl) ret).add(attOper);
 	}
 
-	public void actionChangeAttribute(LinkDescription linkDescription, String key, Object value) throws CadseException,
+	public <T> void actionChangeAttribute(LinkDescription linkDescription, IAttributeType<T> key, T value) throws CadseException,
 			CadseException {
 		check_write();
 		if (log != null) {
@@ -744,7 +796,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		linkOper.add(attOper);
 	}
 
-	public void actionRemoveAttribute(UUID itemId, String key) throws CadseException {
+	public <T> void actionRemoveAttribute(UUID itemId, IAttributeType<T> key) throws CadseException {
 		check_write();
 		if (log != null) {
 			log.actionRemoveAttribute(itemId, key);
@@ -761,7 +813,8 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		((ItemOrLinkDeltaImpl) ret).add(attOper);
 	}
 
-	public void actionRemoveAttribute(LinkDescription linkDescription, String key) throws CadseException,
+	@Override
+	public <T> void actionRemoveAttribute(LinkDescription linkDescription, IAttributeType<T> key) throws CadseException,
 			CadseException {
 		check_write();
 		if (log != null) {
@@ -821,7 +874,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		if (it == null) {
 			throw new CadseException(Messages.error_item_type_is_null2);
 		}
-		ret = new ItemDeltaImpl(this, id, it, add);
+		ret = new ItemDeltaImpl(this, new UUID(id.getMostSignificantBits(), id.getLeastSignificantBits()), it, add);
 		return ret;
 	}
 
@@ -992,14 +1045,15 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 			for (Link l : base.getOutgoingLinks()) {
 				actionAddLink(new LinkDescription(l));
 			}
-			for (String key : base.getAttributeKeys()) {
+			
+			for (IAttributeType<?> key : base.getLocalAllAttributeTypes()) {
 				if (key.equals(ItemTypeImpl.SHORT_NAME_KEY)) {
 					continue;
 				}
 				if (key.equals(ItemTypeImpl.UNIQUE_NAME_KEY)) {
 					continue;
 				}
-				actionAddAttribute(base.getId(), key, base.getAttribute(key));
+				actionAddAttribute(base.getId(), (IAttributeType<Object>)key, base.getAttribute(key));
 			}
 		} catch (CadseException e) {
 			// TODO Auto-generated catch block
@@ -1208,15 +1262,15 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 				// TODO add a warning
 			}
 			ItemDelta item = link.getSource();
-			if (item.getType() != null && item.getType().getSpaceKeyType() != null) {
-				SpaceKeyType keyType = item.getType().getSpaceKeyType();
+			if (item.getType() != null && item.getType().getKeyDefinition() != null) {
+				KeyDefinition keyType = item.getType().getKeyDefinition();
 				KEY: {
 					if (item.isAdded()) {
 						Key key = item.getKey();
 						if (key == null) {
 							break KEY;
 						}
-						IAttributeType<?>[] attKeys = keyType.getAttributeTypes();
+						IAttributeType<?>[] attKeys = keyType.getKeyElements();
 						if (attKeys == null) {
 							break KEY;
 						}
@@ -1241,7 +1295,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 						if (key == null) {
 							break KEY;
 						}
-						IAttributeType<?>[] attKeys = keyType.getAttributeTypes();
+						IAttributeType<?>[] attKeys = keyType.getKeyElements();
 						if (attKeys == null) {
 							break KEY;
 						}
@@ -1322,8 +1376,8 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 				}
 			}
 
-			if (item.getType() != null && item.getType().getSpaceKeyType() != null) {
-				SpaceKeyType keyType = item.getType().getSpaceKeyType();
+			if (item.getType() != null && item.getType().getKeyDefinition() != null) {
+				KeyDefinition keyType = item.getType().getKeyDefinition();
 				Key newK = keyType.computeKey(item);
 				item.setKey(newK);
 			}
@@ -1332,7 +1386,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		@Override
 		public void notifyDeletedItem(LogicalWorkspaceTransaction wc, ItemDelta item) throws CadseException,
 				CadseException {
-			if (item.getType() != null && item.getType().getSpaceKeyType() != null) {
+			if (item.getType() != null && item.getType().getKeyDefinition() != null) {
 				item.setKey(null);
 			}
 
@@ -1395,15 +1449,15 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		public void validateChangeAttribute(LogicalWorkspaceTransaction wc, ItemDelta item,
 				SetAttributeOperation attOperation) throws CadseException {
 
-			if (item.getType() != null && item.getType().getSpaceKeyType() != null) {
-				SpaceKeyType keyType = item.getType().getSpaceKeyType();
+			if (item.getType() != null && item.getType().getKeyDefinition() != null) {
+				KeyDefinition keyType = item.getType().getKeyDefinition();
 				KEY: {
 					if (item.isAdded()) {
 						Key key = item.getKey();
 						if (key == null) {
 							break KEY;
 						}
-						IAttributeType<?>[] attKeys = keyType.getAttributeTypes();
+						IAttributeType<?>[] attKeys = keyType.getKeyElements();
 						if (attKeys == null) {
 							break KEY;
 						}
@@ -1428,7 +1482,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 						if (key == null) {
 							break KEY;
 						}
-						IAttributeType<?>[] attKeys = keyType.getAttributeTypes();
+						IAttributeType<?>[] attKeys = keyType.getKeyElements();
 						if (attKeys == null) {
 							break KEY;
 						}
@@ -1715,24 +1769,24 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		}
 	}
 
+	@Override
 	public void clear() throws CadseException {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public void loadCadseModel(String qualifiedCadseModelName) {
 		throw new UnsupportedOperationException();
 	}
 
-	public void setAttribute(Item item, String key, Object value) {
-		throw new UnsupportedOperationException();
-	}
-
+	@Override
 	public void setAttribute(Item item, IAttributeType<?> key, Object value) {
 		throw new UnsupportedOperationException();
 	}
 
-	public LinkType createUnresolvedLinkType(String type, ItemType type2, ItemType type3) {
-		return base.createUnresolvedLinkType(type, type2, type3);
+	@Override
+	public LinkType createUnresolvedLinkType(UUID id, String name, TypeDefinition source, TypeDefinition dest) {
+		return base.createUnresolvedLinkType(id, name, source, dest);
 	}
 
 	/*
@@ -1743,15 +1797,14 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	 * #notifyChangeAttribute(fr.imag.adele.cadse.core.delta.ItemOperation,
 	 * fr.imag.adele.cadse.core.delta.SetAttributeOperation)
 	 */
-	public void notifyChangeAttribute(ItemDelta item, SetAttributeOperation attOperation) throws CadseException,
-			CadseException {
+	@Override
+	public void notifyChangeAttribute(ItemDelta item, SetAttributeOperation attOperation) {
 		if (_logicalWorkspaceTransactionListeners != null) {
 			for (int i = 0; i < _logicalWorkspaceTransactionListeners.length; i++) {
 				try {
 					_logicalWorkspaceTransactionListeners[i].notifyChangeAttribute(this, item, attOperation);
 				} catch (Throwable e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				addError(_logicalWorkspaceTransactionListeners[i], attOperation, e);
 				}
 			}
 		}
@@ -1765,7 +1818,8 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 					} catch (Throwable e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					}
+                                            addError(_logicalWorkspaceTransactionListeners[i], attOperation, e);
+                                        }
 				}
 			}
 		}
@@ -1813,7 +1867,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		if (l != null) {
 			listener.addAll(Arrays.asList(l));
 		}
-		ItemType it = lt.getSource();
+		TypeDefinition it = lt.getSource();
 		if (it != null) {
 			l = it.getLogicalWorkspaceTransactionListener();
 			if (l != null) {
@@ -1838,6 +1892,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	 * #notifyChangeLinkOrder(fr.imag.adele.cadse.core.delta.LinkOperation,
 	 * fr.imag.adele.cadse.core.internal.delta.OrderOperation)
 	 */
+        @Override
 	public void notifyChangeLinkOrder(LinkDelta link, OrderOperation orderOperation) {
 		if (_logicalWorkspaceTransactionListeners != null) {
 			for (int i = 0; i < _logicalWorkspaceTransactionListeners.length; i++) {
@@ -1852,6 +1907,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 
 	}
 
+	@Override
 	public void notifyCommitTransaction() {
 		HashSet<Object> ts = new HashSet<Object>();
 		if (_logicalWorkspaceTransactionListeners != null) {
@@ -2013,6 +2069,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
 	 * #notifyCreatedItem(fr.imag.adele.cadse.core.delta.ItemOperation)
 	 */
+	@Override
 	public void notifyCreatedItem(ItemDelta item) throws CadseException {
 		if (_logicalWorkspaceTransactionListeners != null) {
 			for (int i = 0; i < _logicalWorkspaceTransactionListeners.length; i++) {
@@ -2148,10 +2205,15 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		}
 	}
 
-	public void validateChangeAttribute(ItemDelta item, SetAttributeOperation attOperation) throws CadseException {
+	public void validateChangeAttribute(ItemDelta item, SetAttributeOperation attOperation) {
 		if (_logicalWorkspaceTransactionListeners != null) {
 			for (int i = 0; i < _logicalWorkspaceTransactionListeners.length; i++) {
-				_logicalWorkspaceTransactionListeners[i].validateChangeAttribute(this, item, attOperation);
+                            try {
+                                _logicalWorkspaceTransactionListeners[i].validateChangeAttribute(this, item, attOperation);
+                            } catch (CadseException ex) {
+                                addError(_logicalWorkspaceTransactionListeners[i], attOperation, ex);
+                                Logger.getLogger(LogicalWorkspaceTransactionImpl.class.getName()).log(Level.SEVERE, null, ex);
+                            }
 			}
 		}
 		ItemType it = item.getType();
@@ -2159,10 +2221,22 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 			LogicalWorkspaceTransactionListener[] l = it.getLogicalWorkspaceTransactionListener();
 			if (l != null) {
 				for (int i = 0; i < l.length; i++) {
-					l[i].validateChangeAttribute(this, item, attOperation);
+                        try {
+                            l[i].validateChangeAttribute(this, item, attOperation);
+                        } catch (CadseException ex) {
+                            addError(_logicalWorkspaceTransactionListeners[i], attOperation, ex);
+                            Logger.getLogger(LogicalWorkspaceTransactionImpl.class.getName()).log(Level.SEVERE, null, ex);
+                        }
 				}
 			}
 		}
+	}
+
+	private void addError(
+			Object source,
+			WLWCOperation operation, Throwable ex) {
+		Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, ex.getMessage(),ex);
+		
 	}
 
 	public void validateCreatedLink(LinkDelta link) throws CadseException {
@@ -2240,6 +2314,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
 	 * #notifyDeletedItem(fr.imag.adele.cadse.core.delta.ItemOperation)
 	 */
+        @Override
 	public void notifyDeletedItem(ItemDelta item) throws CadseException {
 		if (_logicalWorkspaceTransactionListeners != null) {
 			for (int i = 0; i < _logicalWorkspaceTransactionListeners.length; i++) {
@@ -2264,6 +2339,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
 	 * #notifyDoubleClick(fr.imag.adele.cadse.core.delta.ItemOperation)
 	 */
+	@Override
 	public void notifyDoubleClick(ItemDelta item) throws CadseException {
 		if (_logicalWorkspaceTransactionListeners != null) {
 			for (int i = 0; i < _logicalWorkspaceTransactionListeners.length; i++) {
@@ -2317,6 +2393,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
 	 * #notifyCancelCreatedItem(fr.imag.adele.cadse.core.delta.ItemOperation)
 	 */
+	@Override
 	public void notifyCancelCreatedItem(ItemDelta item) throws CadseException {
 		if (_logicalWorkspaceTransactionListeners != null) {
 			for (int i = 0; i < _logicalWorkspaceTransactionListeners.length; i++) {
@@ -2351,6 +2428,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
 	 * #notifyCancelCreatedLink(fr.imag.adele.cadse.core.delta.LinkOperation)
 	 */
+	@Override
 	public void notifyCancelCreatedLink(LinkDelta link) throws CadseException {
 		if (_logicalWorkspaceTransactionListeners != null) {
 			for (int i = 0; i < _logicalWorkspaceTransactionListeners.length; i++) {
@@ -2373,28 +2451,34 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		}
 	}
 
+	@Override
 	public void addLogicalWorkspaceTransactionListener(LogicalWorkspaceTransactionListener l) {
 		_logicalWorkspaceTransactionListeners = ArraysUtil.add(LogicalWorkspaceTransactionListener.class,
 				_logicalWorkspaceTransactionListeners, l);
 	}
 
+	@Override
 	public void removeLogicalWorkspaceTransactionListener(LogicalWorkspaceTransactionListener l) {
 		_logicalWorkspaceTransactionListeners = ArraysUtil.remove(LogicalWorkspaceTransactionListener.class,
 				_logicalWorkspaceTransactionListeners, l);
 	}
 
+	@Override
 	public LogicalWorkspaceTransactionListener[] getLogicalWorkspaceTransactionListener() {
 		return _logicalWorkspaceTransactionListeners;
 	}
 
+	@Override
 	public CadseRuntime createCadseRuntime(String name, UUID runtimeId, UUID definitionId) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public CadseRuntime[] getCadseRuntime() {
 		return base.getCadseRuntime();
 	}
 
+	@Override
 	public ItemType createItemType(ItemType metaType, CadseRuntime cadseName, ItemType superType, int intID,
 			UUID id, String shortName, String displayName, boolean hasContent, boolean isAbstract,
 			IItemManager manager) {
@@ -2407,16 +2491,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		return acc;
 	}
 
-	public ItemDelta loadItem(UUID id, UUID type) {
+	
 
-		ItemDelta loadingItem = _operations.get(id);
-		if (loadingItem != null) {
-			return loadingItem;
-		}
-
-		return new ItemDeltaImpl(this, id, type, true);
-	}
-
+	@Override
 	public Collection<Item> commit(boolean update, boolean forceToSave, boolean forceLoad,
 			Collection<ProjectAssociation> projectAssociationSet) throws CadseException {
 		this.update = update;
@@ -2487,6 +2564,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
 	 * #isUpdate()
 	 */
+	@Override
 	public boolean isUpdate() {
 		return update;
 	}
@@ -2498,6 +2576,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
 	 * #isForceToSave()
 	 */
+	@Override
 	public boolean isForceToSave() {
 		return forceToSave;
 	}
@@ -2509,6 +2588,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
 	 * #isForcetoLoad()
 	 */
+	@Override
 	public boolean isForcetoLoad() {
 		return forcetoLoad;
 	}
@@ -2520,6 +2600,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
 	 * #getNotifier()
 	 */
+	@Override
 	public IWorkspaceNotifier getNotifier() {
 		return notifier;
 	}
@@ -2531,10 +2612,12 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	 * fr.imag.adele.cadse.core.internal.InternaleWorkspaceLogiqueWorkingCopy
 	 * #getProjectAssociationSet()
 	 */
+	@Override
 	public Collection<ProjectAssociation> getProjectAssociationSet() {
 		return projectAssociationSet;
 	}
 
+	@Override
 	public ItemDelta createItemIfNeed(ItemType itemType, Item parent, LinkType partLinkType, String uniqueName,
 			String shortName, SetAttrVal<?>... attributes) throws CadseException {
 
@@ -2544,19 +2627,14 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		}
 		ItemDelta newItem = null;
 		ItemDelta parentDelta = parent == null ? null : getItem(parent.getId());
-		SpaceKeyType keyType = itemType.getSpaceKeyType();
+		KeyDefinition keyType = itemType.getKeyDefinition();
 		if (keyType != null) {
-			IAttributeType<?>[] attribuesDefintions = keyType.getAttributeTypes();
+			IAttributeType<?>[] attribuesDefintions = keyType.getKeyElements();
 			Object[] keyvaluse = new Object[attribuesDefintions.length];
 			for (int i = 0; i < keyvaluse.length; i++) {
-				if (attribuesDefintions[i] == CadseGCST.ITEM_at_NAME_) {
-					keyvaluse[i] = shortName;
-					continue;
-				}
 				for (int j = 0; j < attributes.length;) {
 					SetAttrVal<?> v = attributes[j++];
-					if (attribuesDefintions[i] == v.getAttrDef()
-							|| attribuesDefintions[i].getName().equals(v.getAttrName())) {
+					if (attribuesDefintions[i] == v.getAttrDef()) {
 						keyvaluse[i] = v.getValue();
 						break;
 					}
@@ -2565,7 +2643,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 					throw new CadseException(NLS.bind("Cannot find the value for the attribute definition {0} ({1}).",
 							attribuesDefintions[i].getName(), attribuesDefintions[i].getCSTName()));
 			}
-			Key key = keyType.computeKey(shortName, parentDelta, keyvaluse);
+			Key key = keyType.computeKey(parentDelta.getKey(), keyvaluse);
 			newItem = getItem(key);
 			if (newItem != null)
 				return newItem;
@@ -2578,13 +2656,9 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 
 			if (setAttr.getAttrDef() instanceof LinkType) {
 				newItem.createLink((LinkType) setAttr.getAttrDef(), (Item) setAttr.getValue());
-			} else if (setAttr.getAttrDef() instanceof IAttributeType<?>) {
-				newItem.setAttribute(setAttr.getAttrDef(), setAttr.getValue());
 			} else {
-				if (setAttr.getAttrName() != null) {
-					newItem.setAttribute(setAttr.getAttrName(), setAttr.getValue());
-				}
-			}
+				newItem.setAttribute(setAttr.getAttrDef(), setAttr.getValue());
+			} 
 		}
 
 		if (!itemType.hasQualifiedNameAttribute()) {
@@ -2663,6 +2737,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	 * @throws CadseException
 	 *             the melusine exception
 	 */
+	@Override
 	public ItemDelta createItemIfNeed(String uniqueName, String shortname, ItemType it, Item parent, LinkType lt,
 			Object... attributes) throws CadseException {
 
@@ -2671,15 +2746,11 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 			shortname = Item.NO_VALUE_STRING;
 		}
 		ItemDelta parentDelta = parent == null ? null : getItem(parent.getId());
-		SpaceKeyType keyType = it.getSpaceKeyType();
+		KeyDefinition keyType = it.getKeyDefinition();
 		if (keyType != null) {
-			IAttributeType<?>[] attribuesDefintions = keyType.getAttributeTypes();
+			IAttributeType<?>[] attribuesDefintions = keyType.getKeyElements();
 			Object[] keyvaluse = new Object[attribuesDefintions.length];
 			for (int i = 0; i < keyvaluse.length; i++) {
-				if (attribuesDefintions[i] == CadseGCST.ITEM_at_NAME_) {
-					keyvaluse[i] = shortname;
-					continue;
-				}
 				for (int j = 0; j < attributes.length;) {
 					Object key = attributes[j++];
 					Object value = attributes[j++];
@@ -2692,7 +2763,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 					throw new CadseException(NLS.bind("Cannot find the value for the attribute definition {0} ({1}).",
 							attribuesDefintions[i].getName(), attribuesDefintions[i].getCSTName()));
 			}
-			Key key = keyType.computeKey(shortname, parentDelta, keyvaluse);
+			Key key = keyType.computeKey(parentDelta.getKey(), keyvaluse);
 			ItemDelta newItem = getItem(key);
 			if (newItem != null)
 				return newItem;
@@ -2708,9 +2779,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 				newItem.createLink((LinkType) key, (Item) value);
 			} else if (key instanceof IAttributeType<?>) {
 				newItem.setAttribute((IAttributeType) key, value);
-			} else {
-				newItem.setAttribute((String) key, value);
-			}
+			} 
 		}
 
 		if (!it.hasQualifiedNameAttribute()) {
@@ -2783,6 +2852,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 	 * @throws CadseException
 	 *             the melusine exception
 	 */
+	@Override
 	public LinkDelta createLinkIfNeed(ItemDelta item, Item dest, LinkType lt) throws CadseException {
 		LinkDelta ret;
 
@@ -2795,10 +2865,12 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		return ret;
 	}
 
+	@Override
 	public void rollback() {
 		_commitState = false;
 	}
 
+	@Override
 	public <T> T getAttribute(Item source, IAttributeType<T> type, boolean ownerOnly) {
 		throw new UnsupportedOperationException();
 	}
@@ -2807,6 +2879,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public ContextVariable getNewContext() {
 		if (_newContextVariable == null) {
 			_newContextVariable = new NewContextVariable(this);
@@ -2814,6 +2887,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		return _newContextVariable;
 	}
 
+	@Override
 	public ContextVariable getOldContext() {
 		if (_oldContextVariable == null) {
 			_oldContextVariable = new OldContextVariable(this);
@@ -2912,5 +2986,179 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public IAttributeType<?> findAttribute(UUID key, UUID attSourceType, UUID attSourceCadsetype,
+			UUID attTypeType, UUID attTypeCadsetype) throws CadseException {
+		ItemDelta attrDef = getItem(key);
+		if (attrDef != null)
+			return attrDef.getAdapter(IAttributeType.class);
+		
+		TypeDefinition sourceType = findTypeDefinition(attSourceType, attSourceCadsetype, true);
+		ItemType typeAttr = (ItemType) findTypeDefinition(attTypeType, attTypeCadsetype, true);
+		
+		return base.createUnresolvedAttributeType(sourceType, typeAttr, key, null);
+	}
+	
+	@Override
+	public IAttributeType<?> createUnresolvedAttributeType(
+			TypeDefinition sourceType, ItemType attrType, UUID attrID,
+			String attName) {
+		return base.createUnresolvedAttributeType(sourceType, attrType, attrID, attName);
+	}
+
+	@Override
+	public TypeDefinition findTypeDefinition(UUID id, UUID cadse, boolean createUnresolved) throws CadseException {
+		ItemDelta cadseItem = getItem(cadse);
+		if (cadseItem == null) {
+			if (createUnresolved)
+				return createUnresolvedItemType(id, cadse);
+		}
+		CadseRuntime cr = cadseItem.getAdapter(CadseRuntime.class);
+		if (cr == null || !cr.isExecuted()) {
+			if (createUnresolved)
+				return createUnresolvedItemType(id, cadse);
+		}
+		
+		
+		return getTypeDefinition(cadse, id, createUnresolved);
+	}
+	
+	@Override
+	public ItemType createUnresolvedItemType(UUID cadseid, UUID id, String sn, String un)
+			throws CadseException {
+		return base.createUnresolvedItemType(cadseid, id, sn, un);
+	}
+	
+	private TypeDefinition createUnresolvedItemType(UUID cadse, UUID id) throws CadseException {
+		return base.createUnresolvedItemType(cadse, id, null, null);
+	}
+
+	@Override
+	public LinkType findLinkType(UUID linkTypeID, UUID lTSourceType, UUID lTSourceCadsetype,
+			UUID lTDestType, UUID lTDestCadsetype) throws CadseException {
+		
+		TypeDefinition it = findTypeDefinition(lTSourceType, lTSourceCadsetype, true);
+		if (it.isResolved()) {
+			ItemDelta lkDelta = getItem(linkTypeID);
+			if (lkDelta != null)
+				return lkDelta.getAdapter(LinkType.class);
+		}
+		TypeDefinition dest = findTypeDefinition(lTDestType, lTDestCadsetype, true);
+		
+		return createUnresolvedLinkType(linkTypeID, null, it, dest);
+	}
+
+	@Override
+	public ItemDelta createEmptyItem(UUID id) {
+		ItemDelta ret = getItemOperation(id);
+		if (ret != null)
+			return ret;
+		ret = new ItemDeltaImpl(this, id, true);
+		ret.setLoaded(true);
+		return null;
+	}
+
+	@Override
+	public IAttributeType<?> findAttribute(ItemDelta attHeader, ItemDelta attSourceHeader) throws CadseException {
+		ItemDelta attrDef = getItem(attHeader.getId());
+		if (attrDef != null)
+			return attrDef.getAdapter(IAttributeType.class);
+		
+		TypeDefinition sourceType = findTypeDefinition(attSourceHeader, true);
+		ItemType typeAttr = attHeader.getType();
+		
+		return base.createUnresolvedAttributeType(sourceType, typeAttr, attHeader.getId(), null);
+	}
+
+	@Override
+	public LinkType findLinkType(ItemDelta ltHeader, ItemDelta ltSourceHeader, ItemDelta ltDestTypeHeader) throws CadseException {
+		TypeDefinition it = findTypeDefinition(ltSourceHeader, true);
+		if (it.isResolved()) {
+			ItemDelta lkDelta = getItem(ltHeader.getId());
+			if (lkDelta != null)
+				return lkDelta.getAdapter(LinkType.class);
+		}
+		TypeDefinition dest = findTypeDefinition(ltDestTypeHeader, true);
+		
+		return createUnresolvedLinkType(ltHeader.getId(), null, it, dest);
+	}
+
+	@Override
+	public TypeDefinition findTypeDefinition(ItemDelta destHeader, boolean createUnresolved) throws CadseException {
+		CadseRuntime cadse = destHeader.getCadse();
+		if (cadse == null) {
+			if (createUnresolved)
+				return createUnresolvedItemType(null, destHeader.getId(), destHeader.getName(), destHeader.getQualifiedName());
+		}
+		
+		return getTypeDefinition(cadse, destHeader, createUnresolved);
+	}
+
+	public TypeDefinition getTypeDefinition(CadseRuntime cadseId, ItemDelta destHeader, boolean createUnresolvedType) {
+		ItemDelta itemTypeDelta = getItem(destHeader.getId(), false);
+		
+		//ItemType itemType = base.getItemType(id);
+		if (createUnresolvedType && itemTypeDelta == null) {
+			try {
+				return createUnresolvedItemType(cadseId.getId(), destHeader.getId(), destHeader.getName(), destHeader.getQualifiedName());
+			} catch (CadseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return null;
+		}
+		if (itemTypeDelta == null)
+			return null;
+	
+		return itemTypeDelta.getAdapter(ItemType.class);
+	}
+
+	@Override
+	public LinkType createUnresolvedLinkType(String linkTypeName,
+			ItemType sourceType, ItemType destType) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setAttribute(Item item, String key, Object value)
+			throws CadseException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public <T> T adapt(Class<T> clazz) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void addKey(INamedUUID item, Key key) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void changeKey(INamedUUID item, Key oldKey, Key newKey) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Key[] getChildrenKey(Key aThis) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void commit(
+			LogicalWorkspaceTransaction logicalWorkspaceTransactionImpl,
+			boolean b) throws CadseException {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }

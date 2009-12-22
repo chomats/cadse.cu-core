@@ -2,15 +2,18 @@ package fr.imag.adele.cadse.core.impl.internal.delta;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import fr.imag.adele.cadse.core.CPackage;
 import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CadseRuntime;
+import fr.imag.adele.cadse.core.ExtendedType;
 import fr.imag.adele.cadse.core.GroupType;
 import fr.imag.adele.cadse.core.IItemFactory;
 import fr.imag.adele.cadse.core.IItemManager;
@@ -19,19 +22,23 @@ import fr.imag.adele.cadse.core.ItemFilter;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
+import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.attribute.GroupOfAttributes;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.impl.internal.Accessor;
 import fr.imag.adele.cadse.core.impl.internal.ItemTypeImpl;
+import fr.imag.adele.cadse.core.key.KeyDefinition;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransactionListener;
 import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
 import fr.imag.adele.cadse.core.transaction.delta.LinkDelta;
+import fr.imag.adele.cadse.core.ui.HierarchicPage;
 import fr.imag.adele.cadse.core.ui.IActionContributor;
 import fr.imag.adele.cadse.core.ui.IActionPage;
 import fr.imag.adele.cadse.core.ui.IPage;
 import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.ui.UIValidator;
+import fr.imag.adele.cadse.core.ui.view.FilterContext;
 import fr.imag.adele.cadse.core.ui.view.NewContext;
 
 public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements ItemType, TypeDefinition.Internal {
@@ -69,7 +76,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 		} else {
 			linktypedelta = copy.loadItem(id, CadseGCST.LINK_TYPE.getId());
 			linktypedelta.setParent(_delta, CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES);
-			linktypedelta.loadLink(CadseGCST.LINK_TYPE_lt_DESTINATION.getName(), copy.loadItem(destination));
+			linktypedelta.loadLink(CadseGCST.LINK_TYPE_lt_DESTINATION, copy.loadItem(destination));
 
 		}
 		linktypedelta.setAttribute(CadseGCST.LINK_TYPE_at_KIND_, kind, id != null);
@@ -243,7 +250,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 		List<LinkDelta> deltaLinks = _delta.getOutgoingLinkOperations(CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES);
 		for (LinkDelta linkDelta : deltaLinks) {
 			ItemDelta destination = linkDelta.getDestination();
-			if (destination.isInstanceOf(CadseGCST.LINK)) {
+			if (destination.isInstanceOf(CadseGCST.LINK_TYPE)) {
 				ret.add(destination.getAdapter(LinkType.class));
 			}
 		}
@@ -255,11 +262,6 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 		return _delta.getAttribute(CadseGCST.ITEM_TYPE_at_PACKAGE_NAME_);
 	}
 
-	@Override
-	public SpaceKeyType getSpaceKeyType() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public ItemType[] getSubTypes() {
@@ -378,12 +380,6 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 	}
 
 	@Override
-	public void setSpaceKeyType(SpaceKeyType spaceKeytype) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public <T> Link addAttributeType(IAttributeType<T> type) {
 		// TODO Auto-generated method stub
 		return null;
@@ -485,17 +481,6 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 
 	}
 
-	@Override
-	public void resetIncomingLinkType() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void resetOutgoingLinkType() {
-		// TODO Auto-generated method stub
-
-	}
 
 	@Override
 	public void setSuperType(ItemType it) {
@@ -658,12 +643,6 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 		return null;
 	}
 
-	@Override
-	public ExtendedType[] getExtendedType() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 
 	@Override
 	public UIField findField(IAttributeType<?> att) {
@@ -683,11 +662,91 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 		return false;
 	}
 
+
 	@Override
-	public IAttributeType<?> getUnresolvedAttributeType(UUID id,
-			TypeDefinition sourceType, ItemType type, String name) {
+	public void computeGroup(Set<GroupOfAttributes> groups) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public IActionPage createDefaultCreationAction(NewContext context)
+			throws CadseException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+
+    @Override
+    public void setKeyDefinition(KeyDefinition keyDefinition) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public KeyDefinition getKeyDefinition() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+	@Override
+	public LinkType createLinkType(UUID id, int intID, String name, int kind,
+			int min, int max, String selection, ItemType destination)
+			throws CadseException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ExtendedType[] getExtendedType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public LinkType getOutgoingLinkType(ItemType destination, String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public LinkType getOutgoingLinkType(ItemType destination, int kind) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public CPackage getPackage() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public KeyDefinition getSpaceKeyType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setSpaceKeyType(KeyDefinition spaceKeytype) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addAttributeType(IAttributeType<?> ret) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public IAttributeType<?> getCStructuralFeatures(int index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setPackage(CPackage p) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
@@ -700,23 +759,10 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 	}
 
 	@Override
-	public void computeGroup(Set<GroupOfAttributes> groups) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void computeValidators(FilterContext context,
 			List<UIValidator> validators) {
 		// TODO Auto-generated method stub
 		
-	}
-
-	@Override
-	public IActionPage createDefaultCreationAction(NewContext context)
-			throws CadseException {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
@@ -738,65 +784,5 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 		// TODO Auto-generated method stub
 		
 	}
-
-    @Override
-    public <T> T adapt(Class<T> clazz) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void clean(IBuildingContext context, boolean componentsContent) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void build(IBuildingContext context) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void compose(IBuildingContext context) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Exporter[] getExporters() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Exporter[] getExporter(Class<?> exportedContentType) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void setExporters(Exporter... exporters) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Composer[] getComposers() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void setComposers(Composer... composers) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public String getInstanceDisplayName(Item item) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void setKeyDefinition(KeyDefinition keyDefinition) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public KeyDefinition getKeyDefinition() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 
 }

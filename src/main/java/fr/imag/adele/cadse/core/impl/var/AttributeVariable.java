@@ -22,6 +22,7 @@ package fr.imag.adele.cadse.core.impl.var;
 import java.util.UUID;
 
 import fr.imag.adele.cadse.core.Item;
+import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.var.ContextVariable;
 
 /**
@@ -32,7 +33,7 @@ import fr.imag.adele.cadse.core.var.ContextVariable;
 public class AttributeVariable extends VariableImpl {
 
 	/** The key. */
-	String	key;
+	IAttributeType<String>	key;
 
 	/**
 	 * Instantiates a new attribute variable.
@@ -40,7 +41,7 @@ public class AttributeVariable extends VariableImpl {
 	 * @param key
 	 *            the key
 	 */
-	public AttributeVariable(String key) {
+	public AttributeVariable(IAttributeType<String> key) {
 		super();
 		this.key = key;
 	}
@@ -53,7 +54,7 @@ public class AttributeVariable extends VariableImpl {
 	 * @param key
 	 *            the key
 	 */
-	public AttributeVariable(UUID id, String name, String key) {
+	public AttributeVariable(UUID id, String name, IAttributeType<String> key) {
 		super(id, name);
 		this.key = key;
 	}
@@ -65,7 +66,7 @@ public class AttributeVariable extends VariableImpl {
 	 *      fr.imag.adele.cadse.core.Item)
 	 */
 	public String compute(ContextVariable context, Item itemCurrent) {
-		return context.getValue(itemCurrent, key);
+		return context.getAttribute(itemCurrent, key);
 	}
 
 }

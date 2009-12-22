@@ -30,9 +30,9 @@ import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.felix.ipojo.util.Tracker;
 import org.osgi.framework.BundleContext;
 
+import fr.imag.adele.cadse.as.platformide.IPlatformIDE;
 import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.ChangeID;
@@ -42,11 +42,11 @@ import fr.imag.adele.cadse.core.ItemDescriptionRef;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.WSEvent;
+import fr.imag.adele.cadse.core.impl.db.DBLogicalWorkspace;
 import fr.imag.adele.cadse.core.transaction.delta.ImmutableWorkspaceDelta;
-import fr.imag.adele.fede.workspace.as.eclipse.IEclipse;
 import fr.imag.adele.fede.workspace.as.initmodel.IInitModel;
-import fr.imag.adele.fede.workspace.as.persistence.IPersistence;
 import fr.imag.adele.teamwork.db.ModelVersionDBService;
+import fr.imag.adele.teamwork.db.ModelVersionDBService2;
 
 /**
  * The Class WorkspaceDomainImpl.

@@ -12,12 +12,12 @@ public class ExtItemTypeImpl extends ItemTypeImpl {
 			ItemTypeImpl superType, UUID id, int intId,
 			boolean hasContent, boolean isAbstract, String shortname,
 			String displayName) {
-		super(metaType, wl, superType, id, intId, hasContent, isAbstract,
+		super(metaType, superType, id, intId, hasContent, isAbstract,
 				shortname, displayName);
 	}
 
-	public ExtItemTypeImpl(LogicalWorkspace wl, ItemType it, ItemDelta desc) {
-		super(wl, it, desc);
+	public ExtItemTypeImpl(ItemType it, ItemDelta desc) {
+		super(it, desc);
 	}
 
     public ExtItemTypeImpl() {

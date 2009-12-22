@@ -57,7 +57,7 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 	DefineNewContext[]		_defineNewContext;
 
 	public CadseRuntimeImpl(String name, UUID runtimeId, UUID definitionId) {
-		super(runtimeId);
+		super(runtimeId, 0);
 		_idCadseDefinition = definitionId;
 		internalSetName(name);
 		this._cadseName = "Cadse " + name;

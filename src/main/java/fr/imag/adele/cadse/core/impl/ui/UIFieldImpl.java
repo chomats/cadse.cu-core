@@ -107,7 +107,6 @@ public class UIFieldImpl extends Item_Descriptor implements
 
 	public UIFieldImpl(ItemType it, UUID id) {
 		super(id, it);
-		_id = id;
 		_hspan = 1;
 		if (it == CadseGCST.DBROWSER || it == CadseGCST.DLIST)
 			_hspan = 2;

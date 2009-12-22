@@ -39,7 +39,6 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import fede.workspace.role.initmodel.ErrorWhenLoadedModel;
 import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
@@ -47,6 +46,7 @@ import fr.imag.adele.cadse.core.CadseRuntime;
 import fr.imag.adele.cadse.core.ChangeID;
 import fr.imag.adele.cadse.core.DefaultItemManager;
 import fr.imag.adele.cadse.core.EventFilter;
+import fr.imag.adele.cadse.core.ExtendedType;
 import fr.imag.adele.cadse.core.IItemManager;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemDescriptionRef;
@@ -535,7 +535,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 			}
 			return null;
 		}
-		KeyDefinition spacekeytype = type.adapt(FacetteItemTypeKey.class).getKeyDefinition();
+		KeyDefinition spacekeytype = ((ItemType)type).getKeyDefinition();
 		if (spacekeytype != null && spacekeytype.getParentKey() == null &&
                 spacekeytype.getKeyElements().length == 1 &&
                 spacekeytype.getKeyElements()[0] == CadseGCST.ITEM_at_NAME_) {
@@ -1083,35 +1083,35 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		}
 	}
 
-	/**
-	 * Adds the composant.
-	 * 
-	 * @param cl
-	 *            the cl
-	 * @param item
-	 *            the item
-	 */
-	private void addComponent(Link cl, Item item) {
-		ItemImpl source = (ItemImpl) cl.getSource();
-
-		if (source._composants == null) {
-			source._composants = new HashMap<UUID, Item>();
-		}
-		List<Item> added = new ArrayList<Item>();
-
-		Item icl = cl.getDestination();
-		if (source._composants.put(icl.getId(), icl) == null) {
-			added.add(icl);
-		}
-		for (Item il : item.getComponents()) {
-			if (source._composants.put(il.getId(), il) == null) {
-				added.add(il);
-			}
-		}
-		if (added.size() > 0) {
-			_wd.notifieChangeEvent(ChangeID.ADD_COMPONENT, source, added);
-		}
-	}
+//	/**
+//	 * Adds the composant.
+//	 * 
+//	 * @param cl
+//	 *            the cl
+//	 * @param item
+//	 *            the item
+//	 */
+//	private void addComponent(Link cl, Item item) {
+//		ItemImpl source = (ItemImpl) cl.getSource();
+//
+//		if (source._composants == null) {
+//			source._composants = new HashMap<UUID, Item>();
+//		}
+//		List<Item> added = new ArrayList<Item>();
+//
+//		Item icl = cl.getDestination();
+//		if (source._composants.put(icl.getId(), icl) == null) {
+//			added.add(icl);
+//		}
+//		for (Item il : item.getComponents()) {
+//			if (source._composants.put(il.getId(), il) == null) {
+//				added.add(il);
+//			}
+//		}
+//		if (added.size() > 0) {
+//			_wd.notifieChangeEvent(ChangeID.ADD_COMPONENT, source, added);
+//		}
+//	}
 
 	/**
 	 * Removes the composant.
@@ -1202,7 +1202,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		if (i == null) {
 
 			if (type == CadseGCST.CADSE) {
-				i = new CadseRuntimeImpl();
+				i = new CadseRuntimeImpl(shortname, id, );
                                 i.setName(shortname);
                                 i.setUUID(id.getMostSignificantBits(), id.getLeastSignificantBits());
                                 i.setFlag(Item.UNRESOLVED, true);
@@ -1483,7 +1483,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		}
 
 		// cretion du super type et enregistrement.
-		ItemTypeImpl it = new ItemTypeImpl(metaType, this, (ItemTypeImpl) (superType), id, intID, hasContent,
+		ItemTypeImpl it = new ItemTypeImpl(metaType, (ItemTypeImpl) (superType), id, intID, hasContent,
 				isAbstract, shortName, displayName);
 		it.setParent(cadseName, CadseGCST.CADSE_lt_ITEM_TYPES);
 		cadseName.addItemType(it);
@@ -1543,7 +1543,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		resolveItem(it, null, item);
 	}
 
-	void registerItem(Item item) {
+	public void registerItem(Item item) {
 		if (item.getId() != null) {
 			_items.put(item.getId(), item);
 		}
@@ -1870,7 +1870,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 							if (opertype == OperationTypeCst.SET_ATTRIBUTE_OPERATION) {
 								opertype = oper.getParentType();
 								if (opertype == OperationTypeCst.ITEM_OPERATION) {
-									ItemDelta item = (ItemDelta) oper.getParent();
+									ItemDelta item = (ItemDelta) oper.getParentOperDelta();
 									if (item.getBaseItem() != null && item.getBaseItem().isStatic()) {
 										throw new CadseException("Cannot set attribute on a static item");
 									}
@@ -1880,14 +1880,14 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 							if (opertype == OperationTypeCst.DELETE_OPERATION) {
 								opertype = oper.getParentType();
 								if (opertype == OperationTypeCst.ITEM_OPERATION) {
-									ItemDelta item = (ItemDelta) oper.getParent();
+									ItemDelta item = (ItemDelta) oper.getParentOperDelta();
 									if (item.getBaseItem().isStatic()) {
 										throw new CadseException("Cannot delete a static item");
 									}
 									continue;
 								}
 								if (opertype == OperationTypeCst.LINK_OPERATION) {
-									LinkDeltaImpl linkOperation = (LinkDeltaImpl) oper.getParent();
+									LinkDeltaImpl linkOperation = (LinkDeltaImpl) oper.getParentOperDelta();
 									Link linkbase = linkOperation.getBaseLink();
 
 									if (linkbase != null && linkbase.isStatic()) {
@@ -1901,14 +1901,14 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 								opertype = oper.getParentType();
 								if (opertype == OperationTypeCst.ITEM_OPERATION) {
 
-									ItemDelta item = (ItemDelta) oper.getParent();
+									ItemDelta item = (ItemDelta) oper.getParentOperDelta();
 									preconditions_createItem(item, item.getType(), item.getPartParent(), item
 											.getPartParentLinkType());
 									continue;
 								}
 								if (opertype == OperationTypeCst.LINK_OPERATION) {
 
-									LinkDeltaImpl linkOperation = (LinkDeltaImpl) oper.getParent();
+									LinkDeltaImpl linkOperation = (LinkDeltaImpl) oper.getParentOperDelta();
 									ItemDeltaImpl source = linkOperation.getSource();
 									if (source.isDeleted()) {
 										// TODO throw an exception

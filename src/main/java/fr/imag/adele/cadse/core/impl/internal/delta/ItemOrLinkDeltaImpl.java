@@ -33,6 +33,7 @@ import fr.imag.adele.cadse.core.transaction.delta.ItemOrLinkDelta;
 import fr.imag.adele.cadse.core.transaction.delta.OperationType;
 import fr.imag.adele.cadse.core.transaction.delta.SetAttributeOperation;
 import fr.imag.adele.cadse.core.transaction.delta.WLWCOperationImpl;
+import fr.imag.adele.cadse.util.Assert;
 
 public abstract class ItemOrLinkDeltaImpl extends WLWCOperationImpl implements ItemOrLinkDelta, InternalItemOrLinkDelta {
 

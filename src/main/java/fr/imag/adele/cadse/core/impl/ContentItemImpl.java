@@ -42,7 +42,10 @@ import fr.imag.adele.cadse.core.build.IBuildingContext;
 import fr.imag.adele.cadse.core.content.ContentItem;
 import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
 import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
+import fr.imag.adele.cadse.core.impl.db.DBLogicalWorkspace;
+import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
 import fr.imag.adele.cadse.core.var.ContextVariable;
+import fr.imag.adele.cadse.core.var.ContextVariableImpl;
 import fr.imag.adele.cadse.util.ArraysUtil;
 
 /**
@@ -73,30 +76,23 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	/** The item. */
 	private 	 Item			_ownerItem;
 
-
-	//private LinkType			partLinkType;
-
-	/** The composers. */
-	private Composer[]			fComposers;
-
-	/** The exporters. */
-	private Exporter[]			fExporters;
-	
-	private ContentItem[]		_children;
+    private ContentItem[]		_children;
 	private ContentItem[]		_childrenFromParent;
 	
 	
-
 	
-	/**
-	 * Instantiates a new content manager.
-	 */
 	protected ContentItemImpl(UUID id) {
-		super(id);
+		super(id, 0);
 		_ownerItem = null;
 		_parent = null;
 	}
 	
+	protected ContentItemImpl(int objectId) {
+		super(objectId, 0);
+		_ownerItem = null;
+		_parent = null;
+	}
+
 	@Override
 	public Link commitLoadCreateLink(LinkType lt, Item destination)
 			throws CadseException {
@@ -107,15 +103,15 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 		return super.commitLoadCreateLink(lt, destination);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#getItem()
-	 */
-	@Deprecated
-	final public Item getItem() {
-		return _ownerItem;
-	}
+//	/*
+//	 * (non-Javadoc)
+//	 * 
+//	 * @see fr.imag.adele.cadse.core.ContentItem#getItem()
+//	 */
+//	@Deprecated
+//	final public Item getItem() {
+//		return _ownerItem;
+//	}
 	
 	final public Item getOwnerItem() {
 		return _ownerItem;
@@ -196,7 +192,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	 *      java.lang.Object)
 	 */
 	public <T> T getMainMappingContent(Class<T> clazz) {
-		return getMainMappingContent(ContextVariable.DEFAULT, clazz);
+		return getMainMappingContent(ContextVariableImpl.DEFAULT, clazz);
 	}
 
 	/*
@@ -205,7 +201,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	 * @see fr.imag.adele.cadse.core.ContentItem#getMainMappingContent(fr.imag.adele.cadse.core.var.ContextVariable,
 	 *      java.lang.Class, java.lang.Object)
 	 */
-	public <T> T getMainMappingContent(ContextVariable cxt, Class<T> clazz) {
+	public <T> T getMainMappingContent(ContextVariableImpl cxt, Class<T> clazz) {
 		return null;
 	}
 
@@ -266,14 +262,14 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 		}
 
 		ContentItem cm;
-		Item parentItem = getItem().getPartParent(false);
+		Item parentItem = getOwnerItem().getPartParent(false);
 		if (parentItem == null) {
 			return null;
 		}
 		if (parentItem.getContentItem() != null) {
 			return parentItem.getContentItem();
 		}
-		for (Link l : getItem().getIncomingLinks()) {
+		for (Link l : getOwnerItem().getIncomingLinks()) {
 			if (l.getLinkType().isPart() && l.getSource().getContentItem() != null) {
 				return l.getSource().getContentItem();
 			}
@@ -428,7 +424,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	 *      fr.imag.adele.cadse.core.GenContext)
 	 */
 	public void generateParts(GenStringBuilder sb, String type, String kind, Set<String> imports, GenContext context) {
-		generateParts(getItem(), sb, type, kind, imports, context);
+		generateParts(getOwnerItem(), sb, type, kind, imports, context);
 	}
 
 	/**
@@ -500,72 +496,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#getExporters()
-	 */
-	public Exporter[] getExporters() {
-		if (fExporters == null) {
-			return NO_EXPORTER;
-		}
-		return fExporters;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#getExporter(java.lang.String)
-	 */
-	public Exporter[] getExporter(String exporterType) {
-		Exporter[] ex = getExporters();
-		List<Exporter> ret = new ArrayList<Exporter>();
-		for (int i = 0; i < ex.length; i++) {
-			if (ex[i].containsExporterType(exporterType)) {
-				ret.add(ex[i]);
-			}
-		}
-		return ret.toArray(new Exporter[ret.size()]);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#setExporters(fr.imag.adele.cadse.core.build.Exporter)
-	 */
-	public void setExporters(Exporter... exporters) {
-		if (exporters.length == 0) {
-			fExporters = NO_EXPORTER;
-			return;
-		}
-		this.fExporters = exporters;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#getComposers()
-	 */
-	public Composer[] getComposers() {
-		if (fComposers == null) {
-			return NO_COMPOSER;
-		}
-		return fComposers;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#setComposers(fr.imag.adele.cadse.core.build.Composer)
-	 */
-	public void setComposers(Composer... composers) {
-		if (composers.length == 0) {
-			fComposers = NO_COMPOSER;
-			return;
-		}
-		this.fComposers = composers;
-	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 

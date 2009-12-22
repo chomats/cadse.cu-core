@@ -28,10 +28,12 @@ import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
+import fr.imag.adele.cadse.core.impl.db.DBObject;
 import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
 import fr.imag.adele.cadse.core.impl.internal.Accessor;
+import fr.imag.adele.teamwork.db.ModelVersionDBException;
 
-public class ReflectLink implements Link {
+public class ReflectLink extends DBObject implements Link {
 	int			_flag;
 	LinkType	_linkType;
 	Item		_source;
@@ -233,7 +235,7 @@ public class ReflectLink implements Link {
 	}
 
 	public void addCompatibleVersions(int... versions) {
-		// TODO Auto-generated method stub
+		
 
 	}
 
@@ -265,5 +267,33 @@ public class ReflectLink implements Link {
 
 	public boolean isStatic() {
 		return false;
+	}
+
+
+	@Override
+	public UUID getDestinationCadseId() {
+		return getDestination().getCadse().getId();
+	}
+
+
+	@Override
+	public <T> T getLinkAttributeOwner(IAttributeType<T> attDef) {
+		try {
+			return (T) _dblw.getDB().getObjectValue(getObjectId(), attDef.getObjectId());
+		} catch (ModelVersionDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	@Override
+	public UUID getSourceCadseId() {
+		return getSource().getCadse().getId();
+	}
+
+	@Override
+	public boolean isInterCadseLink() {
+		return getSource().getCadse() != getDestination().getCadse();
 	}
 }

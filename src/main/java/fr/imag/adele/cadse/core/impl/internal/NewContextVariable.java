@@ -4,8 +4,9 @@ import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
 import fr.imag.adele.cadse.core.var.ContextVariable;
+import fr.imag.adele.cadse.core.var.ContextVariableImpl;
 
-public class NewContextVariable extends ContextVariable {
+public class NewContextVariable extends ContextVariableImpl {
 
 	LogicalWorkspaceTransaction	_copy;
 

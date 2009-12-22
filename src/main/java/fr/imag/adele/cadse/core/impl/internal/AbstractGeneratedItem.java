@@ -55,13 +55,16 @@ import fr.imag.adele.cadse.core.Messages;
 import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.WorkspaceListener;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
+import fr.imag.adele.cadse.core.build.Composer;
 import fr.imag.adele.cadse.core.build.Exporter;
+import fr.imag.adele.cadse.core.build.IBuildingContext;
 import fr.imag.adele.cadse.core.content.ContentItem;
 import fr.imag.adele.cadse.core.impl.CadseCore;
 import fr.imag.adele.cadse.core.impl.CadseIllegalArgumentException;
 import fr.imag.adele.cadse.core.impl.CollectedReflectLink;
 import fr.imag.adele.cadse.core.impl.PageRuntimeModel;
 import fr.imag.adele.cadse.core.impl.ReflectLink;
+import fr.imag.adele.cadse.core.impl.db.DBObject;
 import fr.imag.adele.cadse.core.impl.internal.delta.ItemTypeItemDeltaAdapter;
 import fr.imag.adele.cadse.core.internal.IWorkingLoadingItems;
 import fr.imag.adele.cadse.core.internal.IWorkspaceNotifier;
@@ -77,7 +80,6 @@ import fr.imag.adele.cadse.core.ui.view.FilterContext;
 import fr.imag.adele.cadse.core.ui.view.NewContext;
 import fr.imag.adele.cadse.core.util.Convert;
 import fr.imag.adele.cadse.core.util.IErrorCollector;
-import fr.imag.adele.cadse.util.ArraysUtil;
 import fr.imag.adele.cadse.util.*;
 import fr.imag.adele.teamwork.db.ModelVersionDBException;
 
@@ -85,6 +87,8 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item, In
 	
 	
 
+	private static final Composer[] NO_COMPOSER = new Composer[0];
+	private static final Exporter[] NO_EXPORTER = new Exporter[0];
 	// listener attributes
 	protected WorkspaceListener[]			_listeners				= null;
 	protected int[]                         _filter					= null;
@@ -134,53 +138,32 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item, In
 	public AbstractGeneratedItem() {
 	}
 	
-	public AbstractGeneratedItem(DBLogicalWorkspace dblw) throws ModelVersionDBException {
-		this(dblw, dblw.getDB().createLocalIdentifier());
+	public AbstractGeneratedItem(boolean createUUID) throws ModelVersionDBException {
+		this(-1, 0);
+		if (createUUID)
+			setUUID(UUID.randomUUID());
 	}
 
-	public AbstractGeneratedItem(DBLogicalWorkspace dblw, int objectId) {
-		this(dblw, objectId, null, 0);
+	public AbstractGeneratedItem(int objectId) {
+		this(objectId, 0);
 	}
 
-	public AbstractGeneratedItem(UUID id) {
-		this._id = id;
-		_wl = (LogicalWorkspaceImpl) CadseCore.getLogicalWorkspace();
-		checkId(id);
-
-	public AbstractGeneratedItem(DBLogicalWorkspace dblw, int objectId, UUID id, int flag) {
-            super(dblw,objectId);
-		_flag = flag;
-		_definedflag = flag;
-		checkId(id);
-	}
-
-
-	public AbstractGeneratedItem(DBLogicalWorkspace dblw, ItemDelta item) throws ModelVersionDBException {
-            super(dblw, item.getObjectID() == -1 ? dblw.getDB().createLocalIdentifier():  item.getObjectID());
+	public AbstractGeneratedItem(UUID id, int flag) {
+		this(-1, flag);
+		setUUID(id);
 	}
 	
-	public AbstractGeneratedItem(ItemDelta item) throws ModelVersionDBException {
-            _objectId = item.getObjectID();
-	private void checkId(UUID id) {
-		if (id == null) {
-			this._id = UUID.randomUUID();
-		}
+	public AbstractGeneratedItem(int objectId, int flag) {
+            super(objectId);
+		_flag = flag;
+		_definedflag = flag;
 	}
 
 	public AbstractGeneratedItem(ItemDelta item) {
-		this._id = item.getId();
-		_wl = (LogicalWorkspaceImpl) CadseCore.getLogicalWorkspace();
-		checkId(_id);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.internal.LinkImpl#hashCode()
-	 */
-	@Override
-	public void setObjectID(int localIdentifier) {
-		_objectId = localIdentifier;
+            _objectId = item.getObjectId();
+            if (_objectId == -1) {
+            	//this._id = UUID.randomUUID();
+            }
 	}
 	
 
@@ -422,15 +405,8 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item, In
 		return getContentItem();
 	}
 
-	public Item getComponentInfo(UUID id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 
-	public Set<UUID> getComponentIds() {
-		return Collections.emptySet();
-	}
 
 	public List<Item> getCompositeParent() {
 		return Collections.emptyList();
@@ -1099,7 +1075,12 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item, In
 	}
 
 	public void setName(String name)  {
-		setAttribute(CadseGCST.ITEM_at_NAME_, name);
+		try {
+			setAttribute(CadseGCST.ITEM_at_NAME_, name);
+		} catch (CadseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void setType(ItemType selectedItemType) {
@@ -1108,7 +1089,12 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item, In
 	}
 
 	public void setQualifiedName(String qualifiedName)  {
-		setAttribute(CadseGCST.ITEM_at_QUALIFIED_NAME_, qualifiedName);
+		try {
+			setAttribute(CadseGCST.ITEM_at_QUALIFIED_NAME_, qualifiedName);
+		} catch (CadseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void setUniqueName(String uniqueName) throws CadseException {
@@ -1127,10 +1113,6 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item, In
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
-        @Override
-        public int getIdInPackage() {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
 
 
 
@@ -1827,27 +1809,19 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item, In
 	public CadseRuntime getCadse() {
 		return _cadse;
 	}
-	@Override
-	public Exporter[] getExporter(Class<?> exporterType) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 	@Override
 	public int getIdInPackage() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+	
 	@Override
 	public ItemType getType() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
-	@Override
-	public boolean isInstanceOf(TypeDefinition it) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 	
 	@Override
 	public void setCadse(CadseRuntime cr) {
@@ -1869,13 +1843,13 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item, In
 		}
 		return _exporters;
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 *
 	 * @see fr.imag.adele.cadse.core.ContentItem#getExporter(java.lang.String)
 	 */
-	public Exporter[] getExporter(Class exporterType) {
+	public Exporter[] getExporter(Class<?> exporterType) {
 		Exporter[] ex = getExporters();
 		List<Exporter> ret = new ArrayList<Exporter>();
 		for (int i = 0; i < ex.length; i++) {
