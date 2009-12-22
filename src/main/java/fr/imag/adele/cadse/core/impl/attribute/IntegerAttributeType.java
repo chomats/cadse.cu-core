@@ -33,6 +33,7 @@ import fr.imag.adele.cadse.core.ui.EPosLabel;
 import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.ui.UIPlatform;
 import fr.imag.adele.cadse.core.util.Convert;
+import fr.imag.adele.cadse.util.NLS;
 
 /**
  * The Class IntegerAttributeType.

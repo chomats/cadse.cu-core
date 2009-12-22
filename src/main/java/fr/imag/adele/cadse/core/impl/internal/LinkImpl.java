@@ -25,6 +25,9 @@ package fr.imag.adele.cadse.core.impl.internal;
 import java.util.UUID;
 
 import fr.imag.adele.cadse.core.CadseException;
+import fr.imag.adele.cadse.core.CadseGCST;
+import fr.imag.adele.cadse.core.CadseIllegalArgumentException;
+import fr.imag.adele.cadse.core.CadseRuntime;
 import fr.imag.adele.cadse.core.CommonMethods;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
@@ -32,9 +35,11 @@ import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
+import fr.imag.adele.cadse.core.impl.db.DBObject;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
 import fr.imag.adele.cadse.core.util.Convert;
 import fr.imag.adele.cadse.util.ArraysUtil;
+import fr.imag.adele.teamwork.db.ModelVersionDBException;
 
 /**
  * A link is a relation between two items. Each link has a type <tt>lt</tt>
@@ -117,6 +122,14 @@ public class LinkImpl extends DBObject implements Link {
 	LinkImpl(int objectId, 
 			Item source, LinkType lt, Item destination, boolean addInIncommingList) {
 		super(objectId);
+		if (objectId == -1) {
+			try {
+				objectId = _dblw.getDB().createLinkIfNeed(lt.getObjectId(), source.getObjectId(), destination.getObjectId());
+			} catch (ModelVersionDBException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
         assert source != null;
 		assert destination != null;
 		if (lt == null && this instanceof LinkType) {
@@ -140,34 +153,64 @@ public class LinkImpl extends DBObject implements Link {
 		}
 	}
 
-	/**
-	 * Gets the type.
-	 * 
-	 * @return link type.
-	 */
-	public LinkType getLinkType() {
-		return linkType;
+	public void addCompatibleVersions(int... versions) {
+		compatibleVersions = ArraysUtil.add(compatibleVersions, versions);
+	}
+
+	public void clearCompatibleVersions() {
+		compatibleVersions = null;
+	}
+
+	public void commitDelete() throws CadseException {
+		source.removeOutgoingLink(this, false);
+		if (!source.isOrphan()) {
+			destination.removeIncomingLink(this, false);
+		}
+	}
+
+	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
+		if (key.equals(CadseGCST.LINK_TYPE_TYPE_at_VERSION_)) {
+			this.version = Convert.toInt(value, null, -1);
+			return true;
+		}
+		return false;
 	}
 
 	/**
-	 * Gets the source.
+	 * Delete a link.
 	 * 
-	 * @return source of this link.
+	 * NOTE: D�tacher les references de la source et de la destination point� �
+	 * ce lien. Si la destination de ce lien est un contenu, supprimer le aussi.
 	 */
-	public Item getSource() {
-		return source;
+	@Deprecated
+	public void delete() throws CadseException {
+		Accessor.delete(this);
 	}
 
-	/**
-	 * Gets the resolved destination.
+	public void destroy() throws CadseException {
+		((ItemImpl) source).removeOutgoingLink(this);
+		if (!source.isOrphan()) {
+			((AbstractItem) destination).removeIncomingLink(this, true);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @return destination of this link.
-	 * 
-	 * NOTE: Si ce lien est non-resolu, avant de retouner l'objet, essayer de
-	 * r�cup�rer cet item dans le workspace. Si non trouv�, retourner null.
+	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
-	public Item getResolvedDestination() {
-		return getDestination(true);
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Link) {
+			Link l = (Link) obj;
+			return l.getSource().equals(getSource()) && l.getLinkType().equals(getLinkType())
+					&& l.getDestinationId().equals(getDestinationId());
+		}
+		return super.equals(obj);
+	}
+
+	public int[] getCompatibleVersions() {
+		return compatibleVersions;
 	}
 
 	/*
@@ -197,13 +240,14 @@ public class LinkImpl extends DBObject implements Link {
 		return isLinkResolved() ? destination : null;
 	}
 
-	/**
-	 * Gets the source id.
-	 * 
-	 * @return id source.
-	 */
-	public UUID getSourceId() {
-		return source.getId();
+	@Override
+	public UUID getDestinationCadseId() {
+		if (destination == null)
+			return null;
+		CadseRuntime cr = destination.getCadse();
+		if (cr == null)
+			return null;
+		return cr.getId();
 	}
 
 	/**
@@ -215,48 +259,157 @@ public class LinkImpl extends DBObject implements Link {
 		return destination.getId();
 	}
 
-	/**
-	 * Sets the read only.
+
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param readOnly
-	 *            the read only
+	 * @see fr.imag.adele.cadse.core.Link#getDestinationShortName()
 	 */
-	public void setReadOnly(boolean readOnly) {
-		if ((getLinkType().getKind() & LinkType.READ_ONLY) == 0) {
-			if (readOnly) {
-				kind |= LinkType.READ_ONLY;
-			} else {
-				kind &= ~LinkType.READ_ONLY;
-			}
+	public String getDestinationName() {
+		return destination.getName();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see fr.imag.adele.cadse.core.Link#getDestinationUniqueName()
+	 */
+	public String getDestinationQualifiedName() {
+		return destination.getQualifiedName();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see fr.imag.adele.cadse.core.Link#getDestinationType()
+	 */
+	public ItemType getDestinationType() {
+		return destination.getType();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see fr.imag.adele.cadse.core.Link#getIndex()
+	 */
+	public int getIndex() {
+		return source.indexOf(this);
+	}
+
+	@Override
+	public <T> T getLinkAttributeOwner(IAttributeType<T> attDef) {
+		try {
+			return (T) _dblw.getDB().getObjectValue(getObjectId(), attDef.getObjectId());
+		} catch (ModelVersionDBException e) {
+			throw new CadseIllegalArgumentException("Cannot get attribute of {0}", e, attDef);
 		}
 	}
 
 	/**
-	 * Checks if is read only.
+	 * Gets the type.
 	 * 
-	 * @return readOnly
+	 * @return link type.
 	 */
-	public boolean isReadOnly() {
-		if (source.isReadOnly()) {
-			return true;
-		}
-		return (kind & LinkType.READ_ONLY) != 0;
+	public LinkType getLinkType() {
+		return linkType;
 	}
 
 	/**
-	 * Sets the hidden.
+	 * Gets the resolved destination.
 	 * 
-	 * @param hidden
-	 *            the hidden
+	 * @return destination of this link.
+	 * 
+	 * NOTE: Si ce lien est non-resolu, avant de retouner l'objet, essayer de
+	 * r�cup�rer cet item dans le workspace. Si non trouv�, retourner null.
 	 */
-	public void setHidden(boolean hidden) {
-		if ((getLinkType().getKind() & LinkType.HIDDEN) == 0) {
-			if (hidden) {
-				kind |= LinkType.HIDDEN;
-			} else {
-				kind &= ~LinkType.HIDDEN;
-			}
-		}
+	public Item getResolvedDestination() {
+		return getDestination(true);
+	}
+
+	/**
+	 * Gets the source.
+	 * 
+	 * @return source of this link.
+	 */
+	public Item getSource() {
+		return source;
+	}
+
+	@Override
+	public UUID getSourceCadseId() {
+		if (source == null)
+			return null;
+		CadseRuntime cr = source.getCadse();
+		if (cr == null)
+			return null;
+		return cr.getId();
+	}
+
+	/**
+	 * Gets the source id.
+	 * 
+	 * @return id source.
+	 */
+	@Override
+	public UUID getSourceId() {
+		return source.getId();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see fr.imag.adele.cadse.core.Link#getVersion()
+	 */
+	public int getVersion() {
+		return version;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		if (_objectId != -1)
+			return _objectId;
+		return getSource().getObjectId()^ getLinkType().getObjectId() ^ getDestinationId().hashCode();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see fr.imag.adele.cadse.core.Link#isAggregation()
+	 */
+	public boolean isAggregation() {
+		return (kind & (LinkType.AGGREGATION)) != 0;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see fr.imag.adele.cadse.core.Link#isAnnotation()
+	 */
+	public boolean isAnnotation() {
+		return (kind & (LinkType.ANNOTATION)) != 0;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see fr.imag.adele.cadse.core.Link#isComposition()
+	 */
+	public boolean isComposition() {
+		return (kind & LinkType.COMPOSITION) != 0;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see fr.imag.adele.cadse.core.Link#isDerived()
+	 */
+	public boolean isDerived() {
+		return (kind & LinkType.DERIVED) != 0;
 	}
 
 	/**
@@ -268,73 +421,21 @@ public class LinkImpl extends DBObject implements Link {
 		return (kind & LinkType.HIDDEN) != 0;
 	}
 
-	/**
-	 * Delete a link.
-	 * 
-	 * NOTE: D�tacher les references de la source et de la destination point� �
-	 * ce lien. Si la destination de ce lien est un contenu, supprimer le aussi.
-	 */
-	@Deprecated
-	public void delete() throws CadseException {
-		Accessor.delete(this);
-	};
-
-	public void destroy() throws CadseException {
-		((ItemImpl) source).removeOutgoingLink(this);
-		if (!source.isOrphan()) {
-			((AbstractItem) destination).removeIncomingLink(this, true);
-		}
-	}
-
-	public void commitDelete() throws CadseException {
-		source.removeOutgoingLink(this, false);
-		if (!source.isOrphan()) {
-			destination.removeIncomingLink(this, false);
-		}
+	@Override
+	public boolean isInterCadseLink() {
+		UUID scId = getSourceCadseId();
+		UUID dcId = getDestinationCadseId();
+		return !((scId == null && dcId == null) 
+				|| (scId != null && dcId != null && scId.equals(dcId)));
 	}
 
 	/**
-	 * Resolve a link.
+	 * test si le lien est resolu.
 	 * 
-	 * NOTE: Ce m�thode essaie de r�cup�rer par id dans le workspace l'object
-	 * destination de ce lien .
-	 * 
-	 * @return true, if resolve
+	 * @return true, if checks if is resolved
 	 */
-	public boolean resolve() {
-		if (getSource().isOrphan()) {
-			return false;
-		}
-		if (!destination.isResolved()) {
-			LogicalWorkspace ws = source.getLogicalWorkspace();
-			Item it = ws.getItem(this.destination.getId());
-			if (it != null && it != destination) {
-				destination.removeIncomingLink(this, true);
-				this.destination = it;
-				destination.addIncomingLink(this, true);
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Unresolve a link.
-	 */
-	public void unresolve() {
-		if (getSource().isOrphan()) {
-			return;
-		}
-
-		try {
-			destination = ((LogicalWorkspaceImpl) source.getLogicalWorkspace()).getItem(destination.getId(),
-					destination.getType(), destination.getQualifiedName(), destination.getName());
-		} catch (CadseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		destination.addIncomingLink(this, false);
+	public boolean isLinkResolved() {
+		return destination.isResolved();
 	}
 
 	/**
@@ -350,57 +451,24 @@ public class LinkImpl extends DBObject implements Link {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return CommonMethods.toStringLink(this);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.Link#isAnnotation()
-	 */
-	public boolean isAnnotation() {
-		return (kind & (LinkType.ANNOTATION)) != 0;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.Link#isAggregation()
-	 */
-	public boolean isAggregation() {
-		return (kind & (LinkType.AGGREGATION)) != 0;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.Link#isPart()
 	 */
 	public boolean isPart() {
 		return (kind & LinkType.PART) != 0;
 	}
 
-	/**
-	 * Recompute destination.
-	 * 
-	 * @param aDestination
-	 *            the a destination
-	 */
-	void recomputeDestination(ItemImpl aDestination) {
-		this.destination = aDestination;
-	}
+	
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Checks if is read only.
 	 * 
-	 * @see fr.imag.adele.cadse.core.Link#isComposition()
+	 * @return readOnly
 	 */
-	public boolean isComposition() {
-		return (kind & LinkType.COMPOSITION) != 0;
+	public boolean isReadOnly() {
+		if (source.isReadOnly()) {
+			return true;
+		}
+		return (kind & LinkType.READ_ONLY) != 0;
 	}
 
 	/*
@@ -412,74 +480,9 @@ public class LinkImpl extends DBObject implements Link {
 		return (kind & LinkType.REQUIRE) != 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.Link#isDerived()
-	 */
-	public boolean isDerived() {
-		return (kind & LinkType.DERIVED) != 0;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof Link) {
-			Link l = (Link) obj;
-			return l.getSource().equals(getSource()) && l.getLinkType().equals(getLinkType())
-					&& l.getDestinationId().equals(getDestinationId());
-		}
-		return super.equals(obj);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		return getSource().getObjectID()^ getLinkType().getObjectID() ^ getDestinationId().hashCode();
-	}
-
-	/**
-	 * test si le lien est resolu.
-	 * 
-	 * @return true, if checks if is resolved
-	 */
-	public boolean isLinkResolved() {
-		return destination.isResolved();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.Link#getDestinationType()
-	 */
-	public ItemType getDestinationType() {
-		return destination.getType();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.Link#getDestinationUniqueName()
-	 */
-	public String getDestinationQualifiedName() {
-		return destination.getQualifiedName();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.Link#getDestinationShortName()
-	 */
-	public String getDestinationName() {
-		return destination.getName();
+	public boolean isStatic() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	/*
@@ -508,22 +511,71 @@ public class LinkImpl extends DBObject implements Link {
 		// ((ItemImpl)this.source).moveBefore(this,link);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Recompute destination.
 	 * 
-	 * @see fr.imag.adele.cadse.core.Link#getIndex()
+	 * @param aDestination
+	 *            the a destination
 	 */
-	public int getIndex() {
-		return source.indexOf(this);
+	void recomputeDestination(ItemImpl aDestination) {
+		this.destination = aDestination;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Resolve a link.
 	 * 
-	 * @see fr.imag.adele.cadse.core.Link#getVersion()
+	 * NOTE: Ce m�thode essaie de r�cup�rer par id dans le workspace l'object
+	 * destination de ce lien .
+	 * 
+	 * @return true, if resolve
 	 */
-	public int getVersion() {
-		return version;
+	public boolean resolve() {
+		if (getSource().isOrphan()) {
+			return false;
+		}
+		if (!destination.isResolved()) {
+			LogicalWorkspace ws = source.getLogicalWorkspace();
+			Item it = ws.getItem(this.destination.getId());
+			if (it != null && it != destination) {
+				destination.removeIncomingLink(this, true);
+				this.destination = it;
+				destination.addIncomingLink(this, true);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Sets the hidden.
+	 * 
+	 * @param hidden
+	 *            the hidden
+	 */
+	public void setHidden(boolean hidden) {
+		if ((getLinkType().getKind() & LinkType.HIDDEN) == 0) {
+			if (hidden) {
+				kind |= LinkType.HIDDEN;
+			} else {
+				kind &= ~LinkType.HIDDEN;
+			}
+		}
+	}
+
+	/**
+	 * Sets the read only.
+	 * 
+	 * @param readOnly
+	 *            the read only
+	 */
+	public void setReadOnly(boolean readOnly) {
+		if ((getLinkType().getKind() & LinkType.READ_ONLY) == 0) {
+			if (readOnly) {
+				kind |= LinkType.READ_ONLY;
+			} else {
+				kind &= ~LinkType.READ_ONLY;
+			}
+		}
 	}
 
 	/*
@@ -535,100 +587,33 @@ public class LinkImpl extends DBObject implements Link {
 		this.version = version;
 	}
 
-	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
-		if (key.equals(CadseGCST.VERSION_KEY)) {
-			this.version = Convert.toInt(value, null, -1);
-			return true;
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return CommonMethods.toStringLink(this);
+	}
+
+	/**
+	 * Unresolve a link.
+	 */
+	public void unresolve() {
+		if (getSource().isOrphan()) {
+			return;
 		}
-		return false;
-	}
 
-	
-
-	public void addCompatibleVersions(int... versions) {
-		compatibleVersions = ArraysUtil.add(compatibleVersions, versions);
-	}
-
-	public void clearCompatibleVersions() {
-		compatibleVersions = null;
-	}
-
-	public int[] getCompatibleVersions() {
-		return compatibleVersions;
-	}
-
-	public boolean isStatic() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	@Deprecated
-	public UUID getDestinationCadseId() {
-		if (destination == null)
-			return null;
-		CadseRuntime cr = destination.getCadse();
-		if (cr == null)
-			return null;
-		return cr.getId();
-	}
-
-	@Override
-	@Deprecated
-	public UUID getSourceCadseId() {
-		if (source == null)
-			return null;
-		CadseRuntime cr = source.getCadse();
-		if (cr == null)
-			return null;
-		return cr.getId();
-	}
-
-	@Override
-	public boolean isInterCadseLink() {
-		UUID scId = getSourceCadseID();
-		UUID dcId = getDestinationCadseID();
-		return !((scId == null && dcId == null) 
-				|| (scId != null && dcId != null && scId.equals(dcId)));
-	}
-
-	@Override
-	public <T> T getLinkAttributeOwner(IAttributeType<T> attDef) {
 		try {
-			return (T) _dblw.getDB().getObjectValue(getObjectID(), attDef.getObjectID());
-		} catch (ModelVersionDBException e) {
-			throw new CadseIllegalArgumentException("Cannot get attribute of {0}", e, attDef);
+			destination = ((LogicalWorkspaceImpl) source.getLogicalWorkspace()).getItem(destination.getId(),
+					destination.getType(), destination.getQualifiedName(), destination.getName());
+		} catch (CadseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-	}
 
-	@Override
-	public UUID getDestinationCadseID() {
-		if (destination == null)
-			return null;
-		CadseRuntime cr = destination.getCadse();
-		if (cr == null)
-			return null;
-		return cr.getId();
-	}
-
-	@Override
-	public UUID getDestinationID() {
-		return source.getId();
-	}
-
-	@Override
-	public UUID getSourceCadseID() {
-		if (source == null)
-			return null;
-		CadseRuntime cr = source.getCadse();
-		if (cr == null)
-			return null;
-		return cr.getId();
-	}
-
-	@Override
-	public UUID getSourceID() {
-		return source.getId();
+		destination.addIncomingLink(this, false);
 	}
 
 	

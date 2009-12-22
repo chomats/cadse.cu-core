@@ -307,13 +307,7 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements Li
 		// TODO Auto-generated method stub
 		return false;
 	}
-
-	@Override
-	public boolean containsComponent(UUID itemId) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
+	
 	@Override
 	public boolean containsPartChild(Item item) {
 		// TODO Auto-generated method stub
@@ -372,30 +366,6 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements Li
 
 	@Override
 	public CadseDomain getCadseDomain() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Set<UUID> getComponentIds() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Item getComponentInfo(UUID itemId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Set<Item> getComponents() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Item> getCompositeParent() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -788,11 +758,6 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements Li
 
 	}
 
-	@Override
-	public void setName(String name) throws CadseException {
-		// TODO Auto-generated method stub
-
-	}
 
 	@Override
 	public Link setOutgoingItem(LinkType linkType, Item dest)
@@ -809,31 +774,13 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements Li
 	}
 
 	@Override
-	public void setQualifiedName(String qualifiedName) throws CadseException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void setReadOnly(boolean readOnly)  {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setShortName(String name) throws CadseException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void setState(ItemState newState) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setUniqueName(String qualifiedName) throws CadseException {
 		// TODO Auto-generated method stub
 
 	}
@@ -1189,25 +1136,6 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements Li
 
 	}
 
-	@Override
-	public void addLogicalWorkspaceTransactionListener(
-			LogicalWorkspaceTransactionListener listener) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public LogicalWorkspaceTransactionListener[] getLogicalWorkspaceTransactionListener() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void removeLogicalWorkspaceTransactionListener(
-			LogicalWorkspaceTransactionListener listener) {
-		// TODO Auto-generated method stub
-
-	}
 
 	@Override
 	public String getCSTName() {
@@ -1283,18 +1211,6 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements Li
 	}
 
 	@Override
-	public CadseRuntime getCadse() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setCadse(CadseRuntime cr) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public UUID getDestinationCadseId() {
 		// TODO Auto-generated method stub
 		return null;
@@ -1324,89 +1240,12 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements Li
 		return null;
 	}
 
-	@Override
-	public UUID getDestinationCadseID() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public UUID getDestinationID() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public UUID getSourceCadseID() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public UUID getSourceID() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
     @Override
     public <T> T adapt(Class<T> clazz) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Override
-    public void clean(IBuildingContext context, boolean componentsContent) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void build(IBuildingContext context) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void compose(IBuildingContext context) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Exporter[] getExporters() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Exporter[] getExporter(Class<?> exportedContentType) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void setExporters(Exporter... exporters) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Composer[] getComposers() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void setComposers(Composer... composers) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public int getIdInPackage() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void setIdInPackage(int idInPackage) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void setUUID(long itemMsb, long itemLsb) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 
     @Override
     public void addLogicalWorkspaceTransactionListener(LogicalWorkspaceTransactionListener listener) {

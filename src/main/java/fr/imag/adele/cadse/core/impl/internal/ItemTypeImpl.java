@@ -22,6 +22,8 @@
  */
 package fr.imag.adele.cadse.core.impl.internal;
 
+import fr.imag.adele.cadse.core.CadseException;
+import java.util.UUID;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -37,11 +39,13 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import fr.imag.adele.cadse.core.CPackage;
 import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CadseRuntime;
 import fr.imag.adele.cadse.core.DerivedLinkType;
+import fr.imag.adele.cadse.core.ExtendedType;
 import fr.imag.adele.cadse.core.GroupType;
 import fr.imag.adele.cadse.core.IItemFactory;
 import fr.imag.adele.cadse.core.IItemManager;
@@ -56,6 +60,8 @@ import fr.imag.adele.cadse.core.Messages;
 import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.attribute.GroupOfAttributes;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
+import fr.imag.adele.cadse.core.build.Exporter;
+import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
 import fr.imag.adele.cadse.core.impl.CadseCore;
 import fr.imag.adele.cadse.core.CadseIllegalArgumentException;
 import fr.imag.adele.cadse.core.impl.CollectedReflectLink;
@@ -63,6 +69,8 @@ import fr.imag.adele.cadse.core.impl.ItemFactory;
 import fr.imag.adele.cadse.core.impl.ReflectLink;
 import fr.imag.adele.cadse.core.internal.IWorkingLoadingItems;
 import fr.imag.adele.cadse.core.internal.ItemTypeInternal;
+import fr.imag.adele.cadse.core.key.DefaultKeyDefinitionImpl;
+import fr.imag.adele.cadse.core.key.KeyDefinition;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransactionListener;
 import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
 import fr.imag.adele.cadse.core.ui.HierarchicPage;
@@ -77,6 +85,7 @@ import fr.imag.adele.cadse.core.util.Convert;
 import fr.imag.adele.cadse.core.util.IErrorCollector;
 import fr.imag.adele.cadse.core.util.LinkPathUtil;
 import fr.imag.adele.cadse.util.ArraysUtil;
+import fr.imag.adele.cadse.util.Assert;
 
 /**
  * A item type is type of an element in the workspace. Each item type has an id.
@@ -197,9 +206,9 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 	 * @param displayName
 	 *            the display name
 	 */
-	protected ItemTypeImpl(ItemType metaType, LogicalWorkspace wl, ItemTypeImpl superType, UUID id, int intId,
+	protected ItemTypeImpl(ItemType metaType, ItemTypeImpl superType, UUID id, int intId,
 			boolean hasContent, boolean isAbstract, String shortname, String displayName) {
-		super(wl, id, metaType, null, shortname);
+		super(id, metaType, null, shortname);
 		if (id == null) {
 			throw new CadseIllegalArgumentException(Messages.error_id_is_null);
 		}
@@ -223,8 +232,8 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 		setHasQualifiedNameAttribute(true);
 	}
 
-	public ItemTypeImpl(LogicalWorkspace wl, ItemType it, ItemDelta desc) {
-		super(wl, it, desc);
+	public ItemTypeImpl(ItemType it, ItemDelta desc) {
+		super(it, desc);
 		this._kind = 0;
 
 		_subTypes = null;
@@ -1409,10 +1418,72 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType, ItemTy
 		return _extendedBy;
 	}
 
-    @Override
-    public String getInstanceDisplayName(Item item) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+
+	@Override
+	public LinkType createLinkType(UUID id, int intID, String name, int kind,
+			int min, int max, String selection, ItemType destination)
+			throws CadseException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	@Override
+	public LinkType getOutgoingLinkType(ItemType destination, int kind) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	@Override
+	public CPackage getPackage() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	@Override
+	public KeyDefinition getSpaceKeyType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	@Override
+	public void setSpaceKeyType(KeyDefinition spaceKeytype) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+	@Override
+	public void addAttributeType(IAttributeType<?> ret) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	@Override
+	public void setPackage(CPackage p) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	@Override
+	public IAttributeType<?> getAttributeType(String name,
+			boolean createUnresolvedDefinition) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 
 

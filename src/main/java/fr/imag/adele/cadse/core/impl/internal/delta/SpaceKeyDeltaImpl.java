@@ -1,6 +1,7 @@
 package fr.imag.adele.cadse.core.impl.internal.delta;
 
 import fr.imag.adele.cadse.core.key.Key;
+import fr.imag.adele.cadse.core.key.KeyDefinition;
 import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
 import fr.imag.adele.cadse.core.transaction.delta.OperationTypeCst;
 import fr.imag.adele.cadse.core.transaction.delta.SetAttributeOperation;

@@ -40,7 +40,8 @@ import java.lang.reflect.Array;
 import java.util.UUID;
 
 public class DBLogicalWorkspace  extends LogicalWorkspaceImpl implements LogicalWorkspace {
-        IntKeyOpenWeakHashMap<DBObject> _cache;
+    
+	IntKeyOpenWeakHashMap<DBObject> _cache;
     CadseDomainImpl _cadseDomain;
         
 	private ModelVersionDBService2 _db;
@@ -52,7 +53,9 @@ public class DBLogicalWorkspace  extends LogicalWorkspaceImpl implements Logical
     }
 
 	public Item item(int objectId) {
-		return new DBItemImpl(this, _db, objectId);
+		if (_cache.containsKey(objectId))
+			return (Item) _cache.get(objectId);
+		return new DBItemImpl(objectId);
 	}
 
 	public void addListener(int localId, WorkspaceListener l, int eventFilter) {
@@ -78,10 +81,10 @@ public class DBLogicalWorkspace  extends LogicalWorkspaceImpl implements Logical
     List<Link> getOutgoingLinks(INamedUUID obj) {
         ArrayList<Link> ret = new ArrayList<Link>();
         try {
-            int[] links = _db.getOutgoingLinks(obj.getObjectID());
+            int[] links = _db.getOutgoingLinks(obj.getObjectId());
             for (int i = 0; i < links.length; i++) {
                 int linkId = links[i];
-                ret.add(new DBLinkImpl(this, linkId));
+                ret.add(new DBLinkImpl(linkId));
             }
         } catch (ModelVersionDBException ex) {
             Logger.getLogger(DBLogicalWorkspace.class.getName()).log(Level.SEVERE, null, ex);
@@ -101,17 +104,17 @@ public class DBLogicalWorkspace  extends LogicalWorkspaceImpl implements Logical
 //	}
 
     private int obj(INamedUUID object) throws CadseException {
-		int ret = object.getObjectID();
+		int ret = object.getObjectId();
 		if(ret != ModelVersionDBService2.NULL_ID)
 			return ret;
 		try {
-                    ret = _db.checkLocalIdentifier(object.getID());
+                    ret = _db.checkLocalIdentifier(object.getId());
 		} catch (ModelVersionDBException e) {
 			throw new CadseException("Cannot get object from UUID.", e);
 		}
 		if(ret != ModelVersionDBService2.NULL_ID)
 			return ret;
-		throw new CadseException("Not found object from UUID.", object.getID());
+		throw new CadseException("Not found object from UUID.", object.getId());
 	}
 
     public void delete(INamedUUID object) throws CadseException {
@@ -198,7 +201,7 @@ public class DBLogicalWorkspace  extends LogicalWorkspaceImpl implements Logical
 
 	public <T> T getValue(IAttributeType<T> attr, int objectId) throws CadseException {
 		try {
-			return (T) _db.getObjectValue(objectId, attr.getObjectID());
+			return (T) _db.getObjectValue(objectId, attr.getObjectId());
 		} catch (ModelVersionDBException e) {
 			throw new CadseException("Cannot get attribute value for object id {0} and attribute {1}", e,objectId, attr.getName());
 		}
@@ -206,7 +209,7 @@ public class DBLogicalWorkspace  extends LogicalWorkspaceImpl implements Logical
 
 	public <T> void setValue(IAttributeType<T> attr, int objectId, T v) throws CadseException {
 		try {
-			_db.setObjectValue(objectId, attr.getObjectID(), v);
+			_db.setObjectValue(objectId, attr.getObjectId(), v);
 		} catch (ModelVersionDBException e) {
 			throw new CadseException("Cannot set attribute value for object id {0} and attribute {1}", e,objectId, attr.getName());
 

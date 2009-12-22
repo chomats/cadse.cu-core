@@ -146,12 +146,12 @@ public abstract class DefaultDBItemImpl implements Item, InternalItem {
 	
 	
 	@Override
-	public int getObjectID() {
+	public int getObjectId() {
 		return _localid;
 	}
 	
 	@Override
-	public void setObjectID(int localIdentifier) {
+	public void setObjectId(int localIdentifier) {
 		_localid = localIdentifier;
 	}
 	

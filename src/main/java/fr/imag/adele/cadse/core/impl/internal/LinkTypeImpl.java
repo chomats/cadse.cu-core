@@ -27,17 +27,19 @@ import java.util.UUID;
 
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
+import fr.imag.adele.cadse.core.CadseIllegalArgumentException;
+import fr.imag.adele.cadse.core.CadseRuntime;
 import fr.imag.adele.cadse.core.ILinkTypeManager;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.LogicalWorkspace;
+import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.enumdef.TWDestEvol;
 import fr.imag.adele.cadse.core.impl.AbstractLinkTypeManager;
 import fr.imag.adele.cadse.core.impl.CadseCore;
-import fr.imag.adele.cadse.core.impl.CadseIllegalArgumentException;
 import fr.imag.adele.cadse.core.impl.CollectedReflectLink;
 import fr.imag.adele.cadse.core.impl.ReflectLink;
 import fr.imag.adele.cadse.core.impl.attribute.AttributeType;
@@ -76,7 +78,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	/** The source. Attribute.parent */
 
 	/** The destination. */
-	private ItemType			_destination;
+	private TypeDefinition			_destination;
 	/** The min. */
 	private int					_min;
 
@@ -100,8 +102,12 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 	TWDestEvol					_twdestEvol	= TWDestEvol.immutable;
 
+        public LinkTypeImpl() {
+        }
+
 	// TWCoupled is a flag
 
+        
 	/**
 	 * The Constructor.
 	 * 
@@ -124,8 +130,8 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	 * 
 	 * @version 2.0
 	 */
-	LinkTypeImpl(UUID id, int kind, ItemType source, String name, int intID, int min, int max, String selection,
-			ItemType destination) {
+	LinkTypeImpl(UUID id, int kind, TypeDefinition source, String name, int intID, int min, int max, String selection,
+			TypeDefinition destination) {
 		super(id, name, min != 0 ? MUST_BE_INITIALIZED_AT_CREATION_TIME : 0);
 
 		if (CadseCore.theLinkType == null) {
@@ -167,8 +173,8 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	 * @param selection
 	 *            the selection
 	 */
-	LinkTypeImpl(UUID id, int kind, ItemType source, String name, int min, int max, String selection,
-			ItemType destination) {
+	LinkTypeImpl(UUID id, int kind, TypeDefinition source, String name, int min, int max, String selection,
+			TypeDefinition destination) {
 		super(id, name, min != 0 ? MUST_BE_INITIALIZED_AT_CREATION_TIME : 0);
 
 		this._linkType = CadseCore.theLinkType;
@@ -186,7 +192,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 		}
 	}
 
-	public LinkTypeImpl(UUID id, ItemType source, String name) {
+	public LinkTypeImpl(UUID id, TypeDefinition source, String name) {
 		super(id, name, 0);
 
 		this._linkType = CadseCore.theLinkType;
@@ -267,14 +273,14 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	 * 
 	 * @return the destination type.
 	 */
-	public ItemType getDestination() {
+	public TypeDefinition getDestination() {
 		return _destination;
 	}
 
 	@Override
-	public ItemType getParent() {
+	public TypeDefinition getParent() {
 		if (super.getParent() instanceof ItemType) {
-			return (ItemType) super.getParent();
+			return (TypeDefinition) super.getParent();
 		}
 		return null;
 	}
@@ -284,7 +290,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	 * 
 	 * @return the source type
 	 */
-	public ItemType getSource() {
+	public TypeDefinition getSource() {
 		return getParent();
 	}
 
@@ -531,42 +537,42 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	}
 
 	public ItemType getType() {
-		return CadseGCST.LINK;
+		return CadseGCST.LINK_TYPE;
 	}
 
 	@Override
 	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
-		if (CadseGCST.LINK_at_AGGREGATION_ == type) {
+		if (CadseGCST.LINK_TYPE_at_AGGREGATION_ == type) {
 			return (T) (Boolean) isAggregation();
 		}
-		if (CadseGCST.LINK_at_ANNOTATION_ == type) {
+		if (CadseGCST.LINK_TYPE_at_ANNOTATION_ == type) {
 			return (T) (Boolean) isAnnotation();
 		}
-		if (CadseGCST.LINK_at_COMPOSITION_ == type) {
+		if (CadseGCST.LINK_TYPE_at_COMPOSITION_ == type) {
 			return (T) (Boolean) isComposition();
 		}
-		if (CadseGCST.LINK_at_PART_ == type) {
+		if (CadseGCST.LINK_TYPE_at_PART_ == type) {
 			return (T) (Boolean) isPart();
 		}
-		if (CadseGCST.LINK_at_REQUIRE_ == type) {
+		if (CadseGCST.LINK_TYPE_at_REQUIRE_ == type) {
 			return (T) (Boolean) isRequire();
 		}
-		if (CadseGCST.LINK_at_KIND_ == type) {
+		if (CadseGCST.LINK_TYPE_at_KIND_ == type) {
 			return (T) new Integer(_kind);
 		}
-		if (CadseGCST.LINK_at_MAX_ == type) {
+		if (CadseGCST.LINK_TYPE_at_MAX_ == type) {
 			return (T) new Integer(_max);
 		}
-		if (CadseGCST.LINK_at_MIN_ == type) {
+		if (CadseGCST.LINK_TYPE_at_MIN_ == type) {
 			return (T) new Integer(_min);
 		}
-		if (CadseGCST.LINK_at_SELECTION_ == type) {
+		if (CadseGCST.LINK_TYPE_at_SELECTION_ == type) {
 			return (T) (_selection);
 		}
-		if (CadseGCST.LINK_at_TWCOUPLED_ == type) {
+		if (CadseGCST.LINK_TYPE_at_TWCOUPLED_ == type) {
 			return (T) Boolean.valueOf(getFlag(Item.EVOL_LINK_TYPE_COUPLED));
 		}
-		if (CadseGCST.LINK_at_TWDEST_EVOL_ == type) {
+		if (CadseGCST.LINK_TYPE_at_TWDEST_EVOL_ == type) {
 			if (_twdestEvol == null) {
 				_twdestEvol = TWDestEvol.immutable;
 			}
@@ -577,47 +583,47 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 	@Override
 	public boolean commitSetAttribute(IAttributeType<?> type, Object value) {
-		if (CadseGCST.LINK_at_AGGREGATION_ == type) {
-			return setKind(LinkType.AGGREGATION, Convert.toBoolean(value, CadseGCST.LINK_at_AGGREGATION_, false));
+		if (CadseGCST.LINK_TYPE_at_AGGREGATION_ == type) {
+			return setKind(LinkType.AGGREGATION, Convert.toBoolean(value, CadseGCST.LINK_TYPE_at_AGGREGATION_, false));
 		}
-		if (CadseGCST.LINK_at_ANNOTATION_ == type) {
-			return setKind(LinkType.ANNOTATION, Convert.toBoolean(value, CadseGCST.LINK_at_ANNOTATION_, false));
+		if (CadseGCST.LINK_TYPE_at_ANNOTATION_ == type) {
+			return setKind(LinkType.ANNOTATION, Convert.toBoolean(value, CadseGCST.LINK_TYPE_at_ANNOTATION_, false));
 		}
-		if (CadseGCST.LINK_at_COMPOSITION_ == type) {
-			return setKind(LinkType.COMPOSITION, Convert.toBoolean(value, CadseGCST.LINK_at_COMPOSITION_, false));
+		if (CadseGCST.LINK_TYPE_at_COMPOSITION_ == type) {
+			return setKind(LinkType.COMPOSITION, Convert.toBoolean(value, CadseGCST.LINK_TYPE_at_COMPOSITION_, false));
 		}
-		if (CadseGCST.LINK_at_PART_ == type) {
-			return setKind(LinkType.PART, Convert.toBoolean(value, CadseGCST.LINK_at_PART_, false));
+		if (CadseGCST.LINK_TYPE_at_PART_ == type) {
+			return setKind(LinkType.PART, Convert.toBoolean(value, CadseGCST.LINK_TYPE_at_PART_, false));
 		}
-		if (CadseGCST.LINK_at_REQUIRE_ == type) {
-			return setKind(LinkType.REQUIRE, Convert.toBoolean(value, CadseGCST.LINK_at_REQUIRE_, false));
+		if (CadseGCST.LINK_TYPE_at_REQUIRE_ == type) {
+			return setKind(LinkType.REQUIRE, Convert.toBoolean(value, CadseGCST.LINK_TYPE_at_REQUIRE_, false));
 		}
-		if (CadseGCST.LINK_at_KIND_ == type) {
+		if (CadseGCST.LINK_TYPE_at_KIND_ == type) {
 			_kind = Convert.toInteger(value);
 			return true;
 		}
-		if (CadseGCST.LINK_at_MAX_ == type) {
+		if (CadseGCST.LINK_TYPE_at_MAX_ == type) {
 			_max = Convert.toInt(value, null, -1);
 			return true;
 		}
-		if (CadseGCST.LINK_at_MIN_ == type) {
+		if (CadseGCST.LINK_TYPE_at_MIN_ == type) {
 			_min = Convert.toInt(value, null, 0);
 			return true;
 		}
-		if (CadseGCST.LINK_at_SELECTION_ == type) {
+		if (CadseGCST.LINK_TYPE_at_SELECTION_ == type) {
 			_selection = Convert.toString(value);
 			return true;
 		}
-		if (CadseGCST.LINK_at_TWCOUPLED_ == type) {
-			boolean localCoupled = Convert.toBoolean(value, CadseGCST.LINK_at_TWCOUPLED_, false);
+		if (CadseGCST.LINK_TYPE_at_TWCOUPLED_ == type) {
+			boolean localCoupled = Convert.toBoolean(value, CadseGCST.LINK_TYPE_at_TWCOUPLED_, false);
 			if (localCoupled == getFlag(Item.EVOL_LINK_TYPE_COUPLED)) {
 				return false;
 			}
 			setFlag(Item.EVOL_LINK_TYPE_COUPLED, localCoupled);
 			return true;
 		}
-		if (CadseGCST.LINK_at_TWDEST_EVOL_ == type) {
-			this._twdestEvol = CadseGCST.LINK_at_TWDEST_EVOL_.convertTo(value);
+		if (CadseGCST.LINK_TYPE_at_TWDEST_EVOL_ == type) {
+			this._twdestEvol = CadseGCST.LINK_TYPE_at_TWDEST_EVOL_.convertTo(value);
 			return true;
 		}
 		return super.commitSetAttribute(type, value);
@@ -639,32 +645,32 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 	@Override
 	protected void collectOutgoingLinks(LinkType linkType, CollectedReflectLink ret) {
-		if (linkType == CadseGCST.LINK_lt_DESTINATION) {
-			ret.addOutgoing(CadseGCST.LINK_lt_DESTINATION, _destination);
+		if (linkType == CadseGCST.LINK_TYPE_lt_DESTINATION) {
+			ret.addOutgoing(CadseGCST.LINK_TYPE_lt_DESTINATION, _destination);
 		}
-		if (linkType == CadseGCST.LINK_lt_SOURCE) {
-			ret.addOutgoing(CadseGCST.LINK_lt_SOURCE, getSource());
+		if (linkType == CadseGCST.LINK_TYPE_lt_SOURCE) {
+			ret.addOutgoing(CadseGCST.LINK_TYPE_lt_SOURCE, getSource());
 		}
-		if (linkType == CadseGCST.LINK_lt_INVERSE_LINK) {
-			ret.addOutgoing(CadseGCST.LINK_lt_INVERSE_LINK, _inverse);
+		if (linkType == CadseGCST.LINK_TYPE_lt_INVERSE_LINK) {
+			ret.addOutgoing(CadseGCST.LINK_TYPE_lt_INVERSE_LINK, _inverse);
 		}
 		super.collectOutgoingLinks(linkType, ret);
 	}
 
 	@Override
 	public Link commitLoadCreateLink(LinkType lt, Item destination) throws CadseException {
-		if (lt == CadseGCST.LINK_lt_DESTINATION) {
+		if (lt == CadseGCST.LINK_TYPE_lt_DESTINATION) {
 			this._destination = (ItemType) destination;
 			if (this.getSource() != null && !this.getSource().isOrphan()) {
 				_destination.addIncomingLink(this, true);
 			}
 			return new ReflectLink(lt, this, destination, 0);
 		}
-		if (lt == CadseGCST.LINK_lt_SOURCE) {
+		if (lt == CadseGCST.LINK_TYPE_lt_SOURCE) {
 			setParent(destination, lt);
 			return new ReflectLink(lt, this, destination, 0);
 		}
-		if (lt == CadseGCST.LINK_lt_INVERSE_LINK) {
+		if (lt == CadseGCST.LINK_TYPE_lt_INVERSE_LINK) {
 			this._inverse = (LinkType) destination;
 			return new ReflectLink(lt, this, destination, 0);
 		}
@@ -674,17 +680,17 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	@Override
 	public void removeOutgoingLink(Link linkImpl, boolean notifie) {
 		LinkType linkType = linkImpl.getLinkType();
-		if (linkType == CadseGCST.LINK_lt_DESTINATION) {
+		if (linkType == CadseGCST.LINK_TYPE_lt_DESTINATION) {
 			if (!this.getSource().isOrphan()) {
 				_destination.removeIncomingLink(this, notifie);
 			}
 			// Do not set to null. The destination must be keep for information
 			// : _destination = null;
 		}
-		if (linkType == CadseGCST.LINK_lt_SOURCE) {
+		if (linkType == CadseGCST.LINK_TYPE_lt_SOURCE) {
 			// source = null;
 		}
-		if (linkType == CadseGCST.LINK_lt_INVERSE_LINK) {
+		if (linkType == CadseGCST.LINK_TYPE_lt_INVERSE_LINK) {
 			_inverse = null;
 		}
 	}
@@ -989,6 +995,8 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 	private LogicalWorkspaceTransactionListener[]	workspaceLogiqueCopyListeners;
 
+	private IAttributeType<?>[] _attributeDefinitions;
+
 	public void addLogicalWorkspaceTransactionListener(LogicalWorkspaceTransactionListener l) {
 		workspaceLogiqueCopyListeners = ArraysUtil.add(LogicalWorkspaceTransactionListener.class,
 				workspaceLogiqueCopyListeners, l);
@@ -1052,6 +1060,49 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public UUID getDestinationCadseId() {
+		if (_destination == null)
+			return null;
+		CadseRuntime cr = _destination.getCadse();
+		if (cr == null)
+			return null;
+		return cr.getId();
+	}
+
+	@Override
+	public UUID getSourceCadseId() {
+		if (getSource() == null)
+			return null;
+		CadseRuntime cr = getSource().getCadse();
+		if (cr == null)
+			return null;
+		return cr.getId();
+	}
+
+	@Override
+	public boolean isInterCadseLink() {
+		UUID scId = getSourceCadseId();
+		UUID dcId = getDestinationCadseId();
+		return !((scId == null && dcId == null) 
+				|| (scId != null && dcId != null && scId.equals(dcId)));
+	}
+
+	@Override
+	public IAttributeType<?>[] getLinkTypeAttributeTypes() {
+		if (_attributeDefinitions == null)
+			return new IAttributeType[0];
+		return _attributeDefinitions;
+	}
+
+	@Override
+	public <T> T getLinkAttributeOwner(IAttributeType<T> attDef) {
+		return getAttribute(attDef);
+	}
 	
+	public void addLinkTypeAttributeType(IAttributeType<?> att) {
+		_attributeDefinitions = ArraysUtil.add(IAttributeType.class, _attributeDefinitions, att);
+	}
 
 }

@@ -37,14 +37,14 @@ public class ShortNameVariable extends AttributeVariable {
 	 *            the id
 	 */
 	public ShortNameVariable(UUID id, String name) {
-		super(id, name, CadseGCST.ITEM_at_NAME);
+		super(id, name, CadseGCST.ITEM_at_NAME_);
 	}
 
 	/**
 	 * Instantiates a new short name variable.
 	 */
 	public ShortNameVariable() {
-		super(CadseGCST.ITEM_at_NAME);
+		super(CadseGCST.ITEM_at_NAME_);
 	}
 
 }

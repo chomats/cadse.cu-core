@@ -11,7 +11,7 @@ public class Item_Descriptor extends AbstractGeneratedItem {
 	
 	
 	public Item_Descriptor(UUID id, ItemType it, Object ... keyvalues) {
-		super(id);
+		super(id,0);
 		_it = it;
 		for (int i = 0; i < keyvalues.length; i++) {
 			IAttributeType<?> att = (IAttributeType<?>) keyvalues[i++];

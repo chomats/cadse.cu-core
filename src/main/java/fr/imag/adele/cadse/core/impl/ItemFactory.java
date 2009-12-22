@@ -74,7 +74,7 @@ public class ItemFactory implements IItemFactory {
 		if (it == CadseGCST.INTEGER) {
 			return new IntegerAttributeType(item);
 		}
-		if (it == CadseGCST.LINK) {
+		if (it == CadseGCST.LINK_TYPE) {
 			return new LinkTypeImpl(item);
 		}
 		/*if (it == CadseGCST.LIST_ATTRIBUTE_TYPE) {
@@ -116,7 +116,7 @@ public class ItemFactory implements IItemFactory {
 			return new CadseDefinitionImpl(item.getQualifiedName(), id, id);
 		}
 		
-		return new ItemImpl(wl, it, item);
+		return new ItemImpl(it, item);
 	}
 
 }

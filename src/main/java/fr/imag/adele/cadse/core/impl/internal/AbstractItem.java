@@ -72,8 +72,7 @@ public abstract class AbstractItem extends AbstractGeneratedItem implements Item
 	 * @param type
 	 *            the type
 	 */
-	public AbstractItem(DBLogicalWorkspace wl, ItemType type) {
-		this._dblw = wl;
+	public AbstractItem(ItemType type) {
 		this._type = type;
 		this._incomings = new ArrayList<Link>();
 		this._qualifiedName = NO_VALUE_STRING;
@@ -95,8 +94,8 @@ public abstract class AbstractItem extends AbstractGeneratedItem implements Item
 	 * @param shortName
 	 *            the short name
 	 */
-	protected AbstractItem(LogicalWorkspace wl, UUID id, ItemType type, String uniqueName, String shortName) {
-		super(wl, id);
+	protected AbstractItem(UUID id, ItemType type, String uniqueName, String shortName) {
+		super(id, 0);
 		this._type = type;
 		this._incomings = new ArrayList<Link>();
 
@@ -123,7 +122,7 @@ public abstract class AbstractItem extends AbstractGeneratedItem implements Item
 	 *            the desc
 	 */
 	protected AbstractItem(LogicalWorkspace wl, ItemType type, ItemDescriptionRef desc) {
-		super(wl, desc.getId());
+		super(desc.getId(), 0);
 		this._type = type;
 		this._incomings = new ArrayList<Link>();
 		if (type.hasQualifiedNameAttribute()) {
@@ -138,9 +137,8 @@ public abstract class AbstractItem extends AbstractGeneratedItem implements Item
 		}
 	}
 
-	public AbstractItem(LogicalWorkspace wl, ItemType type, ItemDelta desc) {
-		this._dblw = (DBLogicalWorkspace) wl;
-		this._objectId = desc.getObjectID();
+	public AbstractItem(ItemType type, ItemDelta desc) {
+		super(desc);
 		
 		this._type = type;
 		this._incomings = new ArrayList<Link>();

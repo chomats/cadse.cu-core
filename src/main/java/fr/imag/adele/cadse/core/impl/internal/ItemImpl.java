@@ -48,6 +48,7 @@ import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.Messages;
+import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.impl.CadseIllegalArgumentException;
 import fr.imag.adele.cadse.core.impl.CollectedReflectLink;
@@ -261,8 +262,8 @@ public class ItemImpl extends AbstractItem implements Item {
 	 * @param item
 	 *            the short name
 	 */
-	public ItemImpl(LogicalWorkspace wl, UUID id, ItemType it, String uniqueName, String shortName) {
-		super(wl, id, it, uniqueName, shortName);
+	public ItemImpl(UUID id, ItemType it, String uniqueName, String shortName) {
+		super(id, it, uniqueName, shortName);
 		// this.incomings = new ArrayList<Link>();
 		this.m_outgoings = new ArrayList<Link>();
 		this._state = ItemState.NOT_IN_WORKSPACE;
@@ -270,9 +271,9 @@ public class ItemImpl extends AbstractItem implements Item {
 		setIsStatic(false);
 	}
 
-	public ItemImpl(LogicalWorkspace wl, UUID id, ItemType type, String uniqueName, String shortName,
+	public ItemImpl(UUID id, ItemType type, String uniqueName, String shortName,
 			Item parent, LinkType lt) throws CadseException {
-		super(wl, id, type, uniqueName, shortName);
+		super(id, type, uniqueName, shortName);
 		// this.incomings = new ArrayList<Link>();
 		this.m_outgoings = new ArrayList<Link>();
 		this._state = ItemState.NOT_IN_WORKSPACE;
@@ -296,17 +297,17 @@ public class ItemImpl extends AbstractItem implements Item {
 	 *        used by Workspace in order to validate global constraints when
 	 *        creating a new item in workspace.
 	 */
-	protected ItemImpl(LogicalWorkspaceImpl wl, ItemType type) {
-		super(wl, type);
+	protected ItemImpl(ItemType type) {
+		super(type);
 		// this.incomings = new ArrayList<Link>();
 		this.m_outgoings = new ArrayList<Link>();
 		this._state = ItemState.NOT_IN_WORKSPACE;
 
 	}
 
-	public ItemImpl(LogicalWorkspace wl, ItemType itemtype, ItemDelta desc) {
-		super(wl, itemtype, desc);
-		assert wl != null && itemtype != null && desc != null;
+	public ItemImpl(ItemType itemtype, ItemDelta desc) {
+		super(itemtype, desc);
+		assert itemtype != null && desc != null;
 		this.isValid = desc.isValid();
 
 		this.m_outgoings = new ArrayList<Link>();
@@ -406,7 +407,7 @@ public class ItemImpl extends AbstractItem implements Item {
 	protected Link createDefaultLink(LinkType lt, Item destination)
 			throws CadseException {
 		// create a link
-		LinkImpl l = new LinkImpl(this, lt, destination, true);
+		LinkImpl l = new LinkImpl(-1, this, lt, destination, true);
 		// add link l into the list "outgoings" of source "this".
 		if (!m_outgoings.contains(l)) {
 			m_outgoings.add(l);
@@ -518,7 +519,7 @@ public class ItemImpl extends AbstractItem implements Item {
 	 */
 	@Override
 	public boolean itemHasContent() {
-		return _type.hasContent() && _type.getItemManager() != null && _type.getItemManager().hasContent(this);
+		return _type.hasContent();
 	}
 
 	/**
@@ -532,7 +533,7 @@ public class ItemImpl extends AbstractItem implements Item {
 	public synchronized void removeIncomingLink(Link link, boolean notifie) {
 		_incomings.remove(link);
 		if (notifie) {
-			_wl.getCadseDomain().notifieChangeEvent(ChangeID.UNRESOLVE_INCOMING_LINK, this, link);
+			_dblw.getCadseDomain().notifieChangeEvent(ChangeID.UNRESOLVE_INCOMING_LINK, this, link);
 		}
 	}
 
@@ -571,7 +572,7 @@ public class ItemImpl extends AbstractItem implements Item {
 	public synchronized void removeOutgoingLink(Link link, boolean notifie) {
 		m_outgoings.remove(link);
 		if (notifie) {
-			_wl.getCadseDomain().notifieChangeEvent(ChangeID.DELETE_OUTGOING_LINK, link);
+			_dblw.getCadseDomain().notifieChangeEvent(ChangeID.DELETE_OUTGOING_LINK, link);
 		}
 	}
 
@@ -796,7 +797,7 @@ public class ItemImpl extends AbstractItem implements Item {
 //		Link inverseLink = null;
 //
 //		// find a good destination.
-//		Item good_destination = this._wl.getItem(destination.getId());
+//		Item good_destination = this._dbwl.getItem(destination.getId());
 //		if (good_destination == null) {
 //			good_destination = destination;
 //		}
@@ -843,14 +844,14 @@ public class ItemImpl extends AbstractItem implements Item {
 //			return l;
 //		}
 //
-//		_wl.getCadseDomain().notifieChangeEvent(ChangeID.CREATE_OUTGOING_LINK, l);
+//		_dbwl.getCadseDomain().notifieChangeEvent(ChangeID.CREATE_OUTGOING_LINK, l);
 //		if (l.isLinkResolved()) {
-//			_wl.getCadseDomain().notifieChangeEvent(ChangeID.RESOLVE_INCOMING_LINK, l.getResolvedDestination(), l);
+//			_dbwl.getCadseDomain().notifieChangeEvent(ChangeID.RESOLVE_INCOMING_LINK, l.getResolvedDestination(), l);
 //		}
 //		if (createInverseLink) {
-//			_wl.getCadseDomain().notifieChangeEvent(ChangeID.CREATE_OUTGOING_LINK, inverseLink);
+//			_dbwl.getCadseDomain().notifieChangeEvent(ChangeID.CREATE_OUTGOING_LINK, inverseLink);
 //			if (inverseLink.isLinkResolved()) {
-//				_wl.getCadseDomain().notifieChangeEvent(ChangeID.RESOLVE_INCOMING_LINK,
+//				_dbwl.getCadseDomain().notifieChangeEvent(ChangeID.RESOLVE_INCOMING_LINK,
 //						inverseLink.getResolvedDestination(), inverseLink);
 //			}
 //		}
@@ -971,7 +972,7 @@ public class ItemImpl extends AbstractItem implements Item {
 	//
 	// if (modifUniqueName) {
 	// try {
-	// _wl.checkUniqueNameForRename(this, newShortName, newUniqueName);
+	// _dbwl.checkUniqueNameForRename(this, newShortName, newUniqueName);
 	// } catch (CadseIllegalArgumentException e) {
 	// ret.addFatalError(e.getMessage());
 	// return ret;
@@ -1358,7 +1359,7 @@ public class ItemImpl extends AbstractItem implements Item {
 //				return null;
 //			}
 //
-//			Item destination = _wl.loadItem(link.getDestination());
+//			Item destination = _dbwl.loadItem(link.getDestination());
 //
 //			Link ret = null;
 //			// create the derived link if need.
@@ -1535,14 +1536,14 @@ public class ItemImpl extends AbstractItem implements Item {
 	// }
 	// }
 	// try {
-	// // _wl.getCadseDomain().beginOperation("Item.unload");
+	// // _dbwl.getCadseDomain().beginOperation("Item.unload");
 	// // remove this line because unload ne fonctionne pas à cause d'un
 	// // test dans la methode delete
 	// // forceState(ItemState.PRE_SHADOW_OR_DELETE);
 	// internalHiddenItem(false, this);
 	// shadow(true);
 	// } finally {
-	// // _wl.getCadseDomain().endOperation();
+	// // _dbwl.getCadseDomain().endOperation();
 	// }
 	// }
 
@@ -1737,7 +1738,7 @@ public class ItemImpl extends AbstractItem implements Item {
 //		if (parentId == null) {
 //			return null;
 //		}
-//		Item retItem = _wl.getItem(parentId);
+//		Item retItem = _dbwl.getItem(parentId);
 //		// /setAttribute(ATTR_PARENT_ITEM_ID, retItem.getId());
 //		return retItem;
 	}
@@ -1755,110 +1756,6 @@ public class ItemImpl extends AbstractItem implements Item {
 
 	// ///////////
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.Item#getComponents()
-	 */
-	@Override
-	public Set<Item> getComponents() {
-		tryToRecomputeComponent();
-		if (_composants == null) {
-			return Collections.emptySet();
-		}
-		return new ComponentsSet();
-	}
-
-	/**
-	 * The Class ComponentsSet.
-	 */
-	class ComponentsSet extends AbstractSet<Item> {
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.util.AbstractCollection#contains(java.lang.Object)
-		 */
-		@Override
-		public boolean contains(Object o) {
-			return _composants.containsValue(o);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.util.AbstractCollection#retainAll(java.util.Collection)
-		 */
-		@Override
-		public boolean retainAll(Collection<?> c) {
-			throw new UnsupportedOperationException();
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.util.AbstractCollection#addAll(java.util.Collection)
-		 */
-		@Override
-		public boolean addAll(Collection<? extends Item> c) {
-			throw new UnsupportedOperationException();
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.util.AbstractCollection#iterator()
-		 */
-		@Override
-		public Iterator<Item> iterator() {
-			return Collections.unmodifiableCollection(_composants.values()).iterator();
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.util.AbstractCollection#size()
-		 */
-		@Override
-		public int size() {
-			return _composants.size();
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.util.AbstractCollection#toArray()
-		 */
-		@Override
-		public Object[] toArray() {
-			return _composants.values().toArray();
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.util.AbstractCollection#toArray(T[])
-		 */
-		@Override
-		public <T> T[] toArray(T[] a) {
-			return _composants.values().toArray(a);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.Item#getComponentsId()
-	 */
-	@Override
-	public Set<UUID> getComponentIds() {
-		Set<Item> c = getComponents();
-		Set<UUID> ids = new HashSet<UUID>();
-		for (Item il : c) {
-			ids.add(il.getId());
-		}
-		return ids;
-	}
 
 	// -------------------------------------------------//
 
@@ -1879,7 +1776,7 @@ public class ItemImpl extends AbstractItem implements Item {
 	 */
 	@Override
 	public CadseDomain getCadseDomain() {
-		return _wl.getCadseDomain();
+		return _dblw.getCadseDomain();
 	}
 
 	/*
@@ -1896,7 +1793,7 @@ public class ItemImpl extends AbstractItem implements Item {
 		_composants = new HashMap<UUID, Item>();
 		for (ItemDescriptionRef c : comp) {
 			try {
-				Item i = this._wl.loadItem(c);
+				Item i = _dblw.loadItem(c);
 				_composants.put(i.getId(), i);
 			} catch (Throwable e) {
 				System.err.println("This composant is ignored.\n+" + c.toString());
@@ -1944,26 +1841,6 @@ public class ItemImpl extends AbstractItem implements Item {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.Item#getComponentInfo(fr.imag.adele.cadse.core.UUID)
-	 */
-	@Override
-	public Item getComponentInfo(UUID id) {
-		return _composants == null ? null : _composants.get(id);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.internal.AbstractItem#isInstanceOf(fr.imag.adele.cadse.core.ItemType)
-	 */
-	@Override
-	public boolean isInstanceOf(ItemType it) {
-		// return this.type.equals(it) || it.isSuperTypeOf(this.type);
-		return Accessor.isInstanceOf(this, it);
-	}
 
 	/*
 	 * (non-Javadoc)

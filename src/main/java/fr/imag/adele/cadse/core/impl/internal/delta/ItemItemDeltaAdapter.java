@@ -10,6 +10,7 @@ import java.util.UUID;
 
 import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
+import fr.imag.adele.cadse.core.CadseRuntime;
 import fr.imag.adele.cadse.core.DerivedLink;
 import fr.imag.adele.cadse.core.DerivedLinkDescription;
 import fr.imag.adele.cadse.core.EventFilter;
@@ -26,6 +27,8 @@ import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.WorkspaceListener;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
+import fr.imag.adele.cadse.core.build.Exporter;
+import fr.imag.adele.cadse.core.content.ContentItem;
 import fr.imag.adele.cadse.core.transaction.delta.ImmutableWorkspaceDelta;
 import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
 import fr.imag.adele.cadse.core.internal.IWorkingLoadingItems;
@@ -99,10 +102,6 @@ public class ItemItemDeltaAdapter implements Item {
 		_delta.computeAttributes();
 	}
 
-	public boolean containsComponent(UUID itemId) {
-		return _delta.containsComponent(itemId);
-	}
-
 	public boolean containsPartChild(Item item) {
 		return _delta.containsPartChild(item);
 	}
@@ -147,27 +146,11 @@ public class ItemItemDeltaAdapter implements Item {
 		return _delta.getAttribute(att);
 	}
 
-	public <T> T getAttribute(String att) {
-		return _delta.getAttribute(att);
-	}
-
-	public <T> T getAttributeH(String att, boolean fromSuperIfNull) {
-		return _delta.getAttributeH(att, fromSuperIfNull);
-	}
-
-	public String[] getAttributeKeys() {
-		return _delta.getAttributeKeys();
-	}
-
 	public <T> T getAttributeOwner(IAttributeType<T> att) {
 		return _delta.getAttributeOwner(att);
 	}
 
 	public <T> T getAttributeWithDefaultValue(IAttributeType<T> att, T defaultValue) {
-		return _delta.getAttributeWithDefaultValue(att, defaultValue);
-	}
-
-	public <T> T getAttributeWithDefaultValue(String att, T defaultValue) {
 		return _delta.getAttributeWithDefaultValue(att, defaultValue);
 	}
 
@@ -178,33 +161,9 @@ public class ItemItemDeltaAdapter implements Item {
 	public CadseDomain getCadseDomain() {
 		return _delta.getCadseDomain();
 	}
-
-	public Set<UUID> getComponentIds() {
-		return _delta.getComponentIds();
-	}
-
-	public Item getComponentInfo(UUID itemId) {
-		return _delta.getComponentInfo(itemId);
-	}
-
-	public Set<Item> getComponents() {
-		return _delta.getComponents();
-	}
-
-	public List<Item> getCompositeParent() {
-		return _delta.getCompositeParent();
-	}
-
+	
 	public ContentItem getContentItem() {
 		return _delta.getContentItem();
-	}
-
-	public Set<DerivedLinkDescription> getDerivedLinkDescriptions(ItemDescription source) {
-		return _delta.getDerivedLinkDescriptions(source);
-	}
-
-	public Set<DerivedLink> getDerivedLinks() {
-		return _delta.getDerivedLinks();
 	}
 
 	public String getDisplayName() {
@@ -412,14 +371,6 @@ public class ItemItemDeltaAdapter implements Item {
 		return _delta.getType();
 	}
 
-	public String getUniqueName() {
-		return _delta.getUniqueName();
-	}
-
-	public String getUniqueName(boolean recompute) throws CadseException {
-		return _delta.getUniqueName(recompute);
-	}
-
 	public int getVersion() {
 		return _delta.getVersion();
 	}
@@ -432,18 +383,10 @@ public class ItemItemDeltaAdapter implements Item {
 		return _delta.internalGetGenericOwnerAttribute(type);
 	}
 
-	public <T> T internalGetGenericOwnerAttribute(String key) {
-		return _delta.internalGetGenericOwnerAttribute(key);
-	}
-
 	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
 		return _delta.internalGetOwnerAttribute(type);
 	}
-
-	public <T> T internalGetOwnerAttribute(String key) {
-		return _delta.internalGetOwnerAttribute(key);
-	}
-
+	
 	public boolean isAccessible() {
 		return _delta.isAccessible();
 	}
@@ -590,20 +533,12 @@ public class ItemItemDeltaAdapter implements Item {
 		_delta.setReadOnly(readOnly);
 	}
 
-	public void setShortName(String name) throws CadseException {
-		_delta.setShortName(name);
-	}
-
 	public void setState(ItemState newState) {
 		_delta.setState(newState);
 	}
 
 	public void setType(ItemType itemType) {
 		_delta.setType(itemType);
-	}
-
-	public void setUniqueName(String qualifiedName) throws CadseException {
-		_delta.setUniqueName(qualifiedName);
 	}
 
 	public void setValid(boolean isValid) {
@@ -686,63 +621,6 @@ public class ItemItemDeltaAdapter implements Item {
 		
 	}
 
-	@Override
-	public int getObjectID() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public void setObjectID(int localIdentifier) {
-		// TODO Auto-generated method stub
-		
-	}
-
-    @Override
-    public <T> T adapt(Class<T> clazz) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void clean(IBuildingContext context, boolean componentsContent) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void build(IBuildingContext context) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void compose(IBuildingContext context) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Exporter[] getExporters() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Exporter[] getExporter(Class<?> exportedContentType) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void setExporters(Exporter... exporters) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Composer[] getComposers() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void setComposers(Composer... composers) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
     @Override
     public int getIdInPackage() {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -757,5 +635,22 @@ public class ItemItemDeltaAdapter implements Item {
     public void setUUID(long itemMsb, long itemLsb) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+	@Override
+	public Exporter[] getExporter(Class<?> exporterType) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getObjectId() {
+		return _delta.getObjectId();
+	}
+
+	@Override
+	public void setUUID(UUID uuid) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

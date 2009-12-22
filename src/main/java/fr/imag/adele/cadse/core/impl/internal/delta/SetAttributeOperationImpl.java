@@ -24,6 +24,7 @@ import fr.imag.adele.cadse.core.internal.delta.InternalSetAttributeOperation;
 import fr.imag.adele.cadse.core.transaction.delta.ItemOrLinkDelta;
 import fr.imag.adele.cadse.core.transaction.delta.OperationTypeCst;
 import fr.imag.adele.cadse.core.transaction.delta.SetAttributeOperation;
+import fr.imag.adele.cadse.core.transaction.delta.WLWCOperation;
 import fr.imag.adele.cadse.core.transaction.delta.WLWCOperationImpl;
 
 public final class SetAttributeOperationImpl extends WLWCOperationImpl implements SetAttributeOperation,
@@ -35,19 +36,6 @@ public final class SetAttributeOperationImpl extends WLWCOperationImpl implement
 	private Object			_precValue;
 
 	
-	public SetAttributeOperationImpl(ItemOrLinkDelta parent, String key, Object value, Object oldValue)
-	throws CadseException {
-		this(parent, key, value, oldValue, true);
-	}
-	public SetAttributeOperationImpl(ItemOrLinkDelta parent, String key, Object value, Object oldValue, boolean add)
-			throws CadseException {
-		super(OperationTypeCst.SET_ATTRIBUTE_OPERATION, parent);
-		this._attributeName = key;
-		this._currentValue = value;
-		this._precValue = this._oldValue = oldValue;
-		_attribute = null;
-		if (add) addInParent();
-	}
 	
 	public SetAttributeOperationImpl(ItemOrLinkDelta parent, IAttributeType<?> key, Object value, Object oldValue)
 	{
@@ -100,10 +88,10 @@ public final class SetAttributeOperationImpl extends WLWCOperationImpl implement
 	public Object getOldValue() {
 		return _oldValue;
 	}
-
+	
 	@Override
-	public ItemOrLinkDeltaImpl getParent() {
-		return (ItemOrLinkDeltaImpl) super.getParent();
+	public WLWCOperation getParentOperDelta() {
+		return (ItemOrLinkDeltaImpl) super.getParentOperDelta();
 	}
 
 	public IAttributeType<?> getType() {

@@ -50,9 +50,9 @@ public class ItemUnresolved extends AbstractItem implements Item {
 	 * @param shortName
 	 *            the short name
 	 */
-	public ItemUnresolved(LogicalWorkspaceImpl modelInstance, UUID id, ItemType type, String uniqueName,
+	public ItemUnresolved(UUID id, ItemType type, String uniqueName,
 			String shortName) {
-		super(modelInstance, id, type, uniqueName, shortName);
+		super(id, type, uniqueName, shortName);
 	}
 
 	/*

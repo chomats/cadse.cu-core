@@ -6,8 +6,9 @@ import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
 import fr.imag.adele.cadse.core.transaction.delta.SetAttributeOperation;
 import fr.imag.adele.cadse.core.var.ContextVariable;
+import fr.imag.adele.cadse.core.var.ContextVariableImpl;
 
-public class OldContextVariable extends ContextVariable {
+public class OldContextVariable extends ContextVariableImpl {
 	LogicalWorkspaceTransaction	_copy;
 
 	@Override

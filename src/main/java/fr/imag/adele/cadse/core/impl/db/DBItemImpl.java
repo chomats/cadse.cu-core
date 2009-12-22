@@ -13,6 +13,8 @@ import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseRuntime;
 import java.util.UUID;
+
+import fr.imag.adele.cadse.core.build.Exporter;
 import fr.imag.adele.cadse.core.content.ContentItem;
 import fr.imag.adele.cadse.core.DerivedLink;
 import fr.imag.adele.cadse.core.DerivedLinkDescription;
@@ -46,13 +48,12 @@ import fr.imag.adele.teamwork.db.ModelVersionDBService2;
 
 public class DBItemImpl extends DBObject implements Item {
 
-	public DBItemImpl(DBLogicalWorkspace dblw, ModelVersionDBService2 db,
-			int localId) {
-		super(dblw, db, localId);
+	public DBItemImpl(int localId) {
+		super(localId);
 	}
 
 	public void addListener(WorkspaceListener l, int eventFilter) {
-		_dblw.addListener(_localId, l, eventFilter);
+		_dblw.addListener(_objectId, l, eventFilter);
 	}
 
 	public void addListener(WorkspaceListener l, EventFilter eventFilter) {
@@ -61,7 +62,7 @@ public class DBItemImpl extends DBObject implements Item {
 	}
 
 	public List<WorkspaceListener> filter(int filters, ImmutableWorkspaceDelta delta) {
-		return _dblw.filter(_localId, filters, delta);
+		return _dblw.filter(_objectId, filters, delta);
 	}
 
 	@Override
@@ -73,7 +74,7 @@ public class DBItemImpl extends DBObject implements Item {
 
 	@Override
 	public void buildComposite() throws CadseException {
-		_dblw.buildComposite(_localId);
+		_dblw.buildComposite(_objectId);
 		
 	}
 
@@ -81,13 +82,13 @@ public class DBItemImpl extends DBObject implements Item {
 	public boolean canCreateLink(LinkType linkType, UUID destItemId) {
 		int destId;
 		try {
-			destId = _db.checkLocalIdentifier(destItemId.toUUID());
+			destId = _dblw.getDB().checkLocalIdentifier(destItemId);
 		} catch (ModelVersionDBException e) {
 			throw new CadseIllegalArgumentException("Cannot get local identifier ", e);
 		}
 		if (destId == -1)
 			return false;
-		return _dblw.canCreateLink(linkType.getObjectID(), destId);
+		return _dblw.canCreateLink(linkType.getObjectId(), destId);
 	}
 
 	@Override
@@ -207,19 +208,6 @@ public class DBItemImpl extends DBObject implements Item {
 
 	@Override
 	public Pages getCreationPages(NewContext context) throws CadseException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Set<DerivedLinkDescription> getDerivedLinkDescriptions(
-			ItemDescription source) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Set<DerivedLink> getDerivedLinks() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -637,26 +625,13 @@ public class DBItemImpl extends DBObject implements Item {
 	}
 
 	@Override
-	public void setComponents(Set<ItemDescriptionRef> comp)
-			throws CadseException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setDerivedLinks(Set<DerivedLinkDescription> derivedLinks) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void setKey(Key newkey) throws CadseException {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void setName(String name) throws CadseException {
+	public void setName(String name)  {
 		// TODO Auto-generated method stub
 		
 	}
@@ -676,7 +651,7 @@ public class DBItemImpl extends DBObject implements Item {
 	}
 
 	@Override
-	public void setQualifiedName(String qualifiedName) throws CadseException {
+	public void setQualifiedName(String qualifiedName)  {
 		// TODO Auto-generated method stub
 		
 	}
@@ -898,11 +873,6 @@ public class DBItemImpl extends DBObject implements Item {
 		
 	}
 
-	@Override
-	public void setObjectID(int localIdentifier) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public void setParent(Item parent, LinkType lt) {
@@ -927,5 +897,35 @@ public class DBItemImpl extends DBObject implements Item {
 			IWorkspaceNotifier notifie) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public Exporter[] getExporter(Class<?> exporterType) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getIdInPackage() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public String getShortName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setIdInPackage(int idInPackage) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Iterator<Item> propagateValue(String key) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

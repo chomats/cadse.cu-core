@@ -65,7 +65,7 @@ public class BooleanAttributeType extends AttributeType implements
 				: Boolean.valueOf(CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_.getDefaultValue()) : Boolean.valueOf(value);
 	}
 
-	public BooleanAttributeType(ItemDelta item) throws ModelVersionDBException {
+	public BooleanAttributeType(ItemDelta item) {
 		super(item);
 		this._defaultValue = Convert.toBoolean(item.getAttribute(CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_),
 				false);
