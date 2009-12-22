@@ -34,6 +34,10 @@ public class TimeAttributeType extends LongAttributeType implements fr.imag.adel
 		super(item);
 	}
 
+    public TimeAttributeType() {
+        
+    }
+
 	@Override
 	public ItemType getType() {
 		return CadseGCST.TIME;

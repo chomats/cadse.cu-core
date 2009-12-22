@@ -76,6 +76,9 @@ public class StringAttributeType extends AttributeType implements fr.imag.adele.
 		super(item);
 	}
 
+    public StringAttributeType() {
+    }
+
 	/*
 	 * (non-Javadoc)
 	 * 

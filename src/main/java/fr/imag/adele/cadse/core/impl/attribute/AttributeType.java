@@ -22,19 +22,24 @@ import java.util.UUID;
 
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemState;
+import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.attribute.CheckStatus;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
+import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
 import fr.imag.adele.cadse.core.enumdef.TWCommitKind;
 import fr.imag.adele.cadse.core.enumdef.TWEvol;
 import fr.imag.adele.cadse.core.enumdef.TWUpdateKind;
+import fr.imag.adele.cadse.core.impl.db.DBLogicalWorkspace;
 import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
 import fr.imag.adele.cadse.core.internal.attribute.IInternalTWAttribute;
 import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
 import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.ui.UIPlatform;
 import fr.imag.adele.cadse.core.util.Convert;
+import fr.imag.adele.teamwork.db.ModelVersionDBException;
 
 public abstract class AttributeType extends AbstractGeneratedItem implements IInternalTWAttribute {
 
@@ -44,6 +49,10 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 	private boolean			_TWRevSpecific	= true;
 	private TWCommitKind	_TWCommitKind	= TWCommitKind.conflict;
 	private TWUpdateKind	_TWUpdateKind	= TWUpdateKind.merge;
+
+        public AttributeType() {
+        }
+
 
 	public AttributeType(UUID id, String name, int flag) {
 		super(id, flag);
@@ -360,6 +369,12 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 	}
 	
 	public UIField generateDefaultField() {
+		return null;
+	}
+	
+	public TypeDefinition getSource() {
+		if (_parent instanceof TypeDefinition)
+			return (TypeDefinition) _parent;
 		return null;
 	}
 }

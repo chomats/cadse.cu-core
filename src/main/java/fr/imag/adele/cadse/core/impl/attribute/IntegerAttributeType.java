@@ -50,6 +50,11 @@ public class IntegerAttributeType extends AttributeType implements
 	/** The value. */
 	private Integer	value;
 
+        public IntegerAttributeType() {
+        }
+
+
+        
 	/**
 	 * Instantiates a new integer attribute type.
 	 * 

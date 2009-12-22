@@ -19,6 +19,10 @@ public class ExtItemTypeImpl extends ItemTypeImpl {
 	public ExtItemTypeImpl(LogicalWorkspace wl, ItemType it, ItemDelta desc) {
 		super(wl, it, desc);
 	}
+
+    public ExtItemTypeImpl() {
+        
+    }
 	
 	@Override
 	public boolean isAbstract() {

@@ -53,6 +53,10 @@ public class DateAttributeType extends AttributeType implements fr.imag.adele.ca
 		super(item);
 	}
 
+    public DateAttributeType() {
+
+    }
+
 	public ItemType getType() {
 		return CadseGCST.DATE;
 	}

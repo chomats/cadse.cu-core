@@ -56,8 +56,9 @@ import fr.imag.adele.cadse.util.ArraysUtil;
  * 
  */
 
-public class LinkImpl implements Link {
+public class LinkImpl extends DBObject implements Link {
 
+	
 	/** The source. */
 	private final Item		source;
 
@@ -76,7 +77,8 @@ public class LinkImpl implements Link {
 
 	/** The version. */
 	private int				version;
-
+	
+	int[]	compatibleVersions	= null;
 	/**
 	 * Instanciate an unresolved link. <br/>
 	 * 
@@ -91,8 +93,8 @@ public class LinkImpl implements Link {
 	 * @param destination :
 	 *            link's destination id.
 	 */
-	LinkImpl(Item source, LinkType lt, Item destination) {
-		this(source, lt, destination, true);
+	LinkImpl(int objectId, Item source, LinkType lt, Item destination) {
+		this(objectId, source, lt, destination, true);
 	}
 
 	/**
@@ -110,9 +112,12 @@ public class LinkImpl implements Link {
 	 *            the destination
 	 * @param addInIncommingList
 	 *            the add in incomming list
+	 * @param dblw 
 	 */
-	LinkImpl(Item source, LinkType lt, Item destination, boolean addInIncommingList) {
-		assert source != null;
+	LinkImpl(int objectId, 
+			Item source, LinkType lt, Item destination, boolean addInIncommingList) {
+		super(objectId);
+        assert source != null;
 		assert destination != null;
 		if (lt == null && this instanceof LinkType) {
 			lt = (LinkType) this;
@@ -438,7 +443,7 @@ public class LinkImpl implements Link {
 	 */
 	@Override
 	public int hashCode() {
-		return (getSource().getId() + getLinkType().getName() + getDestinationId()).hashCode();
+		return getSource().getObjectID()^ getLinkType().getObjectID() ^ getDestinationId().hashCode();
 	}
 
 	/**
@@ -448,15 +453,6 @@ public class LinkImpl implements Link {
 	 */
 	public boolean isLinkResolved() {
 		return destination.isResolved();
-	}
-
-	/**
-	 * restore un lien non r�solu.
-	 * 
-	 * @throws CadseException
-	 *             the melusine exception
-	 */
-	public void restore() throws CadseException {
 	}
 
 	/*
@@ -475,18 +471,6 @@ public class LinkImpl implements Link {
 	 */
 	public String getDestinationQualifiedName() {
 		return destination.getQualifiedName();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.Link#getDestinationShortName()
-	 */
-	/**
-	 * @deprecated Use {@link #getDestinationName()} instead
-	 */
-	public String getDestinationShortName() {
-		return getDestinationName();
 	}
 
 	/*
@@ -552,14 +536,14 @@ public class LinkImpl implements Link {
 	}
 
 	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
-		if (key.equals(Item.VERSION_KEY)) {
+		if (key.equals(CadseGCST.VERSION_KEY)) {
 			this.version = Convert.toInt(value, null, -1);
 			return true;
 		}
 		return false;
 	}
 
-	int[]	compatibleVersions	= null;
+	
 
 	public void addCompatibleVersions(int... versions) {
 		compatibleVersions = ArraysUtil.add(compatibleVersions, versions);
@@ -577,4 +561,75 @@ public class LinkImpl implements Link {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	@Override
+	@Deprecated
+	public UUID getDestinationCadseId() {
+		if (destination == null)
+			return null;
+		CadseRuntime cr = destination.getCadse();
+		if (cr == null)
+			return null;
+		return cr.getId();
+	}
+
+	@Override
+	@Deprecated
+	public UUID getSourceCadseId() {
+		if (source == null)
+			return null;
+		CadseRuntime cr = source.getCadse();
+		if (cr == null)
+			return null;
+		return cr.getId();
+	}
+
+	@Override
+	public boolean isInterCadseLink() {
+		UUID scId = getSourceCadseID();
+		UUID dcId = getDestinationCadseID();
+		return !((scId == null && dcId == null) 
+				|| (scId != null && dcId != null && scId.equals(dcId)));
+	}
+
+	@Override
+	public <T> T getLinkAttributeOwner(IAttributeType<T> attDef) {
+		try {
+			return (T) _dblw.getDB().getObjectValue(getObjectID(), attDef.getObjectID());
+		} catch (ModelVersionDBException e) {
+			throw new CadseIllegalArgumentException("Cannot get attribute of {0}", e, attDef);
+		}
+	}
+
+	@Override
+	public UUID getDestinationCadseID() {
+		if (destination == null)
+			return null;
+		CadseRuntime cr = destination.getCadse();
+		if (cr == null)
+			return null;
+		return cr.getId();
+	}
+
+	@Override
+	public UUID getDestinationID() {
+		return source.getId();
+	}
+
+	@Override
+	public UUID getSourceCadseID() {
+		if (source == null)
+			return null;
+		CadseRuntime cr = source.getCadse();
+		if (cr == null)
+			return null;
+		return cr.getId();
+	}
+
+	@Override
+	public UUID getSourceID() {
+		return source.getId();
+	}
+
+	
 }

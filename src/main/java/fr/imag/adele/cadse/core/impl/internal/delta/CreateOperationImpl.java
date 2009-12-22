@@ -23,6 +23,7 @@ import fr.imag.adele.cadse.core.transaction.delta.CreateOperation;
 import fr.imag.adele.cadse.core.transaction.delta.ItemOrLinkDelta;
 import fr.imag.adele.cadse.core.transaction.delta.OperationTypeCst;
 import fr.imag.adele.cadse.core.transaction.delta.WLWCOperationImpl;
+import fr.imag.adele.cadse.util.Assert;
 
 public class CreateOperationImpl extends WLWCOperationImpl implements CreateOperation {
 

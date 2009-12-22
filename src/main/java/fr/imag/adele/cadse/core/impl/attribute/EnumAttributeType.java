@@ -27,13 +27,15 @@ import java.util.UUID;
 
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.attribute.CheckStatus;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
-import fr.imag.adele.cadse.core.impl.CadseIllegalArgumentException;
+import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
+import fr.imag.adele.cadse.core.CadseIllegalArgumentException;
 import fr.imag.adele.cadse.core.impl.ui.UIFieldImpl;
 import fr.imag.adele.cadse.core.impl.ui.ic.IC_Descriptor;
 import fr.imag.adele.cadse.core.impl.ui.mc.MC_Descriptor;
@@ -42,6 +44,7 @@ import fr.imag.adele.cadse.core.ui.EPosLabel;
 import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.ui.UIPlatform;
 import fr.imag.adele.cadse.core.util.Convert;
+import fr.imag.adele.cadse.util.NLS;
 
 /**
  * The Class EnumAttributeType.
@@ -61,6 +64,10 @@ public class EnumAttributeType<X extends Enum<X>> extends AttributeType implemen
 
 	private Map<String, X> enumConstantDirectory;
 
+    public EnumAttributeType() {
+    }
+
+        
 	/**
 	 * Instantiates a new enum attribute type.
 	 * 

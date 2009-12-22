@@ -62,31 +62,27 @@ public class CadseDomainImpl implements CadseDomain {
 	private static CadseDomainImpl		INSTANCE;
 
 	/** The workspace logique. */
-	private LogicalWorkspaceImpl		_logicalWorkspace;
+	private DBLogicalWorkspace		_logicalWorkspace;
 
 	/** The events manager. */
 	private transient EventsManagerImpl	eventsManager	= null;
 
-	private BundleContext				_cxt;
-
-	private Tracker						_ModelDBTracker;
-
-	private Tracker						_IInitModelTracker;
-
-	private Tracker						_IEclipseTracker;
-
-	private Tracker						_IPersistenceTracker;
+	
 
 	public static boolean STOPPED = false;
 	public static boolean STARTED = false;
 
+        private ModelVersionDBService2 _ModelDB2Service;
+        private IInitModel _initModelService;
+        private IPlatformIDE _platformService;
+        private ModelVersionDBService _modelDBService;
+
 	/**
 	 * Instantiates a new workspace domain impl.
 	 */
-	public CadseDomainImpl(BundleContext cxt) {
+	public CadseDomainImpl() {
 		Logger mLogger = Logger.getLogger("CU.Workspace.Workspace");
 		mLogger.info("create instance");
-		_cxt = cxt;
 	}
 
 	/**
@@ -101,7 +97,7 @@ public class CadseDomainImpl implements CadseDomain {
 	 * 
 	 * @see fr.imag.adele.cadse.core.WorkspaceDomain#getWorkspaceLogique()
 	 */
-	public LogicalWorkspace getLogicalWorkspace() {
+	public DBLogicalWorkspace getLogicalWorkspace() {
 		return _logicalWorkspace;
 	}
 
@@ -116,42 +112,6 @@ public class CadseDomainImpl implements CadseDomain {
 
 	// -------------------------------------------------//
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.WorkspaceDomain#disablePersistance()
-	 */
-	@Deprecated
-	public void disablePersistance() {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.WorkspaceDomain#enablePersistance()
-	 */
-	@Deprecated
-	public void enablePersistance() {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.WorkspaceDomain#reloadWSContent()
-	 */
-	@Deprecated
-	public void reloadWSContent() {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.WorkspaceDomain#isEnablePersistance()
-	 */
-	@Deprecated
-	public boolean isEnablePersistance() {
-		return true;
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -175,55 +135,16 @@ public class CadseDomainImpl implements CadseDomain {
 		eventsManager.sendEvents(im);
 	}
 
-	// /**
-	// * events sont enregister durant toutes l'action, il ne sont notifier qu'�
-	// * la fin si registerevent il sont rejouer (trier si sortenvent /
-	// * createnvent, create link, resolve link .../) en cas d'erreur le
-	// workspace
-	// * est d'en l'�tat du debut
-	// *
-	// * @param action
-	// * the action
-	// * @param async
-	// * the async
-	// * @param registerevent
-	// * the registerevent
-	// * @param sortevent
-	// * the sortevent
-	// * @param lock
-	// * the lock
-	// *
-	// * @throws Throwable
-	// * the throwable
-	// */
-	// public void runSafe(IWSRunnable action, boolean async, boolean
-	// registerevent, boolean sortevent, boolean lock)
-	// throws Throwable {
-	// eventsManager.runSafe(action, async, registerevent, sortevent, lock);
-	// }
 
 	public void start() {
 		STARTED = true;
 		STOPPED = false;
 		INSTANCE = this;
 		eventsManager = new EventsManagerImpl(this);
-		_logicalWorkspace = new LogicalWorkspaceImpl(this);
+		_logicalWorkspace = new DBLogicalWorkspace(this);
 		eventsManager.start();
 		Logger mLogger = Logger.getLogger("CU.Workspace.Workspace");
 		mLogger.info("start");
-
-		_ModelDBTracker = new Tracker(_cxt, ModelVersionDBService.class.getName(), null);
-		_ModelDBTracker.open();
-
-		_IInitModelTracker = new Tracker(_cxt, IInitModel.class.getName(), null);
-		_IInitModelTracker.open();
-
-		_IEclipseTracker = new Tracker(_cxt, IEclipse.class.getName(), null);
-		_IEclipseTracker.open();
-
-		_IPersistenceTracker = new Tracker(_cxt, IPersistence.class.getName(), null);
-		_IPersistenceTracker.open();
-
 	}
 
 	public void stop() {
@@ -243,71 +164,60 @@ public class CadseDomainImpl implements CadseDomain {
 		if (eventsManager.isAlive())
 				mLogger.log(Level.WARNING, "Events manager is allready alive");
 			
-		if (unresolvedObject != null) {
-			try {
-				unresolvedObject.store(new FileOutputStream(propFile), "");
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		_ModelDBTracker.close();
-		_ModelDBTracker = null;
-
-		_IInitModelTracker.close();
-		_IInitModelTracker = null;
-
-		_IEclipseTracker.close();
-		_IEclipseTracker = null;
-
-		_IPersistenceTracker.close();
-		_IPersistenceTracker = null;
+//		if (unresolvedObject != null) {
+//			try {
+//				unresolvedObject.store(new FileOutputStream(propFile), "");
+//			} catch (FileNotFoundException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
 		
 		INSTANCE = null;
 		mLogger.info("stop");
 		
 	}
 
-	Properties		unresolvedObject	= null;
+	//Properties		unresolvedObject	= null;
 
-	private File	propFile;
-
-	public UUID getUnresolvedId(String key) {
-		if (unresolvedObject == null) {
-			File l = getLocation();
-			unresolvedObject = new Properties();
-			propFile = new File(l, ".cadse.unresolved.id.properties");
-			if (propFile.exists()) {
-				try {
-					unresolvedObject.load(new FileInputStream(propFile));
-				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-
-		String id = unresolvedObject.getProperty(key);
-		UUID randomUUID = null;
-		if (id != null) {
-			try {
-				return UUID.fromString(id);
-			} catch (IllegalArgumentException e) {
-
-			}
-		}
-
-		randomUUID = UUID.randomUUID();
-		unresolvedObject.put(key, randomUUID.toString());
-		System.out.println("*** create unresolved object " + key + ":" + randomUUID);
-		return randomUUID;
-	}
+//	private File	propFile;
+//
+//	public UUID getUnresolvedId(String key) {
+//		if (unresolvedObject == null) {
+//			File l = getLocation();
+//			unresolvedObject = new Properties();
+//			propFile = new File(l, ".cadse.unresolved.id.properties");
+//			if (propFile.exists()) {
+//				try {
+//					unresolvedObject.load(new FileInputStream(propFile));
+//				} catch (FileNotFoundException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
+//		}
+//
+//		String id = unresolvedObject.getProperty(key);
+//		UUID randomUUID = null;
+//		if (id != null) {
+//			try {
+//				return new UUID(id);
+//			} catch (IllegalArgumentException e) {
+//
+//			}
+//		}
+//
+//		randomUUID = UUID.randomUUID();
+//		unresolvedObject.put(key, randomUUID.toString());
+//		System.out.println("*** create unresolved object " + key + ":" + randomUUID);
+//		return randomUUID;
+//	}
 
 	/**
 	 * Log.
@@ -344,7 +254,7 @@ public class CadseDomainImpl implements CadseDomain {
 		Logger mLogger = Logger.getLogger("CU.Workspace.Workspace");
 		mLogger.log(Level.SEVERE, message, e);
 
-		final IEclipse ideService = getIdeService();
+		final IPlatformIDE ideService = getIdeService();
 		if (ideService != null) {
 			ideService.log(type, message, e);
 		}
@@ -435,7 +345,7 @@ public class CadseDomainImpl implements CadseDomain {
 	 * 
 	 * @return single instance of WorkspaceDomainImpl
 	 */
-	public static CadseDomain getInstance() {
+	public static CadseDomainImpl getInstance() {
 		return INSTANCE;
 	}
 
@@ -457,35 +367,15 @@ public class CadseDomainImpl implements CadseDomain {
 	}
 
 	public ModelVersionDBService getModelVersionDBService() {
-		if (_ModelDBTracker == null) {
-			return null;
-		}
-
-		return (ModelVersionDBService) _ModelDBTracker.getService();
+		return _modelDBService;
 	}
 
-	public IEclipse getIdeService() {
-		if (_IEclipseTracker == null) {
-			return null;
-		}
-
-		return (IEclipse) _IEclipseTracker.getService();
+	public IPlatformIDE getIdeService() {
+		return _platformService;
 	}
 
 	public IInitModel getInitModelService() {
-		if (_IInitModelTracker == null) {
-			return null;
-		}
-
-		return (IInitModel) _IInitModelTracker.getService();
-	}
-
-	public IPersistence getPersistence() {
-		if (_IPersistenceTracker == null) {
-			return null;
-		}
-
-		return (IPersistence) _IPersistenceTracker.getService();
+		return _initModelService;
 	}
 
 	public void refresh(Item item) {
@@ -514,9 +404,13 @@ public class CadseDomainImpl implements CadseDomain {
 		return STARTED;
 	}
 
-	@Override
-	public boolean inDevelopmentMode() {
-		// TODO Auto-generated method stub
-		return false;
+	public ModelVersionDBService2 getDB() {
+		return _ModelDB2Service;
 	}
+
+    public boolean inDevelopmentMode() {
+        return _platformService != null && _platformService.inDevelopmentMode();
+    }
+
+
 }

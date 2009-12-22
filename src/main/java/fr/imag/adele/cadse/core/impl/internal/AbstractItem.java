@@ -60,6 +60,10 @@ public abstract class AbstractItem extends AbstractGeneratedItem implements Item
 	/** The incomings. */
 	protected List<Link>	_incomings;
 
+        public AbstractItem() {
+        }
+
+
 	/**
 	 * Instantiates a new abstract item.
 	 * 
@@ -68,8 +72,8 @@ public abstract class AbstractItem extends AbstractGeneratedItem implements Item
 	 * @param type
 	 *            the type
 	 */
-	public AbstractItem(LogicalWorkspace wl, ItemType type) {
-		super(wl, CadseDomainImpl.generateUUID());
+	public AbstractItem(DBLogicalWorkspace wl, ItemType type) {
+		this._dblw = wl;
 		this._type = type;
 		this._incomings = new ArrayList<Link>();
 		this._qualifiedName = NO_VALUE_STRING;
@@ -135,8 +139,9 @@ public abstract class AbstractItem extends AbstractGeneratedItem implements Item
 	}
 
 	public AbstractItem(LogicalWorkspace wl, ItemType type, ItemDelta desc) {
-		super(wl, desc.getId());
-		this._id = desc.getId();
+		this._dblw = (DBLogicalWorkspace) wl;
+		this._objectId = desc.getObjectID();
+		
 		this._type = type;
 		this._incomings = new ArrayList<Link>();
 		if (type.hasQualifiedNameAttribute()) {
@@ -150,16 +155,6 @@ public abstract class AbstractItem extends AbstractGeneratedItem implements Item
 			this._name = Item.NO_VALUE_STRING;
 		}
 
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.Item#getWorkspaceLogique()
-	 */
-	@Override
-	public LogicalWorkspace getLogicalWorkspace() {
-		return _wl;
 	}
 
 	/*
@@ -298,15 +293,7 @@ public abstract class AbstractItem extends AbstractGeneratedItem implements Item
 		throw new UnsupportedOperationException();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.Item#isInstanceOf(fr.imag.adele.cadse.core.ItemType)
-	 */
-	@Override
-	public boolean isInstanceOf(ItemType it) {
-		return this._type.equals(it) || it.isSuperTypeOf(this._type);
-	}
+	
 
 	@Override
 	public boolean commitMove(OrderWay kind, Link l1, Link l2) {

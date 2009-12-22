@@ -1,5 +1,6 @@
 package fr.imag.adele.cadse.core.impl.attribute;
 
+import fr.imag.adele.cadse.util.NLS;
 
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "fr.imag.adele.cadse.core.impl.attribute.messages"; //$NON-NLS-1$

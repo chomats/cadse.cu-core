@@ -39,13 +39,15 @@ import fr.imag.adele.cadse.util.ArraysUtil;
 public final class LinkDeltaImpl extends ItemOrLinkDeltaImpl implements Link, LinkDelta {
 
 	/** The type. */
-	private String				_lt;
+	private LinkType				_lt;
 
 	/** The destination. */
 	private ItemDelta			_destination;
 	private int[]				_compatibleVersions	= null;
 
-	public LinkDeltaImpl(ItemDeltaImpl parent, String lt, ItemDelta destination, Link original, int index,
+	private int	_objectID;
+
+	public LinkDeltaImpl(ItemDeltaImpl parent, LinkType lt, ItemDelta destination, Link original, int index,
 			boolean loaded)  {
 		super(OperationTypeCst.LINK_OPERATION, parent);
 		this._destination = destination;
@@ -56,10 +58,10 @@ public final class LinkDeltaImpl extends ItemOrLinkDeltaImpl implements Link, Li
 		}
 
 		if (original != null) {
-			setAttribute(Item.VERSION_KEY, original.getVersion(), original.getVersion(), loaded);
-			setAttribute(Item.IS_READ_ONLY_KEY, original.isReadOnly(), original.isReadOnly(), loaded);
+			setAttribute(CadseGCST.VERSION_KEY, original.getVersion(), original.getVersion(), loaded);
+			setAttribute(CadseGCST.IS_READ_ONLY_KEY, original.isReadOnly(), original.isReadOnly(), loaded);
 		}
-		this.setAttribute(Item.LINK_INDEX_KEY, index, index, loaded);
+		this.setAttribute(CadseGCST.LINK_INDEX_KEY, index, index, loaded);
 	}
 
 	/*
@@ -68,7 +70,7 @@ public final class LinkDeltaImpl extends ItemOrLinkDeltaImpl implements Link, Li
 	 * @see fr.imag.adele.cadse.core.internal.delta.LinkOperation#getLinkType()
 	 */
 	public String getLinkTypeName() {
-		return _lt;
+		return _lt.getName();
 	}
 
 	/*

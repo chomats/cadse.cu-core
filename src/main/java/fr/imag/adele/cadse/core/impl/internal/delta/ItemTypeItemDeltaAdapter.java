@@ -34,7 +34,7 @@ import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.ui.UIValidator;
 import fr.imag.adele.cadse.core.ui.view.NewContext;
 
-public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements ItemType {
+public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements ItemType, TypeDefinition.Internal {
 
 	public ItemTypeItemDeltaAdapter(ItemDelta itemDelta) {
 		super(itemDelta);
@@ -60,24 +60,24 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 	 */
 	@Override
 	public LinkType createLinkType(UUID id, int intID, String name, int kind, int min, int max,
-			String selection, ItemType destination) throws CadseException {
+			String selection, TypeDefinition destination) throws CadseException {
 		ItemDelta linktypedelta = null;
 		LogicalWorkspaceTransaction copy = _delta.getCopy();
 		if (id == null) {
-			linktypedelta = copy.createItem(CadseGCST.LINK, _delta, CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES);
-			linktypedelta.createLink(CadseGCST.LINK_lt_DESTINATION, destination);
+			linktypedelta = copy.createItem(CadseGCST.LINK_TYPE, _delta, CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES);
+			linktypedelta.createLink(CadseGCST.LINK_TYPE_lt_DESTINATION, destination);
 		} else {
-			linktypedelta = copy.loadItem(id, CadseGCST.LINK.getId());
+			linktypedelta = copy.loadItem(id, CadseGCST.LINK_TYPE.getId());
 			linktypedelta.setParent(_delta, CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES);
-			linktypedelta.loadLink(CadseGCST.LINK_lt_DESTINATION.getName(), copy.loadItem(destination));
+			linktypedelta.loadLink(CadseGCST.LINK_TYPE_lt_DESTINATION.getName(), copy.loadItem(destination));
 
 		}
-		linktypedelta.setAttribute(CadseGCST.LINK_at_KIND_, null, kind, id != null);
+		linktypedelta.setAttribute(CadseGCST.LINK_TYPE_at_KIND_, kind, id != null);
 		if (selection != null)
-			linktypedelta.setAttribute(CadseGCST.LINK_at_SELECTION_, null, selection, id != null);
-		linktypedelta.setAttribute(CadseGCST.ITEM_at_NAME_, null, name, id != null);
-		linktypedelta.setAttribute(CadseGCST.LINK_at_MIN_, null, min, id != null);
-		linktypedelta.setAttribute(CadseGCST.LINK_at_MAX_, null, max, id != null);
+			linktypedelta.setAttribute(CadseGCST.LINK_TYPE_at_SELECTION_, selection, id != null);
+		linktypedelta.setAttribute(CadseGCST.ITEM_at_NAME_, name, id != null);
+		linktypedelta.setAttribute(CadseGCST.LINK_TYPE_at_MIN_, min, id != null);
+		linktypedelta.setAttribute(CadseGCST.LINK_TYPE_at_MAX_, max, id != null);
 
 		return linktypedelta.getAdapter(LinkType.class);
 	}
@@ -212,12 +212,12 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 	}
 
 	@Override
-	public LinkType getOutgoingLinkType(ItemType destination, String name) {
+	public LinkType getOutgoingLinkType(TypeDefinition destination, String name) {
 		return ItemTypeImpl._getOutgoingLinkType(this, destination, name);
 	}
 
 	@Override
-	public LinkType getOutgoingLinkType(ItemType destination, int kind) {
+	public LinkType getOutgoingLinkType(TypeDefinition destination, int kind) {
 		return ItemTypeImpl._getOutgoingLinkType(this, destination, kind);
 	}
 
@@ -306,8 +306,8 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 
 	@Override
 	public boolean isAbstract() {
-		Boolean ret = _delta.getAttribute(CadseGCST.ITEM_TYPE_at_IS_ABSTRACT_);
-		return ret == null ? CadseGCST.ITEM_TYPE_at_IS_ABSTRACT_.getDefaultValue() : ret;
+		Boolean ret = _delta.getAttribute(CadseGCST.ITEM_TYPE_at_IS_INSTANCE_ABSTRACT_);
+		return ret == null ? CadseGCST.ITEM_TYPE_at_IS_INSTANCE_ABSTRACT_.getDefaultValue() : ret;
 	}
 
 	@Override
@@ -657,5 +657,146 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements It
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public ExtendedType[] getExtendedType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public UIField findField(IAttributeType<?> att) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isExtendedType() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isMainType() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public IAttributeType<?> getUnresolvedAttributeType(UUID id,
+			TypeDefinition sourceType, ItemType type, String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void computeGenericPage(FilterContext context,
+			HierarchicPage genericPage,
+			HashSet<IAttributeType<?>> inSpecificPages,
+			Set<IAttributeType<?>> ro, IAttributeType<?>... firstAttributes) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void computeGroup(Set<GroupOfAttributes> groups) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void computeValidators(FilterContext context,
+			List<UIValidator> validators) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public IActionPage createDefaultCreationAction(NewContext context)
+			throws CadseException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IActionPage createDefaultModificationAction(FilterContext context) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void recurcifComputeCreationPage(FilterContext context,
+			List<IPage> list, Set<IAttributeType<?>> ro) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void recurcifComputeModificationPage(FilterContext context,
+			List<IPage> list, Set<IAttributeType<?>> ro) {
+		// TODO Auto-generated method stub
+		
+	}
+
+    @Override
+    public <T> T adapt(Class<T> clazz) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void clean(IBuildingContext context, boolean componentsContent) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void build(IBuildingContext context) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void compose(IBuildingContext context) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Exporter[] getExporters() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Exporter[] getExporter(Class<?> exportedContentType) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setExporters(Exporter... exporters) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Composer[] getComposers() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setComposers(Composer... composers) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public String getInstanceDisplayName(Item item) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setKeyDefinition(KeyDefinition keyDefinition) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public KeyDefinition getKeyDefinition() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
 }

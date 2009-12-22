@@ -243,6 +243,10 @@ public class ItemImpl extends AbstractItem implements Item {
 
 	private boolean				_isRecomputeComponants;
 
+    public ItemImpl() {
+    }
+
+        
 	/**
 	 * Instantiates a new item impl.
 	 * 
@@ -593,19 +597,6 @@ public class ItemImpl extends AbstractItem implements Item {
 		return Accessor.removeOutgoingItem(this, linkType, destination);
 	}
 
-	/**
-	 * Set attribute for this item. If the value is null, remove the attribute
-	 * 
-	 * @param key
-	 *            the key
-	 * @param value
-	 *            the value
-	 * @throws CadseException
-	 */
-	@Override
-	public void setAttribute(String key, Object value) throws CadseException {
-		_wl.setAttribute(this, key, value);
-	}
 
 	@Override
 	public boolean commitSetAttribute(IAttributeType<?> type, Object value) {
@@ -639,7 +630,7 @@ public class ItemImpl extends AbstractItem implements Item {
 		boolean oldvalue = isValid;
 		this.isValid = valid;
 		if (_state != ItemState.NOT_IN_WORKSPACE && _state != ItemState.MODIFING) {
-			_wl.getCadseDomain().notifieChangeEvent(ChangeID.VALID, this, oldvalue, valid);
+			_dblw.getCadseDomain().notifieChangeEvent(ChangeID.VALID, this, oldvalue, valid);
 		}
 	}
 
@@ -1519,7 +1510,7 @@ public class ItemImpl extends AbstractItem implements Item {
 //	 */
 //	private DerivedLinkType createDerivedLinkTypeIfNeed(DerivedLinkDescription link) {
 //
-//		ItemType originSourceType = _wl.getItemType(link.getOriginLinkSourceTypeID());
+//		ItemType originSourceType = _dblw.getItemType(link.getOriginLinkSourceTypeID());
 //		if (originSourceType == null) {
 //			return null;
 //		}
@@ -2083,7 +2074,7 @@ public class ItemImpl extends AbstractItem implements Item {
 	// }
 	//
 	// // pre: items->forAll(item | item.id <> id )
-	// Item i = _wl.getItem(uniqueName);
+	// Item i = _dblw.getItem(uniqueName);
 	// if (i != null && i != this && i.isResolved()) {
 	// throw new CadseException(Messages.error_unique_name_alreay_exist,
 	// uniqueName);
@@ -2093,8 +2084,8 @@ public class ItemImpl extends AbstractItem implements Item {
 	// this._uniqueName = uniqueName;
 	// if (_state != ItemState.NOT_IN_WORKSPACE && _state != ItemState.MODIFING)
 	// {
-	// _wl.renameUniqueName(this, oldValue, uniqueName);
-	// _wl.getCadseDomain().notifieChangeEvent(ChangeID.SET_ATTRIBUTE, this,
+	// _dblw.renameUniqueName(this, oldValue, uniqueName);
+	// _dblw.getCadseDomain().notifieChangeEvent(ChangeID.SET_ATTRIBUTE, this,
 	// CadseGCST.ITEM_at_QUALIFIED_NAME_, oldValue, uniqueName);
 	// }
 	//
