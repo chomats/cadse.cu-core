@@ -79,53 +79,137 @@ iPOJO-Components: component { $immediate="true" $classname="fr.imag.ade
   { $transition="validate" $method="start" }callback { $transition="inv
  alidate" $method="stop" }provides { $specification="fr.imag.adele.cads
  e.core.CadseDomain" property { $name="sam.domain.root" $value="Workspa
- ce" $type="java.lang.String" }}manipulation { field { $name="eventsMan
- ager" $type="fr.imag.adele.cadse.core.impl.internal.EventsManagerImpl"
-  }field { $name="_modelDBService" $type="fr.imag.adele.teamwork.db.Mod
- elVersionDBService" }field { $name="_logicalWorkspace" $type="fr.imag.
- adele.cadse.core.impl.db.DBLogicalWorkspace" }field { $name="_ModelDB2
- Service" $type="fr.imag.adele.teamwork.db.ModelVersionDBService2" }fie
- ld { $name="_initModelService" $type="fr.imag.adele.fede.workspace.as.
- initmodel.IInitModel" }field { $name="_platformService" $type="fr.imag
- .adele.cadse.as.platformide.IPlatformIDE" }method { $name="$init" }met
- hod { $name="init" }method { $name="getLogicalWorkspace" $return="fr.i
- mag.adele.cadse.core.impl.db.DBLogicalWorkspace" }method { $name="getL
- ocation" $return="java.io.File" }method { $arguments="{fr.imag.adele.c
- adse.core.ChangeID,java.lang.Object[]}" $name="notifieChangeEvent" }me
- thod { $arguments="{fr.imag.adele.cadse.core.ChangeID,java.lang.Object
- []}" $name="notifieChangeEventSingle" }method { $name="start" }method 
- { $name="stop" }method { $arguments="{fr.imag.adele.cadse.core.Item,in
- t,java.lang.String,java.lang.String,java.lang.Throwable}" $name="log" 
- }method { $arguments="{java.lang.String,java.lang.String,java.lang.Thr
- owable}" $name="log" }method { $arguments="{fr.imag.adele.cadse.core.I
- tem,java.lang.String,java.lang.Throwable}" $name="error" }method { $na
- me="isLocked" $return="boolean" }method { $name="endOperation" }method
-  { $arguments="{java.lang.String}" $name="beginOperation" $return="fr.
- imag.adele.cadse.core.IWorkspaceOperation" }method { $arguments="{java
- .lang.String,boolean}" $name="beginOperation" $return="fr.imag.adele.c
- adse.core.IWorkspaceOperation" }method { $arguments="{java.lang.Object
- }" $name="beginRule" }method { $arguments="{java.lang.Object}" $name="
- endRule" }method { $name="generateUUID" $return="java.util.UUID" }meth
- od { $name="getInstance" $return="fr.imag.adele.cadse.core.impl.intern
- al.CadseDomainImpl" }method { $arguments="{java.lang.String}" $name="l
- oadClass" $return="java.lang.Class" }method { $arguments="{int}" $name
- ="waitEndAsyncEvents" }method { $name="getModelVersionDBService" $retu
- rn="fr.imag.adele.teamwork.db.ModelVersionDBService" }method { $name="
- getIdeService" $return="fr.imag.adele.cadse.as.platformide.IPlatformID
- E" }method { $name="getInitModelService" $return="fr.imag.adele.fede.w
+ ce" $type="java.lang.String" }}manipulation { field { $name="__Mstart"
+  $type="boolean" }field { $name="__Mstop" $type="boolean" }field { $na
+ me="__MnotifieChangeEvent$fr_imag_adele_cadse_core_ChangeID$java_lang_
+ Object__" $type="boolean" }field { $name="__MnotifieChangeEventSingle$
+ fr_imag_adele_cadse_core_ChangeID$java_lang_Object__" $type="boolean" 
+ }field { $name="__Mlog$java_lang_String$java_lang_String$java_lang_Thr
+ owable" $type="boolean" }field { $name="__F_initModelService" $type="b
+ oolean" }field { $name="__IM" $type="org.apache.felix.ipojo.InstanceMa
+ nager" }field { $name="__MsetReadOnly$fr_imag_adele_cadse_core_Item$bo
+ olean" $type="boolean" }field { $name="__MisLocked" $type="boolean" }f
+ ield { $name="__MbeginOperation$java_lang_String" $type="boolean" }fie
+ ld { $name="_logicalWorkspace" $type="fr.imag.adele.cadse.core.impl.db
+ .DBLogicalWorkspace" }field { $name="__F_platformService" $type="boole
+ an" }field { $name="__MwaitEndAsyncEvents$int" $type="boolean" }field 
+ { $name="__MbeginRule$java_lang_Object" $type="boolean" }field { $name
+ ="__MendOperation" $type="boolean" }field { $name="__F_logicalWorkspac
+ e" $type="boolean" }field { $name="__FeventsManager" $type="boolean" }
+ field { $name="__MgetDB" $type="boolean" }field { $name="_modelDBServi
+ ce" $type="fr.imag.adele.teamwork.db.ModelVersionDBService" }field { $
+ name="__Merror$fr_imag_adele_cadse_core_Item$java_lang_String$java_lan
+ g_Throwable" $type="boolean" }field { $name="__McreateUnresolvedItem$f
+ r_imag_adele_cadse_core_ItemType$java_lang_String$java_util_UUID" $typ
+ e="boolean" }field { $name="__Mlog$fr_imag_adele_cadse_core_Item$int$j
+ ava_lang_String$java_lang_String$java_lang_Throwable" $type="boolean" 
+ }field { $name="__MgetLogicalWorkspace" $type="boolean" }field { $name
+ ="__MgetLocation" $type="boolean" }field { $name="__MbeginOperation$ja
+ va_lang_String$boolean" $type="boolean" }field { $name="_platformServi
+ ce" $type="fr.imag.adele.cadse.as.platformide.IPlatformIDE" }field { $
+ name="__MgetIdeService" $type="boolean" }field { $name="__Mrefresh$fr_
+ imag_adele_cadse_core_Item" $type="boolean" }field { $name="__F_ModelD
+ B2Service" $type="boolean" }field { $name="__MgetInitModelService" $ty
+ pe="boolean" }field { $name="eventsManager" $type="fr.imag.adele.cadse
+ .core.impl.internal.EventsManagerImpl" }field { $name="__MinDevelopmen
+ tMode" $type="boolean" }field { $name="_ModelDB2Service" $type="fr.ima
+ g.adele.teamwork.db.ModelVersionDBService2" }field { $name="__F_modelD
+ BService" $type="boolean" }field { $name="__MgetEventsManager" $type="
+ boolean" }field { $name="__MloadClass$java_lang_String" $type="boolean
+ " }field { $name="_initModelService" $type="fr.imag.adele.fede.workspa
+ ce.as.initmodel.IInitModel" }field { $name="__MgetModelVersionDBServic
+ e" $type="boolean" }field { $name="__MendRule$java_lang_Object" $type=
+ "boolean" }method { $name="__get_logicalWorkspace" $return="fr.imag.ad
+ ele.cadse.core.impl.db.DBLogicalWorkspace" }method { $arguments="{fr.i
+ mag.adele.cadse.core.impl.db.DBLogicalWorkspace}" $name="__set_logical
+ Workspace" }method { $name="__geteventsManager" $return="fr.imag.adele
+ .cadse.core.impl.internal.EventsManagerImpl" }method { $arguments="{fr
+ .imag.adele.cadse.core.impl.internal.EventsManagerImpl}" $name="__sete
+ ventsManager" }method { $name="__get_ModelDB2Service" $return="fr.imag
+ .adele.teamwork.db.ModelVersionDBService2" }method { $arguments="{fr.i
+ mag.adele.teamwork.db.ModelVersionDBService2}" $name="__set_ModelDB2Se
+ rvice" }method { $name="__get_initModelService" $return="fr.imag.adele
+ .fede.workspace.as.initmodel.IInitModel" }method { $arguments="{fr.ima
+ g.adele.fede.workspace.as.initmodel.IInitModel}" $name="__set_initMode
+ lService" }method { $name="__get_platformService" $return="fr.imag.ade
+ le.cadse.as.platformide.IPlatformIDE" }method { $arguments="{fr.imag.a
+ dele.cadse.as.platformide.IPlatformIDE}" $name="__set_platformService"
+  }method { $name="__get_modelDBService" $return="fr.imag.adele.teamwor
+ k.db.ModelVersionDBService" }method { $arguments="{fr.imag.adele.teamw
+ ork.db.ModelVersionDBService}" $name="__set_modelDBService" }method { 
+ $name="$init" }method { $arguments="{org.apache.felix.ipojo.InstanceMa
+ nager}" $name="$init" }method { $name="init" }method { $name="getLogic
+ alWorkspace" $return="fr.imag.adele.cadse.core.impl.db.DBLogicalWorksp
+ ace" }method { $name="__getLogicalWorkspace" $return="fr.imag.adele.ca
+ dse.core.impl.db.DBLogicalWorkspace" }method { $name="getLocation" $re
+ turn="java.io.File" }method { $name="__getLocation" $return="java.io.F
+ ile" }method { $arguments="{fr.imag.adele.cadse.core.ChangeID,java.lan
+ g.Object[]}" $name="notifieChangeEvent" }method { $arguments="{fr.imag
+ .adele.cadse.core.ChangeID,java.lang.Object[]}" $name="__notifieChange
+ Event" }method { $arguments="{fr.imag.adele.cadse.core.ChangeID,java.l
+ ang.Object[]}" $name="notifieChangeEventSingle" }method { $arguments="
+ {fr.imag.adele.cadse.core.ChangeID,java.lang.Object[]}" $name="__notif
+ ieChangeEventSingle" }method { $name="start" }method { $name="__start"
+  }method { $name="stop" }method { $name="__stop" }method { $arguments=
+ "{fr.imag.adele.cadse.core.Item,int,java.lang.String,java.lang.String,
+ java.lang.Throwable}" $name="log" }method { $arguments="{fr.imag.adele
+ .cadse.core.Item,int,java.lang.String,java.lang.String,java.lang.Throw
+ able}" $name="__log" }method { $arguments="{java.lang.String,java.lang
+ .String,java.lang.Throwable}" $name="log" }method { $arguments="{java.
+ lang.String,java.lang.String,java.lang.Throwable}" $name="__log" }meth
+ od { $arguments="{fr.imag.adele.cadse.core.Item,java.lang.String,java.
+ lang.Throwable}" $name="error" }method { $arguments="{fr.imag.adele.ca
+ dse.core.Item,java.lang.String,java.lang.Throwable}" $name="__error" }
+ method { $name="isLocked" $return="boolean" }method { $name="__isLocke
+ d" $return="boolean" }method { $name="endOperation" }method { $name="_
+ _endOperation" }method { $arguments="{java.lang.String}" $name="beginO
+ peration" $return="fr.imag.adele.cadse.core.IWorkspaceOperation" }meth
+ od { $arguments="{java.lang.String}" $name="__beginOperation" $return=
+ "fr.imag.adele.cadse.core.IWorkspaceOperation" }method { $arguments="{
+ java.lang.String,boolean}" $name="beginOperation" $return="fr.imag.ade
+ le.cadse.core.IWorkspaceOperation" }method { $arguments="{java.lang.St
+ ring,boolean}" $name="__beginOperation" $return="fr.imag.adele.cadse.c
+ ore.IWorkspaceOperation" }method { $arguments="{java.lang.Object}" $na
+ me="beginRule" }method { $arguments="{java.lang.Object}" $name="__begi
+ nRule" }method { $arguments="{java.lang.Object}" $name="endRule" }meth
+ od { $arguments="{java.lang.Object}" $name="__endRule" }method { $name
+ ="generateUUID" $return="java.util.UUID" }method { $name="getInstance"
+  $return="fr.imag.adele.cadse.core.impl.internal.CadseDomainImpl" }met
+ hod { $arguments="{java.lang.String}" $name="loadClass" $return="java.
+ lang.Class" }method { $arguments="{java.lang.String}" $name="__loadCla
+ ss" $return="java.lang.Class" }method { $arguments="{int}" $name="wait
+ EndAsyncEvents" }method { $arguments="{int}" $name="__waitEndAsyncEven
+ ts" }method { $name="getModelVersionDBService" $return="fr.imag.adele.
+ teamwork.db.ModelVersionDBService" }method { $name="__getModelVersionD
+ BService" $return="fr.imag.adele.teamwork.db.ModelVersionDBService" }m
+ ethod { $name="getIdeService" $return="fr.imag.adele.cadse.as.platform
+ ide.IPlatformIDE" }method { $name="__getIdeService" $return="fr.imag.a
+ dele.cadse.as.platformide.IPlatformIDE" }method { $name="getInitModelS
+ ervice" $return="fr.imag.adele.fede.workspace.as.initmodel.IInitModel"
+  }method { $name="__getInitModelService" $return="fr.imag.adele.fede.w
  orkspace.as.initmodel.IInitModel" }method { $arguments="{fr.imag.adele
  .cadse.core.Item}" $name="refresh" }method { $arguments="{fr.imag.adel
- e.cadse.core.Item,boolean}" $name="setReadOnly" }method { $name="getEv
- entsManager" $return="fr.imag.adele.cadse.core.impl.internal.EventsMan
- agerImpl" }method { $arguments="{fr.imag.adele.cadse.core.ItemType,jav
- a.lang.String,java.util.UUID}" $name="createUnresolvedItem" $return="f
- r.imag.adele.cadse.core.Item" }method { $name="isStopped" $return="boo
- lean" }method { $name="isStarted" $return="boolean" }method { $name="g
- etDB" $return="fr.imag.adele.teamwork.db.ModelVersionDBService2" }meth
- od { $name="inDevelopmentMode" $return="boolean" }method { $name="getL
- ogicalWorkspace" $return="fr.imag.adele.cadse.core.LogicalWorkspace" }
- interface { $name="fr.imag.adele.cadse.core.CadseDomain" }}}instance {
-  $component="fr.imag.adele.cadse.core.impl.internal.CadseDomainImpl" $
- name="fr.imag.adele.cadse.core.impl.internal.CadseDomainImpl" }
+ e.cadse.core.Item}" $name="__refresh" }method { $arguments="{fr.imag.a
+ dele.cadse.core.Item,boolean}" $name="setReadOnly" }method { $argument
+ s="{fr.imag.adele.cadse.core.Item,boolean}" $name="__setReadOnly" }met
+ hod { $name="getEventsManager" $return="fr.imag.adele.cadse.core.impl.
+ internal.EventsManagerImpl" }method { $name="__getEventsManager" $retu
+ rn="fr.imag.adele.cadse.core.impl.internal.EventsManagerImpl" }method 
+ { $arguments="{fr.imag.adele.cadse.core.ItemType,java.lang.String,java
+ .util.UUID}" $name="createUnresolvedItem" $return="fr.imag.adele.cadse
+ .core.Item" }method { $arguments="{fr.imag.adele.cadse.core.ItemType,j
+ ava.lang.String,java.util.UUID}" $name="__createUnresolvedItem" $retur
+ n="fr.imag.adele.cadse.core.Item" }method { $name="isStopped" $return=
+ "boolean" }method { $name="isStarted" $return="boolean" }method { $nam
+ e="getDB" $return="fr.imag.adele.teamwork.db.ModelVersionDBService2" }
+ method { $name="__getDB" $return="fr.imag.adele.teamwork.db.ModelVersi
+ onDBService2" }method { $name="inDevelopmentMode" $return="boolean" }m
+ ethod { $name="__inDevelopmentMode" $return="boolean" }method { $name=
+ "getLogicalWorkspace" $return="fr.imag.adele.cadse.core.LogicalWorkspa
+ ce" }method { $name="__getLogicalWorkspace" $return="fr.imag.adele.cad
+ se.core.LogicalWorkspace" }interface { $name="fr.imag.adele.cadse.core
+ .CadseDomain" }}}instance { $component="fr.imag.adele.cadse.core.impl.
+ internal.CadseDomainImpl" $name="fr.imag.adele.cadse.core.impl.interna
+ l.CadseDomainImpl" }
 ipojo-auto-start: true
 
