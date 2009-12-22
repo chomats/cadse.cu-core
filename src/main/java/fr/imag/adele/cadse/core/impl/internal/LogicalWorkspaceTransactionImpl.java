@@ -511,7 +511,7 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 			}
 			for (LinkDescription l : desc.getLinks()) {
 				ItemDelta destItem = loadItem(l.getDestination());
-				ret.loadLink(l.getType(), destItem);
+				ret.loadLink(l.getLinkType(), destItem);
 			}
 			ret.finishLoad();
 		} catch (CadseException e) {
@@ -526,8 +526,8 @@ public class LogicalWorkspaceTransactionImpl implements LogicalWorkspaceTransact
 		if (loadingItem != null && loadingItem.isLoaded()) {
 			return loadingItem;
 		}
-		loadingItem = loadItem(desc.getId(), desc.getType());
 		try {
+			loadingItem = loadItem(desc.getId(), desc.getTypeObject());
 			if (desc.getQualifiedName() != null) {
 				loadingItem.setQualifiedName(desc.getQualifiedName(), true);
 			}
