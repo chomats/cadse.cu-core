@@ -22,13 +22,10 @@
  */
 package fr.imag.adele.cadse.core.impl.internal;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,6 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -43,12 +41,10 @@ import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CadseRuntime;
-import java.util.UUID;
 import fr.imag.adele.cadse.core.DerivedLinkType;
 import fr.imag.adele.cadse.core.GroupType;
 import fr.imag.adele.cadse.core.IItemFactory;
 import fr.imag.adele.cadse.core.IItemManager;
-import fr.imag.adele.cadse.core.IItemNode;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemFilter;
 import fr.imag.adele.cadse.core.ItemState;
@@ -60,35 +56,27 @@ import fr.imag.adele.cadse.core.Messages;
 import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.attribute.GroupOfAttributes;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
-import fr.imag.adele.cadse.core.delta.ItemDelta;
 import fr.imag.adele.cadse.core.impl.CadseCore;
 import fr.imag.adele.cadse.core.impl.CadseIllegalArgumentException;
 import fr.imag.adele.cadse.core.impl.CollectedReflectLink;
 import fr.imag.adele.cadse.core.impl.ItemFactory;
 import fr.imag.adele.cadse.core.impl.ReflectLink;
-import fr.imag.adele.cadse.core.impl.internal.ui.HierachicPageImpl;
-import fr.imag.adele.cadse.core.impl.internal.ui.PagesImpl;
-import fr.imag.adele.cadse.core.impl.ui.CreationAction;
-import fr.imag.adele.cadse.core.impl.ui.ModificationAction;
 import fr.imag.adele.cadse.core.internal.IWorkingLoadingItems;
 import fr.imag.adele.cadse.core.internal.ItemTypeInternal;
-import fr.imag.adele.cadse.core.key.SpaceKeyType;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransactionListener;
+import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
 import fr.imag.adele.cadse.core.ui.HierarchicPage;
 import fr.imag.adele.cadse.core.ui.IActionContributor;
 import fr.imag.adele.cadse.core.ui.IActionPage;
 import fr.imag.adele.cadse.core.ui.IPage;
-import fr.imag.adele.cadse.core.ui.IPageFactory;
-import fr.imag.adele.cadse.core.ui.Pages;
 import fr.imag.adele.cadse.core.ui.UIField;
-import fr.imag.adele.cadse.core.ui.UIRunningValidator;
 import fr.imag.adele.cadse.core.ui.UIValidator;
 import fr.imag.adele.cadse.core.ui.view.FilterContext;
 import fr.imag.adele.cadse.core.ui.view.NewContext;
-import fr.imag.adele.cadse.core.util.ArraysUtil;
 import fr.imag.adele.cadse.core.util.Convert;
 import fr.imag.adele.cadse.core.util.IErrorCollector;
 import fr.imag.adele.cadse.core.util.LinkPathUtil;
+import fr.imag.adele.cadse.util.ArraysUtil;
 
 /**
  * A item type is type of an element in the workspace. Each item type has an id.

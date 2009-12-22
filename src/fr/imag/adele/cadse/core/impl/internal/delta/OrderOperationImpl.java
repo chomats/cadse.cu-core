@@ -19,11 +19,11 @@
 package fr.imag.adele.cadse.core.impl.internal.delta;
 
 import fr.imag.adele.cadse.core.LinkType;
-import fr.imag.adele.cadse.core.delta.LinkDelta;
-import fr.imag.adele.cadse.core.delta.OperationTypeCst;
-import fr.imag.adele.cadse.core.delta.OrderOperation;
-import fr.imag.adele.cadse.core.delta.WLWCOperationImpl;
-import fr.imag.adele.cadse.core.util.OrderWay;
+import fr.imag.adele.cadse.core.transaction.delta.LinkDelta;
+import fr.imag.adele.cadse.core.transaction.delta.OperationTypeCst;
+import fr.imag.adele.cadse.core.transaction.delta.OrderOperation;
+import fr.imag.adele.cadse.core.transaction.delta.WLWCOperationImpl;
+import fr.imag.adele.cadse.util.OrderWay;
 
 public class OrderOperationImpl extends WLWCOperationImpl implements OrderOperation {
 	private final OrderWay	_kind;

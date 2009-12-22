@@ -21,13 +21,11 @@ package fr.imag.adele.cadse.core.impl.ui.mc;
 import java.util.ArrayList;
 import java.util.List;
 
-import java.util.UUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
-import fr.imag.adele.cadse.core.delta.ItemDelta;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
-import fr.imag.adele.cadse.core.ui.UIPlatform;
+import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
 import fr.imag.adele.cadse.core.ui.UIField;
 
 public class MC_DestLink extends LinkModelController {

@@ -25,24 +25,24 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import fr.imag.adele.cadse.core.CadseException;
-import java.util.UUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.Messages;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
-import fr.imag.adele.cadse.core.delta.ItemDelta;
-import fr.imag.adele.cadse.core.delta.LinkDelta;
-import fr.imag.adele.cadse.core.delta.SetAttributeOperation;
 import fr.imag.adele.cadse.core.impl.CadseIllegalArgumentException;
 import fr.imag.adele.cadse.core.impl.internal.delta.DeleteOperationImpl;
-import fr.imag.adele.cadse.core.key.AbstractSpaceKey;
-import fr.imag.adele.cadse.core.key.ISpaceKey;
-import fr.imag.adele.cadse.core.key.SpaceKeyType;
+import fr.imag.adele.cadse.core.key.DefaultKeyImpl;
+import fr.imag.adele.cadse.core.key.Key;
+import fr.imag.adele.cadse.core.key.KeyDefinition;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
+import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
+import fr.imag.adele.cadse.core.transaction.delta.LinkDelta;
+import fr.imag.adele.cadse.core.transaction.delta.SetAttributeOperation;
 import fr.imag.adele.cadse.core.util.IErrorCollector;
 
 public class Accessor {
@@ -141,7 +141,7 @@ public class Accessor {
 						continue;
 					}
 
-					SetAttributeOperation v = desc.getSetAttributeOperation(att.getName(), false);
+					SetAttributeOperation v = desc.getSetAttributeOperation(att, false);
 					if (v == null) {
 						continue;
 					}
@@ -230,12 +230,12 @@ public class Accessor {
 		return false;
 	}
 
-	static public ISpaceKey computekey(ISpaceKey key, ItemType type, Item item) {
-		if (key == AbstractSpaceKey.NO_INIT_KEY) {
+	static public Key computekey(Key key, ItemType type, Item item) {
+		if (key == DefaultKeyImpl.NO_INIT_KEY) {
 			if (type == null) {
 				key = null;
 			} else {
-				SpaceKeyType keyType = type.getSpaceKeyType();
+				KeyDefinition keyType = type.getSpaceKeyType();
 				if (keyType != null) {
 					try {
 						key = keyType.computeKey(item);

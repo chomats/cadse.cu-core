@@ -3,18 +3,14 @@ package fr.imag.adele.cadse.core.impl.internal.ui;
 import java.util.HashSet;
 import java.util.List;
 
-import fr.imag.adele.cadse.core.CadseGCST;
-import java.util.UUID;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
 import fr.imag.adele.cadse.core.impl.ui.PageImpl;
-import fr.imag.adele.cadse.core.impl.ui.UIFieldImpl;
 import fr.imag.adele.cadse.core.ui.HierarchicPage;
 import fr.imag.adele.cadse.core.ui.IActionPage;
 import fr.imag.adele.cadse.core.ui.IPage;
-import fr.imag.adele.cadse.core.ui.UIField;
-import fr.imag.adele.cadse.core.util.ArraysUtil;
+import fr.imag.adele.cadse.util.ArraysUtil;
 
 public class HierachicPageImpl extends AbstractGeneratedItem implements IPage, HierarchicPage {
 	protected IPage[] _bloc = null;

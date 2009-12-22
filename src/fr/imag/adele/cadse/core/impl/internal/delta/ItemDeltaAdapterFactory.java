@@ -1,6 +1,6 @@
 package fr.imag.adele.cadse.core.impl.internal.delta;
 
-import fr.imag.adele.cadse.core.delta.ItemDelta;
+import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
 
 /**
  * Get a facette, an adapter, or an accessor to an itemDelta to manipulate an ItemType or a LinkType form an ItemDelta in a transaction.

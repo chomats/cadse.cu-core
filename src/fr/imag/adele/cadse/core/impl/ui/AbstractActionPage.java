@@ -20,16 +20,8 @@
 package fr.imag.adele.cadse.core.impl.ui;
 
 import fr.imag.adele.cadse.core.CadseException;
-import fr.imag.adele.cadse.core.Item;
-import fr.imag.adele.cadse.core.ItemType;
-import fr.imag.adele.cadse.core.LinkType;
-import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
 import fr.imag.adele.cadse.core.ui.IActionPage;
-import fr.imag.adele.cadse.core.ui.IFieldDescription;
-import fr.imag.adele.cadse.core.ui.IPage;
 import fr.imag.adele.cadse.core.ui.UIPlatform;
-import fr.imag.adele.cadse.core.ui.IPageObject;
-import fr.imag.adele.cadse.core.ui.Pages;
 
 /**
  * .

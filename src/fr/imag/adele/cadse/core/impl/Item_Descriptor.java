@@ -1,6 +1,7 @@
 package fr.imag.adele.cadse.core.impl;
 
 import java.util.UUID;
+
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;

@@ -1,14 +1,14 @@
 package fr.imag.adele.cadse.core.impl.internal.delta;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CadseRuntime;
-import java.util.UUID;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
-import fr.imag.adele.cadse.core.delta.ItemDelta;
-import fr.imag.adele.cadse.core.delta.LinkDelta;
+import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
+import fr.imag.adele.cadse.core.transaction.delta.LinkDelta;
 import fr.imag.adele.cadse.core.ui.view.DefineNewContext;
 
 public class CadseRuntimeItemDeltaAdapter extends ItemItemDeltaAdapter implements CadseRuntime {

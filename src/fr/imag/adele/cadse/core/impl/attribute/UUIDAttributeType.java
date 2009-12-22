@@ -20,10 +20,9 @@ package fr.imag.adele.cadse.core.impl.attribute;
 
 import java.util.UUID;
 
-import java.util.UUID;
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.impl.internal.delta.ItemDeltaImpl;
-import fr.imag.adele.cadse.core.CadseGCST;
 
 public class UUIDAttributeType extends AttributeType implements fr.imag.adele.cadse.core.attribute.UUIDAttributeType {
 

@@ -18,11 +18,11 @@
  */
 package fr.imag.adele.cadse.core.impl.ui.view;
 
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
-import fr.imag.adele.cadse.core.CadseGCST;
 
 public class TreeView extends AbstractGeneratedItem {
 

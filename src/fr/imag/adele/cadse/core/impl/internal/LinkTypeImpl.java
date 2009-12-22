@@ -23,10 +23,10 @@
 package fr.imag.adele.cadse.core.impl.internal;
 
 import java.util.Collection;
+import java.util.UUID;
 
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
-import java.util.UUID;
 import fr.imag.adele.cadse.core.ILinkTypeManager;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
@@ -34,7 +34,6 @@ import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
-import fr.imag.adele.cadse.core.delta.ItemDelta;
 import fr.imag.adele.cadse.core.enumdef.TWDestEvol;
 import fr.imag.adele.cadse.core.impl.AbstractLinkTypeManager;
 import fr.imag.adele.cadse.core.impl.CadseCore;
@@ -50,10 +49,11 @@ import fr.imag.adele.cadse.core.impl.ui.mc.MC_Descriptor;
 import fr.imag.adele.cadse.core.internal.attribute.IInternalTWLink;
 import fr.imag.adele.cadse.core.path.EvaluatePath;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransactionListener;
+import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
 import fr.imag.adele.cadse.core.ui.EPosLabel;
 import fr.imag.adele.cadse.core.ui.UIField;
-import fr.imag.adele.cadse.core.util.ArraysUtil;
 import fr.imag.adele.cadse.core.util.Convert;
+import fr.imag.adele.cadse.util.ArraysUtil;
 
 /**
  * D�finit un type de lien particulier. Attributs : L'attribut id est une cl�

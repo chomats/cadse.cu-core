@@ -20,11 +20,11 @@ package fr.imag.adele.cadse.core.impl.internal.delta;
 
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
-import fr.imag.adele.cadse.core.delta.ItemOrLinkDelta;
-import fr.imag.adele.cadse.core.delta.OperationTypeCst;
-import fr.imag.adele.cadse.core.delta.SetAttributeOperation;
-import fr.imag.adele.cadse.core.delta.WLWCOperationImpl;
 import fr.imag.adele.cadse.core.internal.delta.InternalSetAttributeOperation;
+import fr.imag.adele.cadse.core.transaction.delta.ItemOrLinkDelta;
+import fr.imag.adele.cadse.core.transaction.delta.OperationTypeCst;
+import fr.imag.adele.cadse.core.transaction.delta.SetAttributeOperation;
+import fr.imag.adele.cadse.core.transaction.delta.WLWCOperationImpl;
 
 public final class SetAttributeOperationImpl extends WLWCOperationImpl implements SetAttributeOperation,
 		InternalSetAttributeOperation {

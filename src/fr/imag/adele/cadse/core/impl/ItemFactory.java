@@ -18,13 +18,13 @@
  */
 package fr.imag.adele.cadse.core.impl;
 
-import fr.imag.adele.cadse.core.CadseGCST;
 import java.util.UUID;
+
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.IItemFactory;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.LogicalWorkspace;
-import fr.imag.adele.cadse.core.delta.ItemDelta;
 import fr.imag.adele.cadse.core.impl.attribute.BooleanAttributeType;
 import fr.imag.adele.cadse.core.impl.attribute.DateAttributeType;
 import fr.imag.adele.cadse.core.impl.attribute.DoubleAttributeType;
@@ -41,6 +41,7 @@ import fr.imag.adele.cadse.core.impl.internal.ItemTypeImpl;
 import fr.imag.adele.cadse.core.impl.internal.LinkTypeImpl;
 import fr.imag.adele.cadse.core.impl.ui.PageImpl;
 import fr.imag.adele.cadse.core.impl.ui.UIFieldImpl;
+import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
 
 public class ItemFactory implements IItemFactory {
 	static final public ItemFactory	SINGLETON	= new ItemFactory();

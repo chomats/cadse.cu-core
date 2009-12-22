@@ -1,6 +1,7 @@
 package fr.imag.adele.cadse.core.impl.ui.mc;
 
-import fr.imag.adele.cadse.core.util.NLS;
+import fr.imag.adele.cadse.util.NLS;
+
 
 
 

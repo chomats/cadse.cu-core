@@ -22,12 +22,11 @@ package fr.imag.adele.cadse.core.impl.ui;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
-import java.util.UUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
@@ -36,20 +35,11 @@ import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.impl.CollectedReflectLink;
 import fr.imag.adele.cadse.core.impl.ReflectLink;
 import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
-import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
 import fr.imag.adele.cadse.core.ui.IActionPage;
 import fr.imag.adele.cadse.core.ui.IPage;
-import fr.imag.adele.cadse.core.ui.UIPlatform;
-import fr.imag.adele.cadse.core.ui.IPageObject;
-import fr.imag.adele.cadse.core.ui.IUIFieldContainer;
-import fr.imag.adele.cadse.core.ui.Pages;
-import fr.imag.adele.cadse.core.ui.UIField;
-import fr.imag.adele.cadse.core.ui.UIValidator;
-import fr.imag.adele.cadse.core.ui.view.FilterContext;
-import fr.imag.adele.cadse.core.util.ArraysUtil;
 import fr.imag.adele.cadse.core.util.Convert;
-import fr.imag.adele.cadse.core.util.ObjectMap;
-import fr.imag.adele.cadse.core.util.OrderWay;
+import fr.imag.adele.cadse.util.ArraysUtil;
+import fr.imag.adele.cadse.util.OrderWay;
 
 /**
  * The Class IPage. Represente une page graphique. Elle contient UIField,

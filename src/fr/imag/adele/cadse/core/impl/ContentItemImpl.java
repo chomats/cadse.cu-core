@@ -26,11 +26,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
-import java.util.UUID;
-import fr.imag.adele.cadse.core.ContentItem;
 import fr.imag.adele.cadse.core.GenContext;
 import fr.imag.adele.cadse.core.GenStringBuilder;
 import fr.imag.adele.cadse.core.Item;
@@ -40,10 +39,11 @@ import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.build.Composer;
 import fr.imag.adele.cadse.core.build.Exporter;
 import fr.imag.adele.cadse.core.build.IBuildingContext;
-import fr.imag.adele.cadse.core.delta.ItemDelta;
+import fr.imag.adele.cadse.core.content.ContentItem;
 import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
-import fr.imag.adele.cadse.core.util.ArraysUtil;
+import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
 import fr.imag.adele.cadse.core.var.ContextVariable;
+import fr.imag.adele.cadse.util.ArraysUtil;
 
 /**
  * This class manages the build of the derived content of an item, in order to

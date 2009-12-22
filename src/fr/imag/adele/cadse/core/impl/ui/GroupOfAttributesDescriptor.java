@@ -1,8 +1,9 @@
 package fr.imag.adele.cadse.core.impl.ui;
 
 
-import fr.imag.adele.cadse.core.CadseGCST;
 import java.util.UUID;
+
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.attribute.CheckStatus;
@@ -11,7 +12,7 @@ import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.impl.attribute.AttributeType;
 import fr.imag.adele.cadse.core.ui.EPosLabel;
 import fr.imag.adele.cadse.core.ui.UIField;
-import fr.imag.adele.cadse.core.util.ArraysUtil;
+import fr.imag.adele.cadse.util.ArraysUtil;
 
 public class GroupOfAttributesDescriptor extends AttributeType implements GroupOfAttributes {
 

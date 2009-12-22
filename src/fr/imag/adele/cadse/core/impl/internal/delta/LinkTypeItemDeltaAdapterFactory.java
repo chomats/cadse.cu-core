@@ -1,7 +1,7 @@
 package fr.imag.adele.cadse.core.impl.internal.delta;
 
 import fr.imag.adele.cadse.core.LinkType;
-import fr.imag.adele.cadse.core.delta.ItemDelta;
+import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
 
 public class LinkTypeItemDeltaAdapterFactory implements ItemDeltaAdapterFactory<LinkType>{
 

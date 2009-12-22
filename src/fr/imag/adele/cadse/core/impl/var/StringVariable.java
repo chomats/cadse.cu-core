@@ -20,6 +20,7 @@
 package fr.imag.adele.cadse.core.impl.var;
 
 import java.util.UUID;
+
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.var.ContextVariable;
 

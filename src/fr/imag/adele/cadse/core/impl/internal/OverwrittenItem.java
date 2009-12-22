@@ -22,7 +22,7 @@ import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
-import fr.imag.adele.cadse.core.util.ArraysUtil;
+import fr.imag.adele.cadse.util.ArraysUtil;
 
 public class OverwrittenItem extends AbstractGeneratedItem {
 	Item		source;
