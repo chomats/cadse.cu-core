@@ -35,7 +35,7 @@ import fr.imag.adele.cadse.core.impl.attribute.StringAttributeType;
 import fr.imag.adele.cadse.core.impl.attribute.TimeAttributeType;
 import fr.imag.adele.cadse.core.impl.attribute.URLAttributeType;
 import fr.imag.adele.cadse.core.impl.attribute.UUIDAttributeType;
-import fr.imag.adele.cadse.core.impl.internal.ExtItemTypeImpl;
+import fr.imag.adele.cadse.core.impl.internal.ExtendedTypeImpl;
 import fr.imag.adele.cadse.core.impl.internal.ItemImpl;
 import fr.imag.adele.cadse.core.impl.internal.ItemTypeImpl;
 import fr.imag.adele.cadse.core.impl.internal.LinkTypeImpl;
@@ -52,7 +52,7 @@ public class ItemFactory implements IItemFactory {
 
 	public Item newForCommitItem(LogicalWorkspace wl, ItemType it, ItemDelta item) {
 		if (isThisOrSubType(it, CadseGCST.ITEM_TYPE)) {
-			return new ItemTypeImpl(wl, it, item);
+			return new ItemTypeImpl(it, item);
 		}
 		UUID id = item.getId();
 		String shortName = item.getName();
@@ -109,7 +109,8 @@ public class ItemFactory implements IItemFactory {
 		}
 
 		if (it == CadseGCST.EXT_ITEM_TYPE) {
-			return new ExtItemTypeImpl(wl, it, item); 
+			return new ExtendedTypeImpl(item.getId(), it, item.getQualifiedName(), 
+					item.getName()); 
 		} 
 		
 		if (it == CadseGCST.CADSE_DEFINITION) {
