@@ -30,7 +30,6 @@ public final class SetAttributeOperationImpl extends WLWCOperationImpl implement
 		InternalSetAttributeOperation {
 
 	private final IAttributeType<?>	_attribute;
-	private final String	_attributeName;
 	private Object			_currentValue;
 	private final Object	_oldValue;
 	private Object			_precValue;
@@ -51,13 +50,12 @@ public final class SetAttributeOperationImpl extends WLWCOperationImpl implement
 	}
 	
 	public SetAttributeOperationImpl(ItemOrLinkDelta parent, IAttributeType<?> key, Object value, Object oldValue)
-	throws CadseException {
+	{
 		this(parent, key, value, oldValue, true);
 	}
 	public SetAttributeOperationImpl(ItemOrLinkDelta parent, IAttributeType<?> key, Object value, Object oldValue, boolean add)
-			throws CadseException {
+	{
 		super(OperationTypeCst.SET_ATTRIBUTE_OPERATION, parent);
-		this._attributeName = key.getName();
 		this._attribute = key;
 		this._currentValue = value;
 		this._precValue = this._oldValue = oldValue;
@@ -70,7 +68,7 @@ public final class SetAttributeOperationImpl extends WLWCOperationImpl implement
 	 * @see fr.imag.adele.cadse.core.internal.delta.SetAttributeOperation2#getAttributeName()
 	 */
 	public String getAttributeName() {
-		return _attributeName;
+		return _attribute.getName();
 	}
 
 	/**
@@ -109,12 +107,12 @@ public final class SetAttributeOperationImpl extends WLWCOperationImpl implement
 	}
 
 	public IAttributeType<?> getType() {
-		return getParent().getAttributeType(this);
+		return getAttributeDefinition();
 	}
 
 	@Override
 	public String toString() {
-		return _attributeName + "=" + _currentValue + " (prec value:" + _precValue + ", old value:" + _oldValue + " )";
+		return getAttributeName() + "=" + _currentValue + " (prec value:" + _precValue + ", old value:" + _oldValue + " )";
 	}
 
 	@Override

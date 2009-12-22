@@ -45,6 +45,10 @@ public class LongAttributeType extends AttributeType implements fr.imag.adele.ca
 		super(item);
 	}
 
+    public LongAttributeType() {
+        
+    }
+
 	public Class<Long> getAttributeType() {
 		return Long.class;
 	}

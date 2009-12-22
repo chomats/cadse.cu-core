@@ -22,7 +22,7 @@ public class SpaceKeyDeltaImpl extends WLWCOperationImpl implements SpaceKeyDelt
 		return _attOperation;
 	}
 
-	public SpaceKeyType getKeyType() {
+	public KeyDefinition getKeyType() {
 		return _newKey != null ? _newKey.getType() : _oldKey != null ? _oldKey.getType() : null;
 	}
 
@@ -62,7 +62,7 @@ public class SpaceKeyDeltaImpl extends WLWCOperationImpl implements SpaceKeyDelt
 
 	public boolean isChangeParent() {
 		return _newKey != null && _oldKey != null
-				&& !Convert.equals(_newKey.getParentSpaceKey(), _oldKey.getParentSpaceKey());
+				&& !Convert.equals(_newKey.getParentKey(), _oldKey.getParentKey());
 	}
 
 }

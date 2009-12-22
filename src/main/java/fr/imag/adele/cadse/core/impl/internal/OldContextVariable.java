@@ -10,27 +10,9 @@ import fr.imag.adele.cadse.core.var.ContextVariable;
 public class OldContextVariable extends ContextVariable {
 	LogicalWorkspaceTransaction	_copy;
 
-	/**
-	 * @deprecated Use {@link #getName(Item)} instead
-	 */
-	@Deprecated
-	@Override
-	public String getShortName(Item item) {
-		return getName(item);
-	}
-
 	@Override
 	public String getName(Item item) {
 		return getAttribute(item, CadseGCST.ITEM_at_NAME_);
-	}
-
-	/**
-	 * @deprecated Use {@link #getQualifiedName(Item)} instead
-	 */
-	@Deprecated
-	@Override
-	public String getUniqueName(Item item) {
-		return getQualifiedName(item);
 	}
 
 	@Override
@@ -39,8 +21,8 @@ public class OldContextVariable extends ContextVariable {
 	}
 
 	@Override
-	public String getValue(Item item, String key) {
-		SetAttributeOperation attOper = _copy.getItem(item.getId()).getSetAttributeOperation(key, false);
+	public String getValue(Item item, IAttributeType<String> key) {
+			SetAttributeOperation attOper = _copy.getItem(item.getId()).getSetAttributeOperation(key, false);
 		if (attOper != null) {
 			return (String) attOper.getOldValue();
 		}
@@ -49,15 +31,15 @@ public class OldContextVariable extends ContextVariable {
 
 	@Override
 	public String getAttribute(Item item, IAttributeType<String> att) {
-		SetAttributeOperation attOper = _copy.getItem(item.getId()).getSetAttributeOperation(att.getName(), false);
+		SetAttributeOperation attOper = _copy.getItem(item.getId()).getSetAttributeOperation(att, false);
 		if (attOper != null) {
 			return (String) attOper.getOldValue();
 		}
 		return item.getAttribute(att);
 	}
-
+	
 	@Override
-	public void putValue(Item item, String key, String value) {
+	public void putValue(Item item, IAttributeType<String> attr, String value) {
 		throw new UnsupportedOperationException("Context is readonly");
 	}
 

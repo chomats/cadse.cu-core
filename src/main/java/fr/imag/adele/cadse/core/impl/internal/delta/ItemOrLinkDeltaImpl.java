@@ -38,7 +38,7 @@ public abstract class ItemOrLinkDeltaImpl extends WLWCOperationImpl implements I
 
 	CreateOperation						_createOperation	= null;
 	DeleteOperation						_deleteOperation	= null;
-	Map<String, SetAttributeOperation>	_attributes			= null;
+	Map<IAttributeType<?>, SetAttributeOperation>	_attributes			= null;
 
 	public ItemOrLinkDeltaImpl(OperationType type, WLWCOperationImpl parent) {
 		super(type, parent);
@@ -99,7 +99,7 @@ public abstract class ItemOrLinkDeltaImpl extends WLWCOperationImpl implements I
 		getWorkingCopy().check_write();
 
 		if (this._attributes == null) {
-			this._attributes = new HashMap<String, SetAttributeOperation>();
+			this._attributes = new HashMap<IAttributeType<?>, SetAttributeOperation>();
 		}
 
 		SetAttributeOperation old = _attributes.get(setAttributeOperation.getAttributeName());
@@ -107,7 +107,7 @@ public abstract class ItemOrLinkDeltaImpl extends WLWCOperationImpl implements I
 			old.removeInParent();
 		}
 
-		this._attributes.put(setAttributeOperation.getAttributeName(), setAttributeOperation);
+		this._attributes.put(setAttributeOperation.getAttributeDefinition(), setAttributeOperation);
 	}
 
 	/*
@@ -122,15 +122,15 @@ public abstract class ItemOrLinkDeltaImpl extends WLWCOperationImpl implements I
 		}
 
 		if (this._attributes == null) {
-			this._attributes = new HashMap<String, SetAttributeOperation>();
+			this._attributes = new HashMap<IAttributeType<?>, SetAttributeOperation>();
 		}
 
-		SetAttributeOperation old = _attributes.get(setAttributeOperation.getAttributeName());
+		SetAttributeOperation old = _attributes.get(setAttributeOperation.getAttributeDefinition());
 		if (old != null) {
 			old.removeInParent();
 		}
 
-		this._attributes.put(setAttributeOperation.getAttributeName(), setAttributeOperation);
+		this._attributes.put(setAttributeOperation.getAttributeDefinition(), setAttributeOperation);
 	}
 
 	public Collection<SetAttributeOperation> getSetAttributeOperation() {
@@ -199,7 +199,7 @@ public abstract class ItemOrLinkDeltaImpl extends WLWCOperationImpl implements I
 		return getDeleteOperation() != null;
 	}
 
-	public <T> T getAttribute(String key) {
+	public <T> T getAttribute(IAttributeType<T> key) {
 		return getAttribute(key, true);
 	}
 
@@ -208,14 +208,26 @@ public abstract class ItemOrLinkDeltaImpl extends WLWCOperationImpl implements I
 	 * 
 	 * @see fr.imag.adele.cadse.core.internal.delta.InternalAttributeOperation#getAttribute(java.lang.String)
 	 */
-	public <T> T getAttribute(String key, boolean returnDefault) {
+	public <T> T getAttribute(IAttributeType<T> key, boolean returnDefault) {
 		if (this._attributes != null) {
 			SetAttributeOperation oa = this._attributes.get(key);
 			if (oa != null) {
 				return (T) oa.getCurrentValue();
 			}
 		}
+		if (returnDefault)
+			return key.getDefaultValue();
 		return null;
+	}
+	
+	@Override
+	public <T> T getAttributeWithDefaultValue(IAttributeType<T> att,
+			T defaultValue) {
+		T v = getAttribute(att,false);
+		if (v == null)
+			v = defaultValue;
+		
+		return v;
 	}
 
 	/*
@@ -223,7 +235,7 @@ public abstract class ItemOrLinkDeltaImpl extends WLWCOperationImpl implements I
 	 * 
 	 * @see fr.imag.adele.cadse.core.internal.delta.InternalAttributeOperation#getSetAttributeOperation(java.lang.String)
 	 */
-	public SetAttributeOperation getSetAttributeOperation(String key) {
+	public SetAttributeOperation getSetAttributeOperation(IAttributeType<?> key) {
 		if (this._attributes != null) {
 			SetAttributeOperation oa = this._attributes.get(key);
 			return oa;
@@ -231,22 +243,16 @@ public abstract class ItemOrLinkDeltaImpl extends WLWCOperationImpl implements I
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.internal.delta.InternalAttributeOperation#getAttributeType(fr.imag.adele.cadse.core.delta.SetAttributeOperation)
-	 */
-	public abstract IAttributeType<?> getAttributeType(SetAttributeOperation setAttributeOperation);
 
 	protected void toStringAttributes(StringBuilder sb, String tab) {
 		if (_attributes != null) {
-			for (String k : _attributes.keySet()) {
+			for (IAttributeType<?> k : _attributes.keySet()) {
 				SetAttributeOperation v = _attributes.get(k);
 				if (!v.isModified()) {
 					continue;
 				}
 				sb.append(tab);
-				sb.append(" - ").append(k).append("=");
+				sb.append(" - ").append(k.getName()).append("=");
 				toString(sb, v, tab);
 				sb.append("\n");
 			}

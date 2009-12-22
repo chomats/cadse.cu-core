@@ -34,6 +34,9 @@ public class URLAttributeType extends AttributeType implements fr.imag.adele.cad
 		super(item);
 	}
 
+    public URLAttributeType() {
+    }
+
 	public Class<URL> getAttributeType() {
 		return URL.class;
 	}

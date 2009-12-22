@@ -65,6 +65,9 @@ public class DoubleAttributeType extends AttributeType implements
 		super(item);
 	}
 
+    public DoubleAttributeType() {
+    }
+
 	/*
 	 * (non-Javadoc)
 	 * 

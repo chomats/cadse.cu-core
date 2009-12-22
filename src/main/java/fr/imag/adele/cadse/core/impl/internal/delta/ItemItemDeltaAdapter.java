@@ -23,9 +23,11 @@ import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.LogicalWorkspace;
+import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.WorkspaceListener;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
-import fr.imag.adele.cadse.core.content.ContentItem;
+import fr.imag.adele.cadse.core.transaction.delta.ImmutableWorkspaceDelta;
+import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
 import fr.imag.adele.cadse.core.internal.IWorkingLoadingItems;
 import fr.imag.adele.cadse.core.internal.IWorkspaceNotifier;
 import fr.imag.adele.cadse.core.key.Key;
@@ -550,18 +552,7 @@ public class ItemItemDeltaAdapter implements Item {
 	public void setAttribute(IAttributeType<?> att, Object value) throws CadseException {
 		_delta.setAttribute(att, value);
 	}
-
-	public void setAttribute(String att, Object value) throws CadseException {
-		_delta.setAttribute(att, value);
-	}
-
-	public void setComponents(Set<ItemDescriptionRef> comp) throws CadseException {
-		_delta.setComponents(comp);
-	}
-
-	public void setDerivedLinks(Set<DerivedLinkDescription> derivedLinks) {
-		_delta.setDerivedLinks(derivedLinks);
-	}
+	
 
 	public boolean setFlag(int f, boolean flag) {
 		return _delta.setFlag(f, flag);
@@ -575,7 +566,7 @@ public class ItemItemDeltaAdapter implements Item {
 		_delta.setKey(newkey);
 	}
 
-	public void setName(String name) throws CadseException {
+	public void setName(String name) {
 		_delta.setName(name);
 	}
 
@@ -591,7 +582,7 @@ public class ItemItemDeltaAdapter implements Item {
 		_delta.setParent(parent, lt);
 	}
 
-	public void setQualifiedName(String qualifiedName) throws CadseException {
+	public void setQualifiedName(String qualifiedName) {
 		_delta.setQualifiedName(qualifiedName);
 	}
 
@@ -676,5 +667,95 @@ public class ItemItemDeltaAdapter implements Item {
 	public Pages getModificationPages(FilterContext context) {
 		return _delta.getModificationPages(context);
 	}
+
+	@Override
+	public boolean isInstanceOf(TypeDefinition it) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public CadseRuntime getCadse() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setCadse(CadseRuntime cr) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int getObjectID() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setObjectID(int localIdentifier) {
+		// TODO Auto-generated method stub
+		
+	}
+
+    @Override
+    public <T> T adapt(Class<T> clazz) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void clean(IBuildingContext context, boolean componentsContent) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void build(IBuildingContext context) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void compose(IBuildingContext context) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Exporter[] getExporters() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Exporter[] getExporter(Class<?> exportedContentType) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setExporters(Exporter... exporters) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Composer[] getComposers() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setComposers(Composer... composers) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public int getIdInPackage() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setIdInPackage(int idInPackage) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setUUID(long itemMsb, long itemLsb) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
 }

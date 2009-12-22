@@ -40,6 +40,9 @@ public class UUIDAttributeType extends AttributeType implements fr.imag.adele.ca
 		this(id, shortName, 0);
 	}
 
+    public UUIDAttributeType() {
+    }
+
 	public Class<UUID> getAttributeType() {
 		return UUID.class;
 	}

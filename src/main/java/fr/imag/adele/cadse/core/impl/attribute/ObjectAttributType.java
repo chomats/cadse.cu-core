@@ -1,10 +1,12 @@
 package fr.imag.adele.cadse.core.impl.attribute;
 
+import fr.imag.adele.cadse.core.CadseException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;
 
 import fr.imag.adele.cadse.core.CadseException;
+import java.util.UUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;

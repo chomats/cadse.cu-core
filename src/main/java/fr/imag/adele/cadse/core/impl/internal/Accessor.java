@@ -125,9 +125,9 @@ public class Accessor {
 		return -1;
 	}
 
-	public static String	ATTR_PARENT_ITEM_ID			= "#ws:private:parent:id";
-	public static String	ATTR_PARENT_ITEM			= "#ws:private:parent:item";
-	public static String	ATTR_PARENT_ITEM_TYPE_ID	= "#ws:private:parent-type:id";
+	public static StringAttributeType	ATTR_PARENT_ITEM_ID			= null;// "#ws:private:parent:id";
+	public static StringAttributeType	ATTR_PARENT_ITEM			= null;//"#ws:private:parent:item";
+	public static StringAttributeType	ATTR_PARENT_ITEM_TYPE_ID	= null;//"#ws:private:parent-type:id";
 
 	final static public ItemType loadAttributes(Item item, ItemDelta desc, IErrorCollector errorCollector) {
 		ItemType type = item.getType();
@@ -235,7 +235,7 @@ public class Accessor {
 			if (type == null) {
 				key = null;
 			} else {
-				KeyDefinition keyType = type.getSpaceKeyType();
+				KeyDefinition keyType = type.getKeyDefinition();
 				if (keyType != null) {
 					try {
 						key = keyType.computeKey(item);
@@ -253,7 +253,8 @@ public class Accessor {
 	}
 
 	static public Link createLink(Item source, LinkType linkType, Item destination) throws CadseException {
-		LogicalWorkspaceTransaction transaction = source.getLogicalWorkspace().createTransaction();
+		LogicalWorkspaceTransaction transaction = source
+                            .getLogicalWorkspace().createTransaction();
 		transaction.getItem(source.getId()).createLink(linkType, destination);
 		transaction.commit();
 		return source.getOutgoingLink(linkType, destination.getId());
@@ -379,10 +380,18 @@ public class Accessor {
 
 	}
 
-	public static boolean isInstanceOf(Item item, ItemType it) {
-		ItemType item_itemType = item.getType();
-		return item_itemType.equals(it) || it.isSuperTypeOf(item_itemType);
-		// return this.type.equals(it) || it.isSuperTypeOf(this.type);
+	public static boolean isInstanceOf(Item item, TypeDefinition it) {
+		ItemType type = item.getType();
+		if (it instanceof ItemType) {
+			return it == type || ((ItemType) it).isSuperTypeOf(type);
+		}
+		ExtendedType[] ext = type.getExtendedType();
+		for (ExtendedType extendedType : ext) {
+			if (it == extendedType) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
