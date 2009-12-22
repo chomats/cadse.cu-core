@@ -88,6 +88,7 @@ import fr.imag.adele.cadse.core.transaction.delta.WLWCOperationImpl;
 import fr.imag.adele.cadse.core.ui.view.DefineNewContext;
 import fr.imag.adele.cadse.core.ui.view.FilterContext;
 import fr.imag.adele.cadse.core.ui.view.NewContext;
+import fr.imag.adele.cadse.core.var.ContextVariable;
 import fr.imag.adele.cadse.core.var.ContextVariableImpl;
 import fr.imag.adele.cadse.util.ArraysUtil;
 import fr.imag.adele.fede.workspace.as.initmodel.ErrorWhenLoadedModel;
@@ -247,9 +248,9 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 						item = (Item) wse.getOperationArgs()[0];
 						link = (Link) wse.getOperationArgs()[1];
 
-						if (link.isComposition()) {
-							addComponent(link, item);
-						}
+//						if (link.isComposition()) {
+//							addComponent(link, item);
+//						}
 
 						// creation des liens d�rived.
 						// createDerivedLinkFromLink(link);
@@ -1202,20 +1203,11 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		if (i == null) {
 
 			if (type == CadseGCST.CADSE) {
-				i = new CadseRuntimeImpl(shortname, id, );
-                                i.setName(shortname);
-                                i.setUUID(id.getMostSignificantBits(), id.getLeastSignificantBits());
-                                i.setFlag(Item.UNRESOLVED, true);
-
+				i = new CadseRuntimeImpl(shortname, id, id );
 			} else {
-				i = new ItemUnresolved();
-                                i.setType(type);
-                                i.setQualifiedName(uniqueName);
-                                i.setName(shortname);
-                                i.setUUID(id.getMostSignificantBits(), id.getLeastSignificantBits());
-                                i.setFlag(Item.UNRESOLVED, true);
-
+				i = new ItemUnresolved(id, type,uniqueName, shortname);
 			}
+			  i.setFlag(Item.UNRESOLVED, true);
 			this._items.put(id, i);
 		} else {
 			if (!i.getType().equals(type)) {
@@ -1834,15 +1826,15 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		}
 
 		// 3
-		if (lt.isComposition()) {
-			if (destination.containsComponent(source.getId())) {
-				throw new CadseIllegalArgumentException("Cannot create a link {0} to {1} of type {2} : " //$NON-NLS-1$
-						+ "The source ({0}) is contained in the composition list of the destination ({1}). " //$NON-NLS-1$
-						+ "That will create a composition cycle : {0} -c-> {1} -c->* {0}.", //$NON-NLS-1$
-						source.getId(), destination.getId(), lt.getName());
-
-			}
-		}
+//		if (lt.isComposition()) {
+//			if (destination.containsComponent(source.getId())) {
+//				throw new CadseIllegalArgumentException("Cannot create a link {0} to {1} of type {2} : " //$NON-NLS-1$
+//						+ "The source ({0}) is contained in the composition list of the destination ({1}). " //$NON-NLS-1$
+//						+ "That will create a composition cycle : {0} -c-> {1} -c->* {0}.", //$NON-NLS-1$
+//						source.getId(), destination.getId(), lt.getName());
+//
+//			}
+//		}
 	}
 
 	public void commit(LogicalWorkspaceTransaction workingLogiqueCopy, boolean check) throws CadseException {
@@ -1935,7 +1927,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 					}
 				}
 				workingLogiqueCopy.setState(WSModelState.COPY_PRE_LOAD);
-				new TransactionItemsProcess(_wd.getDB(), this, (LogicalWorkspaceTransactionImpl) workingLogiqueCopy).processCommit(new ArrayList<ItemDelta>(
+				new TransactionItemsProcess(this, (LogicalWorkspaceTransactionImpl) workingLogiqueCopy).processCommit(new ArrayList<ItemDelta>(
 						workingLogiqueCopy.getItemOperations()), ((CadseDomainImpl) _wd).getEventsManager());
 				workingLogiqueCopy.setState(WSModelState.COPY_READ_ONLY);
 
@@ -2246,4 +2238,37 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
     public Key[] getChildrenKey(Key aThis) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+	@Override
+	public CadseRuntime createCadseRuntime(String name, UUID runtimeId,
+			UUID definitionId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public LinkType createUnresolvedLinkType(String linkTypeName,
+			ItemType sourceType, ItemType destType) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <T> T getAttribute(Item source, String key, boolean ownerOnly) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setAttribute(Item item, String key, Object value)
+			throws CadseException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public <T> T adapt(Class<T> clazz) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
