@@ -64,19 +64,19 @@ Export-Package: fr.imag.adele.cadse.core.impl;uses:="fr.imag.adele.cad
  fr.imag.adele.cadse.core.internal,fr.imag.adele.cadse.core.attribute,
  fr.imag.adele.cadse.core.impl,bak.pcj.map,fr.imag.adele.cadse.core.im
  pl.internal",fr.imag.adele.cadse.core.impl.ui.view;uses:="fr.imag.ade
- le.cadse.core,fr.imag.adele.cadse.core.impl.internal",fr.imag.adele.c
- adse.core.impl.ui.mc;uses:="fr.imag.adele.cadse.core.transaction.delt
- a,fr.imag.adele.cadse.core,fr.imag.adele.cadse.core.ui,fr.imag.adele.
- cadse.core.impl,fr.imag.adele.cadse.core.oper,fr.imag.adele.cadse.cor
- e.util,fr.imag.adele.cadse.core.attribute,fr.imag.adele.cadse.core.tr
- ansaction,fr.imag.adele.cadse.core.impl.ui,fr.imag.adele.cadse.core.k
- ey,fr.imag.adele.cadse.util"
+ le.cadse.core,fr.imag.adele.cadse.core.impl.internal,fr.imag.adele.ca
+ dse.core.attribute",fr.imag.adele.cadse.core.impl.ui.mc;uses:="fr.ima
+ g.adele.cadse.core.transaction.delta,fr.imag.adele.cadse.core,fr.imag
+ .adele.cadse.core.ui,fr.imag.adele.cadse.core.impl,fr.imag.adele.cads
+ e.core.oper,fr.imag.adele.cadse.core.util,fr.imag.adele.cadse.core.at
+ tribute,fr.imag.adele.cadse.core.transaction,fr.imag.adele.cadse.core
+ .impl.ui,fr.imag.adele.cadse.core.key,fr.imag.adele.cadse.util"
 Built-By: chomats
 Build-Jdk: 1.6.0_17
 Bundle-Version: 2.3.0.SNAPSHOT
 Tool: Bnd-0.0.357
 Bundle-Name: fr.imag.adele.cadse.cu.core
-Bnd-LastModified: 1261565739099
+Bnd-LastModified: 1261575220916
 Created-By: Apache Maven Bundle Plugin
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: fr.imag.adele.cadse.cu.core
