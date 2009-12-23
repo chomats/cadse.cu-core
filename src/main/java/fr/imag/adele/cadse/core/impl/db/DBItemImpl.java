@@ -899,4 +899,16 @@ public class DBItemImpl extends DBObject implements Item {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public IAttributeType<?> getLocalAttributeType(UUID attrName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public UUID getCadseId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
