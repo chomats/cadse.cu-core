@@ -29,8 +29,8 @@ import fr.imag.adele.cadse.core.ui.UIPlatform;
 
 public class MC_DefaultForList extends MC_AttributesItem {
 
-	int	min;
-	int	max;
+	int min;
+	int max;
 
 	public MC_DefaultForList(int min, int max) {
 		this.min = min;
@@ -69,22 +69,30 @@ public class MC_DefaultForList extends MC_AttributesItem {
 				return false;
 
 			}
-			_uiPlatform.setMessageError(getUIField().getLabel() + ": No values is needed");
+			_uiPlatform.setMessageError(getUIField().getLabel()
+					+ ": No values is needed");
 			return true;
 		}
 		if (l.size() < min) {
-			_uiPlatform.setMessageError("The mininum of elements for the field '" + getUIField().getName() + "' is " + min);
+			_uiPlatform
+					.setMessageError("The mininum of elements for the field '"
+							+ getUIField().getName() + "' is " + min);
 			return true;
 		}
 		if (max != -1 && l.size() > max) {
-			_uiPlatform.setMessageError("The maximun of elements for the field '" + getUIField().getName() + "' is " + max);
+			_uiPlatform
+					.setMessageError("The maximun of elements for the field '"
+							+ getUIField().getName() + "' is " + max);
 			return true;
 		}
-		ListAttributeType<?> att = (ListAttributeType<?>) getUIField().getAttributeDefinition();
-		IAttributeType<?> subatt = att == null ? null : att.getSubAttributeType();
+		ListAttributeType<?> att = (ListAttributeType<?>) getUIField()
+				.getAttributeDefinition();
+		IAttributeType<?> subatt = att == null ? null : att
+				.getSubAttributeType();
 		if (subatt != null) {
 			for (Object o : l) {
-				CheckStatus error = subatt.check(_uiPlatform.getItem(getUIField()), o);
+				CheckStatus error = subatt.check(_uiPlatform
+						.getItem(getUIField()), o);
 				if (error != null) {
 					if (error.getType() == UIPlatform.ERROR) {
 						_uiPlatform.setMessageError(error.getFormatedMessage());
@@ -99,7 +107,5 @@ public class MC_DefaultForList extends MC_AttributesItem {
 	protected boolean isEnable() {
 		return true;
 	}
-	
-	
 
 }

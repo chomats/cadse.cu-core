@@ -45,14 +45,14 @@ import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
 public class CadseCore {
 
 	/** The type of any item. */
-	static public ItemType	theItem	= null;
+	static public ItemType theItem = null;
 
 	/** The item type : the type of any item type. */
-	static public ItemType	theItemType			= null;
+	static public ItemType theItemType = null;
 
 	/** The link type of any link type. */
-	static public LinkType	theLinkType			= null;
-	
+	static public LinkType theLinkType = null;
+
 	/**
 	 * Gets the name.
 	 * 
@@ -67,7 +67,8 @@ public class CadseCore {
 	 * 
 	 * @return the name
 	 */
-	public static String getName(Item wrapper, String name, Item parent, LinkType lt) {
+	public static String getName(Item wrapper, String name, Item parent,
+			LinkType lt) {
 		IItemManager im = wrapper.getType().getItemManager();
 		return im.computeQualifiedName(wrapper, name, parent, lt);
 	}
@@ -86,13 +87,14 @@ public class CadseCore {
 	 * 
 	 * @throws CadseException
 	 *             the melusine exception
-	 * @throws MelusineUnModifiedAttribute *
+	 * @throws MelusineUnModifiedAttribute
+	 *             *
 	 * @throws CadseIllegalArgumentException
 	 *             the melusine error
 	 */
 
-	public static void setName(Item wrapper, String shortName, Item parent, LinkType lt)
-			throws CadseIllegalArgumentException, CadseException {
+	public static void setName(Item wrapper, String shortName, Item parent,
+			LinkType lt) throws CadseIllegalArgumentException, CadseException {
 		wrapper.setName(shortName);
 		if (wrapper.getType().hasQualifiedNameAttribute()) {
 			String uniqueName = getName(wrapper, shortName, parent, lt);
@@ -113,7 +115,8 @@ public class CadseCore {
 	 * @throws CadseException
 	 *             the melusine exception
 	 */
-	public static void setName(Item createdItem, String name) throws CadseException {
+	public static void setName(Item createdItem, String name)
+			throws CadseException {
 		Item parent = createdItem.getPartParent(false);
 		LinkType lt = createdItem.getPartParentLinkType();
 		setName(createdItem, name, parent, lt);
@@ -147,13 +150,14 @@ public class CadseCore {
 	 * @throws CadseException
 	 *             the melusine exception
 	 */
-	public static Item getItem(String uniqueName, String shortname, ItemType it, Item parent, LinkType lt)
-			throws CadseException {
+	public static Item getItem(String uniqueName, String shortname,
+			ItemType it, Item parent, LinkType lt) throws CadseException {
 
 		LogicalWorkspace wl = getLogicalWorkspace();
 		if (it.hasQualifiedNameAttribute() == false) {
 			throw new CadseException(
-					"Cannot get an item from unique name when itemtype {0} has no unique name attribute", it.getName());
+					"Cannot get an item from unique name when itemtype {0} has no unique name attribute",
+					it.getName());
 		}
 
 		if (uniqueName == null) {
@@ -191,12 +195,14 @@ public class CadseCore {
 	 *             the melusine exception
 	 */
 	@Deprecated
-	public static Item createItemIfNeed(String uniqueName, String shortname, ItemType it, Item parent, LinkType lt,
-			Object... attributes) throws CadseException {
+	public static Item createItemIfNeed(String uniqueName, String shortname,
+			ItemType it, Item parent, LinkType lt, Object... attributes)
+			throws CadseException {
 		LogicalWorkspace wl = getLogicalWorkspace();
 
 		LogicalWorkspaceTransaction copy = wl.createTransaction();
-		ItemDelta newItem = copy.createItemIfNeed(uniqueName, shortname, it, parent, lt, attributes);
+		ItemDelta newItem = copy.createItemIfNeed(uniqueName, shortname, it,
+				parent, lt, attributes);
 		UUID id = newItem.getId();
 		if (newItem.isAdded()) {
 			copy.commit();
@@ -244,7 +250,8 @@ public class CadseCore {
 	 * @throws CadseException
 	 *             the melusine exception
 	 */
-	public static Link createLinkIfNeed(Item item, Item dest, LinkType lt) throws CadseException {
+	public static Link createLinkIfNeed(Item item, Item dest, LinkType lt)
+			throws CadseException {
 		Link ret;
 
 		ret = item.getOutgoingLink(lt, dest.getId());
@@ -277,23 +284,25 @@ public class CadseCore {
 		return getInstance().getLogicalWorkspace();
 	}
 
-	/**
-	 * Load from persistence.
-	 * 
-	 * @param url
-	 *            the url
-	 * 
-	 * @return the item description
-	 * 
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 */
-	public static ItemDelta loadFromPersistence(LogicalWorkspaceTransaction transaction, URL url) throws CadseException {
-		if (getInstance() == null) {
-			return null;
-		}
-		return ((CadseDomainImpl) getInstance()).getPersistence().loadFromPersistence(transaction, url);
-	}
+	// /**
+	// * Load from persistence.
+	// *
+	// * @param url
+	// * the url
+	// *
+	// * @return the item description
+	// *
+	// * @throws IOException
+	// * Signals that an I/O exception has occurred.
+	// */
+	// public static ItemDelta loadFromPersistence(LogicalWorkspaceTransaction
+	// transaction, URL url) throws CadseException {
+	// if (getInstance() == null) {
+	// return null;
+	// }
+	// return ((CadseDomainImpl)
+	// getInstance()).getPersistence().loadFromPersistence(transaction, url);
+	// }
 
 	/**
 	 * Sets the item persistence id.
@@ -306,11 +315,13 @@ public class CadseCore {
 	 * @throws CadseException
 	 *             the melusine exception
 	 */
-	public static void setItemPersistenceID(String projectName, Item item) throws CadseException {
+	public static void setItemPersistenceID(String projectName, Item item)
+			throws CadseException {
 		if (getInstance() == null) {
 			return;
 		}
-		((CadseDomainImpl) getInstance()).getIdeService().setItemPersistenceID(projectName, item);
+		((CadseDomainImpl) getInstance()).getIdeService().setItemPersistenceID(
+				projectName, item);
 	}
 
 	/**
@@ -326,15 +337,18 @@ public class CadseCore {
 	 * @throws CadseException
 	 *             the melusine exception
 	 */
-	public static void copyResource(Item item, String path, URL data) throws CadseException {
+	public static void copyResource(Item item, String path, URL data)
+			throws CadseException {
 		if (getInstance() == null) {
 			return;
 		}
-		((CadseDomainImpl) getInstance()).getIdeService().copyResource(item, path, data);
+		((CadseDomainImpl) getInstance()).getIdeService().copyResource(item,
+				path, data);
 	}
 
 	/**
-	 * register l'operation avec le service de test. cette methode est captur�.
+	 * register l'operation avec le service de test. cette methode est
+	 * captur�.
 	 * 
 	 * @param oper
 	 */
@@ -365,7 +379,7 @@ public class CadseCore {
 	public static boolean isStopped() {
 		return CadseDomainImpl.STOPPED;
 	}
-	
+
 	public static boolean isStarted() {
 		return CadseDomainImpl.STARTED;
 	}

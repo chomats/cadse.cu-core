@@ -5,8 +5,8 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
-import org.mozilla.javascript.internal.Scriptable;
-import org.mozilla.javascript.internal.ScriptableObject;
+import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.ScriptableObject;
 
 class XX extends ScriptableObject {
 

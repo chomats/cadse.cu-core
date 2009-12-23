@@ -20,17 +20,10 @@
 package fr.imag.adele.cadse.core.impl.internal;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.osgi.framework.BundleContext;
 
 import fr.imag.adele.cadse.as.platformide.IPlatformIDE;
 import fr.imag.adele.cadse.core.CadseDomain;
@@ -40,7 +33,6 @@ import fr.imag.adele.cadse.core.IWorkspaceOperation;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemDescriptionRef;
 import fr.imag.adele.cadse.core.ItemType;
-import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.WSEvent;
 import fr.imag.adele.cadse.core.impl.db.DBLogicalWorkspace;
 import fr.imag.adele.cadse.core.transaction.delta.ImmutableWorkspaceDelta;
@@ -59,23 +51,21 @@ import fr.imag.adele.teamwork.db.ModelVersionDBService2;
 public class CadseDomainImpl implements CadseDomain {
 
 	/** The INSTANCE. */
-	private static CadseDomainImpl		INSTANCE;
+	private static CadseDomainImpl INSTANCE;
 
 	/** The workspace logique. */
-	private DBLogicalWorkspace		_logicalWorkspace;
+	private DBLogicalWorkspace _logicalWorkspace;
 
 	/** The events manager. */
-	private transient EventsManagerImpl	eventsManager	= null;
-
-	
+	private transient EventsManagerImpl eventsManager = null;
 
 	public static boolean STOPPED = false;
 	public static boolean STARTED = false;
 
-        private ModelVersionDBService2 _ModelDB2Service;
-        private IInitModel _initModelService;
-        private IPlatformIDE _platformService;
-        private ModelVersionDBService _modelDBService;
+	private ModelVersionDBService2 _modelDB2Service;
+	private IInitModel _initModelService;
+	private IPlatformIDE _platformService;
+	private ModelVersionDBService _modelDBService;
 
 	/**
 	 * Instantiates a new workspace domain impl.
@@ -89,7 +79,8 @@ public class CadseDomainImpl implements CadseDomain {
 	 * Inits the.
 	 */
 	public static void init() {
-		System.out.println("***Appel de init dans workspaceDomain Implementation");
+		System.out
+				.println("***Appel de init dans workspaceDomain Implementation");
 	}
 
 	/*
@@ -112,12 +103,12 @@ public class CadseDomainImpl implements CadseDomain {
 
 	// -------------------------------------------------//
 
-
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.WorkspaceDomain#notifieChangeEvent(fr.imag.adele.cadse.core.ChangeID,
-	 *      java.lang.Object[])
+	 * @see
+	 * fr.imag.adele.cadse.core.WorkspaceDomain#notifieChangeEvent(fr.imag.adele
+	 * .cadse.core.ChangeID, java.lang.Object[])
 	 */
 	public void notifieChangeEvent(ChangeID id, Object... values) {
 		eventsManager.notifieChangeEvent(id, values);
@@ -126,15 +117,15 @@ public class CadseDomainImpl implements CadseDomain {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.WorkspaceDomain#notifieChangeEvent(fr.imag.adele.cadse.core.ChangeID,
-	 *      java.lang.Object[])
+	 * @see
+	 * fr.imag.adele.cadse.core.WorkspaceDomain#notifieChangeEvent(fr.imag.adele
+	 * .cadse.core.ChangeID, java.lang.Object[])
 	 */
 	public void notifieChangeEventSingle(ChangeID id, Object... values) {
 		ImmutableWorkspaceDelta im = eventsManager.createImmutableEvents();
 		im.addEvent(new WSEvent(System.currentTimeMillis(), id, values));
 		eventsManager.sendEvents(im);
 	}
-
 
 	public void start() {
 		STARTED = true;
@@ -155,69 +146,70 @@ public class CadseDomainImpl implements CadseDomain {
 		try {
 			eventsManager.waitEndAsyncEvents(2000);
 		} catch (InterruptedException e1) {
-			mLogger.log(Level.SEVERE, "Interupted !!!",e1);
+			mLogger.log(Level.SEVERE, "Interupted !!!", e1);
 			eventsManager.stop();
 		} catch (TimeoutException e1) {
-			mLogger.log(Level.SEVERE, "Cannot send all events !!!",e1);
+			mLogger.log(Level.SEVERE, "Cannot send all events !!!", e1);
 			eventsManager.stop();
 		}
 		if (eventsManager.isAlive())
-				mLogger.log(Level.WARNING, "Events manager is allready alive");
-			
-//		if (unresolvedObject != null) {
-//			try {
-//				unresolvedObject.store(new FileOutputStream(propFile), "");
-//			} catch (FileNotFoundException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
-		
+			mLogger.log(Level.WARNING, "Events manager is allready alive");
+
+		// if (unresolvedObject != null) {
+		// try {
+		// unresolvedObject.store(new FileOutputStream(propFile), "");
+		// } catch (FileNotFoundException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// } catch (IOException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// }
+
 		INSTANCE = null;
 		mLogger.info("stop");
-		
+
 	}
 
-	//Properties		unresolvedObject	= null;
+	// Properties unresolvedObject = null;
 
-//	private File	propFile;
-//
-//	public UUID getUnresolvedId(String key) {
-//		if (unresolvedObject == null) {
-//			File l = getLocation();
-//			unresolvedObject = new Properties();
-//			propFile = new File(l, ".cadse.unresolved.id.properties");
-//			if (propFile.exists()) {
-//				try {
-//					unresolvedObject.load(new FileInputStream(propFile));
-//				} catch (FileNotFoundException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				} catch (IOException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//			}
-//		}
-//
-//		String id = unresolvedObject.getProperty(key);
-//		UUID randomUUID = null;
-//		if (id != null) {
-//			try {
-//				return new UUID(id);
-//			} catch (IllegalArgumentException e) {
-//
-//			}
-//		}
-//
-//		randomUUID = UUID.randomUUID();
-//		unresolvedObject.put(key, randomUUID.toString());
-//		System.out.println("*** create unresolved object " + key + ":" + randomUUID);
-//		return randomUUID;
-//	}
+	// private File propFile;
+	//
+	// public UUID getUnresolvedId(String key) {
+	// if (unresolvedObject == null) {
+	// File l = getLocation();
+	// unresolvedObject = new Properties();
+	// propFile = new File(l, ".cadse.unresolved.id.properties");
+	// if (propFile.exists()) {
+	// try {
+	// unresolvedObject.load(new FileInputStream(propFile));
+	// } catch (FileNotFoundException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// } catch (IOException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// }
+	// }
+	// }
+	//
+	// String id = unresolvedObject.getProperty(key);
+	// UUID randomUUID = null;
+	// if (id != null) {
+	// try {
+	// return new UUID(id);
+	// } catch (IllegalArgumentException e) {
+	//
+	// }
+	// }
+	//
+	// randomUUID = UUID.randomUUID();
+	// unresolvedObject.put(key, randomUUID.toString());
+	// System.out.println("*** create unresolved object " + key + ":" +
+	// randomUUID);
+	// return randomUUID;
+	// }
 
 	/**
 	 * Log.
@@ -233,7 +225,8 @@ public class CadseDomainImpl implements CadseDomain {
 	 * @param e
 	 *            the e
 	 */
-	public void log(Item item, int errorcode, String type, String message, Throwable e) {
+	public void log(Item item, int errorcode, String type, String message,
+			Throwable e) {
 		Logger mLogger = Logger.getLogger("CU.Workspace.Workspace");
 		mLogger.log(Level.SEVERE, message, e);
 
@@ -296,7 +289,8 @@ public class CadseDomainImpl implements CadseDomain {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.WorkspaceDomain#beginOperation(java.lang.String)
+	 * @see
+	 * fr.imag.adele.cadse.core.WorkspaceDomain#beginOperation(java.lang.String)
 	 */
 	public IWorkspaceOperation beginOperation(String name) {
 		return eventsManager.beginOperation(name, true);
@@ -305,8 +299,9 @@ public class CadseDomainImpl implements CadseDomain {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.WorkspaceDomain#beginOperation(java.lang.String,
-	 *      boolean)
+	 * @see
+	 * fr.imag.adele.cadse.core.WorkspaceDomain#beginOperation(java.lang.String,
+	 * boolean)
 	 */
 	public IWorkspaceOperation beginOperation(String name, boolean wait) {
 		return eventsManager.beginOperation(name, wait);
@@ -362,7 +357,8 @@ public class CadseDomainImpl implements CadseDomain {
 		return null;
 	}
 
-	public void waitEndAsyncEvents(int timeout) throws InterruptedException, TimeoutException {
+	public void waitEndAsyncEvents(int timeout) throws InterruptedException,
+			TimeoutException {
 		eventsManager.waitEndAsyncEvents(timeout);
 	}
 
@@ -389,11 +385,12 @@ public class CadseDomainImpl implements CadseDomain {
 	public EventsManagerImpl getEventsManager() {
 		return eventsManager;
 	}
-	
+
 	@Override
-	public Item createUnresolvedItem(ItemType itemType, String name,
-			UUID id) throws CadseException {
-		return this._logicalWorkspace.loadItem(new ItemDescriptionRef(id, itemType, name, name));
+	public Item createUnresolvedItem(ItemType itemType, String name, UUID id)
+			throws CadseException {
+		return this._logicalWorkspace.loadItem(new ItemDescriptionRef(id,
+				itemType, name, name));
 	}
 
 	public static boolean isStopped() {
@@ -405,12 +402,11 @@ public class CadseDomainImpl implements CadseDomain {
 	}
 
 	public ModelVersionDBService2 getDB() {
-		return _ModelDB2Service;
+		return _modelDB2Service;
 	}
 
-    public boolean inDevelopmentMode() {
-        return _platformService != null && _platformService.inDevelopmentMode();
-    }
-
+	public boolean inDevelopmentMode() {
+		return _platformService != null && _platformService.inDevelopmentMode();
+	}
 
 }

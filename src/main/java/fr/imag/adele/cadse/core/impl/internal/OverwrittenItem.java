@@ -25,9 +25,9 @@ import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.util.ArraysUtil;
 
 public class OverwrittenItem extends AbstractGeneratedItem {
-	Item		source;
-	Item		parent					= null;
-	Object[]	attributeValuesArray	= null;
+	Item source;
+	Item parent = null;
+	Object[] attributeValuesArray = null;
 
 	public ItemType getType() {
 		return source.getType();
@@ -48,13 +48,15 @@ public class OverwrittenItem extends AbstractGeneratedItem {
 	}
 
 	private void addAttribute(IAttributeType<?> type, Object value) {
-		this.attributeValuesArray = ArraysUtil.addList2(Object.class, this.attributeValuesArray, type, value);
+		this.attributeValuesArray = ArraysUtil.addList2(Object.class,
+				this.attributeValuesArray, type, value);
 	}
 
 	private void removeAttribute(IAttributeType<?> type) {
 		int index = ArraysUtil.indexOf(this.attributeValuesArray, type);
 		if (index != -1) {
-			this.attributeValuesArray = ArraysUtil.remove(Object.class, this.attributeValuesArray, index, 2);
+			this.attributeValuesArray = ArraysUtil.remove(Object.class,
+					this.attributeValuesArray, index, 2);
 		}
 	}
 

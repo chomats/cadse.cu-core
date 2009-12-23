@@ -61,7 +61,8 @@ public class DBItemImpl extends DBObject implements Item {
 		addListener(l, -1);
 	}
 
-	public List<WorkspaceListener> filter(int filters, ImmutableWorkspaceDelta delta) {
+	public List<WorkspaceListener> filter(int filters,
+			ImmutableWorkspaceDelta delta) {
 		return _dblw.filter(_objectId, filters, delta);
 	}
 
@@ -75,7 +76,7 @@ public class DBItemImpl extends DBObject implements Item {
 	@Override
 	public void buildComposite() throws CadseException {
 		_dblw.buildComposite(_objectId);
-		
+
 	}
 
 	@Override
@@ -84,7 +85,8 @@ public class DBItemImpl extends DBObject implements Item {
 		try {
 			destId = _dblw.getDB().checkLocalIdentifier(destItemId);
 		} catch (ModelVersionDBException e) {
-			throw new CadseIllegalArgumentException("Cannot get local identifier ", e);
+			throw new CadseIllegalArgumentException(
+					"Cannot get local identifier ", e);
 		}
 		if (destId == -1)
 			return false;
@@ -99,12 +101,6 @@ public class DBItemImpl extends DBObject implements Item {
 
 	@Override
 	public boolean canSetAttribute(String attrName, Object value) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean containsComponent(UUID itemId) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -131,7 +127,7 @@ public class DBItemImpl extends DBObject implements Item {
 	@Override
 	public void delete(boolean deleteContent) throws CadseException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -143,7 +139,7 @@ public class DBItemImpl extends DBObject implements Item {
 	@Override
 	public void finishLoad() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -172,30 +168,6 @@ public class DBItemImpl extends DBObject implements Item {
 
 	@Override
 	public CadseDomain getCadseDomain() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Set<UUID> getComponentIds() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Item getComponentInfo(UUID itemId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Set<Item> getComponents() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Item> getCompositeParent() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -602,13 +574,13 @@ public class DBItemImpl extends DBObject implements Item {
 	@Override
 	public void removeContentItem() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void removeListener(WorkspaceListener listener) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -621,19 +593,19 @@ public class DBItemImpl extends DBObject implements Item {
 	@Override
 	public void setCadse(CadseRuntime cr) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setKey(Key newkey) throws CadseException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
-	public void setName(String name)  {
+	public void setName(String name) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -651,39 +623,39 @@ public class DBItemImpl extends DBObject implements Item {
 	}
 
 	@Override
-	public void setQualifiedName(String qualifiedName)  {
+	public void setQualifiedName(String qualifiedName) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setReadOnly(boolean readOnly) throws CadseException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setState(ItemState newState) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setValid(boolean isValid) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void shadow(boolean deleteContent) throws CadseException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void unload() throws CadseException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -715,14 +687,14 @@ public class DBItemImpl extends DBObject implements Item {
 	public void setAttribute(IAttributeType<?> att, Object value)
 			throws CadseException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void getLocalAllAttributeTypes(
 			List<IAttributeType<?>> allLocalAttrDefs) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -730,14 +702,14 @@ public class DBItemImpl extends DBObject implements Item {
 			Map<String, IAttributeType<?>> allLocalAttrDefs,
 			boolean keepLastAttribute) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void getLocalAllAttributeTypes(
 			List<IAttributeType<?>> allLocalAttrDefs, ItemFilter filter) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -751,14 +723,14 @@ public class DBItemImpl extends DBObject implements Item {
 			Map<String, IAttributeType<?>> allLocalAttrDefs,
 			boolean keepLastAttribute, ItemFilter filter) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void getLocalAllAttributeTypesKeys(Set<String> allLocalAttrDefs,
 			ItemFilter filter) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -776,7 +748,7 @@ public class DBItemImpl extends DBObject implements Item {
 	@Override
 	public void addIncomingLink(Link link, boolean notify) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -803,19 +775,19 @@ public class DBItemImpl extends DBObject implements Item {
 	public void computeAttribute(String attributeName, Object theirsValue,
 			Object baseValue, Object mineValue) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void computeAttributes() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void forceState(ItemState state) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -834,7 +806,7 @@ public class DBItemImpl extends DBObject implements Item {
 	public void loadItem(IWorkingLoadingItems wl, ItemDelta itemOperation,
 			IErrorCollector errorCollector) throws CadseException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -846,19 +818,19 @@ public class DBItemImpl extends DBObject implements Item {
 	@Override
 	public void refresh() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void removeIncomingLink(Link link, boolean notify) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void removeOutgoingLink(Link link, boolean notify) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -870,33 +842,32 @@ public class DBItemImpl extends DBObject implements Item {
 	@Override
 	public void setIsStatic(boolean isStatic) {
 		// TODO Auto-generated method stub
-		
-	}
 
+	}
 
 	@Override
 	public void setParent(Item parent, LinkType lt) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setType(ItemType itemType) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setVersion(int version) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void update(IWorkingLoadingItems items, ItemDelta desc,
 			IWorkspaceNotifier notifie) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -920,7 +891,7 @@ public class DBItemImpl extends DBObject implements Item {
 	@Override
 	public void setIdInPackage(int idInPackage) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override

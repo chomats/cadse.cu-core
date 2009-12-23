@@ -46,23 +46,23 @@ import fr.imag.adele.cadse.util.OrderWay;
  * 
  * @author <a href="mailto:stephane.chomat@imag.fr">Stephane Chomat</a>
  */
-public abstract class AbstractItem extends AbstractGeneratedItem implements Item {
+public abstract class AbstractItem extends AbstractGeneratedItem implements
+		Item {
 
 	/** The unique name. */
-	protected String		_qualifiedName;
+	protected String _qualifiedName;
 
 	/** The shortname. */
-	protected String		_name;
+	protected String _name;
 
 	/** The type. */
-	protected ItemType		_type;
+	protected ItemType _type;
 
 	/** The incomings. */
-	protected List<Link>	_incomings;
+	protected List<Link> _incomings;
 
-        public AbstractItem() {
-        }
-
+	public AbstractItem() {
+	}
 
 	/**
 	 * Instantiates a new abstract item.
@@ -94,13 +94,15 @@ public abstract class AbstractItem extends AbstractGeneratedItem implements Item
 	 * @param shortName
 	 *            the short name
 	 */
-	protected AbstractItem(UUID id, ItemType type, String uniqueName, String shortName) {
+	protected AbstractItem(UUID id, ItemType type, String uniqueName,
+			String shortName) {
 		super(id, 0);
 		this._type = type;
 		this._incomings = new ArrayList<Link>();
 
 		if (type == null || type.hasQualifiedNameAttribute()) {
-			this._qualifiedName = uniqueName == null ? NO_VALUE_STRING : uniqueName;
+			this._qualifiedName = uniqueName == null ? NO_VALUE_STRING
+					: uniqueName;
 		} else {
 			this._qualifiedName = Item.NO_VALUE_STRING;
 		}
@@ -121,7 +123,8 @@ public abstract class AbstractItem extends AbstractGeneratedItem implements Item
 	 * @param desc
 	 *            the desc
 	 */
-	protected AbstractItem(LogicalWorkspace wl, ItemType type, ItemDescriptionRef desc) {
+	protected AbstractItem(LogicalWorkspace wl, ItemType type,
+			ItemDescriptionRef desc) {
 		super(desc.getId(), 0);
 		this._type = type;
 		this._incomings = new ArrayList<Link>();
@@ -139,7 +142,7 @@ public abstract class AbstractItem extends AbstractGeneratedItem implements Item
 
 	public AbstractItem(ItemType type, ItemDelta desc) {
 		super(desc);
-		
+
 		this._type = type;
 		this._incomings = new ArrayList<Link>();
 		if (type.hasQualifiedNameAttribute()) {
@@ -162,7 +165,8 @@ public abstract class AbstractItem extends AbstractGeneratedItem implements Item
 	 */
 	@Override
 	public String getQualifiedName() {
-		if ((_qualifiedName == null || _qualifiedName == NO_VALUE_STRING) && isResolved()) {
+		if ((_qualifiedName == null || _qualifiedName == NO_VALUE_STRING)
+				&& isResolved()) {
 			Key key = getKey();
 			if (key != null) {
 				return key.getQualifiedString();
@@ -221,16 +225,20 @@ public abstract class AbstractItem extends AbstractGeneratedItem implements Item
 	}
 
 	/**
-	 * R�soudre un lien. Ajouter le lien � la liste <tt>incomings</tt> de cet
-	 * item.
+	 * R�soudre un lien. Ajouter le lien � la liste <tt>incomings</tt> de
+	 * cet item.
 	 * 
 	 * @param link
 	 *            the link
 	 */
 	@Override
 	public synchronized void addIncomingLink(Link link, boolean notifie) {
-		if (link.getLinkType() == CadseCore.theLinkType && !(link instanceof LinkType)) {
-			Logger.getLogger("fr.imag.adele.cadse.runtime.lw").log(Level.SEVERE, "add bad incomming : not instance of link type", new CadseException());
+		if (link.getLinkType() == CadseCore.theLinkType
+				&& !(link instanceof LinkType)) {
+			Logger.getLogger("fr.imag.adele.cadse.runtime.lw").log(
+					Level.SEVERE,
+					"add bad incomming : not instance of link type",
+					new CadseException());
 		}
 		_incomings.add(link);
 	}
@@ -239,8 +247,8 @@ public abstract class AbstractItem extends AbstractGeneratedItem implements Item
 	 * Supprimer un lien dans la liste <tt>incomings</tt> de cet item.<br/>
 	 * This method is called by method delete() of Link
 	 * 
-	 * @param link :
-	 *            lien � supprimer.
+	 * @param link
+	 *            : lien � supprimer.
 	 */
 	@Override
 	public synchronized void removeIncomingLink(Link link, boolean notifie) {
@@ -250,48 +258,54 @@ public abstract class AbstractItem extends AbstractGeneratedItem implements Item
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.Item#setOutgoingItemOne(fr.imag.adele.cadse.core.LinkType,
-	 *      fr.imag.adele.cadse.core.Item)
+	 * @see
+	 * fr.imag.adele.cadse.core.Item#setOutgoingItemOne(fr.imag.adele.cadse.
+	 * core.LinkType, fr.imag.adele.cadse.core.Item)
 	 */
 	@Override
-	public Link setOutgoingItem(LinkType lt, Item destination) throws CadseException {
+	public Link setOutgoingItem(LinkType lt, Item destination)
+			throws CadseException {
 		return Accessor.setOutgoingItemOne(this, lt, destination);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.Item#setOutgoingItem(fr.imag.adele.cadse.core.LinkType,
-	 *      java.util.Collection)
+	 * @see
+	 * fr.imag.adele.cadse.core.Item#setOutgoingItem(fr.imag.adele.cadse.core
+	 * .LinkType, java.util.Collection)
 	 */
 	@Override
-	public Collection<Link> setOutgoingItems(LinkType lt, Collection<Item> value) throws CadseException {
+	public Collection<Link> setOutgoingItems(LinkType lt, Collection<Item> value)
+			throws CadseException {
 		return Accessor.setOutgoingItem(this, lt, value);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.Item#addOutgoingItem(fr.imag.adele.cadse.core.LinkType,
-	 *      fr.imag.adele.cadse.core.Item)
+	 * @see
+	 * fr.imag.adele.cadse.core.Item#addOutgoingItem(fr.imag.adele.cadse.core
+	 * .LinkType, fr.imag.adele.cadse.core.Item)
 	 */
 	@Override
-	public Link addOutgoingItem(LinkType linkType, Item destination) throws CadseException {
+	public Link addOutgoingItem(LinkType linkType, Item destination)
+			throws CadseException {
 		throw new UnsupportedOperationException();
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.Item#removeOutgoingItem(fr.imag.adele.cadse.core.LinkType,
-	 *      fr.imag.adele.cadse.core.Item)
+	 * @see
+	 * fr.imag.adele.cadse.core.Item#removeOutgoingItem(fr.imag.adele.cadse.
+	 * core.LinkType, fr.imag.adele.cadse.core.Item)
 	 */
 	@Override
-	public Link removeOutgoingItem(LinkType linkType, Item destination) throws CadseException {
+	public Link removeOutgoingItem(LinkType linkType, Item destination)
+			throws CadseException {
 		throw new UnsupportedOperationException();
 	}
-
-	
 
 	@Override
 	public boolean commitMove(OrderWay kind, Link l1, Link l2) {

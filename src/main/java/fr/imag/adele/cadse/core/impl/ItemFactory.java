@@ -44,13 +44,14 @@ import fr.imag.adele.cadse.core.impl.ui.UIFieldImpl;
 import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
 
 public class ItemFactory implements IItemFactory {
-	static final public ItemFactory	SINGLETON	= new ItemFactory();
+	static final public ItemFactory SINGLETON = new ItemFactory();
 
 	private boolean isThisOrSubType(ItemType it, ItemType superType) {
 		return superType.isSuperTypeOf(it) || it == superType;
 	}
 
-	public Item newForCommitItem(LogicalWorkspace wl, ItemType it, ItemDelta item) {
+	public Item newForCommitItem(LogicalWorkspace wl, ItemType it,
+			ItemDelta item) {
 		if (isThisOrSubType(it, CadseGCST.ITEM_TYPE)) {
 			return new ItemTypeImpl(it, item);
 		}
@@ -68,24 +69,22 @@ public class ItemFactory implements IItemFactory {
 		if (it == CadseGCST.ENUM) {
 			return new EnumAttributeType(item);
 		}
-		/*if (it == CadseGCST.FLAG_ATTRIBUTE_TYPE) {
-			return new FlagIntegerAttributeType(item);
-		}*/
+		/*
+		 * if (it == CadseGCST.FLAG_ATTRIBUTE_TYPE) { return new
+		 * FlagIntegerAttributeType(item); }
+		 */
 		if (it == CadseGCST.INTEGER) {
 			return new IntegerAttributeType(item);
 		}
 		if (it == CadseGCST.LINK_TYPE) {
 			return new LinkTypeImpl(item);
 		}
-		/*if (it == CadseGCST.LIST_ATTRIBUTE_TYPE) {
-			return new ListAttributeType(item);
-		}
-		if (it == CadseGCST.MAP_ATTRIBUTE_TYPE) {
-			return new MapAttributeType(item);
-		}
-		if (it == CadseGCST.VARIABLE) {
-			// return new MapAttributeType(id,shortName, 0, null, null);
-		}*/
+		/*
+		 * if (it == CadseGCST.LIST_ATTRIBUTE_TYPE) { return new
+		 * ListAttributeType(item); } if (it == CadseGCST.MAP_ATTRIBUTE_TYPE) {
+		 * return new MapAttributeType(item); } if (it == CadseGCST.VARIABLE) {
+		 * // return new MapAttributeType(id,shortName, 0, null, null); }
+		 */
 		if (it == CadseGCST.PAGE) {
 			return new PageImpl(id, shortName, null);
 		}
@@ -109,14 +108,14 @@ public class ItemFactory implements IItemFactory {
 		}
 
 		if (it == CadseGCST.EXT_ITEM_TYPE) {
-			return new ExtendedTypeImpl(item.getId(), it, item.getQualifiedName(), 
-					item.getName()); 
-		} 
-		
+			return new ExtendedTypeImpl(item.getId(), it, item
+					.getQualifiedName(), item.getName());
+		}
+
 		if (it == CadseGCST.CADSE_DEFINITION) {
 			return new CadseDefinitionImpl(item.getQualifiedName(), id, id);
 		}
-		
+
 		return new ItemImpl(it, item);
 	}
 

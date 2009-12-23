@@ -28,8 +28,8 @@ import fr.imag.adele.cadse.core.ui.UIField;
 
 public class MC_Date extends MC_AttributesItem {
 
-	private static final String	DD_MM_YY	= "dd/MM/YY";
-	private String				_pattern	= DD_MM_YY;
+	private static final String DD_MM_YY = "dd/MM/YY";
+	private String _pattern = DD_MM_YY;
 
 	public MC_Date() {
 	}
@@ -58,15 +58,17 @@ public class MC_Date extends MC_AttributesItem {
 	}
 
 	@Override
-	public boolean validValueChanged( UIField field, Object value) {
-		if (getUIField().getAttributeDefinition().canBeUndefined() && (value == null || value.equals(""))) {
+	public boolean validValueChanged(UIField field, Object value) {
+		if (getUIField().getAttributeDefinition().canBeUndefined()
+				&& (value == null || value.equals(""))) {
 			value = null;
 			return false;// it's ok
 		}
 		try {
 			value = getDateFormat().parse((String) value);
 		} catch (ParseException e) {
-			_uiPlatform.setMessageError(field.getName() + ": invalid date," + e.getMessage() + ", " + _pattern);
+			_uiPlatform.setMessageError(field.getName() + ": invalid date,"
+					+ e.getMessage() + ", " + _pattern);
 			return true;
 		}
 		return super.validValueChanged(field, value);
@@ -79,6 +81,5 @@ public class MC_Date extends MC_AttributesItem {
 	protected Locale getLocale() {
 		return Locale.getDefault();
 	}
-
 
 }

@@ -32,8 +32,7 @@ import fr.imag.adele.cadse.core.ui.UIField;
 
 public class MC_Name extends MC_AttributesItem {
 
-	private static final String	EMPTY_STRING	= "";
-
+	private static final String EMPTY_STRING = "";
 
 	@Override
 	public void initAfterUI() {
@@ -78,7 +77,7 @@ public class MC_Name extends MC_AttributesItem {
 
 		final String shortId = getItem().getName();
 
-		if (shortId.length() == 0 && item.getType().getSpaceKeyType() != null) {
+		if (shortId.length() == 0 && item.getType().getKeyDefinition() != null) {
 			_uiPlatform.setMessageError(Messages.mc_name_must_be_specified);
 			return true;
 		}
@@ -104,7 +103,7 @@ public class MC_Name extends MC_AttributesItem {
 		if (item.getState() != ItemState.NOT_IN_WORKSPACE) {
 			return false;
 		}
-		
+
 		if (item.isReadOnly()) {
 			return false;
 		}
@@ -120,23 +119,25 @@ public class MC_Name extends MC_AttributesItem {
 			_uiPlatform.setMessageError(message);
 			return true;
 		}
-		
+
 		if (item.getType().hasQualifiedNameAttribute()) {
-			String un = im.computeQualifiedName(item, shortId, item.getPartParent(), item.getPartParentLinkType());
+			String un = im.computeQualifiedName(item, shortId, item
+					.getPartParent(), item.getPartParentLinkType());
 			Item foundItem = item.getLogicalWorkspace().getItem(un);
 			if (foundItem != null && foundItem != item) {
 				_uiPlatform.setMessageError(Messages.mc_name_already_exists);
 				return true;
 			}
 		}
-		
-		if (item.getType().getSpaceKeyType() != null) {
+
+		if (item.getType().getKeyDefinition() != null) {
 			Key key;
 			try {
-				key = item.getType().getSpaceKeyType().computeKey(item);
+				key = item.getType().getKeyDefinition().computeKey(item);
 				key.setName(shortId);
 			} catch (CadseException e) {
-				CadseCore.getCadseDomain().log("MC_Name", "cannot generate key", e);
+				CadseCore.getCadseDomain().log("MC_Name",
+						"cannot generate key", e);
 				_uiPlatform.setMessageError(e.getMessage());
 				return true;
 			}
@@ -145,7 +146,7 @@ public class MC_Name extends MC_AttributesItem {
 				_uiPlatform.setMessageError(Messages.mc_name_already_exists);
 				return true;
 			}
-			
+
 		}
 
 		return false;

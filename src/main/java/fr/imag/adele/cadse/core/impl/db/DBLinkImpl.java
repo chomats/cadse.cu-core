@@ -16,7 +16,6 @@ import fr.imag.adele.teamwork.db.ModelVersionDBException;
 import fr.imag.adele.teamwork.db.ModelVersionDBService2;
 
 public class DBLinkImpl extends DBObject implements Link {
-	
 
 	public DBLinkImpl(int localId) {
 		super(localId);
@@ -25,19 +24,19 @@ public class DBLinkImpl extends DBObject implements Link {
 	@Override
 	public void addCompatibleVersions(int... versions) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void clearCompatibleVersions() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void delete() throws CadseException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -51,7 +50,8 @@ public class DBLinkImpl extends DBObject implements Link {
 		try {
 			return _dblw.item(_dblw.getDB().getLinkDest(_objectId));
 		} catch (ModelVersionDBException e) {
-			throw new CadseIllegalArgumentException("Cannot get destination from {0}.", e, _objectId);
+			throw new CadseIllegalArgumentException(
+					"Cannot get destination from {0}.", e, _objectId);
 		}
 	}
 
@@ -64,21 +64,9 @@ public class DBLinkImpl extends DBObject implements Link {
 	}
 
 	@Override
-	public UUID getDestinationCadseID() {
-		Item destination = getDestination();
-		if (destination  == null)
-			return null;
-		CadseRuntime cr = destination.getCadse();
-		if (cr == null)
-			return null;
-		return cr.getId();
-	}
-
-	@Override
-	@Deprecated
 	public UUID getDestinationCadseId() {
 		Item destination = getDestination();
-		if (destination  == null)
+		if (destination == null)
 			return null;
 		CadseRuntime cr = destination.getCadse();
 		if (cr == null)
@@ -87,18 +75,9 @@ public class DBLinkImpl extends DBObject implements Link {
 	}
 
 	@Override
-	public UUID getDestinationID() {
-		Item destination = getDestination();
-		if (destination  == null)
-			return null;
-		return destination.getId();
-	}
-
-	@Override
-	@Deprecated
 	public UUID getDestinationId() {
 		Item destination = getDestination();
-		if (destination  == null)
+		if (destination == null)
 			return null;
 		return destination.getId();
 	}
@@ -106,7 +85,7 @@ public class DBLinkImpl extends DBObject implements Link {
 	@Override
 	public String getDestinationName() {
 		Item destination = getDestination();
-		if (destination  == null)
+		if (destination == null)
 			return null;
 		return destination.getName();
 	}
@@ -114,7 +93,7 @@ public class DBLinkImpl extends DBObject implements Link {
 	@Override
 	public String getDestinationQualifiedName() {
 		Item destination = getDestination();
-		if (destination  == null)
+		if (destination == null)
 			return null;
 		return destination.getQualifiedName();
 	}
@@ -242,25 +221,25 @@ public class DBLinkImpl extends DBObject implements Link {
 	@Override
 	public void setHidden(boolean hidden) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setReadOnly(boolean readOnly) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setVersion(int version) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void commitDelete() throws CadseException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -273,8 +252,7 @@ public class DBLinkImpl extends DBObject implements Link {
 	@Override
 	public void destroy() throws CadseException {
 		// TODO Auto-generated method stub
-		
-	}
 
+	}
 
 }

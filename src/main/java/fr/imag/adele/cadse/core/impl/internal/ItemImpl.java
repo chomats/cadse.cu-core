@@ -222,7 +222,7 @@ public class ItemImpl extends AbstractItem implements Item {
 	// }
 
 	/** The is valid. */
-	private boolean				isValid		= true;	// by
+	private boolean isValid = true; // by
 	// default
 	// is
 	// true
@@ -231,23 +231,19 @@ public class ItemImpl extends AbstractItem implements Item {
 	// time.
 
 	/** The outgoings. */
-	protected ArrayList<Link>	m_outgoings;
-
+	protected ArrayList<Link> m_outgoings;
 
 	/** The composants. */
-	Map<UUID, Item>		_composants	= null;
+	Map<UUID, Item> _composants = null;
 
-	///** The derived links. */
-	//Set<DerivedLink>			_derivedLinks;
+	// /** The derived links. */
+	// Set<DerivedLink> _derivedLinks;
 
+	private boolean _isRecomputeComponants;
 
+	public ItemImpl() {
+	}
 
-	private boolean				_isRecomputeComponants;
-
-    public ItemImpl() {
-    }
-
-        
 	/**
 	 * Instantiates a new item impl.
 	 * 
@@ -271,8 +267,8 @@ public class ItemImpl extends AbstractItem implements Item {
 		setIsStatic(false);
 	}
 
-	public ItemImpl(UUID id, ItemType type, String uniqueName, String shortName,
-			Item parent, LinkType lt) throws CadseException {
+	public ItemImpl(UUID id, ItemType type, String uniqueName,
+			String shortName, Item parent, LinkType lt) throws CadseException {
 		super(id, type, uniqueName, shortName);
 		// this.incomings = new ArrayList<Link>();
 		this.m_outgoings = new ArrayList<Link>();
@@ -288,8 +284,8 @@ public class ItemImpl extends AbstractItem implements Item {
 	/**
 	 * Instanciate a new item. <br/>
 	 * 
-	 * @param type :
-	 *            type of item
+	 * @param type
+	 *            : type of item
 	 * @param wl
 	 *            the wl
 	 * 
@@ -326,10 +322,10 @@ public class ItemImpl extends AbstractItem implements Item {
 	}
 
 	@Override
-	public void loadItem(IWorkingLoadingItems wl, ItemDelta itemOperation, IErrorCollector errorCollector)
-			throws CadseException {
+	public void loadItem(IWorkingLoadingItems wl, ItemDelta itemOperation,
+			IErrorCollector errorCollector) throws CadseException {
 		CadseGCST.ITEM_lt_MODIFIED_ATTRIBUTES.setIsNatif(true);
-		
+
 		Accessor.loadAttributes(this, itemOperation, errorCollector);
 		for (LinkDelta ldesc : itemOperation.getOutgoingLinkOperations()) {
 			try {
@@ -342,25 +338,28 @@ public class ItemImpl extends AbstractItem implements Item {
 				LinkType lt = ldesc.getLinkType();
 				if (lt == null) {
 					errorCollector.addError(this, "Cannot load link " + ldesc);
+					continue;
 				}
-		
+
 				Item dest = wl.loadItem(ldesc.getDestination());
-		
+
 				if (lt == null) {
-					lt = wl.getLogicalWorkspace().createUnresolvedLinkType(ldesc.getLinkTypeName(), getType(),
-							dest.getType());
-					errorCollector.addError(this, MessageFormat.format(Messages.error_cannot_create_link, ldesc
-							.getLinkType(), dest.getName()));
+					lt = wl.getLogicalWorkspace().createUnresolvedLinkType(
+							ldesc.getLinkType().getId(),
+							ldesc.getLinkTypeName(), getType(), dest.getType());
+					errorCollector.addError(this, MessageFormat.format(
+							Messages.error_cannot_create_link, ldesc
+									.getLinkType(), dest.getName()));
 					if (lt == null) {
 						continue;
 					}
 				}
-		
+
 				if (lt == CadseGCST.ITEM_lt_CONTENTS)
 					continue;
 				if (lt == CadseGCST.ITEM_lt_PARENT)
 					continue;
-		
+
 				Link goodLink = null;
 				LinkType invLt = lt.getInverse();
 				if (invLt != null && invLt.isPart()) {
@@ -374,7 +373,7 @@ public class ItemImpl extends AbstractItem implements Item {
 						dest.addIncomingLink(goodLink, false);
 					}
 					continue;
-				} 
+				}
 				if (lt.isNatif() && !dest.isResolved()) {
 					Item goodDest = wl.getItem(dest.getId());
 					if (goodDest != null && goodDest.isResolved()) {
@@ -387,8 +386,10 @@ public class ItemImpl extends AbstractItem implements Item {
 					if (lt == CadseGCST.ITEM_lt_MODIFIED_ATTRIBUTES) {
 						continue;
 					}
-					errorCollector.addError(this, lt.getSource().getName() + "::" + lt.getName()
-							+ " is natif and destination is not resolved... " + new ItemDescriptionRef(dest));
+					errorCollector.addError(this, lt.getSource().getName()
+							+ "::" + lt.getName()
+							+ " is natif and destination is not resolved... "
+							+ new ItemDescriptionRef(dest));
 				}
 				if (lt.getMax() == 1 && getOutgoingLink(lt) != null) {
 					continue;
@@ -403,6 +404,7 @@ public class ItemImpl extends AbstractItem implements Item {
 			}
 		}
 	}
+
 	@Override
 	protected Link createDefaultLink(LinkType lt, Item destination)
 			throws CadseException {
@@ -435,17 +437,19 @@ public class ItemImpl extends AbstractItem implements Item {
 	}
 
 	/**
-	 * Get <tt>outgoings</tt> links by link type.<br/><br/>
+	 * Get <tt>outgoings</tt> links by link type.<br/>
+	 * <br/>
 	 * 
-	 * @param lt :
-	 *            link type used as filter to seek.
+	 * @param lt
+	 *            : link type used as filter to seek.
 	 * 
 	 * @return list outgoing links have the same type. jamais null
 	 * 
-	 * @exception IllegalArgumentException:
-	 *                Link type is null.<br/> IllegalArgumentException: Link
-	 *                type <tt>$name</tt> is not selected in this workspace
-	 *                type. <br/><br/>
+	 * @exception IllegalArgumentException
+	 *                : Link type is null.<br/>
+	 *                IllegalArgumentException: Link type <tt>$name</tt> is not
+	 *                selected in this workspace type. <br/>
+	 * <br/>
 	 */
 	@Override
 	public List<Link> getOutgoingLinks(LinkType lt) {
@@ -466,15 +470,16 @@ public class ItemImpl extends AbstractItem implements Item {
 	/**
 	 * Get <tt>incomings</tt> links by type. jamais null
 	 * 
-	 * @param lt :
-	 *            link type used as filter to seek.
+	 * @param lt
+	 *            : link type used as filter to seek.
 	 * 
 	 * @return list incoming links have the same type.
 	 * 
-	 * @exception IllegalArgumentException:
-	 *                Link type is null.<br/> IllegalArgumentException: Link
-	 *                type <tt>$name</tt> is not selected in this workspace
-	 *                type. <br/><br/>
+	 * @exception IllegalArgumentException
+	 *                : Link type is null.<br/>
+	 *                IllegalArgumentException: Link type <tt>$name</tt> is not
+	 *                selected in this workspace type. <br/>
+	 * <br/>
 	 */
 	@Override
 	public List<Link> getIncomingLinks(LinkType lt) {
@@ -495,17 +500,21 @@ public class ItemImpl extends AbstractItem implements Item {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.Item#getOutgoingLink(fr.imag.adele.cadse.core.LinkType)
+	 * @see
+	 * fr.imag.adele.cadse.core.Item#getOutgoingLink(fr.imag.adele.cadse.core
+	 * .LinkType)
 	 */
 	@Override
 	public Link getOutgoingLink(LinkType lt) {
 		preconditions_getLink(lt);
 		if (lt.getMax() != 1) {
-			throw new CadseIllegalArgumentException(Messages.error_maximum_cardinality_must_be_one, lt.getName());
+			throw new CadseIllegalArgumentException(
+					Messages.error_maximum_cardinality_must_be_one, lt
+							.getName());
 		}
-		
+
 		List<Link> ret = getOutgoingLinks(lt);
-		
+
 		if (ret.size() >= 1) {
 			return ret.get(0);
 		}
@@ -526,21 +535,24 @@ public class ItemImpl extends AbstractItem implements Item {
 	 * Supprimer un lien dans la liste <tt>incomings</tt> de cet item.<br/>
 	 * This method is called by method delete() of Link
 	 * 
-	 * @param link :
-	 *            lien � supprimer.
+	 * @param link
+	 *            : lien � supprimer.
 	 */
 	@Override
 	public synchronized void removeIncomingLink(Link link, boolean notifie) {
 		_incomings.remove(link);
 		if (notifie) {
-			_dblw.getCadseDomain().notifieChangeEvent(ChangeID.UNRESOLVE_INCOMING_LINK, this, link);
+			_dblw.getCadseDomain().notifieChangeEvent(
+					ChangeID.UNRESOLVE_INCOMING_LINK, this, link);
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.AbstractItem#addIncomingLink(fr.imag.adele.cadse.core.Link)
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.AbstractItem#addIncomingLink(fr.imag
+	 * .adele.cadse.core.Link)
 	 */
 	@Override
 	public synchronized void addIncomingLink(Link link, boolean notifie) {
@@ -554,50 +566,55 @@ public class ItemImpl extends AbstractItem implements Item {
 	 * Supprimer un lien dans la liste <tt>outgoings</tt> de cet item. <br/>
 	 * This method is called by method delete() of Link
 	 * 
-	 * @param link :
-	 *            lien � supprimer.
+	 * @param link
+	 *            : lien � supprimer.
 	 */
 	synchronized void removeOutgoingLink(Link link) {
-		removeOutgoingLink(link, _state != ItemState.NOT_IN_WORKSPACE && _state != ItemState.MODIFING);
+		removeOutgoingLink(link, _state != ItemState.NOT_IN_WORKSPACE
+				&& _state != ItemState.MODIFING);
 	}
 
 	/**
 	 * Supprimer un lien dans la liste <tt>outgoings</tt> de cet item. <br/>
 	 * This method is called by method delete() of Link
 	 * 
-	 * @param link :
-	 *            lien � supprimer.
+	 * @param link
+	 *            : lien � supprimer.
 	 */
 	@Override
 	public synchronized void removeOutgoingLink(Link link, boolean notifie) {
 		m_outgoings.remove(link);
 		if (notifie) {
-			_dblw.getCadseDomain().notifieChangeEvent(ChangeID.DELETE_OUTGOING_LINK, link);
+			_dblw.getCadseDomain().notifieChangeEvent(
+					ChangeID.DELETE_OUTGOING_LINK, link);
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.Item#addOutgoingItem(fr.imag.adele.cadse.core.LinkType,
-	 *      fr.imag.adele.cadse.core.Item)
+	 * @see
+	 * fr.imag.adele.cadse.core.Item#addOutgoingItem(fr.imag.adele.cadse.core
+	 * .LinkType, fr.imag.adele.cadse.core.Item)
 	 */
 	@Override
-	public Link addOutgoingItem(LinkType linkType, Item destination) throws CadseException {
+	public Link addOutgoingItem(LinkType linkType, Item destination)
+			throws CadseException {
 		return createLink(linkType, destination);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.Item#removeOutgoingItem(fr.imag.adele.cadse.core.LinkType,
-	 *      fr.imag.adele.cadse.core.Item)
+	 * @see
+	 * fr.imag.adele.cadse.core.Item#removeOutgoingItem(fr.imag.adele.cadse.
+	 * core.LinkType, fr.imag.adele.cadse.core.Item)
 	 */
 	@Override
-	public Link removeOutgoingItem(LinkType linkType, Item destination) throws CadseException {
+	public Link removeOutgoingItem(LinkType linkType, Item destination)
+			throws CadseException {
 		return Accessor.removeOutgoingItem(this, linkType, destination);
 	}
-
 
 	@Override
 	public boolean commitSetAttribute(IAttributeType<?> type, Object value) {
@@ -623,15 +640,18 @@ public class ItemImpl extends AbstractItem implements Item {
 	/**
 	 * Set status valid for this item.
 	 * 
-	 * @param valid :
-	 *            un bool�en indique le status de cet item est valide ou pas.
+	 * @param valid
+	 *            : un bool�en indique le status de cet item est valide ou
+	 *            pas.
 	 */
 	@Override
 	public void setValid(boolean valid) {
 		boolean oldvalue = isValid;
 		this.isValid = valid;
-		if (_state != ItemState.NOT_IN_WORKSPACE && _state != ItemState.MODIFING) {
-			_dblw.getCadseDomain().notifieChangeEvent(ChangeID.VALID, this, oldvalue, valid);
+		if (_state != ItemState.NOT_IN_WORKSPACE
+				&& _state != ItemState.MODIFING) {
+			_dblw.getCadseDomain().notifieChangeEvent(ChangeID.VALID, this,
+					oldvalue, valid);
 		}
 	}
 
@@ -658,8 +678,8 @@ public class ItemImpl extends AbstractItem implements Item {
 	/**
 	 * Ask if link <tt>l</tt> is an incoming link of item.
 	 * 
-	 * @param l :
-	 *            link we want ask.
+	 * @param l
+	 *            : link we want ask.
 	 * 
 	 * @return true if link <tt>l</tt> is an incoming link of item, false if
 	 *         otherwise.
@@ -674,8 +694,8 @@ public class ItemImpl extends AbstractItem implements Item {
 	/**
 	 * Ask if link <tt>l</tt> is an outgoing link of item.
 	 * 
-	 * @param l :
-	 *            link we want ask.
+	 * @param l
+	 *            : link we want ask.
 	 * 
 	 * @return true if link <tt>l</tt> is an outgoing link of item, false if
 	 *         otherwise.
@@ -699,39 +719,42 @@ public class ItemImpl extends AbstractItem implements Item {
 	 * non resolved link. In two case, it must always verify contrainsts on link
 	 * type.
 	 * 
-	 * Constraints: - 1. Link type <tt>lt</tt> cannot be null. <br/> - 2. Link
-	 * type <tt>lt</tt> must be selected in workspace type. <br/>
+	 * Constraints: - 1. Link type <tt>lt</tt> cannot be null. <br/>
+	 * - 2. Link type <tt>lt</tt> must be selected in workspace type. <br/>
 	 * 
-	 * @param lt :
-	 *            type of link to create. <br/><br/>
+	 * @param lt
+	 *            : type of link to create. <br/>
+	 * <br/>
 	 * 
-	 * @throws CadseIllegalArgumentException:
-	 *             Link type <tt>lt</tt> is null.<br/>
+	 * @throws CadseIllegalArgumentException
+	 *             : Link type <tt>lt</tt> is null.<br/>
 	 * 
 	 * @OCL: <b>context:</b> Item::createLink(String id, LinkType lt, Item
 	 *       destination) : Link </br> <b>pre:</b> <tt>lt</tt> <> null <i> //
-	 *       Link type <tt>lt</tt> cannot be null. <br/> <b>pre:</b>
-	 *       <tt>self.workspace.type.selectedLinkTypes</tt>->include(<tt>lt</tt>)
-	 *       <i> // Link type <tt>lt</tt> must be selected in workspace type.
-	 *       <br/>
+	 *       Link type <tt>lt</tt> cannot be null. <br/>
+	 *       <b>pre:</b> <tt>self.workspace.type.selectedLinkTypes</tt>
+	 *       ->include(<tt>lt</tt>) <i> // Link type <tt>lt</tt> must be
+	 *       selected in workspace type. <br/>
 	 */
 	private void constraints_LinkType(LinkType lt) {
 		// 1. Link type lt cannot be null.
 		if (lt == null) {
-			throw new CadseIllegalArgumentException(Messages.error_linktype_is_null);
+			throw new CadseIllegalArgumentException(
+					Messages.error_linktype_is_null);
 		}
 	}
 
 	/**
 	 * Test preconditions when getting a link.
 	 * 
-	 * @param lt :
-	 *            link type.
+	 * @param lt
+	 *            : link type.
 	 * 
-	 * @exception CadseIllegalArgumentException:
-	 *                Link type is null.<br/> CadseIllegalArgumentException:
-	 *                Link type <tt>$name</tt> is not selected in this
-	 *                workspace type. <br/><br/>
+	 * @exception CadseIllegalArgumentException
+	 *                : Link type is null.<br/>
+	 *                CadseIllegalArgumentException: Link type <tt>$name</tt> is
+	 *                not selected in this workspace type. <br/>
+	 * <br/>
 	 */
 	private void preconditions_getLink(LinkType lt) {
 		constraints_LinkType(lt);
@@ -740,18 +763,19 @@ public class ItemImpl extends AbstractItem implements Item {
 	/**
 	 * Seek links by type.
 	 * 
-	 * @param linkList :
-	 *            link list to search.
-	 * @param linkType :
-	 *            link type used as filter to search.
+	 * @param linkList
+	 *            : link list to search.
+	 * @param linkType
+	 *            : link type used as filter to search.
 	 * 
 	 * @return list links have the same type. jamais null
 	 * 
 	 * @NOTE: Seek all links same type given in a link list given.
-	 * @exception IllegalArgumentException:
-	 *                Link type is null.<br/> IllegalArgumentException: Link
-	 *                type <tt>$name</tt> is not selected in this workspace
-	 *                type. <br/><br/>
+	 * @exception IllegalArgumentException
+	 *                : Link type is null.<br/>
+	 *                IllegalArgumentException: Link type <tt>$name</tt> is not
+	 *                selected in this workspace type. <br/>
+	 * <br/>
 	 */
 	private List<Link> getLinksByType(List<Link> linkList, LinkType linkType) {
 		preconditions_getLink(linkType);
@@ -762,7 +786,8 @@ public class ItemImpl extends AbstractItem implements Item {
 		return ret;
 	}
 
-	private void filterByLinkType(List<Link> linkList, LinkType linkType, List<Link> ret) {
+	private void filterByLinkType(List<Link> linkList, LinkType linkType,
+			List<Link> ret) {
 		for (Link l : linkList) {
 			// If link has type linkType, then add link to return list.
 			if (l.getLinkType().equals(linkType)) {
@@ -771,161 +796,177 @@ public class ItemImpl extends AbstractItem implements Item {
 		}
 	}
 
-//	/**
-//	 * instantiate an unresolved link. No notification if the state of item is
-//	 * new or modifing or if the the of the model is not run
-//	 * 
-//	 * @param lt :
-//	 *            link type.
-//	 * @param destination :
-//	 *            new link's destination.
-//	 * @param computeInverse
-//	 *            the compute inverse
-//	 * @param notification
-//	 *            the notification
-//	 * 
-//	 * @return new link l.
-//	 * 
-//	 * @throws CadseException
-//	 *             the melusine exception
-//	 */
-//	@Deprecated
-//	private Link newLinkWithNotification(LinkType lt, Item destination, boolean computeInverse, boolean notification)
-//			throws CadseException {
-//
-//		Link l = null;
-//		Link inverseLink = null;
-//
-//		// find a good destination.
-//		Item good_destination = this._dbwl.getItem(destination.getId());
-//		if (good_destination == null) {
-//			good_destination = destination;
-//		}
-//
-//		boolean addInIncomming = _state != ItemState.NOT_IN_WORKSPACE && _state != ItemState.MODIFING;
-//
-//		// est-ce qu'il faut creer le lien inverse ?
-//		// Par d�faut non
-//		computeInverse = computeInverse && addInIncomming;
-//
-//		LinkType inverseLt = lt.getInverse();
-//		boolean createInverseLink = false;
-//
-//		l = primitifCreateLink(lt, good_destination, addInIncomming);
-//
-//		if (computeInverse && inverseLt != null && good_destination.isResolved()) {
-//			Link findInverseLink = good_destination.getOutgoingLink(inverseLt, this.getId());
-//			if (findInverseLink == null) {
-//				// OUI
-//				createInverseLink = true;
-//			}
-//		}
-//
-//		if (createInverseLink) {
-//			inverseLink = primitifCreateInverseLink(good_destination, addInIncomming, inverseLt);
-//		}
-//
-//		// add link l into the list "outgoings" of source "this".
-//		if (!(l instanceof ReflectLink)) {
-//			m_outgoings.add(l);
-//		}
-//		if (createInverseLink && (!(inverseLink instanceof ReflectLink))) {
-//			((ItemImpl) good_destination).m_outgoings.add(inverseLink);
-//		}
-//
-//		if (!notification) {
-//			return l;
-//		}
-//
-//		if (getState() == ItemState.NOT_IN_WORKSPACE || getState() == ItemState.MODIFING) {
-//			return l;
-//		}
-//		if (getLogicalWorkspace().getState() != WSModelState.RUN) {
-//			return l;
-//		}
-//
-//		_dbwl.getCadseDomain().notifieChangeEvent(ChangeID.CREATE_OUTGOING_LINK, l);
-//		if (l.isLinkResolved()) {
-//			_dbwl.getCadseDomain().notifieChangeEvent(ChangeID.RESOLVE_INCOMING_LINK, l.getResolvedDestination(), l);
-//		}
-//		if (createInverseLink) {
-//			_dbwl.getCadseDomain().notifieChangeEvent(ChangeID.CREATE_OUTGOING_LINK, inverseLink);
-//			if (inverseLink.isLinkResolved()) {
-//				_dbwl.getCadseDomain().notifieChangeEvent(ChangeID.RESOLVE_INCOMING_LINK,
-//						inverseLink.getResolvedDestination(), inverseLink);
-//			}
-//		}
-//		return l;
-//	}
-//
-//	protected Link primitifCreateInverseLink(Item good_destination, boolean addInIncomming, LinkType inverseLt) {
-//		Link inverseLink;
-//		if (inverseLt.isDerived()) {
-//			inverseLink = new DerivedLinkImpl(good_destination, (DerivedLinkType) inverseLt, this, addInIncomming);
-//		} else {
-//			inverseLink = new LinkImpl(good_destination, inverseLt, this, addInIncomming);
-//		}
-//		return inverseLink;
-//	}
-//
-//	protected Link primitifCreateLink(LinkType lt, Item destination, boolean addInIncomming) throws CadseException {
-//
-//		if (lt.isNatif() && destination.isResolved()) {
-//			return null;
-//		}
-//		Link l;
-//		// create a new link l whom source is object "this"
-//		// and destination is parameter "destination".
-//		// set the default destination type...
-//
-//		if (lt.isDerived()) {
-//			l = new DerivedLinkImpl(this, (DerivedLinkType) lt, destination, addInIncomming);
-//		} else {
-//			l = new LinkImpl(this, lt, destination, addInIncomming);
-//		}
-//		return l;
-//	}
-//
-//	/**
-//	 * Create a new link and .
-//	 * 
-//	 * @param lt :
-//	 *            the type of the link
-//	 * @param destination :
-//	 *            new link's destination id.
-//	 * 
-//	 * @return new link l.
-//	 * 
-//	 * @throws no. *
-//	 * @throws CadseException
-//	 *             the melusine exception
-//	 */
-//
-//	@Override
-//	protected Link createDefaultLink(LinkType lt, Item destination) throws CadseException {
-//		if (lt.isNatif() && destination.isResolved()) {
-//			return null;
-//		}
-//		Link l;
-//		// create a new link l whom source is object "this"
-//		// and destination is parameter "destination".
-//		// set the default destination type...
-//
-//		if (lt.isDerived()) {
-//			l = new DerivedLinkImpl(this, (DerivedLinkType) lt, (AbstractItem) destination, true);
-//		} else {
-//			l = new LinkImpl(this, lt, destination, true);
-//		}
-//
-//		// add link l into the list "outgoings" of source "this".
-//		if (l != null && !(l instanceof ReflectLink)) {
-//			if (m_outgoings.contains(l)) {
-//				return l;
-//			}
-//			m_outgoings.add(l);
-//		}
-//		return l;
-//	}
+	// /**
+	// * instantiate an unresolved link. No notification if the state of item is
+	// * new or modifing or if the the of the model is not run
+	// *
+	// * @param lt :
+	// * link type.
+	// * @param destination :
+	// * new link's destination.
+	// * @param computeInverse
+	// * the compute inverse
+	// * @param notification
+	// * the notification
+	// *
+	// * @return new link l.
+	// *
+	// * @throws CadseException
+	// * the melusine exception
+	// */
+	// @Deprecated
+	// private Link newLinkWithNotification(LinkType lt, Item destination,
+	// boolean computeInverse, boolean notification)
+	// throws CadseException {
+	//
+	// Link l = null;
+	// Link inverseLink = null;
+	//
+	// // find a good destination.
+	// Item good_destination = this._dbwl.getItem(destination.getId());
+	// if (good_destination == null) {
+	// good_destination = destination;
+	// }
+	//
+	// boolean addInIncomming = _state != ItemState.NOT_IN_WORKSPACE && _state
+	// != ItemState.MODIFING;
+	//
+	// // est-ce qu'il faut creer le lien inverse ?
+	// // Par d�faut non
+	// computeInverse = computeInverse && addInIncomming;
+	//
+	// LinkType inverseLt = lt.getInverse();
+	// boolean createInverseLink = false;
+	//
+	// l = primitifCreateLink(lt, good_destination, addInIncomming);
+	//
+	// if (computeInverse && inverseLt != null && good_destination.isResolved())
+	// {
+	// Link findInverseLink = good_destination.getOutgoingLink(inverseLt,
+	// this.getId());
+	// if (findInverseLink == null) {
+	// // OUI
+	// createInverseLink = true;
+	// }
+	// }
+	//
+	// if (createInverseLink) {
+	// inverseLink = primitifCreateInverseLink(good_destination, addInIncomming,
+	// inverseLt);
+	// }
+	//
+	// // add link l into the list "outgoings" of source "this".
+	// if (!(l instanceof ReflectLink)) {
+	// m_outgoings.add(l);
+	// }
+	// if (createInverseLink && (!(inverseLink instanceof ReflectLink))) {
+	// ((ItemImpl) good_destination).m_outgoings.add(inverseLink);
+	// }
+	//
+	// if (!notification) {
+	// return l;
+	// }
+	//
+	// if (getState() == ItemState.NOT_IN_WORKSPACE || getState() ==
+	// ItemState.MODIFING) {
+	// return l;
+	// }
+	// if (getLogicalWorkspace().getState() != WSModelState.RUN) {
+	// return l;
+	// }
+	//
+	// _dbwl.getCadseDomain().notifieChangeEvent(ChangeID.CREATE_OUTGOING_LINK,
+	// l);
+	// if (l.isLinkResolved()) {
+	// _dbwl.getCadseDomain().notifieChangeEvent(ChangeID.RESOLVE_INCOMING_LINK,
+	// l.getResolvedDestination(), l);
+	// }
+	// if (createInverseLink) {
+	// _dbwl.getCadseDomain().notifieChangeEvent(ChangeID.CREATE_OUTGOING_LINK,
+	// inverseLink);
+	// if (inverseLink.isLinkResolved()) {
+	// _dbwl.getCadseDomain().notifieChangeEvent(ChangeID.RESOLVE_INCOMING_LINK,
+	// inverseLink.getResolvedDestination(), inverseLink);
+	// }
+	// }
+	// return l;
+	// }
+	//
+	// protected Link primitifCreateInverseLink(Item good_destination, boolean
+	// addInIncomming, LinkType inverseLt) {
+	// Link inverseLink;
+	// if (inverseLt.isDerived()) {
+	// inverseLink = new DerivedLinkImpl(good_destination, (DerivedLinkType)
+	// inverseLt, this, addInIncomming);
+	// } else {
+	// inverseLink = new LinkImpl(good_destination, inverseLt, this,
+	// addInIncomming);
+	// }
+	// return inverseLink;
+	// }
+	//
+	// protected Link primitifCreateLink(LinkType lt, Item destination, boolean
+	// addInIncomming) throws CadseException {
+	//
+	// if (lt.isNatif() && destination.isResolved()) {
+	// return null;
+	// }
+	// Link l;
+	// // create a new link l whom source is object "this"
+	// // and destination is parameter "destination".
+	// // set the default destination type...
+	//
+	// if (lt.isDerived()) {
+	// l = new DerivedLinkImpl(this, (DerivedLinkType) lt, destination,
+	// addInIncomming);
+	// } else {
+	// l = new LinkImpl(this, lt, destination, addInIncomming);
+	// }
+	// return l;
+	// }
+	//
+	// /**
+	// * Create a new link and .
+	// *
+	// * @param lt :
+	// * the type of the link
+	// * @param destination :
+	// * new link's destination id.
+	// *
+	// * @return new link l.
+	// *
+	// * @throws no. *
+	// * @throws CadseException
+	// * the melusine exception
+	// */
+	//
+	// @Override
+	// protected Link createDefaultLink(LinkType lt, Item destination) throws
+	// CadseException {
+	// if (lt.isNatif() && destination.isResolved()) {
+	// return null;
+	// }
+	// Link l;
+	// // create a new link l whom source is object "this"
+	// // and destination is parameter "destination".
+	// // set the default destination type...
+	//
+	// if (lt.isDerived()) {
+	// l = new DerivedLinkImpl(this, (DerivedLinkType) lt, (AbstractItem)
+	// destination, true);
+	// } else {
+	// l = new LinkImpl(this, lt, destination, true);
+	// }
+	//
+	// // add link l into the list "outgoings" of source "this".
+	// if (l != null && !(l instanceof ReflectLink)) {
+	// if (m_outgoings.contains(l)) {
+	// return l;
+	// }
+	// m_outgoings.add(l);
+	// }
+	// return l;
+	// }
 
 	// // TODO key
 	// /*
@@ -1084,8 +1125,9 @@ public class ItemImpl extends AbstractItem implements Item {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.Item#getOutgoingLink(fr.imag.adele.cadse.core.LinkType,
-	 *      fr.imag.adele.cadse.core.UUID)
+	 * @see
+	 * fr.imag.adele.cadse.core.Item#getOutgoingLink(fr.imag.adele.cadse.core
+	 * .LinkType, fr.imag.adele.cadse.core.UUID)
 	 */
 	@Override
 	public Link getOutgoingLink(LinkType lt, UUID destId) {
@@ -1101,7 +1143,9 @@ public class ItemImpl extends AbstractItem implements Item {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.Item#getOutgoingLink(fr.imag.adele.cadse.core.Item)
+	 * @see
+	 * fr.imag.adele.cadse.core.Item#getOutgoingLink(fr.imag.adele.cadse.core
+	 * .Item)
 	 */
 	@Override
 	public Link getOutgoingLink(Item item) {
@@ -1139,57 +1183,58 @@ public class ItemImpl extends AbstractItem implements Item {
 		return links;
 	}
 
-//	/*
-//	 * (non-Javadoc)
-//	 * 
-//	 * @see fr.imag.adele.cadse.core.Item#getDerivedLinks()
-//	 */
-//	@Override
-//	public Set<DerivedLink> getDerivedLinks() {
-//		if (_derivedLinks == null) {
-//			return Collections.emptySet();
-//		}
-//		return this._derivedLinks;
-//	}
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see fr.imag.adele.cadse.core.Item#getDerivedLinks()
+	// */
+	// @Override
+	// public Set<DerivedLink> getDerivedLinks() {
+	// if (_derivedLinks == null) {
+	// return Collections.emptySet();
+	// }
+	// return this._derivedLinks;
+	// }
 
-//	/*
-//	 * (non-Javadoc)
-//	 * 
-//	 * @see fr.imag.adele.cadse.core.Item#setDerivedLinks(java.util.Set)
-//	 */
-//	@Override
-//	public void setDerivedLinks(Set<DerivedLinkDescription> derivedLinks) {
-//		if (derivedLinks == null || derivedLinks.size() == 0) {
-//			return;
-//		}
-//
-//		this._derivedLinks = new HashSet<DerivedLink>();
-//		for (DerivedLinkDescription idl : derivedLinks) {
-//			createOneDerivedLink(idl);
-//		}
-//	}
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see fr.imag.adele.cadse.core.Item#setDerivedLinks(java.util.Set)
+	// */
+	// @Override
+	// public void setDerivedLinks(Set<DerivedLinkDescription> derivedLinks) {
+	// if (derivedLinks == null || derivedLinks.size() == 0) {
+	// return;
+	// }
+	//
+	// this._derivedLinks = new HashSet<DerivedLink>();
+	// for (DerivedLinkDescription idl : derivedLinks) {
+	// createOneDerivedLink(idl);
+	// }
+	// }
 
-//	/**
-//	 * Creates the derived link type.
-//	 * 
-//	 * @param level
-//	 *            the level
-//	 * @param derivedLinks
-//	 *            the derived links
-//	 * 
-//	 * @return true, if successful
-//	 */
-//	public boolean createDerivedLinkType(int level, Set<DerivedLinkDescription> derivedLinks) {
-//		boolean ret = false;
-//		for (DerivedLinkDescription idl : derivedLinks) {
-//			int idl_level = idl.getType().lastIndexOf('#') + 1;
-//			if (level == idl_level) {
-//				createDerivedLinkTypeIfNeed(idl);
-//				ret = true;
-//			}
-//		}
-//		return ret;
-//	}
+	// /**
+	// * Creates the derived link type.
+	// *
+	// * @param level
+	// * the level
+	// * @param derivedLinks
+	// * the derived links
+	// *
+	// * @return true, if successful
+	// */
+	// public boolean createDerivedLinkType(int level,
+	// Set<DerivedLinkDescription> derivedLinks) {
+	// boolean ret = false;
+	// for (DerivedLinkDescription idl : derivedLinks) {
+	// int idl_level = idl.getType().lastIndexOf('#') + 1;
+	// if (level == idl_level) {
+	// createDerivedLinkTypeIfNeed(idl);
+	// ret = true;
+	// }
+	// }
+	// return ret;
+	// }
 
 	/**
 	 * Compute composants.
@@ -1202,7 +1247,8 @@ public class ItemImpl extends AbstractItem implements Item {
 	 * @throws CadseIllegalArgumentException
 	 *             the melusine error
 	 */
-	public Map<UUID, Item> computeComponents(boolean notThrow) throws CadseIllegalArgumentException {
+	public Map<UUID, Item> computeComponents(boolean notThrow)
+			throws CadseIllegalArgumentException {
 		// if (!isOpen) {
 		// if (notThrow)
 		// return null;
@@ -1218,7 +1264,8 @@ public class ItemImpl extends AbstractItem implements Item {
 				ret.put(dest.getId(), dest);
 				if (!dest.isResolved()) {
 					if (!notThrow) {
-						throw new CadseIllegalArgumentException(Messages.error_not_open_but_unresolved_composant,
+						throw new CadseIllegalArgumentException(
+								Messages.error_not_open_but_unresolved_composant,
 								getId(), link.getDestinationId());
 					}
 					continue;
@@ -1233,84 +1280,88 @@ public class ItemImpl extends AbstractItem implements Item {
 		return ret;
 	}
 
-//	/**
-//	 * Compute derived links.
-//	 * 
-//	 * @return the set< derived link>
-//	 */
-//	void computeDerivedLinks() {
-//		LogicalWorkspaceTransaction logicalWorkspaceTransaction = getLogicalWorkspace().createTransaction();
-//		for (Link el : new ArrayList<Link>(getOutgoingLinks())) {
-//			if (!el.getLinkType().isComposition()) {
-//				continue;
-//			}
-//
-//			Item comp = el.getResolvedDestination();
-//			if (comp == null) {
-//				continue;
-//			}
-//			
-//			
-//
-//			// traiter outgoing links
-//			for (Link outgoing : comp.getOutgoingLinks()) {
-//				// composites entities are considered to be part of the
-//				// composite.
-//				// and if the destination is in the composants set.
-//				if (outgoing.getLinkType().isComposition() || containsComponent(outgoing.getDestinationId())) {
-//					continue;
-//				}
-//				createOneDerivedLink(logicalWorkspaceTransaction, outgoing);
-//			}
-//		}
-//		logicalWorkspaceTransaction.commit();
-//	}
+	// /**
+	// * Compute derived links.
+	// *
+	// * @return the set< derived link>
+	// */
+	// void computeDerivedLinks() {
+	// LogicalWorkspaceTransaction logicalWorkspaceTransaction =
+	// getLogicalWorkspace().createTransaction();
+	// for (Link el : new ArrayList<Link>(getOutgoingLinks())) {
+	// if (!el.getLinkType().isComposition()) {
+	// continue;
+	// }
+	//
+	// Item comp = el.getResolvedDestination();
+	// if (comp == null) {
+	// continue;
+	// }
+	//			
+	//			
+	//
+	// // traiter outgoing links
+	// for (Link outgoing : comp.getOutgoingLinks()) {
+	// // composites entities are considered to be part of the
+	// // composite.
+	// // and if the destination is in the composants set.
+	// if (outgoing.getLinkType().isComposition() ||
+	// containsComponent(outgoing.getDestinationId())) {
+	// continue;
+	// }
+	// createOneDerivedLink(logicalWorkspaceTransaction, outgoing);
+	// }
+	// }
+	// logicalWorkspaceTransaction.commit();
+	// }
 
-//	/**
-//	 * Re compute derived link.
-//	 * 
-//	 * @param rec
-//	 *            the rec
-//	 */
-//	void reComputeDerivedLink(boolean rec) {
-//		if (this.isClosed()) {
-//			throw new CadseIllegalArgumentException(Messages.error_internal_connot_call_closed_method, getId());
-//		}
-//
-//		// garde une copy pour voir ceux qui ont �t� supprim�s.
-//		Set<DerivedLink> copy = this._derivedLinks;
-//		if (copy == null) {
-//			copy = new HashSet<DerivedLink>();
-//		}
-//
-//		if (rec) { // algo recurcif au chargement et quand on force le recalcul
-//			// si possible.
-//			for (Link el : new ArrayList<Link>(getOutgoingLinks())) {
-//				if (!el.getLinkType().isComposition()) {
-//					continue;
-//				}
-//
-//				Item comp = el.getResolvedDestination();
-//				if (comp == null) {
-//					continue;
-//				}
-//				ItemImpl compImpl = (ItemImpl) comp;
-//
-//				if (compImpl._derivedLinks == null) {
-//					compImpl.reComputeDerivedLink(true);
-//				}
-//			}
-//		}
-//		this._derivedLinks = this.computeDerivedLinks();
-//
-//		// remove the bad link.
-//		copy.removeAll(this._derivedLinks);
-//		for (Link idl : copy) {
-//			// remove the found link.
-//			(idl.getDestination()).removeIncomingLink(idl, true);
-//			this.removeOutgoingLink(idl);
-//		}
-//	}
+	// /**
+	// * Re compute derived link.
+	// *
+	// * @param rec
+	// * the rec
+	// */
+	// void reComputeDerivedLink(boolean rec) {
+	// if (this.isClosed()) {
+	// throw new
+	// CadseIllegalArgumentException(Messages.error_internal_connot_call_closed_method,
+	// getId());
+	// }
+	//
+	// // garde une copy pour voir ceux qui ont �t� supprim�s.
+	// Set<DerivedLink> copy = this._derivedLinks;
+	// if (copy == null) {
+	// copy = new HashSet<DerivedLink>();
+	// }
+	//
+	// if (rec) { // algo recurcif au chargement et quand on force le recalcul
+	// // si possible.
+	// for (Link el : new ArrayList<Link>(getOutgoingLinks())) {
+	// if (!el.getLinkType().isComposition()) {
+	// continue;
+	// }
+	//
+	// Item comp = el.getResolvedDestination();
+	// if (comp == null) {
+	// continue;
+	// }
+	// ItemImpl compImpl = (ItemImpl) comp;
+	//
+	// if (compImpl._derivedLinks == null) {
+	// compImpl.reComputeDerivedLink(true);
+	// }
+	// }
+	// }
+	// this._derivedLinks = this.computeDerivedLinks();
+	//
+	// // remove the bad link.
+	// copy.removeAll(this._derivedLinks);
+	// for (Link idl : copy) {
+	// // remove the found link.
+	// (idl.getDestination()).removeIncomingLink(idl, true);
+	// this.removeOutgoingLink(idl);
+	// }
+	// }
 
 	/**
 	 * Restore item.
@@ -1340,69 +1391,70 @@ public class ItemImpl extends AbstractItem implements Item {
 		throw new UnsupportedOperationException();
 	}
 
-//	/**
-//	 * Creates the one derived link.
-//	 * 
-//	 * @param link
-//	 *            the link
-//	 * 
-//	 * @return the link
-//	 */
-//	Link createOneDerivedLink(DerivedLinkDescription link) {
-//		try {
-//			// find the link type of the derived link and create it if need.
-//			// create derived link with origin root, name #L, destination
-//			// destId, and char of L.
-//			// If link type does not exist create it.
-//			LinkType lt = createDerivedLinkTypeIfNeed(link);
-//			if (lt == null) {
-//				return null;
-//			}
-//
-//			Item destination = _dbwl.loadItem(link.getDestination());
-//
-//			Link ret = null;
-//			// create the derived link if need.
-//			if ((ret = findDerivedLink(lt, destination)) == null) {
-//				ret = newLinkWithNotification(lt, destination, false, true);
-//			}
-//			return ret;
-//		} catch (CadseException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//			return null;
-//		}
-//	}
-//
-//	/**
-//	 * Creates the one derived link.
-//	 * 
-//	 * @param link
-//	 *            the link
-//	 * 
-//	 * @return the derived link
-//	 */
-//	void createOneDerivedLink(LogicalWorkspaceTransaction logicalWorkspaceTransaction, Link link) {
-//		try {
-//			// find the link type of the derived link and create it if need.
-//			// create derived link with origin root, name #L, destination
-//			// destId, and char of L.
-//			// If link type does not exist create it.
-//			LinkType lt = createDerivedLinkTypeIfNeed(link.getLinkType());
-//			if (lt == null) {
-//				return ;
-//			}
-//
-//			Item destination = link.getDestination();
-//			// create the derived link if need.
-//			if ((findDerivedLink(lt, destination)) == null) {
-//				logicalWorkspaceTransaction.getItem(getId()).createLink(lt, destination);
-//			}
-//		} catch (CadseException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
+	// /**
+	// * Creates the one derived link.
+	// *
+	// * @param link
+	// * the link
+	// *
+	// * @return the link
+	// */
+	// Link createOneDerivedLink(DerivedLinkDescription link) {
+	// try {
+	// // find the link type of the derived link and create it if need.
+	// // create derived link with origin root, name #L, destination
+	// // destId, and char of L.
+	// // If link type does not exist create it.
+	// LinkType lt = createDerivedLinkTypeIfNeed(link);
+	// if (lt == null) {
+	// return null;
+	// }
+	//
+	// Item destination = _dbwl.loadItem(link.getDestination());
+	//
+	// Link ret = null;
+	// // create the derived link if need.
+	// if ((ret = findDerivedLink(lt, destination)) == null) {
+	// ret = newLinkWithNotification(lt, destination, false, true);
+	// }
+	// return ret;
+	// } catch (CadseException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// return null;
+	// }
+	// }
+	//
+	// /**
+	// * Creates the one derived link.
+	// *
+	// * @param link
+	// * the link
+	// *
+	// * @return the derived link
+	// */
+	// void createOneDerivedLink(LogicalWorkspaceTransaction
+	// logicalWorkspaceTransaction, Link link) {
+	// try {
+	// // find the link type of the derived link and create it if need.
+	// // create derived link with origin root, name #L, destination
+	// // destId, and char of L.
+	// // If link type does not exist create it.
+	// LinkType lt = createDerivedLinkTypeIfNeed(link.getLinkType());
+	// if (lt == null) {
+	// return ;
+	// }
+	//
+	// Item destination = link.getDestination();
+	// // create the derived link if need.
+	// if ((findDerivedLink(lt, destination)) == null) {
+	// logicalWorkspaceTransaction.getItem(getId()).createLink(lt, destination);
+	// }
+	// } catch (CadseException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// }
+	// }
 
 	// DerivedLink createOneDerivedLinkLoad(Link link) {
 	//
@@ -1426,101 +1478,110 @@ public class ItemImpl extends AbstractItem implements Item {
 	//
 	// }
 
-//	/**
-//	 * Return the name of derived link Type.<br/> The name begin with '#' next
-//	 * the item type of the source and '_' and the name of orignal link type
-//	 * name. The number of '#' indique la profondeur.
-//	 * 
-//	 * @param lt
-//	 *            the lt
-//	 * 
-//	 * @return The name of the derived link type
-//	 */
-//	static private String getDerivedType(LinkType lt) {
-//		String ln = lt.getName();
-//		if (lt.isDerived()) {
-//			return "#" + ln; //$NON-NLS-1$
-//		}
-//		return "#" + lt.getSource().getName() + "_" + ln; //$NON-NLS-1$ //$NON-NLS-2$
-//	}
+	// /**
+	// * Return the name of derived link Type.<br/> The name begin with '#' next
+	// * the item type of the source and '_' and the name of orignal link type
+	// * name. The number of '#' indique la profondeur.
+	// *
+	// * @param lt
+	// * the lt
+	// *
+	// * @return The name of the derived link type
+	// */
+	// static private String getDerivedType(LinkType lt) {
+	// String ln = lt.getName();
+	// if (lt.isDerived()) {
+	//			return "#" + ln; //$NON-NLS-1$
+	// }
+	//		return "#" + lt.getSource().getName() + "_" + ln; //$NON-NLS-1$ //$NON-NLS-2$
+	// }
 
-//	/**
-//	 * Cette methode cre� un LinkType en fonction d'un autre LinkType. Il est
-//	 * possible de recup�rer l'ItemType source, l'itemType destination, et le
-//	 * LinkType du lien qui provoque ce lien d�riv�.<br>
-//	 * <code>
-//	 * ItemType destType = getModel().getModelType().getItemType(link.getDestTypeName());<br>
-//	 * ItemType sourceType = getModel().getModelType().getItemType(link.getTypeSourceName());<br>
-//	 * LinkType sourceLinkType = sourceType.getOutgoingLinkType(link.getLinkName());<br>
-//	 * </code>
-//	 * 
-//	 * @param link
-//	 *            Le lien deriv� interne � partir du quel doit etre creer le
-//	 *            type de lien deriv�
-//	 * 
-//	 * @return le type de lien deriv�
-//	 */
-//	private DerivedLinkType createDerivedLinkTypeIfNeed(LinkType link) {
-//		ItemType destType = link.getDestination();
-//
-//		String derivedTypeName = getDerivedType(link);
-//
-//		LinkType lt = getType().getOutgoingLinkType(destType, derivedTypeName);
-//
-//		if (lt != null) {
-//			return (DerivedLinkType) lt;
-//		}
-//
-//		int kindLinkType = LinkType.DERIVED;
-//		if (link.isAggregation()) {
-//			kindLinkType |= LinkType.AGGREGATION;
-//		}
-//		if (link.isRequire()) {
-//			kindLinkType |= LinkType.REQUIRE;
-//		}
-//
-//		// TODO
-//		// lt = getType().getOutgoingLinkType(derivedTypeName);
-//		// if (lt != null) {
-//		// if (destType.isSuperTypeOf(lt.getDestination())) {
-//		// lt.setDestinationType(destType);
-//		// return (DerivedLinkType) lt;
-//		// }
-//		// return null;
-//		// }
-//		try {
-//			lt = ((ItemTypeImpl) _type).createDerivedLinkType(null, -3, derivedTypeName, kindLinkType, 0, -1, null,
-//					link);
-//		} catch (CadseIllegalArgumentException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//			return null;
-//		}
-//
-//		return (DerivedLinkType) lt;
-//	}
+	// /**
+	// * Cette methode cre� un LinkType en fonction d'un autre LinkType. Il
+	// est
+	// * possible de recup�rer l'ItemType source, l'itemType destination, et
+	// le
+	// * LinkType du lien qui provoque ce lien d�riv�.<br>
+	// * <code>
+	// * ItemType destType =
+	// getModel().getModelType().getItemType(link.getDestTypeName());<br>
+	// * ItemType sourceType =
+	// getModel().getModelType().getItemType(link.getTypeSourceName());<br>
+	// * LinkType sourceLinkType =
+	// sourceType.getOutgoingLinkType(link.getLinkName());<br>
+	// * </code>
+	// *
+	// * @param link
+	// * Le lien deriv� interne � partir du quel doit etre creer le
+	// * type de lien deriv�
+	// *
+	// * @return le type de lien deriv�
+	// */
+	// private DerivedLinkType createDerivedLinkTypeIfNeed(LinkType link) {
+	// ItemType destType = link.getDestination();
+	//
+	// String derivedTypeName = getDerivedType(link);
+	//
+	// LinkType lt = getType().getOutgoingLinkType(destType, derivedTypeName);
+	//
+	// if (lt != null) {
+	// return (DerivedLinkType) lt;
+	// }
+	//
+	// int kindLinkType = LinkType.DERIVED;
+	// if (link.isAggregation()) {
+	// kindLinkType |= LinkType.AGGREGATION;
+	// }
+	// if (link.isRequire()) {
+	// kindLinkType |= LinkType.REQUIRE;
+	// }
+	//
+	// // TODO
+	// // lt = getType().getOutgoingLinkType(derivedTypeName);
+	// // if (lt != null) {
+	// // if (destType.isSuperTypeOf(lt.getDestination())) {
+	// // lt.setDestinationType(destType);
+	// // return (DerivedLinkType) lt;
+	// // }
+	// // return null;
+	// // }
+	// try {
+	// lt = ((ItemTypeImpl) _type).createDerivedLinkType(null, -3,
+	// derivedTypeName, kindLinkType, 0, -1, null,
+	// link);
+	// } catch (CadseIllegalArgumentException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// return null;
+	// }
+	//
+	// return (DerivedLinkType) lt;
+	// }
 
-//	/**
-//	 * Cette methode cre� un derived LinkType � partir d'un
-//	 * DerivedLinkDescription.
-//	 * 
-//	 * @param link
-//	 *            La description d'un lien deriv�
-//	 * 
-//	 * @return le type de lien deriv�
-//	 */
-//	private DerivedLinkType createDerivedLinkTypeIfNeed(DerivedLinkDescription link) {
-//
-//		ItemType originSourceType = _dblw.getItemType(link.getOriginLinkSourceTypeID());
-//		if (originSourceType == null) {
-//			return null;
-//		}
-//		LinkType originLinkType = originSourceType.getOutgoingLinkType(link.getOriginLinkTypeID());
-//		if (originLinkType == null) {
-//			return null;
-//		}
-//		return createDerivedLinkTypeIfNeed(originLinkType);
-//	}
+	// /**
+	// * Cette methode cre� un derived LinkType � partir d'un
+	// * DerivedLinkDescription.
+	// *
+	// * @param link
+	// * La description d'un lien deriv�
+	// *
+	// * @return le type de lien deriv�
+	// */
+	// private DerivedLinkType
+	// createDerivedLinkTypeIfNeed(DerivedLinkDescription link) {
+	//
+	// ItemType originSourceType =
+	// _dblw.getItemType(link.getOriginLinkSourceTypeID());
+	// if (originSourceType == null) {
+	// return null;
+	// }
+	// LinkType originLinkType =
+	// originSourceType.getOutgoingLinkType(link.getOriginLinkTypeID());
+	// if (originLinkType == null) {
+	// return null;
+	// }
+	// return createDerivedLinkTypeIfNeed(originLinkType);
+	// }
 
 	// /**
 	// * (non-Javadoc) mise en cache + shadow
@@ -1571,7 +1632,8 @@ public class ItemImpl extends AbstractItem implements Item {
 	protected DerivedLink findDerivedLink(LinkType lt, Item destination) {
 		// getOutgoingLink(lt, destinationId)
 		for (Link l : getOutgoingLinks()) {
-			if ((l.getLinkType().equals(lt) || l.getLinkType().getName().equals(lt.getName()))
+			if ((l.getLinkType().equals(lt) || l.getLinkType().getName()
+					.equals(lt.getName()))
 					&& l.getDestination().equals(destination)) {
 				return (DerivedLink) l;
 			}
@@ -1589,8 +1651,10 @@ public class ItemImpl extends AbstractItem implements Item {
 		List<Item> ret = new ArrayList<Item>();
 		for (Link l : getIncomingLinks()) {
 			if (l.getLinkType() == null) {
-				getCadseDomain().error(this, "Type of link is null : dest = " + getId() + " source = " + l.getSource(),
-						null);
+				getCadseDomain().error(
+						this,
+						"Type of link is null : dest = " + getId()
+								+ " source = " + l.getSource(), null);
 				continue;
 			}
 			if (l.getLinkType().isComposition()) {
@@ -1644,7 +1708,8 @@ public class ItemImpl extends AbstractItem implements Item {
 		}
 		setParent(parent, lt);
 
-		if (attemptToRecreate && (getState() != ItemState.NOT_IN_WORKSPACE && getState() != ItemState.MODIFING)) {
+		if (attemptToRecreate
+				&& (getState() != ItemState.NOT_IN_WORKSPACE && getState() != ItemState.MODIFING)) {
 			// cherche a reparer une anomalie : un lien est manquant...
 			// on fait ceci que si ce n'est pas un nouveau item ou si l'item
 			// n'est pas en modification(todo)
@@ -1656,7 +1721,11 @@ public class ItemImpl extends AbstractItem implements Item {
 				if (lt.getMax() == 1) {
 					Link findOtherLink = _parent.getOutgoingLink(lt);
 					if (findOtherLink != null) {
-						getCadseDomain().error(this, "Cannot recreate Item children alldready exist", null);
+						getCadseDomain()
+								.error(
+										this,
+										"Cannot recreate Item children alldready exist",
+										null);
 						return null;
 					}
 				}
@@ -1674,7 +1743,9 @@ public class ItemImpl extends AbstractItem implements Item {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.Item#getPartParent(fr.imag.adele.cadse.core.ItemType)
+	 * @see
+	 * fr.imag.adele.cadse.core.Item#getPartParent(fr.imag.adele.cadse.core.
+	 * ItemType)
 	 */
 	@Override
 	public Item getPartParent(ItemType typeID) {
@@ -1718,51 +1789,52 @@ public class ItemImpl extends AbstractItem implements Item {
 		if (this._parent != null) {
 			return _parent;
 		}
-		
+
 		return getOutgoingItem(CadseGCST.ITEM_lt_PARENT, true);
-//
-//		Object value = getAttribute(CadseGCST.ITEM_at_PARENT_ITEM_ID_);
-//		if (value instanceof UUID) {
-//			// migration
-//			value = new UUID((UUID) value);
-//			// try {
-//			// remove this lines : use outgoing link instead
-//			// setAttribute(CadseGCST.ITEM_at_PARENT_ITEM_ID_,
-//			// value);
-//			// } catch (CadseException e) {
-//			// // TODO Auto-generated catch block
-//			// e.printStackTrace();
-//			// }
-//		}
-//		UUID parentId = (UUID) value;
-//		if (parentId == null) {
-//			return null;
-//		}
-//		Item retItem = _dbwl.getItem(parentId);
-//		// /setAttribute(ATTR_PARENT_ITEM_ID, retItem.getId());
-//		return retItem;
+		//
+		// Object value = getAttribute(CadseGCST.ITEM_at_PARENT_ITEM_ID_);
+		// if (value instanceof UUID) {
+		// // migration
+		// value = new UUID((UUID) value);
+		// // try {
+		// // remove this lines : use outgoing link instead
+		// // setAttribute(CadseGCST.ITEM_at_PARENT_ITEM_ID_,
+		// // value);
+		// // } catch (CadseException e) {
+		// // // TODO Auto-generated catch block
+		// // e.printStackTrace();
+		// // }
+		// }
+		// UUID parentId = (UUID) value;
+		// if (parentId == null) {
+		// return null;
+		// }
+		// Item retItem = _dbwl.getItem(parentId);
+		// // /setAttribute(ATTR_PARENT_ITEM_ID, retItem.getId());
+		// return retItem;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see fr.imag.adele.cadse.core.Item#computeAttribute(java.lang.String,
-	 *      java.lang.Object, java.lang.Object, java.lang.Object)
+	 * java.lang.Object, java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public void computeAttribute(String attributeName, Object theirsValue, Object baseValue, Object mineValue) {
+	public void computeAttribute(String attributeName, Object theirsValue,
+			Object baseValue, Object mineValue) {
 
 	}
 
 	// ///////////
-
 
 	// -------------------------------------------------//
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.Item#isAncestorOf(fr.imag.adele.cadse.core.Item)
+	 * @see
+	 * fr.imag.adele.cadse.core.Item#isAncestorOf(fr.imag.adele.cadse.core.Item)
 	 */
 	@Override
 	public boolean isAncestorOf(Item item2) {
@@ -1785,7 +1857,8 @@ public class ItemImpl extends AbstractItem implements Item {
 	 * @see fr.imag.adele.cadse.core.Item#setComponents(java.util.Set)
 	 */
 	@Override
-	public void setComponents(Set<ItemDescriptionRef> comp) throws CadseException {
+	public void setComponents(Set<ItemDescriptionRef> comp)
+			throws CadseException {
 		if (comp == null || comp.size() == 0) {
 			_composants = null;
 			return;
@@ -1796,7 +1869,8 @@ public class ItemImpl extends AbstractItem implements Item {
 				Item i = _dblw.loadItem(c);
 				_composants.put(i.getId(), i);
 			} catch (Throwable e) {
-				System.err.println("This composant is ignored.\n+" + c.toString());
+				System.err.println("This composant is ignored.\n+"
+						+ c.toString());
 				e.printStackTrace();
 			}
 		}
@@ -1805,7 +1879,9 @@ public class ItemImpl extends AbstractItem implements Item {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.Item#containsComponent(fr.imag.adele.cadse.core.UUID)
+	 * @see
+	 * fr.imag.adele.cadse.core.Item#containsComponent(fr.imag.adele.cadse.core
+	 * .UUID)
 	 */
 	@Override
 	public boolean containsComponent(UUID id) {
@@ -1841,12 +1917,12 @@ public class ItemImpl extends AbstractItem implements Item {
 		return false;
 	}
 
-
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.Item#canCreateLink(fr.imag.adele.cadse.core.LinkType,
-	 *      fr.imag.adele.cadse.core.UUID)
+	 * @see
+	 * fr.imag.adele.cadse.core.Item#canCreateLink(fr.imag.adele.cadse.core.
+	 * LinkType, fr.imag.adele.cadse.core.UUID)
 	 */
 	@Override
 	public boolean canCreateLink(LinkType lt, UUID destination) {
@@ -1857,7 +1933,7 @@ public class ItemImpl extends AbstractItem implements Item {
 	 * (non-Javadoc)
 	 * 
 	 * @see fr.imag.adele.cadse.core.Item#canSetAttribute(java.lang.String,
-	 *      java.lang.Object)
+	 * java.lang.Object)
 	 */
 	@Override
 	public boolean canSetAttribute(String key, Object value) {
@@ -1867,7 +1943,8 @@ public class ItemImpl extends AbstractItem implements Item {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.Item#setType(fr.imag.adele.cadse.core.ItemType)
+	 * @see
+	 * fr.imag.adele.cadse.core.Item#setType(fr.imag.adele.cadse.core.ItemType)
 	 */
 	@Override
 	public void setType(ItemType selectedItemType) {
@@ -1906,8 +1983,9 @@ public class ItemImpl extends AbstractItem implements Item {
 		}
 
 		m_outgoings.remove(indexLinkToMove);
-		m_outgoings.add(indexLinkToMove < indexLinkAfterToMove ? indexLinkAfterToMove : indexLinkAfterToMove + 1,
-				linkToMove);
+		m_outgoings.add(
+				indexLinkToMove < indexLinkAfterToMove ? indexLinkAfterToMove
+						: indexLinkAfterToMove + 1, linkToMove);
 		return true;
 	}
 
@@ -1933,8 +2011,10 @@ public class ItemImpl extends AbstractItem implements Item {
 		}
 
 		m_outgoings.remove(indexLinkToMove);
-		m_outgoings.add(indexLinkToMove < indexLinkBeforeToMove ? indexLinkBeforeToMove - 1 : indexLinkBeforeToMove,
-				linkToMove);
+		m_outgoings
+				.add(
+						indexLinkToMove < indexLinkBeforeToMove ? indexLinkBeforeToMove - 1
+								: indexLinkBeforeToMove, linkToMove);
 		return true;
 	}
 
@@ -1968,31 +2048,34 @@ public class ItemImpl extends AbstractItem implements Item {
 	//
 	// }
 
-//	/*
-//	 * (non-Javadoc)
-//	 * 
-//	 * @see fr.imag.adele.cadse.core.Item#getDerivedLinkDescriptions(fr.imag.adele.cadse.core.ItemDescription)
-//	 */
-//	@Override
-//	public Set<DerivedLinkDescription> getDerivedLinkDescriptions(ItemDescription source) {
-//		HashSet<DerivedLinkDescription> ret = new HashSet<DerivedLinkDescription>();
-//		if (_derivedLinks != null) {
-//			for (DerivedLink dl : _derivedLinks) {
-//				ret.add(new DerivedLinkDescription(source, dl));
-//			}
-//		}
-//
-//		return ret;
-//	}
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see
+	// fr.imag.adele.cadse.core.Item#getDerivedLinkDescriptions(fr.imag.adele.cadse.core.ItemDescription)
+	// */
+	// @Override
+	// public Set<DerivedLinkDescription>
+	// getDerivedLinkDescriptions(ItemDescription source) {
+	// HashSet<DerivedLinkDescription> ret = new
+	// HashSet<DerivedLinkDescription>();
+	// if (_derivedLinks != null) {
+	// for (DerivedLink dl : _derivedLinks) {
+	// ret.add(new DerivedLinkDescription(source, dl));
+	// }
+	// }
+	//
+	// return ret;
+	// }
 
-//	/**
-//	 * Resetderivedlink.
-//	 */
-//	public void resetderivedlink() {
-//		if (_derivedLinks == null) {
-//			reComputeDerivedLink(true);
-//		}
-//	}
+	// /**
+	// * Resetderivedlink.
+	// */
+	// public void resetderivedlink() {
+	// if (_derivedLinks == null) {
+	// reComputeDerivedLink(true);
+	// }
+	// }
 
 	/**
 	 * Resolve component.
@@ -2016,8 +2099,9 @@ public class ItemImpl extends AbstractItem implements Item {
 		super.computeAttributes();
 		if (_type != null) {
 			if (_type.hasQualifiedNameAttribute()) {
-				this._qualifiedName = _type.getItemManager().computeQualifiedName(this, _name, getPartParent(false),
-						getPartParentLinkType());
+				this._qualifiedName = _type.getItemManager()
+						.computeQualifiedName(this, _name,
+								getPartParent(false), getPartParentLinkType());
 			}
 		}
 	}
@@ -2028,7 +2112,8 @@ public class ItemImpl extends AbstractItem implements Item {
 
 	public void setParent(Item parent, LinkType lt) {
 		if (parent != null && !parent.isResolved())
-			throw new CadseIllegalArgumentException("Cannot set unresolved parent", this, parent);
+			throw new CadseIllegalArgumentException(
+					"Cannot set unresolved parent", this, parent);
 		checkCycle(parent, this);
 		this._parent = parent;
 		setModified(true);
@@ -2054,7 +2139,8 @@ public class ItemImpl extends AbstractItem implements Item {
 		}
 
 		if (dest == source || source.getId().equals(dest.getId())) {
-			throw new CadseIllegalArgumentException("cannot be parent of it self : {0} ", source.getName());
+			throw new CadseIllegalArgumentException(
+					"cannot be parent of it self : {0} ", source.getName());
 		}
 
 		while (true) {
@@ -2063,7 +2149,8 @@ public class ItemImpl extends AbstractItem implements Item {
 				return;
 			}
 			if (dest == source || source.getId().equals(dest.getId())) {
-				throw new CadseIllegalArgumentException("cannot be cycle from source to dest");
+				throw new CadseIllegalArgumentException(
+						"cannot be cycle from source to dest");
 			}
 		}
 
