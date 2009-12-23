@@ -19,7 +19,6 @@
 
 package fr.imag.adele.cadse.core.impl.internal;
 
-
 import fr.imag.adele.cadse.core.AdaptableObjectImpl;
 import fr.imag.adele.cadse.core.INamedUUID;
 import fr.imag.adele.cadse.core.internal.InternalLogicalWorkspace;
@@ -100,54 +99,63 @@ import java.util.UUID;
  * 
  * @author <a href="mailto:stephane.chomat@imag.fr">Stephane Chomat</a>
  */
-public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWorkspace {
+public class LogicalWorkspaceImpl implements LogicalWorkspace,
+		InternalLogicalWorkspace {
 
 	static public class CaptureNewOperation implements ILoggableAction {
-		ILoggableAction							log;
-		private ArrayList<WLWCOperationImpl>	removedOperations	= new ArrayList<WLWCOperationImpl>();	;
-		private ArrayList<WLWCOperationImpl>	addedOperations		= new ArrayList<WLWCOperationImpl>();	;
+		ILoggableAction log;
+		private ArrayList<WLWCOperationImpl> removedOperations = new ArrayList<WLWCOperationImpl>();;
+		private ArrayList<WLWCOperationImpl> addedOperations = new ArrayList<WLWCOperationImpl>();;
 
 		public CaptureNewOperation(ILoggableAction log) {
 			this.log = log;
 		}
 
-		public <T> void actionAddAttribute(UUID itemId,
-				IAttributeType<T> key, T value) throws CadseException {
-			if (log != null) log.actionAddAttribute(itemId, key, value);
+		public <T> void actionAddAttribute(UUID itemId, IAttributeType<T> key,
+				T value) throws CadseException {
+			if (log != null)
+				log.actionAddAttribute(itemId, key, value);
 		}
 
 		public <T> void actionAddAttribute(LinkDescription linkDescription,
 				IAttributeType<T> key, T value) throws CadseException {
-			if (log != null) log.actionAddAttribute(linkDescription, key, value);
+			if (log != null)
+				log.actionAddAttribute(linkDescription, key, value);
 		}
 
 		public <T> void actionChangeAttribute(UUID itemId,
 				IAttributeType<T> key, T value) throws CadseException {
-			if (log != null) log.actionChangeAttribute(itemId, key, value);
+			if (log != null)
+				log.actionChangeAttribute(itemId, key, value);
 		}
 
 		public <T> void actionChangeAttribute(LinkDescription linkDescription,
 				IAttributeType<T> key, T value) throws CadseException {
-			if (log != null) log.actionChangeAttribute(linkDescription, key, value);
+			if (log != null)
+				log.actionChangeAttribute(linkDescription, key, value);
 		}
 
-		public <T> void actionRemoveAttribute(UUID itemId,
-				IAttributeType<T> key) throws CadseException {
-			if (log != null) log.actionRemoveAttribute(itemId, key);
+		public <T> void actionRemoveAttribute(UUID itemId, IAttributeType<T> key)
+				throws CadseException {
+			if (log != null)
+				log.actionRemoveAttribute(itemId, key);
 		}
 
 		public <T> void actionRemoveAttribute(LinkDescription linkDescription,
 				IAttributeType<T> key) throws CadseException {
-			if (log != null) log.actionRemoveAttribute(linkDescription, key);
+			if (log != null)
+				log.actionRemoveAttribute(linkDescription, key);
 		}
-		
-		public void actionAddItem(ItemDescriptionRef itemDescriptionRef) throws CadseException {
+
+		public void actionAddItem(ItemDescriptionRef itemDescriptionRef)
+				throws CadseException {
 			if (log != null) {
 				log.actionAddItem(itemDescriptionRef);
 			}
 		}
 
-		public void actionAddLink(LinkDescription linkDescription) throws CadseException {
+		public void actionAddLink(LinkDescription linkDescription)
+				throws CadseException {
 			if (log != null) {
 				log.actionAddLink(linkDescription);
 			}
@@ -160,14 +168,15 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 			addedOperations.add(operation);
 		}
 
-
-		public void actionRemoveItem(ItemDescriptionRef itemDescriptionRef) throws CadseException {
+		public void actionRemoveItem(ItemDescriptionRef itemDescriptionRef)
+				throws CadseException {
 			if (log != null) {
 				log.actionRemoveItem(itemDescriptionRef);
 			}
 		}
 
-		public void actionRemoveLink(LinkDescription linkDescription) throws CadseException {
+		public void actionRemoveLink(LinkDescription linkDescription)
+				throws CadseException {
 			if (log != null) {
 				log.actionRemoveLink(linkDescription);
 			}
@@ -184,34 +193,32 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	}
 
 	/** The item types. */
-	private Collection<ItemType>			_itemTypes;
+	private Collection<ItemType> _itemTypes;
 
-	private CadseRuntime[]					_cadses							= null;
+	protected CadseRuntime[] _cadses = null;
 
 	/** The state. */
-	WSModelState							_state							= WSModelState.INIT;
+	WSModelState _state = WSModelState.INIT;
 
 	/** The items. */
-	Map<UUID, Item>					_items;
+	Map<UUID, Item> _items;
 
 	/** The items_by_key. */
-	private Map<Key, Item>			_items_by_key;
+	private Map<Key, Item> _items_by_key;
 
 	/** The items_by_unique_name. */
-	private Map<String, Item>				_items_by_qualified_name;
+	private Map<String, Item> _items_by_qualified_name;
 
 	/** The wd. */
-	CadseDomainImpl							_wd;
-	WorkspaceListener[]						_listeners						= null;
-	int[]									_filter							= null;
+	CadseDomainImpl _wd;
+	WorkspaceListener[] _listeners = null;
+	int[] _filter = null;
 
+	private IItemManager _unresolveManager = new DefaultItemManager();
+	LogicalWorkspaceTransactionListener[] _workspaceLogiqueCopyListeners = null;
 
-	private IItemManager					_unresolveManager				= new DefaultItemManager();
-	LogicalWorkspaceTransactionListener[]	_workspaceLogiqueCopyListeners	= null;
-
-	
-	private Logger							_logger							= Logger
-																					.getLogger("fr.imag.adele.cadse.logicalworkspace");
+	private Logger _logger = Logger
+			.getLogger("fr.imag.adele.cadse.logicalworkspace");
 
 	public class WorkspaceLogigueWorkspaceListener extends WorkspaceListener {
 		@Override
@@ -222,7 +229,8 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 						try {
 							notifieChangeEvent(wse);
 						} catch (Throwable e) {
-							_wd.log(Messages.error, Messages.error_in_event + wse, e);
+							_wd.log(Messages.error, Messages.error_in_event
+									+ wse, e);
 						}
 					}
 				}
@@ -244,67 +252,72 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 				Link link;
 				Item item;
 				switch (wse.getEventTypeId()) {
-					case RESOLVE_INCOMING_LINK:
-						item = (Item) wse.getOperationArgs()[0];
-						link = (Link) wse.getOperationArgs()[1];
+				case RESOLVE_INCOMING_LINK:
+					item = (Item) wse.getOperationArgs()[0];
+					link = (Link) wse.getOperationArgs()[1];
 
-//						if (link.isComposition()) {
-//							addComponent(link, item);
-//						}
+					// if (link.isComposition()) {
+					// addComponent(link, item);
+					// }
 
-						// creation des liens d�rived.
-						// createDerivedLinkFromLink(link);
-						break;
+					// creation des liens d�rived.
+					// createDerivedLinkFromLink(link);
+					break;
 
-					case CREATE_ITEM:
-						item = (Item) wse.getOperationArgs()[0];
+				case CREATE_ITEM:
+					item = (Item) wse.getOperationArgs()[0];
 
-						if (item instanceof ItemImpl) {
-							// recalcul les information de type composants et
-							// derived
-							// link.
-							// seulement si l'item est ouvert.
-							// l'information obtenu n'est par forc�ment
-							// complete.
-							// Elle se completera au fure et � mesure.
-							((ItemImpl) item)._composants = ((ItemImpl) item).computeComponents(true);
-							// ((ItemImpl) item).reComputeDerivedLink(false);
+					if (item instanceof ItemImpl) {
+						// recalcul les information de type composants et
+						// derived
+						// link.
+						// seulement si l'item est ouvert.
+						// l'information obtenu n'est par forc�ment
+						// complete.
+						// Elle se completera au fure et � mesure.
+						((ItemImpl) item)._composants = ((ItemImpl) item)
+								.computeComponents(true);
+						// ((ItemImpl) item).reComputeDerivedLink(false);
 
+					}
+					break;
+				case DELETE_OUTGOING_LINK:
+					link = (Link) wse.getOperationArgs()[0];
+					if (link.getLinkType().isComposition()) {
+						// il faut surment enlever un composant.
+						removeComponent((ItemImpl) link.getSource());
+					}
+
+					break;
+
+				case ADD_COMPONENT:
+					// Je mets � jours la liste de composition des composite
+					// parent...
+					item = (Item) wse.getOperationArgs()[0];
+					for (Link l : item.getIncomingLinks()) {
+						if (l.getLinkType().isComposition()) {
+							addComponent((ItemImpl) l.getSource(),
+									(List<Item>) wse.getOperationArgs()[1]);
 						}
-						break;
-					case DELETE_OUTGOING_LINK:
-						link = (Link) wse.getOperationArgs()[0];
-						if (link.getLinkType().isComposition()) {
-							// il faut surment enlever un composant.
-							removeComponent((ItemImpl) link.getSource());
+					}
+					break;
+				case REMOVE_COMPONENT:
+					item = (Item) wse.getOperationArgs()[0];
+					for (Link l : item.getIncomingLinks()) {
+						if (l.getLinkType().isComposition()) {
+							removeComponent((ItemImpl) l.getSource());
 						}
+					}
+					break;
 
-						break;
-
-					case ADD_COMPONENT:
-						// Je mets � jours la liste de composition des composite
-						// parent...
-						item = (Item) wse.getOperationArgs()[0];
-						for (Link l : item.getIncomingLinks()) {
-							if (l.getLinkType().isComposition()) {
-								addComponent((ItemImpl) l.getSource(), (List<Item>) wse.getOperationArgs()[1]);
-							}
-						}
-						break;
-					case REMOVE_COMPONENT:
-						item = (Item) wse.getOperationArgs()[0];
-						for (Link l : item.getIncomingLinks()) {
-							if (l.getLinkType().isComposition()) {
-								removeComponent((ItemImpl) l.getSource());
-							}
-						}
-						break;
-
-					default:
-						break;
+				default:
+					break;
 				}
 			} catch (CadseIllegalArgumentException e) {
-				_wd.log("wl", "Error in Processing event " + wse.getEventTypeId().toString(wse.getOperationArgs()), e);
+				_wd.log("wl",
+						"Error in Processing event "
+								+ wse.getEventTypeId().toString(
+										wse.getOperationArgs()), e);
 			}
 		}
 	}
@@ -321,8 +334,9 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		this._items_by_qualified_name = new HashMap<String, Item>();
 		this._wd = wd;
 		_itemTypes = new ArrayList<ItemType>();
-		addListener(new WorkspaceLogigueWorkspaceListener(), ChangeID.toFilter(ChangeID.REMOVE_COMPONENT,
-				ChangeID.ADD_COMPONENT, ChangeID.DELETE_OUTGOING_LINK, ChangeID.CREATE_ITEM,
+		addListener(new WorkspaceLogigueWorkspaceListener(), ChangeID.toFilter(
+				ChangeID.REMOVE_COMPONENT, ChangeID.ADD_COMPONENT,
+				ChangeID.DELETE_OUTGOING_LINK, ChangeID.CREATE_ITEM,
 				ChangeID.RESOLVE_INCOMING_LINK));
 
 	}
@@ -365,8 +379,8 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 * @see fr.imag.adele.cadse.core.IWorkspaceLogique#loadMetaModel()
 	 */
 	public LinkType createMLTIfNeed() throws CadseException {
-		return CadseCore.theItemType.createLinkType(CadseDomain.META_LINK_ID, -1, "#mLT", 0, 0, -1, null,
-				CadseCore.theItemType);
+		return CadseCore.theItemType.createLinkType(CadseDomain.META_LINK_ID,
+				-1, "#mLT", 0, 0, -1, null, CadseCore.theItemType);
 	}
 
 	/*
@@ -387,7 +401,8 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 */
 	public void setState(WSModelState state) {
 		this._state = state;
-		((CadseDomainImpl) _wd).notifieChangeEventSingle(ChangeID.MODEL_STATE, this, this._state, state);
+		((CadseDomainImpl) _wd).notifieChangeEventSingle(ChangeID.MODEL_STATE,
+				this, this._state, state);
 
 	}
 
@@ -431,7 +446,8 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 *                parent(<tt>$parent</tt>) of type <tt>$lt.source</tt> not
 	 *                of type <tt>$parent.type</tt>
 	 */
-	public Item createItem(ItemType it, Item parent, LinkType lt) throws CadseException {
+	public Item createItem(ItemType it, Item parent, LinkType lt)
+			throws CadseException {
 		LogicalWorkspaceTransaction copy = createTransaction();
 		ItemDelta copyRet = copy.createItem(it, parent, lt);
 		copy.commit();
@@ -447,17 +463,17 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 * fr.imag.adele.cadse.core.LinkType, fr.imag.adele.cadse.core.UUID,
 	 * java.lang.String, java.lang.String)
 	 */
-	public Item createItem(ItemType it, Item parent, LinkType lt, UUID id, String longName, String shortName)
-			throws CadseException {
+	public Item createItem(ItemType it, Item parent, LinkType lt, UUID id,
+			String longName, String shortName) throws CadseException {
 		LogicalWorkspaceTransaction copy = createTransaction();
-		ItemDelta copyRet = copy.createItem(it, parent, lt, id, longName, shortName);
+		ItemDelta copyRet = copy.createItem(it, parent, lt, id, longName,
+				shortName);
 		copy.commit();
 		return copyRet.getBaseItem();
 	}
 
-	
-
-	public void setAttribute(Item item, IAttributeType<?> key, Object value) throws CadseException {
+	public void setAttribute(Item item, IAttributeType<?> key, Object value)
+			throws CadseException {
 		if (!item.exists()) {
 			item.commitSetAttribute(key, value);
 			return;
@@ -465,7 +481,8 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		LogicalWorkspaceTransaction copy = createTransaction();
 		ItemDelta itemOperation = copy.getItem(item.getId());
 		if (itemOperation == null) {
-			throw new CadseException("Cannot found item " + item.getDisplayName());
+			throw new CadseException("Cannot found item "
+					+ item.getDisplayName());
 		}
 		itemOperation.setAttribute(key, value);
 		copy.commit();
@@ -526,9 +543,9 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 * .adele.cadse.core.ItemType, java.lang.String)
 	 */
 	public Item getItemByName(TypeDefinition type, String name) {
-		
-		if (type instanceof ExtendedType){
-			ItemType[] extendedType = ((ExtendedType)type).getExendsItemType();
+
+		if (type instanceof ExtendedType) {
+			ItemType[] extendedType = ((ExtendedType) type).getExendsItemType();
 			for (int i = 0; i < extendedType.length; i++) {
 				Item item = getItemByName(extendedType[i], name);
 				if (item != null)
@@ -536,16 +553,17 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 			}
 			return null;
 		}
-		KeyDefinition spacekeytype = ((ItemType)type).getKeyDefinition();
-		if (spacekeytype != null && spacekeytype.getParentKey() == null &&
-                spacekeytype.getKeyElements().length == 1 &&
-                spacekeytype.getKeyElements()[0] == CadseGCST.ITEM_at_NAME_) {
+		KeyDefinition spacekeytype = ((ItemType) type).getKeyDefinition();
+		if (spacekeytype != null && spacekeytype.getParentKey() == null
+				&& spacekeytype.getKeyElements().length == 1
+				&& spacekeytype.getKeyElements()[0] == CadseGCST.ITEM_at_NAME_) {
 			try {
 				Key key;
 				key = spacekeytype.computeKey(null, name);
 				return getItem(key);
 			} catch (CadseException e) {
-				_wd.log("wl", "error when search compute a key of type " + type + " for name " + name, e);
+				_wd.log("wl", "error when search compute a key of type " + type
+						+ " for name " + name, e);
 			}
 		}
 		return null;
@@ -636,7 +654,8 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 			this._items_by_key.put(key, aNewItem);
 		}
 		if (aNewItem.getQualifiedName() != null) {
-			this._items_by_qualified_name.put(aNewItem.getQualifiedName(), aNewItem);
+			this._items_by_qualified_name.put(aNewItem.getQualifiedName(),
+					aNewItem);
 		}
 	}
 
@@ -661,15 +680,18 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 * 
 	 * @return the item
 	 */
-	Item addId(Item newItem, IWorkspaceNotifier notifier, TransactionItemsProcess loadedItemsProcess) {
+	Item addId(Item newItem, IWorkspaceNotifier notifier,
+			TransactionItemsProcess loadedItemsProcess) {
 		Item oldItem = this._items.get(newItem.getId());
 		if (oldItem != null && oldItem.isResolved()) {
 			if (loadedItemsProcess != null) {
-				loadedItemsProcess.addError(newItem.getId(), MessageFormat.format(Messages.error_duplicate_item,
-						newItem.getId()));
+				loadedItemsProcess
+						.addError(newItem.getId(), MessageFormat.format(
+								Messages.error_duplicate_item, newItem.getId()));
 				return oldItem;
 			}
-			throw new CadseIllegalArgumentException(Messages.error_duplicate_item + newItem.getId());
+			throw new CadseIllegalArgumentException(
+					Messages.error_duplicate_item + newItem.getId());
 		}
 		// add item in registry
 		this._items.put(newItem.getId(), newItem);
@@ -682,14 +704,17 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		return oldItem;
 	}
 
-	private void resolveItem(Item newItem, IWorkspaceNotifier notifier, Item oldItem) {
+	private void resolveItem(Item newItem, IWorkspaceNotifier notifier,
+			Item oldItem) {
 		if (oldItem != null) {
 			// Resolve all unseresolved links in workspace.
 			if (!oldItem.isResolved()) {
 				for (Link l : new ArrayList<Link>(oldItem.getIncomingLinks())) {
 					if (l.resolve()) {
 						if (notifier != null) {
-							notifier.notifieChangeEvent(ChangeID.RESOLVE_INCOMING_LINK, l.getResolvedDestination(), l);
+							notifier.notifieChangeEvent(
+									ChangeID.RESOLVE_INCOMING_LINK, l
+											.getResolvedDestination(), l);
 						}
 					}
 				}
@@ -741,11 +766,13 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 *                in state read only.
 	 */
 
-	private void preconditions_createItem(Item THIS, ItemType it, Item parent, LinkType lt) {
+	private void preconditions_createItem(Item THIS, ItemType it, Item parent,
+			LinkType lt) {
 
 		// pre: it <> null
 		if (it == null) {
-			throw new CadseIllegalArgumentException(Messages.error_item_type_is_null2);
+			throw new CadseIllegalArgumentException(
+					Messages.error_item_type_is_null2);
 		}
 
 		// TODO on l'enleve temporairement checkUniqueName(THIS); il faut bien
@@ -753,14 +780,17 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 
 		if (it.isPartType()) {
 			if (parent == null) {
-				throw new CadseIllegalArgumentException(Messages.error_you_must_specifi_parent_item);
+				throw new CadseIllegalArgumentException(
+						Messages.error_you_must_specifi_parent_item);
 			}
 			if (lt == null) {
-				throw new CadseIllegalArgumentException(Messages.error_parent_link_type_is_null);
+				throw new CadseIllegalArgumentException(
+						Messages.error_parent_link_type_is_null);
 			}
 
 			if (!lt.isPart()) {
-				throw new CadseIllegalArgumentException(Messages.error_parent_link_type_not_part, lt);
+				throw new CadseIllegalArgumentException(
+						Messages.error_parent_link_type_not_part, lt);
 			}
 		}
 
@@ -770,18 +800,22 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 
 		// parent.type = lt.source.type
 		if (!parent.isInstanceOf(lt.getSource())) {
-			throw new CadseIllegalArgumentException(Messages.error_cannot_create_an_item_bad_source, parent.getName(),
-					lt.getName(), lt.getSource().getId(), parent.getType().getId());
+			throw new CadseIllegalArgumentException(
+					Messages.error_cannot_create_an_item_bad_source, parent
+							.getName(), lt.getName(), lt.getSource().getId(),
+					parent.getType().getId());
 		}
 
 		if (!(isLinkCompatible(lt, it))) {
-			throw new CadseIllegalArgumentException(Messages.error_cannot_create_an_item_bad_destination, parent
-					.getName(), lt.getName(), lt.getDestination().getName(), lt.getDestination().getId(), it.getName(),
-					it.getId());
+			throw new CadseIllegalArgumentException(
+					Messages.error_cannot_create_an_item_bad_destination,
+					parent.getName(), lt.getName(), lt.getDestination()
+							.getName(), lt.getDestination().getId(), it
+							.getName(), it.getId());
 		}
 
 	}
-	
+
 	public static boolean isLinkCompatible(LinkType lt, ItemType it) {
 		TypeDefinition destType = lt.getDestination();
 		if (destType.isMainType()) {
@@ -791,7 +825,8 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		ExtendedTypeImpl extType = (ExtendedTypeImpl) destType;
 		for (ItemType destItemType : extType.getExendsItemType()) {
 			boolean ret = destItemType.isSuperTypeOf(it) || it == destItemType;
-			if (ret) return true;
+			if (ret)
+				return true;
 		}
 		return false;
 	}
@@ -819,12 +854,15 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 				return;
 			}
 			if (i.isResolved()) {
-				throw new CadseIllegalArgumentException(Messages.error_invalid_assignement_allready_exists, THIS
-						.getName());
+				throw new CadseIllegalArgumentException(
+						Messages.error_invalid_assignement_allready_exists,
+						THIS.getName());
 			}
 			if (!i.getType().equals(THIS.getType())) {
-				throw new CadseIllegalArgumentException(Messages.error_invalid_assignement_bad_type, THIS.getName(),
-						THIS.getType().getName(), i.getType().getId());
+				throw new CadseIllegalArgumentException(
+						Messages.error_invalid_assignement_bad_type, THIS
+								.getName(), THIS.getType().getName(), i
+								.getType().getId());
 			}
 		}
 	}
@@ -843,8 +881,9 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 *             the melusine error
 	 * @throws CadseException
 	 */
-	public void checkUniqueNameForRename(Item THIS, String shortName, String uniqueName)
-			throws CadseIllegalArgumentException, CadseException {
+	public void checkUniqueNameForRename(Item THIS, String shortName,
+			String uniqueName) throws CadseIllegalArgumentException,
+			CadseException {
 		KeyDefinition spacetype = THIS.getType().getKeyDefinition();
 		if (spacetype != null) {
 			Key newkey = spacetype.computeKey(THIS);
@@ -855,7 +894,8 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 			check(i, THIS);
 		}
 
-		if (THIS.getType().hasQualifiedNameAttribute() && uniqueName != null && uniqueName != Item.NO_VALUE_STRING) {
+		if (THIS.getType().hasQualifiedNameAttribute() && uniqueName != null
+				&& uniqueName != Item.NO_VALUE_STRING) {
 			Item i = _items_by_qualified_name.get(uniqueName);
 			check(i, THIS);
 		}
@@ -875,11 +915,15 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		}
 
 		if (i.isResolved()) {
-			throw new CadseIllegalArgumentException(Messages.error_invalid_assignement_allready_exists, THIS.getName());
+			throw new CadseIllegalArgumentException(
+					Messages.error_invalid_assignement_allready_exists, THIS
+							.getName());
 		}
 		if (!i.getType().equals(THIS.getType())) {
-			throw new CadseIllegalArgumentException(Messages.error_invalid_assignement_bad_type, THIS.getName(), THIS
-					.getType().getName(), i.getType().getId());
+			throw new CadseIllegalArgumentException(
+					Messages.error_invalid_assignement_bad_type,
+					THIS.getName(), THIS.getType().getName(), i.getType()
+							.getId());
 		}
 	}
 
@@ -953,7 +997,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		}
 		return items_ret;
 	}
-	
+
 	/**
 	 * Get all items.
 	 * 
@@ -1016,7 +1060,8 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 			try {
 				key = spacetype.computeKey(item);
 			} catch (CadseException e) {
-				logger.log(Level.SEVERE, "cannot compute compute a key of " + item + " for name " + name, e);
+				logger.log(Level.SEVERE, "cannot compute compute a key of "
+						+ item + " for name " + name, e);
 				return null;
 			}
 			if (name != null) {
@@ -1034,7 +1079,8 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 * fr.imag.adele.cadse.core.IWorkspaceLogique#existsItem(fr.imag.adele.cadse
 	 * .core.Item, java.lang.String)
 	 */
-	public boolean existsItem(Item item, String shortName) throws CadseException {
+	public boolean existsItem(Item item, String shortName)
+			throws CadseException {
 		Key key = getKeyItem(item, shortName, _logger);
 		if (key != null) {
 			return containsSpaceKey(key);
@@ -1042,9 +1088,11 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		if (!item.getType().hasQualifiedNameAttribute()) {
 			return false;
 		}
-		String un = item.getType().getItemManager().computeQualifiedName(item, shortName, item.getPartParent(false),
+		String un = item.getType().getItemManager().computeQualifiedName(item,
+				shortName, item.getPartParent(false),
 				item.getPartParentLinkType());
-		return un == null || un == Item.NO_VALUE_STRING || containsUniqueName(un);
+		return un == null || un == Item.NO_VALUE_STRING
+				|| containsUniqueName(un);
 
 	}
 
@@ -1060,8 +1108,8 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	}
 
 	/**
-	 * Ajoute une liste de composant ayant �t� ajout� � l'un de ces fils �
-	 * l'item source.
+	 * Ajoute une liste de composant ayant �t� ajout� � l'un de ces fils
+	 * � l'item source.
 	 * 
 	 * @param source
 	 *            L'item auquel on ajout des composant.
@@ -1084,35 +1132,35 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		}
 	}
 
-//	/**
-//	 * Adds the composant.
-//	 * 
-//	 * @param cl
-//	 *            the cl
-//	 * @param item
-//	 *            the item
-//	 */
-//	private void addComponent(Link cl, Item item) {
-//		ItemImpl source = (ItemImpl) cl.getSource();
-//
-//		if (source._composants == null) {
-//			source._composants = new HashMap<UUID, Item>();
-//		}
-//		List<Item> added = new ArrayList<Item>();
-//
-//		Item icl = cl.getDestination();
-//		if (source._composants.put(icl.getId(), icl) == null) {
-//			added.add(icl);
-//		}
-//		for (Item il : item.getComponents()) {
-//			if (source._composants.put(il.getId(), il) == null) {
-//				added.add(il);
-//			}
-//		}
-//		if (added.size() > 0) {
-//			_wd.notifieChangeEvent(ChangeID.ADD_COMPONENT, source, added);
-//		}
-//	}
+	// /**
+	// * Adds the composant.
+	// *
+	// * @param cl
+	// * the cl
+	// * @param item
+	// * the item
+	// */
+	// private void addComponent(Link cl, Item item) {
+	// ItemImpl source = (ItemImpl) cl.getSource();
+	//
+	// if (source._composants == null) {
+	// source._composants = new HashMap<UUID, Item>();
+	// }
+	// List<Item> added = new ArrayList<Item>();
+	//
+	// Item icl = cl.getDestination();
+	// if (source._composants.put(icl.getId(), icl) == null) {
+	// added.add(icl);
+	// }
+	// for (Item il : item.getComponents()) {
+	// if (source._composants.put(il.getId(), il) == null) {
+	// added.add(il);
+	// }
+	// }
+	// if (added.size() > 0) {
+	// _wd.notifieChangeEvent(ChangeID.ADD_COMPONENT, source, added);
+	// }
+	// }
 
 	/**
 	 * Removes the composant.
@@ -1129,7 +1177,8 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		for (UUID id : result.keySet()) {
 			source._composants.remove(id);
 		}
-		ArrayList<Item> removed = new ArrayList<Item>(source._composants.values());
+		ArrayList<Item> removed = new ArrayList<Item>(source._composants
+				.values());
 		source._composants = result;
 		if (removed.size() > 0) {
 			_wd.notifieChangeEvent(ChangeID.REMOVE_COMPONENT, source, removed);
@@ -1197,21 +1246,23 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 * @throws CadseException
 	 *             the melusine exception
 	 */
-	synchronized Item getItem(UUID id, ItemType type, String uniqueName, String shortname) throws CadseException {
+	synchronized Item getItem(UUID id, ItemType type, String uniqueName,
+			String shortname) throws CadseException {
 		Item i = _items.get(id);
 
 		if (i == null) {
 
 			if (type == CadseGCST.CADSE) {
-				i = new CadseRuntimeImpl(shortname, id, id );
+				i = new CadseRuntimeImpl(shortname, id, id);
 			} else {
-				i = new ItemUnresolved(id, type,uniqueName, shortname);
+				i = new ItemUnresolved(id, type, uniqueName, shortname);
 			}
-			  i.setFlag(Item.UNRESOLVED, true);
+			i.setFlag(Item.UNRESOLVED, true);
 			this._items.put(id, i);
 		} else {
 			if (!i.getType().equals(type)) {
-				throw new CadseException(Messages.error_bad_type, i.getType().getId(), type.getId(), shortname);
+				throw new CadseException(Messages.error_bad_type, i.getType()
+						.getId(), type.getId(), shortname);
 			}
 		}
 		return i;
@@ -1269,17 +1320,21 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 * fr.imag.adele.cadse.core.IWorkspaceLogique#loadItem(fr.imag.adele.cadse
 	 * .core.ItemDescriptionRef)
 	 */
-	synchronized public Item loadItem(ItemDescriptionRef ref) throws CadseException {
+	synchronized public Item loadItem(ItemDescriptionRef ref)
+			throws CadseException {
 		if (ref == null) {
 			return null;
 		}
 
 		ItemType itemtype = getItemType(ref.getTypeObject().getId());
 		if (itemtype == null) {
-			System.err.println(Messages.bind(Messages.error_cannot_find_type, ref.getType()));
-			throw new CadseException(Messages.bind(Messages.error_cannot_find_type, ref.getType()));
+			System.err.println(Messages.bind(Messages.error_cannot_find_type,
+					ref.getType()));
+			throw new CadseException(Messages.bind(
+					Messages.error_cannot_find_type, ref.getType()));
 		}
-		return getItem(ref.getId(), itemtype, ref.getQualifiedName(), ref.getName());
+		return getItem(ref.getId(), itemtype, ref.getQualifiedName(), ref
+				.getName());
 	}
 
 	/*
@@ -1296,10 +1351,13 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 
 		ItemType itemtype = getItemType(ref.getType().getId());
 		if (itemtype == null) {
-			System.err.println(Messages.bind(Messages.error_cannot_find_type, ref.getType()));
-			throw new CadseException(Messages.bind(Messages.error_cannot_find_type, ref.getType()));
+			System.err.println(Messages.bind(Messages.error_cannot_find_type,
+					ref.getType()));
+			throw new CadseException(Messages.bind(
+					Messages.error_cannot_find_type, ref.getType()));
 		}
-		return getItem(ref.getId(), itemtype, ref.getQualifiedName(), ref.getName());
+		return getItem(ref.getId(), itemtype, ref.getQualifiedName(), ref
+				.getName());
 	}
 
 	/**
@@ -1315,7 +1373,8 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 * @throws CadseException
 	 *             the melusine exception
 	 */
-	public ItemType getItemType(ItemDescriptionRef desc, Map<UUID, String> unresolvedType) throws CadseException {
+	public ItemType getItemType(ItemDescriptionRef desc,
+			Map<UUID, String> unresolvedType) throws CadseException {
 		ItemType itemtype = getItemType(desc.getTypeObject().getId());
 		if (itemtype != null) {
 			return itemtype;
@@ -1323,10 +1382,13 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		if (unresolvedType != null) {
 			String shortName = unresolvedType.get(desc.getType());
 			if (shortName != null) {
-				throw new CadseException(Messages.error_cannot_find_type_with_shortName, shortName, desc.getType());
+				throw new CadseException(
+						Messages.error_cannot_find_type_with_shortName,
+						shortName, desc.getType());
 			}
 		}
-		throw new CadseException(Messages.error_cannot_find_type, desc.getType());
+		throw new CadseException(Messages.error_cannot_find_type, desc
+				.getType());
 	}
 
 	/*
@@ -1347,8 +1409,10 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 				return null;
 			}
 
-			throw new CadseIllegalArgumentException("Le type est attendu est metaItemType pour l'id " + id
-					+ " alors qu'il est " + i.getType().getName() + " : bad type for " + id);
+			throw new CadseIllegalArgumentException(
+					"Le type est attendu est metaItemType pour l'id " + id
+							+ " alors qu'il est " + i.getType().getName()
+							+ " : bad type for " + id);
 		}
 		return null;
 
@@ -1442,24 +1506,31 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 *      CadseIllegalArgumentException : Id can not be empty.
 	 *      CadseIllegalArgumentException : Item type $id$ already exist.
 	 */
-	public ItemType createItemType(ItemType metaType, CadseRuntime cadseName, ItemType superType, int intID,
-			UUID id, String shortName, String displayName, boolean hasContent, boolean isAbstract,
+	public ItemType createItemType(ItemType metaType, CadseRuntime cadseName,
+			ItemType superType, int intID, UUID id, String shortName,
+			String displayName, boolean hasContent, boolean isAbstract,
 			IItemManager manager) {
 		/*
 		 * La convention est de charger d'abord le meta item type en premier
 		 * puis tout de suite apres item-type on stoke mIT dans CadseCore.mIT et
 		 * on set sont type
 		 */
-		if (!id.equals(CadseDomain.ITEMTYPE_ID) && CadseCore.theItemType == null) {
-			throw new CadseIllegalArgumentException("Before, you must load Model.Workspace.Root");
+		if (!id.equals(CadseDomain.ITEMTYPE_ID)
+				&& CadseCore.theItemType == null) {
+			throw new CadseIllegalArgumentException(
+					"Before, you must load Model.Workspace.Root");
 		}
 		if (id.equals(CadseDomain.ITEM_ID) && CadseCore.theItemType == null) {
-			throw new CadseIllegalArgumentException("Before, you must load Model.Workspace.Root");
+			throw new CadseIllegalArgumentException(
+					"Before, you must load Model.Workspace.Root");
 		}
-		if (!id.equals(CadseDomain.ITEMTYPE_ID) && !id.equals(CadseDomain.ITEM_ID) && CadseCore.theItem == null) {
-			throw new CadseIllegalArgumentException("Before, you must load Model.Workspace.Root");
+		if (!id.equals(CadseDomain.ITEMTYPE_ID)
+				&& !id.equals(CadseDomain.ITEM_ID) && CadseCore.theItem == null) {
+			throw new CadseIllegalArgumentException(
+					"Before, you must load Model.Workspace.Root");
 		}
-		if (id.equals(CadseDomain.EXT_ITEM_ID) || id.equals(CadseDomain.ITEM_ID)) {
+		if (id.equals(CadseDomain.EXT_ITEM_ID)
+				|| id.equals(CadseDomain.ITEM_ID)) {
 			superType = null;
 		} else {
 			if (superType == null) {
@@ -1475,8 +1546,9 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		}
 
 		// cretion du super type et enregistrement.
-		ItemTypeImpl it = new ItemTypeImpl(metaType, (ItemTypeImpl) (superType), id, intID, hasContent,
-				isAbstract, shortName, displayName);
+		ItemTypeImpl it = new ItemTypeImpl(metaType,
+				(ItemTypeImpl) (superType), id, intID, hasContent, isAbstract,
+				shortName, displayName);
 		it.setParent(cadseName, CadseGCST.CADSE_lt_ITEM_TYPES);
 		cadseName.addItemType(it);
 		registerItemType(it);
@@ -1526,8 +1598,9 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	protected void registerItemType(ItemType it) {
 		final Item item = _items.get(it.getId());
 		if (item != null && item.isResolved()) {
-			throw new CadseIllegalArgumentException("Invalid assignment, this item type {0}" + " already exist.", it
-					.getId());
+			throw new CadseIllegalArgumentException(
+					"Invalid assignment, this item type {0}"
+							+ " already exist.", it.getId());
 		}
 		_items.put(it.getId(), it);
 		_itemTypes.add(it);
@@ -1563,10 +1636,11 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		return null;
 	}
 
-	int	stateLoadContentManager	= 0;	// 0 not loaded, 1 loading, 2 loaded
+	int stateLoadContentManager = 0; // 0 not loaded, 1 loading, 2 loaded
 
 	public LogicalWorkspaceTransaction createTransaction() {
-		return new LogicalWorkspaceTransactionImpl(this, ArraysUtil.clone(_workspaceLogiqueCopyListeners));
+		return new LogicalWorkspaceTransactionImpl(this, ArraysUtil
+				.clone(_workspaceLogiqueCopyListeners));
 	}
 
 	/**
@@ -1595,8 +1669,8 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 *             created.<br/>
 	 * <br/>
 	 */
-	static public void preconditions_createLink(Link l, LinkType lt, Item source, Item destination)
-			throws CadseException {
+	static public void preconditions_createLink(Link l, LinkType lt,
+			Item source, Item destination) throws CadseException {
 		// 7. one relation of containment by destination.
 		if (lt.isPart()) {
 			// if (destination.getPartParent(false) != null &&
@@ -1608,21 +1682,24 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 			// source.getId(), destination.getId()));
 			Item partParent = destination.getPartParent(lt);
 			if (partParent != null && partParent != source) {
-				throw new CadseException(MessageFormat.format(Messages.error_cannot_create_part_link, source.getId(),
+				throw new CadseException(MessageFormat.format(
+						Messages.error_cannot_create_part_link, source.getId(),
 						destination.getId()));
 			}
 		}
 		if (lt.isInversePart()) {
 			final Item partParent = source.getPartParent(lt.getInverse());
 			if (partParent != null && partParent != destination) {
-				throw new CadseException(MessageFormat.format(Messages.error_cannot_create_part_link, destination
-						.getId(), source.getId()));
+				throw new CadseException(MessageFormat.format(
+						Messages.error_cannot_create_part_link, destination
+								.getId(), source.getId()));
 			}
 		}
 		constraints_LinkType(lt);
 		constraints_SourceItem(l, lt, source);
 		if (destination.getType() == null)
-			throw new CadseException("the type of the destinion of this link is null : " + l);
+			throw new CadseException(
+					"the type of the destinion of this link is null : " + l);
 		constraints_DestItem(lt, source, destination);
 		constraints_BetweenDestAndSource(l, lt, source, destination);
 	}
@@ -1660,8 +1737,8 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 *       there have no link the same type have ready created.<br/>
 	 * <br/>
 	 */
-	static public void constraints_BetweenDestAndSource(Link l_orig, LinkType lt, Item source, Item destination)
-			throws CadseException {
+	static public void constraints_BetweenDestAndSource(Link l_orig,
+			LinkType lt, Item source, Item destination) throws CadseException {
 
 		// 2. Beetwen source and destination there have no link the same type
 		// have ready created.
@@ -1671,9 +1748,11 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 				continue;
 			}
 
-			if ((l.getLinkType().equals(lt) || l.getLinkType().getName().equals(lt.getName()))
+			if ((l.getLinkType().equals(lt) || l.getLinkType().getName()
+					.equals(lt.getName()))
 					&& (l.getDestinationId().equals(destination.getId()))) {
-				throw new CadseException(Messages.error_link_already_exist, source.getId(), l.getDestinationId());
+				throw new CadseException(Messages.error_link_already_exist,
+						source.getId(), l.getDestinationId());
 			}
 		}
 	}
@@ -1746,13 +1825,16 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 *                CadseIllegalArgumentException: The source is in read only
 	 *                state.<br/>
 	 */
-	static public void constraints_SourceItem(Link l_orig, LinkType lt, Item source) throws CadseException {
+	static public void constraints_SourceItem(Link l_orig, LinkType lt,
+			Item source) throws CadseException {
 		// 1. Type of source must be the same type as item type source defined
 		// in link type lt
-		if (lt.getSource() != source.getType() && !source.isInstanceOf(lt.getSource())) {
+		if (lt.getSource() != source.getType()
+				&& !source.isInstanceOf(lt.getSource())) {
 			// !lt.getSource().getId().equals(WorkspaceDomain.ANY_ID) && !
 			// (this.type.equals(lt.getSource())))
-			throw new CadseException(Messages.error_itemtype_source_is_bad + lt.getName());
+			throw new CadseException(Messages.error_itemtype_source_is_bad
+					+ lt.getName());
 		}
 
 		// 2. source.isReadOnly = true
@@ -1776,7 +1858,9 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		}
 
 		if (numLinks + 1 > max && max != -1) {
-			throw new CadseException(Messages.error_maximum_cardinality_is_exceed, numLinks + 1, max);
+			throw new CadseException(
+					Messages.error_maximum_cardinality_is_exceed, numLinks + 1,
+					max);
 		}
 		if (numLinks + 1 < min) {
 			source.setValid(false); // TODO...
@@ -1809,35 +1893,41 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 *       // Type of <tt>destination</tt> must be the same type as item type
 	 *       destination defined in <tt>lt</tt> <br/>
 	 */
-	static public void constraints_DestItem(LinkType lt, Item source, Item destination) {
+	static public void constraints_DestItem(LinkType lt, Item source,
+			Item destination) {
 		// 1. destination cannot be null.
 		if (destination == null) {
-			throw new CadseIllegalArgumentException(Messages.error_cannot_create_link_destination_is_null, source
-					.getId(), lt.getName());
+			throw new CadseIllegalArgumentException(
+					Messages.error_cannot_create_link_destination_is_null,
+					source.getId(), lt.getName());
 		}
 
 		// 2. Type of destination must be the same type as item type destination
 		// defined in lt
 		if (!destination.isInstanceOf(lt.getDestination())) {
-			throw new CadseIllegalArgumentException("Cannot create a link {0}({1}) to {2}({3}) of type {4} : " //$NON-NLS-1$
-					+ "type of destination has not the type like as item type destination defined in lt {5} != {6}. ", //$NON-NLS-1$
-					source.getId(), source.getQualifiedName(), destination.getId(), destination.getQualifiedName(), lt
-							.getName(), lt.getDestination().getName(), destination.getType().getName());
+			throw new CadseIllegalArgumentException(
+					"Cannot create a link {0}({1}) to {2}({3}) of type {4} : " //$NON-NLS-1$
+							+ "type of destination has not the type like as item type destination defined in lt {5} != {6}. ", //$NON-NLS-1$
+					source.getId(), source.getQualifiedName(), destination
+							.getId(), destination.getQualifiedName(), lt
+							.getName(), lt.getDestination().getName(),
+					destination.getType().getName());
 		}
 
 		// 3
-//		if (lt.isComposition()) {
-//			if (destination.containsComponent(source.getId())) {
-//				throw new CadseIllegalArgumentException("Cannot create a link {0} to {1} of type {2} : " //$NON-NLS-1$
-//						+ "The source ({0}) is contained in the composition list of the destination ({1}). " //$NON-NLS-1$
-//						+ "That will create a composition cycle : {0} -c-> {1} -c->* {0}.", //$NON-NLS-1$
-//						source.getId(), destination.getId(), lt.getName());
-//
-//			}
-//		}
+		// if (lt.isComposition()) {
+		// if (destination.containsComponent(source.getId())) {
+		//				throw new CadseIllegalArgumentException("Cannot create a link {0} to {1} of type {2} : " //$NON-NLS-1$
+		//						+ "The source ({0}) is contained in the composition list of the destination ({1}). " //$NON-NLS-1$
+		//						+ "That will create a composition cycle : {0} -c-> {1} -c->* {0}.", //$NON-NLS-1$
+		// source.getId(), destination.getId(), lt.getName());
+		//
+		// }
+		// }
 	}
 
-	public void commit(LogicalWorkspaceTransaction workingLogiqueCopy, boolean check) throws CadseException {
+	public void commit(LogicalWorkspaceTransaction workingLogiqueCopy,
+			boolean check) throws CadseException {
 		if (!CadseDomainImpl.isStarted()) {
 			if (!CadseDomainImpl.isStopped())
 				throw new CadseException("Cadse is stopped");
@@ -1853,7 +1943,8 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 				if (check) {
 					// propagation des operations
 					Collection<WLWCOperationImpl> operations;
-					operations = new ArrayList<WLWCOperationImpl>(workingLogiqueCopy.getOperations());
+					operations = new ArrayList<WLWCOperationImpl>(
+							workingLogiqueCopy.getOperations());
 
 					workingLogiqueCopy.checkAll();
 					if (operations.size() != 0) {
@@ -1862,9 +1953,12 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 							if (opertype == OperationTypeCst.SET_ATTRIBUTE_OPERATION) {
 								opertype = oper.getParentType();
 								if (opertype == OperationTypeCst.ITEM_OPERATION) {
-									ItemDelta item = (ItemDelta) oper.getParentOperDelta();
-									if (item.getBaseItem() != null && item.getBaseItem().isStatic()) {
-										throw new CadseException("Cannot set attribute on a static item");
+									ItemDelta item = (ItemDelta) oper
+											.getParentOperDelta();
+									if (item.getBaseItem() != null
+											&& item.getBaseItem().isStatic()) {
+										throw new CadseException(
+												"Cannot set attribute on a static item");
 									}
 									continue;
 								}
@@ -1872,18 +1966,22 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 							if (opertype == OperationTypeCst.DELETE_OPERATION) {
 								opertype = oper.getParentType();
 								if (opertype == OperationTypeCst.ITEM_OPERATION) {
-									ItemDelta item = (ItemDelta) oper.getParentOperDelta();
+									ItemDelta item = (ItemDelta) oper
+											.getParentOperDelta();
 									if (item.getBaseItem().isStatic()) {
-										throw new CadseException("Cannot delete a static item");
+										throw new CadseException(
+												"Cannot delete a static item");
 									}
 									continue;
 								}
 								if (opertype == OperationTypeCst.LINK_OPERATION) {
-									LinkDeltaImpl linkOperation = (LinkDeltaImpl) oper.getParentOperDelta();
+									LinkDeltaImpl linkOperation = (LinkDeltaImpl) oper
+											.getParentOperDelta();
 									Link linkbase = linkOperation.getBaseLink();
 
 									if (linkbase != null && linkbase.isStatic()) {
-										throw new CadseException("Cannot delete a link of a static item");
+										throw new CadseException(
+												"Cannot delete a link of a static item");
 									}
 									continue;
 								}
@@ -1893,32 +1991,43 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 								opertype = oper.getParentType();
 								if (opertype == OperationTypeCst.ITEM_OPERATION) {
 
-									ItemDelta item = (ItemDelta) oper.getParentOperDelta();
-									preconditions_createItem(item, item.getType(), item.getPartParent(), item
-											.getPartParentLinkType());
+									ItemDelta item = (ItemDelta) oper
+											.getParentOperDelta();
+									preconditions_createItem(item, item
+											.getType(), item.getPartParent(),
+											item.getPartParentLinkType());
 									continue;
 								}
 								if (opertype == OperationTypeCst.LINK_OPERATION) {
 
-									LinkDeltaImpl linkOperation = (LinkDeltaImpl) oper.getParentOperDelta();
-									ItemDeltaImpl source = linkOperation.getSource();
+									LinkDeltaImpl linkOperation = (LinkDeltaImpl) oper
+											.getParentOperDelta();
+									ItemDeltaImpl source = linkOperation
+											.getSource();
 									if (source.isDeleted()) {
 										// TODO throw an exception
 										linkOperation.delete();
 										continue;
 									}
 									if (!source.isAdded() && !source.isLoaded()) {
-										if (source.getBaseItem() != null && source.getBaseItem().isReadOnly()) {
-											throw new CadseException("Source is readonly");
+										if (source.getBaseItem() != null
+												&& source.getBaseItem()
+														.isReadOnly()) {
+											throw new CadseException(
+													"Source is readonly");
 										}
 									}
-									LinkType link_lt = linkOperation.getLinkType();
+									LinkType link_lt = linkOperation
+											.getLinkType();
 
-									Item destination = linkOperation.getDestination();
+									Item destination = linkOperation
+											.getDestination();
 									if (destination == null) {
-										throw new CadseException("Destination is null!!!");
+										throw new CadseException(
+												"Destination is null!!!");
 									}
-									preconditions_createLink(linkOperation, link_lt, source, destination);
+									preconditions_createLink(linkOperation,
+											link_lt, source, destination);
 									continue;
 								}
 								continue;
@@ -1927,8 +2036,11 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 					}
 				}
 				workingLogiqueCopy.setState(WSModelState.COPY_PRE_LOAD);
-				new TransactionItemsProcess(this, (LogicalWorkspaceTransactionImpl) workingLogiqueCopy).processCommit(new ArrayList<ItemDelta>(
-						workingLogiqueCopy.getItemOperations()), ((CadseDomainImpl) _wd).getEventsManager());
+				new TransactionItemsProcess(this,
+						(LogicalWorkspaceTransactionImpl) workingLogiqueCopy)
+						.processCommit(new ArrayList<ItemDelta>(
+								workingLogiqueCopy.getItemOperations()),
+								((CadseDomainImpl) _wd).getEventsManager());
 				workingLogiqueCopy.setState(WSModelState.COPY_READ_ONLY);
 
 				workingLogiqueCopy.notifyCommitTransaction();
@@ -1974,7 +2086,8 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		addListener(l, -1);
 	}
 
-	public List<WorkspaceListener> filter(int filters, ImmutableWorkspaceDelta workspaceDelta) {
+	public List<WorkspaceListener> filter(int filters,
+			ImmutableWorkspaceDelta workspaceDelta) {
 		if (_listeners == null) {
 			return null;
 		}
@@ -1999,7 +2112,8 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		if (index == -1) {
 			return;
 		}
-		_listeners = ArraysUtil.remove(WorkspaceListener.class, _listeners, index);
+		_listeners = ArraysUtil.remove(WorkspaceListener.class, _listeners,
+				index);
 		_filter = ArraysUtil.remove(_filter, index);
 	}
 
@@ -2024,7 +2138,8 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		CadseCore.theItemType = null;
 		// loadMetaModel();
 		if (ex.size() != 0) {
-			throw new CadseException("Error on clear", ex.toArray(new CadseException[ex.size()]));
+			throw new CadseException("Error on clear", ex
+					.toArray(new CadseException[ex.size()]));
 		}
 	}
 
@@ -2035,26 +2150,29 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 				((CadseDomainImpl) _wd).getInitModelService().executeCadses(cr);
 			}
 		} catch (ErrorWhenLoadedModel e) {
-			throw new Error("Error when loaded model " + qualifiedCadseModelName, e);
+			throw new Error("Error when loaded model "
+					+ qualifiedCadseModelName, e);
 		}
 
 	}
 
-	public void addLogicalWorkspaceTransactionListener(LogicalWorkspaceTransactionListener l) {
-		_workspaceLogiqueCopyListeners = ArraysUtil.add(LogicalWorkspaceTransactionListener.class,
+	public void addLogicalWorkspaceTransactionListener(
+			LogicalWorkspaceTransactionListener l) {
+		_workspaceLogiqueCopyListeners = ArraysUtil.add(
+				LogicalWorkspaceTransactionListener.class,
 				_workspaceLogiqueCopyListeners, l);
 	}
 
-	public void removeLogicalWorkspaceTransactionListener(LogicalWorkspaceTransactionListener l) {
-		_workspaceLogiqueCopyListeners = ArraysUtil.remove(LogicalWorkspaceTransactionListener.class,
+	public void removeLogicalWorkspaceTransactionListener(
+			LogicalWorkspaceTransactionListener l) {
+		_workspaceLogiqueCopyListeners = ArraysUtil.remove(
+				LogicalWorkspaceTransactionListener.class,
 				_workspaceLogiqueCopyListeners, l);
 	}
 
 	public LogicalWorkspaceTransactionListener[] getLogicalWorkspaceTransactionListener() {
 		return _workspaceLogiqueCopyListeners;
 	}
-
-    
 
 	public CadseRuntime[] getCadseRuntime() {
 		return this._cadses;
@@ -2071,7 +2189,8 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		return null;
 	}
 
-	public <T> T getAttribute(Item source, IAttributeType<T> type, boolean ownerOnly) {
+	public <T> T getAttribute(Item source, IAttributeType<T> type,
+			boolean ownerOnly) {
 		LinkedList<Iterator<Item>> stack = null;
 		Item s = source;
 		while (true) {
@@ -2106,13 +2225,15 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		}
 	}
 
-	public IAttributeType<?> createUnresolvedAttributeType(TypeDefinition sourceType, ItemType attrType,
-		UUID attrID, String attName) {
+	public IAttributeType<?> createUnresolvedAttributeType(
+			TypeDefinition sourceType, ItemType attrType, UUID attrID,
+			String attName) {
 		IAttributeType<?> att = (IAttributeType<?>) getItem(attrID);
 		if (att != null) {
 			return att;
 		}
-		att = new AttributeTypeUnresolved(attrID, attName, attrType, Item.UNRESOLVED);
+		att = new AttributeTypeUnresolved(attrID, attName, attrType,
+				Item.UNRESOLVED);
 		sourceType.addAttributeType(att);
 		return att;
 	}
@@ -2129,19 +2250,23 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 * 
 	 * @return the link type
 	 */
-	synchronized public LinkType createUnresolvedLinkType(UUID id, String linktypeName, TypeDefinition sourcetype, TypeDefinition desttype) {
+	synchronized public LinkType createUnresolvedLinkType(UUID id,
+			String linktypeName, TypeDefinition sourcetype,
+			TypeDefinition desttype) {
 		try {
 			// _wd.beginOperation("Create unresolved link type");
 			Item foundItem = getItem(id);
 			if (foundItem != null) {
 				return (LinkType) foundItem;
 			}
-			LinkTypeImpl linkTypeImpl = new LinkTypeImpl(id, 0, sourcetype, linktypeName, 0, -1, null,
-					desttype);
+			LinkTypeImpl linkTypeImpl = new LinkTypeImpl(id, 0, sourcetype,
+					linktypeName, 0, -1, null, desttype);
 			linkTypeImpl.setFlag(Item.UNRESOLVED, true);
-			((TypeDefinition.Internal) sourcetype).addOutgoingLinkType(linkTypeImpl);
+			((TypeDefinition.Internal) sourcetype)
+					.addOutgoingLinkType(linkTypeImpl);
 			if (getItem(id) == null) {
-				throw new IllegalStateException("Cannot found the inresolved link");
+				throw new IllegalStateException(
+						"Cannot found the inresolved link");
 			}
 			return linkTypeImpl;
 		} finally {
@@ -2149,16 +2274,16 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		}
 	}
 
-//	// Properties unresolvedObject = null;
-//
-//	protected UUID getUnresolvedId(String key) {
-//		return ((CadseDomainImpl) _wd).getUnresolvedId(key);
-//		// UUID randomUUID = UUID.randomUUID();
-//		// System.out.println("*** create unresolved object " + key + ":" +
-//		// randomUUID);
-//		// return randomUUID;
-//	}
-	
+	// // Properties unresolvedObject = null;
+	//
+	// protected UUID getUnresolvedId(String key) {
+	// return ((CadseDomainImpl) _wd).getUnresolvedId(key);
+	// // UUID randomUUID = UUID.randomUUID();
+	// // System.out.println("*** create unresolved object " + key + ":" +
+	// // randomUUID);
+	// // return randomUUID;
+	// }
+
 	public CadseRuntime findCadse(UUID id) {
 		for (CadseRuntime cr : _cadses) {
 			if (cr.getId().equals(id)) {
@@ -2168,6 +2293,23 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		return null;
 	}
 
+	public LinkType findLinkType(ItemType sourceType, ItemType destType,
+			UUID ltId, String ltName, boolean createUnresolvedObject) {
+		if (sourceType == null) {
+			return null;
+		}
+
+		LinkType _lt_object = null;
+		if (ltId == null) {
+			return sourceType.getOutgoingLinkType(ltName);
+		}
+		_lt_object = sourceType.getOutgoingLinkType(ltId);
+		if (createUnresolvedObject && _lt_object == null) {
+			return createUnresolvedLinkType(ltId, ltName, sourceType, destType);
+		}
+		return _lt_object;
+	}
+
 	/**
 	 * Create a unresolved item Type
 	 * 
@@ -2175,15 +2317,17 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	 * @return
 	 * @throws CadseException
 	 */
-	public ItemType createUnresolvedItemType(UUID cadseid, UUID id, String sn, String un) throws CadseException {
-		
+	public ItemType createUnresolvedItemType(UUID cadseid, UUID id, String sn,
+			String un) throws CadseException {
+
 		CadseRuntime cr = findCadse(cadseid);
 		if (cr != null && cr.isExecuted())
 			return null;
 		if (cr == null)
 			cr = getCadseRuntimeForUnresolvedItemType(cadseid);
-		ItemTypeImpl itemTypeImpl = (ItemTypeImpl) createItemType(null, cr, null, 0, id, sn, "Unresolved Item type"
-				+ id, false, true, _unresolveManager);
+		ItemTypeImpl itemTypeImpl = (ItemTypeImpl) createItemType(null, cr,
+				null, 0, id, sn, "Unresolved Item type" + id, false, true,
+				_unresolveManager);
 		itemTypeImpl.setFlag(Item.UNRESOLVED, true);
 		itemTypeImpl._qualifiedName = un;
 		itemTypeImpl.setFlag(Item.IS_HIDDEN, true);
@@ -2194,10 +2338,11 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 
 	private CadseRuntime getCadseRuntimeForUnresolvedItemType(UUID cadseid) {
 		CadseRuntime cr = (CadseRuntime) getItem(cadseid);
-		if (cr != null) return cr;
-		cr = createCadseRuntime("#crUnresolvedItemType",cadseid, cadseid);
+		if (cr != null)
+			return cr;
+		cr = createCadseRuntime("#crUnresolvedItemType", cadseid, cadseid);
 		cr.setIsStatic(true);
-		cr.setDisplayName("Cadse for id "+cadseid);
+		cr.setDisplayName("Cadse for id " + cadseid);
 		cr.setFlag(Item.UNRESOLVED, true);
 		return cr;
 	}
@@ -2228,42 +2373,22 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 	}
 
 	public void addKey(INamedUUID item, Key key) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 
-    public void changeKey(INamedUUID item, Key oldKey, Key newKey) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+	public void changeKey(INamedUUID item, Key oldKey, Key newKey) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 
-    public Key[] getChildrenKey(Key aThis) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+	public Key[] getChildrenKey(Key aThis) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 
 	@Override
 	public CadseRuntime createCadseRuntime(String name, UUID runtimeId,
 			UUID definitionId) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public LinkType createUnresolvedLinkType(String linkTypeName,
-			ItemType sourceType, ItemType destType) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public <T> T getAttribute(Item source, String key, boolean ownerOnly) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setAttribute(Item item, String key, Object value)
-			throws CadseException {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override

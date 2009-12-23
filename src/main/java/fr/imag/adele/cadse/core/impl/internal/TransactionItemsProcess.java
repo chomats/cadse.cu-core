@@ -34,6 +34,7 @@ import fr.imag.adele.cadse.core.impl.ItemFactory;
 import fr.imag.adele.cadse.core.impl.ReflectLink;
 import fr.imag.adele.cadse.core.internal.IWorkingLoadingItems;
 import fr.imag.adele.cadse.core.internal.IWorkspaceNotifier;
+import fr.imag.adele.cadse.core.key.DefaultKeyImpl;
 import fr.imag.adele.cadse.core.key.Key;
 import fr.imag.adele.cadse.core.transaction.delta.ImmutableWorkspaceDelta;
 import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
@@ -44,12 +45,14 @@ import fr.imag.adele.cadse.core.transaction.delta.SetAttributeOperation;
 import fr.imag.adele.cadse.core.util.ElementsOrder;
 import fr.imag.adele.cadse.core.util.IErrorCollector;
 import fr.imag.adele.cadse.util.ArraysUtil;
+import fr.imag.adele.cadse.util.Assert;
 
-public final class TransactionItemsProcess implements IWorkingLoadingItems, IErrorCollector {
+public final class TransactionItemsProcess implements IWorkingLoadingItems,
+		IErrorCollector {
 
 	static class RegisterWorkspanceNotififier implements IWorkspaceNotifier {
-		private EventsManagerImpl		eventsMgr;
-		private ImmutableWorkspaceDelta	events;
+		private EventsManagerImpl eventsMgr;
+		private ImmutableWorkspaceDelta events;
 
 		public RegisterWorkspanceNotififier(EventsManagerImpl eventMgr) {
 			this.eventsMgr = eventMgr;
@@ -57,7 +60,9 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 		}
 
 		public void notifieChangeEvent(ChangeID id, Object... values) {
-			events.addEvent(new WSEvent(System.currentTimeMillis(), id, values));
+			events
+					.addEvent(new WSEvent(System.currentTimeMillis(), id,
+							values));
 		}
 
 		public List<WSEvent> getEvents() {
@@ -69,23 +74,24 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 		}
 	}
 
-	final LogicalWorkspaceImpl		wl;
-	LogicalWorkspaceTransactionImpl	copy;
+	final LogicalWorkspaceImpl wl;
+	LogicalWorkspaceTransactionImpl copy;
 
-	Map<UUID, Item>			visited			= new HashMap<UUID, Item>();
+	Map<UUID, Item> visited = new HashMap<UUID, Item>();
 
-	final boolean					update;
-	final boolean					forceToSave;
-	Map<ItemDelta, String[]>		errors			= null;
+	final boolean update;
+	final boolean forceToSave;
+	Map<ItemDelta, String[]> errors = null;
 
-	HashMap<ItemDelta, Item>		itemsAdded		= new HashMap<ItemDelta, Item>();
-	HashMap<ItemDelta, Item>		itemsDeleted	= new HashMap<ItemDelta, Item>();
-	HashMap<ItemDelta, Item>		itemsLoaded		= new HashMap<ItemDelta, Item>();
+	HashMap<ItemDelta, Item> itemsAdded = new HashMap<ItemDelta, Item>();
+	HashMap<ItemDelta, Item> itemsDeleted = new HashMap<ItemDelta, Item>();
+	HashMap<ItemDelta, Item> itemsLoaded = new HashMap<ItemDelta, Item>();
 
-	HashMap<UUID, ProjectAssociation>	projectAssociationSet;
-	RegisterWorkspanceNotififier	notifie;
+	HashMap<UUID, ProjectAssociation> projectAssociationSet;
+	RegisterWorkspanceNotififier notifie;
 
-	public TransactionItemsProcess(LogicalWorkspaceImpl wl, LogicalWorkspaceTransactionImpl copy) {
+	public TransactionItemsProcess(LogicalWorkspaceImpl wl,
+			LogicalWorkspaceTransactionImpl copy) {
 		super();
 		this.wl = wl;
 
@@ -98,8 +104,6 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 				projectAssociationSet.put(p.getItemref(), p);
 			}
 	}
-
-	
 
 	public Collection<ProjectAssociation> getProjectAssociationSet() {
 		return projectAssociationSet.values();
@@ -163,7 +167,9 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.internal.IWorkingLoadingItems#getItem(fr.imag.adele.cadse.core.UUID)
+	 * @see
+	 * fr.imag.adele.cadse.core.internal.IWorkingLoadingItems#getItem(fr.imag
+	 * .adele.cadse.core.UUID)
 	 */
 	public Item getItem(UUID id) {
 		Item ret = visited.get(id);
@@ -185,7 +191,8 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 	 * @throws CadseException
 	 * @throws CadseException
 	 */
-	void processCommit(Collection<ItemDelta> operations, EventsManagerImpl realnotifie) throws CadseException,
+	void processCommit(Collection<ItemDelta> operations,
+			EventsManagerImpl realnotifie) throws CadseException,
 			CadseException {
 
 		notifie = new RegisterWorkspanceNotififier(realnotifie);
@@ -201,34 +208,37 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 		}
 		// traite les item charg��s...
 		for (ItemDelta loadedOperation : itemsLoaded.keySet()) {
-			setPartParent(notifie, loadedOperation, itemsLoaded.get(loadedOperation));
+			setPartParent(notifie, loadedOperation, itemsLoaded
+					.get(loadedOperation));
 			callLoadItem(notifie, loadedOperation);
 		}
-		
+
 		// traite les item ajout��s
 		for (ItemDelta addOperation : itemsAdded.keySet()) {
 			setPartParent(notifie, addOperation, itemsAdded.get(addOperation));
-			notifie.notifieChangeEvent(ChangeID.CREATE_ITEM, itemsAdded.get(addOperation));
-			
+			notifie.notifieChangeEvent(ChangeID.CREATE_ITEM, itemsAdded
+					.get(addOperation));
+
 		}
-		
+
 		for (ItemDelta loadedOperation : itemsLoaded.keySet()) {
 			Item goodItem = itemsLoaded.get(loadedOperation);
 			loadProjectAssociation(goodItem);
-			
+
 			ContentItem contentItem = goodItem.getContentItem();
 			if (contentItem != null) {
-				((ContentItemImpl)contentItem).setOwnerItem(goodItem);
+				((ContentItemImpl) contentItem).setOwnerItem(goodItem);
 				if (contentItem.getPartParent() == null)
-					((ContentItemImpl)contentItem).setParentContent(
-							goodItem.getType().getItemManager().getParentContentItemWherePutMyContent(contentItem));
+					((ContentItemImpl) contentItem)
+							.setParentContent(goodItem.getType()
+									.getItemManager()
+									.getParentContentItemWherePutMyContent(
+											contentItem));
 				contentItem.init();
 				if (wl.getItem(contentItem.getId()) == null)
 					wl.addId(contentItem, notifie, this);
 			}
 		}
-
-		
 
 		for (ItemDelta item : operations) {
 			if (!item.isModified()) {
@@ -241,7 +251,8 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 			} else {
 				goodItem = wl._items.get(item.getId());
 				if (goodItem == null || !goodItem.isResolved()) {
-					// error le traitement pr��c��dent n'a pas march��
+					// error le traitement pr��c��dent n'a pas
+					// march��
 					continue;
 				}
 				/*
@@ -252,8 +263,10 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 
 				}
 				goodItem.setState(ItemState.MODIFING);
-				for (SetAttributeOperation att : item.getSetAttributeOperation()) {
-					if (att.getAttributeName().equals(Accessor.ATTR_PARENT_ITEM)) {
+				for (SetAttributeOperation att : item
+						.getSetAttributeOperation()) {
+					if (att.getAttributeName()
+							.equals(Accessor.ATTR_PARENT_ITEM)) {
 						continue;
 					}
 					if (att.isLoaded() || !att.isModified()) {
@@ -261,23 +274,31 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 					}
 					try {
 						Object currentValue = att.getCurrentValue();
-						IAttributeType<?> attributeDefinition = att.getAttributeDefinition();
-						if (attributeDefinition == CadseGCST.ITEM_at_NAME_ && !item.isAdded()) {
+						IAttributeType<?> attributeDefinition = att
+								.getAttributeDefinition();
+						if (attributeDefinition == CadseGCST.ITEM_at_NAME_
+								&& !item.isAdded()) {
 							Key key = item.getKey();
 							if (key != null) {
 								key.setName((String) currentValue);
 							}
 						}
 						if (attributeDefinition != null) {
-							currentValue = attributeDefinition.convertTo(currentValue);
-							if (goodItem.commitSetAttribute(attributeDefinition, currentValue)) {
-								notifie.notifieChangeEvent(ChangeID.SET_ATTRIBUTE, goodItem, attributeDefinition, att
-										.getOldValue(), currentValue);
+							currentValue = attributeDefinition
+									.convertTo(currentValue);
+							if (goodItem.commitSetAttribute(
+									attributeDefinition, currentValue)) {
+								notifie.notifieChangeEvent(
+										ChangeID.SET_ATTRIBUTE, goodItem,
+										attributeDefinition, att.getOldValue(),
+										currentValue);
 							}
 						}
 					} catch (Throwable e) {
-						wl.getCadseDomain().log("wl", "error in commit set attribute " + att, e);
-						addError(item, "Add setAttribute " + att + ":" + e.getMessage());
+						wl.getCadseDomain().log("wl",
+								"error in commit set attribute " + att, e);
+						addError(item, "Add setAttribute " + att + ":"
+								+ e.getMessage());
 					}
 
 				}
@@ -290,7 +311,8 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 					continue;
 				}
 				if (link.isDeleted()) {
-					Link l = goodItem.getOutgoingLink(link.getLinkType(), link.getDestinationId());
+					Link l = goodItem.getOutgoingLink(link.getLinkType(), link
+							.getDestinationId());
 					if (l != null) {
 						if (!l.getLinkType().isNatif() && item.isDeleted()) {
 							if (link.getDestination().isDeleted()) {
@@ -301,12 +323,16 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 						} else {
 							l.commitDelete();
 						}
-						notifie.notifieChangeEvent(ChangeID.DELETE_OUTGOING_LINK, l);
-						if (!goodItem.isOrphan() && goodItem.isResolved() && !link.getDestination().isDeleted()) {
-							notifie.notifieChangeEvent(ChangeID.UNRESOLVE_INCOMING_LINK, l.getDestination(), l);
+						notifie.notifieChangeEvent(
+								ChangeID.DELETE_OUTGOING_LINK, l);
+						if (!goodItem.isOrphan() && goodItem.isResolved()
+								&& !link.getDestination().isDeleted()) {
+							notifie.notifieChangeEvent(
+									ChangeID.UNRESOLVE_INCOMING_LINK, l
+											.getDestination(), l);
 						}
 					} else {
-						// no find link to delete 
+						// no find link to delete
 						// it's possible ?
 					}
 
@@ -328,39 +354,48 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 					destination = loadItem(link.getDestination());
 				}
 				if (!destination.isResolved()) {
-					System.out.println("" + link + " has unresoled destination");
+					System.out
+							.println("" + link + " has unresoled destination");
 				}
 				Link l = null;
 				if (link.isAdded()) {
-					l = goodItem.commitLoadCreateLink(link.getLinkType(), destination);
+					l = goodItem.commitLoadCreateLink(link.getLinkType(),
+							destination);
 					if (l == null) {
 						continue;
 					}
 					if (l instanceof ReflectLink && destination.isResolved()) {
 						destination.addIncomingLink(l, false);
 					}
-					notifie.notifieChangeEvent(ChangeID.CREATE_OUTGOING_LINK, l);
+					notifie
+							.notifieChangeEvent(ChangeID.CREATE_OUTGOING_LINK,
+									l);
 					if (l.isLinkResolved()) {
-						notifie.notifieChangeEvent(ChangeID.RESOLVE_INCOMING_LINK, l.getResolvedDestination(), l);
+						notifie.notifieChangeEvent(
+								ChangeID.RESOLVE_INCOMING_LINK, l
+										.getResolvedDestination(), l);
 					}
 					// l.getLinkType().getManager().createdLink(l);
 				} else {
-					l = goodItem.getOutgoingLink(link.getLinkType(), destination.getId());
+					l = goodItem.getOutgoingLink(link.getLinkType(),
+							destination.getId());
 					if (l == null) {
 						continue;
 					}
 				}
-				for (SetAttributeOperation att : link.getSetAttributeOperation()) {
+				for (SetAttributeOperation att : link
+						.getSetAttributeOperation()) {
 
 					// if (compse != null)
 					// compse.actionAddAttribute(linkDescription, key,
 					// value)(goodItem.getId(), att.getKey(),
 					// goodItem.getAttribute(att.getKey()));
 
-					if (l.commitSetAttribute(att.getAttributeDefinition(), att.getAttributeName(), att
-							.getCurrentValue())) {
-						notifie.notifieChangeEvent(ChangeID.SET_LINK_ATTRIBUTE, l, att.getAttributeName(), att
-								.getOldValue(), att.getCurrentValue());
+					if (l.commitSetAttribute(att.getAttributeDefinition(), att
+							.getAttributeName(), att.getCurrentValue())) {
+						notifie.notifieChangeEvent(ChangeID.SET_LINK_ATTRIBUTE,
+								l, att.getAttributeName(), att.getOldValue(),
+								att.getCurrentValue());
 					}
 				}
 			}
@@ -371,12 +406,15 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 
 			// for only added or modified item
 			for (OrderOperation o : item.getOrdersOperation()) {
-				Link l1 = goodItem.getOutgoingLink(o.getFrom().getLinkType(), o.getFrom().getDestinationId());
-				Link l2 = goodItem.getOutgoingLink(o.getTo().getLinkType(), o.getTo().getDestinationId());
+				Link l1 = goodItem.getOutgoingLink(o.getFrom().getLinkType(), o
+						.getFrom().getDestinationId());
+				Link l2 = goodItem.getOutgoingLink(o.getTo().getLinkType(), o
+						.getTo().getDestinationId());
 				if (goodItem.commitMove(o.getKind(), l1, l2)) {
 					;
 				}
-				notifie.notifieChangeEvent(ChangeID.ORDER_OUTGOING_LINK, goodItem, l1, l2, o.getKind());
+				notifie.notifieChangeEvent(ChangeID.ORDER_OUTGOING_LINK,
+						goodItem, l1, l2, o.getKind());
 			}
 			if (item.isAdded()) {
 				goodItem.computeAttributes();
@@ -385,15 +423,16 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 				notifie.notifieChangeEvent(ChangeID.FORCE_SAVE, goodItem);
 			}
 			goodItem.setState(ItemState.CREATED);
-			goodItem.setKey(AbstractSpaceKey.NO_INIT_KEY);
+			goodItem.setKey(DefaultKeyImpl.NO_INIT_KEY);
 			wl.addKeys(goodItem);
 		}
 		callCreatedItem();
-		
+
 		commitMappingOperation();
 
 		if (this.itemsLoaded.size() != 0) {
-			notifie.notifieChangeEvent(ChangeID.LOAD_ITEMS, this, new ArrayList<Item>(this.itemsLoaded.values()));
+			notifie.notifieChangeEvent(ChangeID.LOAD_ITEMS, this,
+					new ArrayList<Item>(this.itemsLoaded.values()));
 		}
 		showErros();
 		notifie.sendAllTo();
@@ -403,7 +442,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 		ElementsOrder<MappingOperation> mappingoder = copy.getMappingOrder();
 		for (MappingOperation mo : mappingoder.elements) {
 			try {
-				ItemDelta parent = mo.getParent();
+				ItemDelta parent = mo.getParentOperDelta();
 				Item goodItem = wl.getItem(parent.getId());
 				mo.commit(wl, goodItem);
 			} catch (Throwable e) {
@@ -413,18 +452,22 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 		}
 	}
 
-	protected void update(IWorkingLoadingItems wl, ItemDelta desc, Item i, IWorkspaceNotifier notifie) {
+	protected void update(IWorkingLoadingItems wl, ItemDelta desc, Item i,
+			IWorkspaceNotifier notifie) {
 		i.update(wl, desc, notifie);
 	}
 
-	private void setPartParent(RegisterWorkspanceNotififier notifie, ItemDelta addOperation, Item goodItem) throws CadseException {
+	private void setPartParent(RegisterWorkspanceNotififier notifie,
+			ItemDelta addOperation, Item goodItem) throws CadseException {
 		try {
 			if (addOperation.getPartParent() != null) {
 				Item parentOperation = addOperation.getPartParent();
-				Item goodParent = goodItem.getLogicalWorkspace().getItem(parentOperation.getId());
+				Item goodParent = goodItem.getLogicalWorkspace().getItem(
+						parentOperation.getId());
 				if (goodParent != null) {
 					if (goodParent.isResolved()) {
-						goodItem.setParent(goodParent, addOperation.getPartParentLinkType());
+						goodItem.setParent(goodParent, addOperation
+								.getPartParentLinkType());
 						return;
 					}
 				}
@@ -434,11 +477,13 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 			}
 		} catch (Throwable e) {
 			e.printStackTrace();
-			addError(addOperation, "Cannot load commit item : exception : " + e.getMessage());
+			addError(addOperation, "Cannot load commit item : exception : "
+					+ e.getMessage());
 		}
 	}
 
-	private void callLoadItem(RegisterWorkspanceNotififier notifie, ItemDelta loadedOperation) throws CadseException {
+	private void callLoadItem(RegisterWorkspanceNotififier notifie,
+			ItemDelta loadedOperation) throws CadseException {
 		try {
 			Item goodItem = itemsLoaded.get(loadedOperation);
 			ItemType it = goodItem.getType();
@@ -449,46 +494,47 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 			ContentItem contentItem = null;
 			try {
 				UUID idContent = UUID.randomUUID();
-				ItemDelta contentDelta = loadedOperation.getOutgoingItem(CadseGCST.ITEM_lt_CONTENTS, false);
+				ItemDelta contentDelta = loadedOperation.getOutgoingItem(
+						CadseGCST.ITEM_lt_CONTENTS, false);
 				if (contentDelta != null)
 					idContent = contentDelta.getId();
-				
+
 				contentItem = (ContentItem) itemsLoaded.get(contentDelta);
 				if (contentItem == null)
-					contentItem = createContentItem(goodItem.getType(), goodItem, idContent);
+					contentItem = createContentItem(goodItem.getType(),
+							goodItem, idContent);
 				if (contentItem == null)
 					contentItem = ContentItem.NO_CONTENT;
 				setContent(notifie, goodItem, contentItem);
 			} catch (CadseException e) {
-				addError(loadedOperation,"Cannot finish load item : exception : "+ e.getMessage());
+				addError(loadedOperation,
+						"Cannot finish load item : exception : "
+								+ e.getMessage());
 				e.printStackTrace();
 			}
-			
+
 			goodItem.loadItem(this, loadedOperation, this);
 			goodItem.finishLoad();
 		} catch (Throwable e) {
 			e.printStackTrace();
-			addError(loadedOperation, "Cannot finish load item : exception : " + e.getMessage());
+			addError(loadedOperation, "Cannot finish load item : exception : "
+					+ e.getMessage());
 		}
 	}
 
-
-
 	private void setContent(RegisterWorkspanceNotififier notifie,
 			Item goodItem, ContentItem contentItem) throws CadseException {
-		Link l = goodItem.commitLoadCreateLink(CadseGCST.ITEM_lt_CONTENTS, contentItem);
+		Link l = goodItem.commitLoadCreateLink(CadseGCST.ITEM_lt_CONTENTS,
+				contentItem);
 		if (contentItem != ContentItem.NO_CONTENT
-			&& contentItem != ContentItem.INVALID_CONTENT) {
+				&& contentItem != ContentItem.INVALID_CONTENT) {
 			if (l instanceof ReflectLink) {
 				contentItem.addIncomingLink(l, false);
 			}
-			notifie
-					.notifieChangeEvent(ChangeID.CREATE_OUTGOING_LINK,
-							l);
+			notifie.notifieChangeEvent(ChangeID.CREATE_OUTGOING_LINK, l);
 			if (l.isLinkResolved()) {
-				notifie.notifieChangeEvent(
-						ChangeID.RESOLVE_INCOMING_LINK, l
-								.getResolvedDestination(), l);
+				notifie.notifieChangeEvent(ChangeID.RESOLVE_INCOMING_LINK, l
+						.getResolvedDestination(), l);
 			}
 		}
 	}
@@ -511,7 +557,8 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 		// Les liens incoming sont supposer etre supprimer dans la copy
 		// il suffit d'executer la copy
 		notifie.notifieChangeEvent(ChangeID.DELETE_ITEM, deletedItem);
-		if (item.getDeleteOperation().isDeleteContent() && deletedItem.getContentItem() != null) {
+		if (item.getDeleteOperation().isDeleteContent()
+				&& deletedItem.getContentItem() != null) {
 			try {
 				deletedItem.getContentItem().delete();
 			} catch (CadseException e) {
@@ -532,7 +579,8 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 			if (it == null) {
 				return null; // Cannot find type ...
 			}
-			if (it == CadseGCST.CONTENT_ITEM || CadseGCST.CONTENT_ITEM.isSuperTypeOf(it))
+			if (it == CadseGCST.CONTENT_ITEM
+					|| CadseGCST.CONTENT_ITEM.isSuperTypeOf(it))
 				return null;
 
 			// find the item factory
@@ -554,7 +602,8 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 				Item deletedItem = getItem(item.getId());
 				if (deletedItem != null && deletedItem.isResolved()) {
 					for (Link l : deletedItem.getIncomingLinks()) {
-						final ItemDelta sourceItem = this.copy.getItem(l.getSourceId(), true);
+						final ItemDelta sourceItem = this.copy.getItem(l
+								.getSourceId(), true);
 						if (sourceItem.isDeleted()) {
 							continue;
 						}
@@ -563,7 +612,9 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 							continue;
 						}
 
-						notifie.notifieChangeEvent(ChangeID.UNRESOLVE_INCOMING_LINK, deletedItem, l);
+						notifie.notifieChangeEvent(
+								ChangeID.UNRESOLVE_INCOMING_LINK, deletedItem,
+								l);
 					}
 
 					itemsDeleted.put(item, deletedItem);
@@ -577,8 +628,10 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 
 				if (goodItem != null) {
 					if (!goodItem.getType().equals(it)) {
-						addError(item, MessageFormat.format(Messages.error_bad_type, goodItem.getType().getName(), it
-								.getName(), item.getName()));
+						addError(item, MessageFormat.format(
+								Messages.error_bad_type, goodItem.getType()
+										.getName(), it.getName(), item
+										.getName()));
 						return null;
 					}
 					// if (!update && goodItem.isResolved()) {
@@ -624,9 +677,10 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 		return null;
 	}
 
-	private ItemType findOrCreateItemTypeFromItemOperation(ItemDelta item) throws CadseException {
+	private ItemType findOrCreateItemTypeFromItemOperation(ItemDelta item)
+			throws CadseException {
 		// do not create a unresolved item type
-		ItemType it = item.getType(false);
+		ItemType it = item.getType();
 		if (it == null) {
 			it = wl.getItemType(item.getItemTypeId());
 		}
@@ -638,12 +692,14 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 			Item anItem = visited.get(itemTypeID);
 			if (anItem == null) {
 				// non
-				// est-ce qu' nous l'avons dans les items �� charg��/creer
+				// est-ce qu' nous l'avons dans les items ��
+				// charg��/creer
 				ItemDelta itemTypeOperation = copy.getItem(itemTypeID);
 				if (itemTypeOperation != null && !itemTypeOperation.isDeleted()) {
 					if (itemTypeID.equals(item.getId())) {
 						// error le type pointe sur lui meme ...
-						addError(item, "error when loaded type item type of self !!!");
+						addError(item,
+								"error when loaded type item type of self !!!");
 						return null;
 					}
 					// on essaye de creer le type ...
@@ -655,16 +711,21 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 					}
 				} else {
 
-					Link linkInstanceOf = item.getOutgoingLink(CadseGCST.ITEM_lt_INSTANCE_OF);
+					Link linkInstanceOf = item
+							.getOutgoingLink(CadseGCST.ITEM_lt_INSTANCE_OF);
 					if (linkInstanceOf == null) {
-						addError(item, "type not found, cannot create unresolved type, instance-of link not found");
+						addError(item,
+								"type not found, cannot create unresolved type, instance-of link not found");
 						return null;
 					}
+					UUID cadseId = linkInstanceOf.getDestinationCadseId();
 					String sn = linkInstanceOf.getDestinationName();
 					String un = linkInstanceOf.getDestinationQualifiedName();
-					ItemType ret = wl.createUnresolvedItemType(itemTypeID, sn, un);
+					ItemType ret = wl.createUnresolvedItemType(cadseId,
+							itemTypeID, sn, un);
 					// nous n'avons pas trouv�� le type
-					addError(item, "type not found : create an unresolved type !!!");
+					addError(item,
+							"type not found : create an unresolved type !!!");
 					return ret;
 				}
 			}
@@ -678,9 +739,11 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 		return it;
 	}
 
-	private ItemType findOrCreateSuperItemTypeFromItemOperation(ItemDelta item) throws CadseException {
+	private ItemType findOrCreateSuperItemTypeFromItemOperation(ItemDelta item)
+			throws CadseException {
 
-		Item superItem = item.getOutgoingItem(CadseGCST.ITEM_TYPE_lt_SUPER_TYPE, false);
+		Item superItem = item.getOutgoingItem(
+				CadseGCST.ITEM_TYPE_lt_SUPER_TYPE, false);
 		if (superItem == null) {
 			return CadseGCST.ITEM;
 		}
@@ -694,19 +757,22 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 			Item anItem = visited.get(itemTypeID);
 			if (anItem == null) {
 				// non
-				// est-ce qu' nous l'avons dans les items �� charg��/creer
+				// est-ce qu' nous l'avons dans les items ��
+				// charg��/creer
 				ItemDelta itemTypeOperation = copy.getItem(itemTypeID);
 				if (itemTypeOperation != null && !itemTypeOperation.isDeleted()) {
 					if (itemTypeID.equals(item.getId())) {
 						// error le type pointe sur lui meme ...
-						addError(item, "error when loaded super type of before loaded this item type !!!");
+						addError(item,
+								"error when loaded super type of before loaded this item type !!!");
 						return null;
 					}
 					// on essaye de creer le type ...
 					anItem = loadOneItem(itemTypeOperation);
 					if (anItem == null) {
 						// une erreur c'est produit ...
-						addError(item, "error when loaded super type of before loaded this item type !!!");
+						addError(item,
+								"error when loaded super type of before loaded this item type !!!");
 						return null;
 					}
 				} else {
@@ -728,26 +794,32 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 	private void callCreatedItem() throws CadseException {
 		for (ItemDelta item : itemsAdded.keySet()) {
 			Item goodItem = wl._items.get(item.getId());
-			
-			IAttributeType<?>[] attributesDefinitions = goodItem.getLocalAllAttributeTypes();
+
+			IAttributeType<?>[] attributesDefinitions = goodItem
+					.getLocalAllAttributeTypes();
 			if (attributesDefinitions != null) {
 				for (IAttributeType<?> attributeType : attributesDefinitions) {
 					try {
-						if (attributeType.mustBeCreateNewValueAtCreationTimeOfItem()) {
-							Object v = attributeType.createNewValueFor(goodItem);
+						if (attributeType
+								.mustBeCreateNewValueAtCreationTimeOfItem()) {
+							Object v = attributeType
+									.createNewValueFor(goodItem);
 							if (v != null) {
 								goodItem.commitSetAttribute(attributeType, v);
 							}
 						}
 					} catch (Throwable e) {
-						wl.getCadseDomain().log("wl",
-								"error in create automatic value at the createion time " + attributeType, e);
+						wl.getCadseDomain().log(
+								"wl",
+								"error in create automatic value at the createion time "
+										+ attributeType, e);
 					}
 				}
 			}
 			if (goodItem.itemHasContent()) {
 				try {
-					ContentItem contentItem = createContentItem(goodItem.getType(), goodItem, UUID.randomUUID());
+					ContentItem contentItem = createContentItem(goodItem
+							.getType(), goodItem, UUID.randomUUID());
 					setContent(notifie, goodItem, contentItem);
 				} catch (CadseException e) {
 					addError(item, e.getMessage());
@@ -755,19 +827,23 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 				}
 			}
 		}
-		
+
 		for (ItemDelta item : itemsAdded.keySet()) {
 			Item goodItem = wl._items.get(item.getId());
 			try {
 				ContentItem contentItem = goodItem.getContentItem();
 				if (contentItem != null) {
-					((ContentItemImpl)contentItem).setOwnerItem(goodItem);
-					((ContentItemImpl)contentItem).setParentContent(
-							goodItem.getType().getItemManager().getParentContentItemWherePutMyContent(contentItem));
+					((ContentItemImpl) contentItem).setOwnerItem(goodItem);
+					((ContentItemImpl) contentItem)
+							.setParentContent(goodItem.getType()
+									.getItemManager()
+									.getParentContentItemWherePutMyContent(
+											contentItem));
 					contentItem.init();
 					contentItem.create();
 					wl.addId(contentItem, notifie, this);
-					notifie.notifieChangeEvent(ChangeID.CREATE_ITEM, contentItem);
+					notifie.notifieChangeEvent(ChangeID.CREATE_ITEM,
+							contentItem);
 				}
 			} catch (CadseException e) {
 				addError(item, e.getMessage());
@@ -775,13 +851,13 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 			}
 		}
 	}
-	
-	
-	
-	public ContentItem createContentItem(ItemType it, Item ownerItem, UUID idContent) {
+
+	public ContentItem createContentItem(ItemType it, Item ownerItem,
+			UUID idContent) {
 		try {
 			final IItemManager itemManager = it.getItemManager();
-			final IContentItemFactory contentItemFactory = itemManager.getContentItemFactory();
+			final IContentItemFactory contentItemFactory = itemManager
+					.getContentItemFactory();
 			if (contentItemFactory == null) {
 				return ContentItem.NO_CONTENT;
 			}
@@ -794,7 +870,8 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 			}
 			if (ret == null) {
 				ret = ContentItem.INVALID_CONTENT;
-			} else if (ret != ContentItem.NO_CONTENT && ret != ContentItem.INVALID_CONTENT) {
+			} else if (ret != ContentItem.NO_CONTENT
+					&& ret != ContentItem.INVALID_CONTENT) {
 				if (ownerItem != null)
 					((ContentItemImpl) ret).setOwnerItem(ownerItem);
 			}
@@ -807,8 +884,9 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 
 	void loadProjectAssociation(Item item) throws CadseException {
 		ProjectAssociation pa = projectAssociationSet.get(item.getId());
-		if (pa == null) return;
-		
+		if (pa == null)
+			return;
+
 		CadseCore.setItemPersistenceID(pa.getProjectName(), item);
 		HashMap<String, URL> entries = pa.getContentEntries();
 		if (entries != null) {
@@ -817,7 +895,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems, IErr
 				String path = e.getKey();
 				CadseCore.copyResource(item, path, data);
 			}
-		}		
+		}
 	}
 
 }

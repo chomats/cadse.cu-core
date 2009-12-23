@@ -42,17 +42,18 @@ import fr.imag.adele.cadse.core.transaction.delta.WLWCOperation;
  * @author Thomas
  * 
  */
-public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspaceTransactionListener {
+public class TeamWorkStatePropagationWLWCListener extends
+		AbstractLogicalWorkspaceTransactionListener {
 
 	@Override
-	public void notifyCancelCreatedItem(LogicalWorkspaceTransaction wc, ItemDelta item) throws CadseException,
-			CadseException {
+	public void notifyCancelCreatedItem(LogicalWorkspaceTransaction wc,
+			ItemDelta item) throws CadseException, CadseException {
 		// do nothing
 	}
 
 	@Override
-	public void notifyCancelCreatedLink(LogicalWorkspaceTransaction wc, LinkDelta link) throws CadseException,
-			CadseException {
+	public void notifyCancelCreatedLink(LogicalWorkspaceTransaction wc,
+			LinkDelta link) throws CadseException, CadseException {
 		LinkType linkType = link.getLinkType();
 		ItemDelta modifiedItem = link.getSource();
 
@@ -62,7 +63,8 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 		}
 
 		boolean modified = false;
-		for (LinkDelta linkOp : modifiedItem.getOutgoingLinkOperations(linkType)) {
+		for (LinkDelta linkOp : modifiedItem
+				.getOutgoingLinkOperations(linkType)) {
 			modified |= (linkOp.isAdded() || linkOp.isDeleted());
 		}
 		// TODO change to use getOrderOperations(linkType)
@@ -75,8 +77,9 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 	}
 
 	@Override
-	public void notifyChangeAttribute(LogicalWorkspaceTransaction wc, ItemDelta modifiedItem,
-			SetAttributeOperation attOperation) throws CadseException {
+	public void notifyChangeAttribute(LogicalWorkspaceTransaction wc,
+			ItemDelta modifiedItem, SetAttributeOperation attOperation)
+			throws CadseException {
 		if (modifiedItem.isDeleted()) { // TODO if item is deleted ???
 			return;
 		}
@@ -113,7 +116,8 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 					; // TODO should notify of a warning
 				} else if (TWDestEvol.immutable.equals(ltDestEvol)) {
 					setRequireNewRev(sourceItem);
-				} else if (TWDestEvol.mutable.equals(ltDestEvol) || TWDestEvol.effective.equals(ltDestEvol)) {
+				} else if (TWDestEvol.mutable.equals(ltDestEvol)
+						|| TWDestEvol.effective.equals(ltDestEvol)) {
 					setRevModified(sourceItem);
 				}
 			}
@@ -127,12 +131,13 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 	}
 
 	private void setRequireNewRev(Item sourceItem) throws CadseException {
-		if (sourceItem.isStatic()) return;
+		if (sourceItem.isStatic())
+			return;
 		sourceItem.setAttribute(CadseGCST.ITEM_at_REQUIRE_NEW_REV_, true);
 	}
 
 	private TWDestEvol getDestEvol(IAttributeType attrDef) {
-		return attrDef.getAttribute(CadseGCST.LINK_at_TWDEST_EVOL_);
+		return attrDef.getAttribute(CadseGCST.LINK_TYPE_at_TWDEST_EVOL_);
 	}
 
 	private TWEvol getEvol(IAttributeType attrDef) {
@@ -141,7 +146,8 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 
 	private boolean isRequireNewRev(Item modifiedItem) {
 		// TODO change to default value....
-		Object ret = modifiedItem.getAttribute(CadseGCST.ITEM_at_REQUIRE_NEW_REV_);
+		Object ret = modifiedItem
+				.getAttribute(CadseGCST.ITEM_at_REQUIRE_NEW_REV_);
 		if (ret == null) {
 			return true;
 		}
@@ -160,7 +166,8 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 	 *            the attribute definition
 	 * @throws CadseException
 	 */
-	private void computeAndSetAttrModified(WLWCOperation attOperation, ItemDelta modifiedItem, IAttributeType attrDef)
+	private void computeAndSetAttrModified(WLWCOperation attOperation,
+			ItemDelta modifiedItem, IAttributeType attrDef)
 			throws CadseException {
 		// manage old cadse
 		if (attrDef == null || !attrDef.isResolved()) {
@@ -190,7 +197,8 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 	 * @return true if an attribute (which can be a link type) should be
 	 *         considered as modified.
 	 */
-	private boolean computeAttrModified(WLWCOperation attOperation, IAttributeType<?> attrDef) {
+	private boolean computeAttrModified(WLWCOperation attOperation,
+			IAttributeType<?> attrDef) {
 		// ignore transient
 		TWEvol attrEvol = getEvol(attrDef);
 		if (attrEvol.equals(TWEvol.twTransient)) {
@@ -200,7 +208,8 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 		// compute if the attribute must be considered as modified
 		if (attOperation instanceof SetAttributeOperation) {
 			SetAttributeOperation setAttrOp = (SetAttributeOperation) attOperation;
-			return attrDef.isTWValueModified(setAttrOp.getOldValue(), setAttrOp.getCurrentValue());
+			return attrDef.isTWValueModified(setAttrOp.getOldValue(), setAttrOp
+					.getCurrentValue());
 		}
 
 		if (attOperation instanceof LinkDelta) {
@@ -230,18 +239,21 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 	 *            new modified flag value
 	 * @throws CadseException
 	 */
-	private void setAttrModified(ItemDelta item, IAttributeType<?> attrDef, boolean modifiedVal) throws CadseException {
+	private void setAttrModified(ItemDelta item, IAttributeType<?> attrDef,
+			boolean modifiedVal) throws CadseException {
 		item.setTWAttributeModified(attrDef, modifiedVal);
 	}
 
 	@Override
-	public void notifyChangeAttribute(LogicalWorkspaceTransaction wc, LinkDelta link, SetAttributeOperation attOperation)
+	public void notifyChangeAttribute(LogicalWorkspaceTransaction wc,
+			LinkDelta link, SetAttributeOperation attOperation)
 			throws CadseException {
 		// do nothing
 	}
 
 	@Override
-	public void notifyChangeLinkOrder(LogicalWorkspaceTransaction wc, LinkDelta link, OrderOperation orderOperation)
+	public void notifyChangeLinkOrder(LogicalWorkspaceTransaction wc,
+			LinkDelta link, OrderOperation orderOperation)
 			throws CadseException {
 		LinkType linkType = link.getLinkType();
 		ItemDelta modifiedItem = link.getSource();
@@ -250,7 +262,8 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 	}
 
 	@Override
-	public void notifyCreatedItem(LogicalWorkspaceTransaction wc, ItemDelta item) throws CadseException, CadseException {
+	public void notifyCreatedItem(LogicalWorkspaceTransaction wc, ItemDelta item)
+			throws CadseException, CadseException {
 		/*
 		 * A created item is RequireNewRev and RevModified.
 		 */
@@ -259,14 +272,16 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 	}
 
 	@Override
-	public void notifyCreatedLink(LogicalWorkspaceTransaction wc, LinkDelta link) throws CadseException, CadseException {
+	public void notifyCreatedLink(LogicalWorkspaceTransaction wc, LinkDelta link)
+			throws CadseException, CadseException {
 		// manage case of attribute modified attribute value
 		LinkType linkType = link.getLinkType();
 		ItemDelta modifiedItem = link.getSource();
 		if (linkType.equals(CadseGCST.ITEM_lt_MODIFIED_ATTRIBUTES)) {
 			// get attribute (link type) which has been modified
 			ItemDelta attrDef = link.getDestination();
-			TWEvol attrEvol = attrDef.getAttribute(CadseGCST.ATTRIBUTE_at_TWEVOL_);
+			TWEvol attrEvol = attrDef
+					.getAttribute(CadseGCST.ATTRIBUTE_at_TWEVOL_);
 
 			if (!isRequireNewRev(modifiedItem)) {
 				if (attrEvol.equals(TWEvol.twMutable)) {
@@ -274,12 +289,14 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 				}
 
 				if (attrEvol.equals(TWEvol.twImmutable)
-						&& ((Boolean) attrDef.getAttribute(CadseGCST.ATTRIBUTE_at_TWREV_SPECIFIC_))) {
+						&& ((Boolean) attrDef
+								.getAttribute(CadseGCST.ATTRIBUTE_at_TWREV_SPECIFIC_))) {
 					setRequireNewRev(modifiedItem);
 				}
 
 				if (attrEvol.equals(TWEvol.twImmutable)
-						&& (!(Boolean) attrDef.getAttribute(CadseGCST.ATTRIBUTE_at_TWREV_SPECIFIC_))) {
+						&& (!(Boolean) attrDef
+								.getAttribute(CadseGCST.ATTRIBUTE_at_TWREV_SPECIFIC_))) {
 					// TODO change item id, set version to null, set item state
 					// to newRev
 
@@ -308,18 +325,21 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 			; // TODO should notify of a warning
 		} else if (TWDestEvol.immutable.equals(ltDestEvol)) {
 			setRequireNewRev(modifiedItem);
-		} else if (TWDestEvol.mutable.equals(ltDestEvol) || TWDestEvol.effective.equals(ltDestEvol)) {
+		} else if (TWDestEvol.mutable.equals(ltDestEvol)
+				|| TWDestEvol.effective.equals(ltDestEvol)) {
 			setRevModified(modifiedItem);
 		}
 	}
 
 	@Override
-	public void notifyDeletedItem(LogicalWorkspaceTransaction wc, ItemDelta item) throws CadseException, CadseException {
+	public void notifyDeletedItem(LogicalWorkspaceTransaction wc, ItemDelta item)
+			throws CadseException, CadseException {
 		// do nothing
 	}
 
 	@Override
-	public void notifyDeletedLink(LogicalWorkspaceTransaction wc, LinkDelta link) throws CadseException, CadseException {
+	public void notifyDeletedLink(LogicalWorkspaceTransaction wc, LinkDelta link)
+			throws CadseException, CadseException {
 		// manage case of attribute modified attribute value
 		LinkType linkType = link.getLinkType();
 		if (linkType.equals(CadseGCST.ITEM_lt_MODIFIED_ATTRIBUTES)) {
@@ -329,7 +349,8 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 
 		// ignore deleting items
 		ItemDelta modifiedItem = link.getSource();
-		if ((modifiedItem == null) || (modifiedItem.isDeleted() || !modifiedItem.exists())) {
+		if ((modifiedItem == null)
+				|| (modifiedItem.isDeleted() || !modifiedItem.exists())) {
 			return;
 		}
 
@@ -338,7 +359,9 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 	}
 
 	@Override
-	public void notifyLoadedItem(LogicalWorkspaceTransaction workspaceLogiqueWorkingCopy, List<ItemDelta> loadedItems) {
+	public void notifyLoadedItem(
+			LogicalWorkspaceTransaction workspaceLogiqueWorkingCopy,
+			List<ItemDelta> loadedItems) {
 		// TODO implement it
 	}
 

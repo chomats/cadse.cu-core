@@ -31,12 +31,13 @@ import fr.imag.adele.cadse.core.ui.UIPlatform;
 import fr.imag.adele.cadse.core.util.Convert;
 import fr.imag.adele.cadse.util.NLS;
 
-public class LongAttributeType extends AttributeType implements fr.imag.adele.cadse.core.attribute.LongAttributeType {
+public class LongAttributeType extends AttributeType implements
+		fr.imag.adele.cadse.core.attribute.LongAttributeType {
 	/** The value. */
-	private long	value;
+	private long value;
 
-	private Long	minValue;
-	private Long	maxValue;
+	private Long minValue;
+	private Long maxValue;
 
 	public LongAttributeType(UUID id, String name, int flag) {
 		super(id, name, flag);
@@ -46,9 +47,9 @@ public class LongAttributeType extends AttributeType implements fr.imag.adele.ca
 		super(item);
 	}
 
-    public LongAttributeType() {
-        
-    }
+	public LongAttributeType() {
+
+	}
 
 	public Class<Long> getAttributeType() {
 		return Long.class;
@@ -66,7 +67,7 @@ public class LongAttributeType extends AttributeType implements fr.imag.adele.ca
 	public Long getDefaultValue() {
 		return value;
 	}
-	
+
 	@Override
 	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
 		if (CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_ == type) {
@@ -86,8 +87,11 @@ public class LongAttributeType extends AttributeType implements fr.imag.adele.ca
 
 	@Override
 	public CheckStatus check(Item item, Object value) {
-		if (!getFlag(CAN_BE_UNDEFINED) && (value == NULL || value.toString().length() == 0 || value.equals("null"))) { //$NON-NLS-1$
-			return new CheckStatus(UIPlatform.ERROR, Messages.cannot_be_undefined);
+		if (!getFlag(CAN_BE_UNDEFINED)
+				&& (value == NULL || value.toString().length() == 0 || value
+						.equals("null"))) { //$NON-NLS-1$
+			return new CheckStatus(UIPlatform.ERROR,
+					Messages.cannot_be_undefined);
 		}
 		if (value == null) {
 			return null;
@@ -109,12 +113,14 @@ public class LongAttributeType extends AttributeType implements fr.imag.adele.ca
 		long v = ((Long) value).longValue();
 		if (minValue != null) {
 			if (v < minValue.longValue()) {
-				return new CheckStatus(UIPlatform.ERROR, Messages.value_must_be_upper , minValue.intValue());
+				return new CheckStatus(UIPlatform.ERROR,
+						Messages.value_must_be_upper, minValue.intValue());
 			}
 		}
 		if (maxValue != null) {
 			if (v > maxValue.longValue()) {
-				return new CheckStatus(UIPlatform.ERROR, Messages.value_must_be_lower, maxValue.intValue());
+				return new CheckStatus(UIPlatform.ERROR,
+						Messages.value_must_be_lower, maxValue.intValue());
 			}
 		}
 
@@ -133,8 +139,9 @@ public class LongAttributeType extends AttributeType implements fr.imag.adele.ca
 			return (Long) v;
 		}
 		if (v instanceof Number)
-			return ((Number)v).longValue();
-		throw new ClassCastException(NLS.bind(Messages.cannot_convert_to_long, v.getClass()));
+			return ((Number) v).longValue();
+		throw new ClassCastException(NLS.bind(Messages.cannot_convert_to_long,
+				v.getClass()));
 	}
 
 	@Override

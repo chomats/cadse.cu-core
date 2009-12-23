@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ipojo>
+<ipojo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://felix.apache.org/ipojo/schemas/CURRENT/core.xsd ">
 	<component immediate="true" classname="fr.imag.adele.cadse.core.impl.internal.CadseDomainImpl" factory="fr.imag.adele.cadse.core.impl.internal.CadseDomainImpl" architecture="true">
 		<callback transition="validate" method="start"/>
 		<callback transition="invalidate" method="stop"/>
 		<provides specification="fr.imag.adele.cadse.core.CadseDomain">
 			<property name="sam.domain.root" value="Workspace" type="java.lang.String"/>
 		</provides>
+		<requires field="_modelDB2Service"></requires>
+		<requires field="_initModelService"></requires>
+		<requires field="_platformService"></requires>
+		<requires field="_modelDBService"></requires>
+		
 	</component>
-	<instance component="fr.imag.adele.cadse.core.impl.internal.CadseDomainImpl" name="fr.imag.adele.cadse.core.impl.internal.CadseDomainImpl"/>
+	<instance component="fr.imag.adele.cadse.core.impl.internal.CadseDomainImpl" 
+			name="fr.imag.adele.cadse.core.impl.internal.CadseDomainImpl"/>
 </ipojo>

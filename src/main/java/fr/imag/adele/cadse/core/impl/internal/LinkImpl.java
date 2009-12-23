@@ -42,11 +42,11 @@ import fr.imag.adele.cadse.util.ArraysUtil;
 import fr.imag.adele.teamwork.db.ModelVersionDBException;
 
 /**
- * A link is a relation between two items. Each link has a type <tt>lt</tt>
- * and a kind <tt>kind</tt>. Value of <tt>kind</tt> is determined following
- * value <tt>kind</tt> of type <tt>lt</tt>. A link has origin is
- * <tt>source</tt> and destination is <tt>destination</tt>. It has also two
- * caracteristics hidden and readOnly.
+ * A link is a relation between two items. Each link has a type <tt>lt</tt> and
+ * a kind <tt>kind</tt>. Value of <tt>kind</tt> is determined following value
+ * <tt>kind</tt> of type <tt>lt</tt>. A link has origin is <tt>source</tt> and
+ * destination is <tt>destination</tt>. It has also two caracteristics hidden
+ * and readOnly.
  * 
  * @author nguyent
  * @version 6
@@ -54,36 +54,35 @@ import fr.imag.adele.teamwork.db.ModelVersionDBException;
  */
 
 /*
- * 2/09/05 - correction du champ type qui a �t� chang� fortuitement en LinkType. -
- * ajout du concept de item orphelin : un lien ayant un item orphelin comme
- * source ne peut etre r�solu. - ajout de la method getItemSourceId (racourci de
- * source.getId())
- * 
+ * 2/09/05 - correction du champ type qui a �t� chang� fortuitement en
+ * LinkType. - ajout du concept de item orphelin : un lien ayant un item
+ * orphelin comme source ne peut etre r�solu. - ajout de la method
+ * getItemSourceId (racourci de source.getId())
  */
 
 public class LinkImpl extends DBObject implements Link {
 
-	
 	/** The source. */
-	private final Item		source;
+	private final Item source;
 
 	/** The destination. */
-	private Item			destination;	// can not be null but
+	private Item destination; // can not be null but
 	// can be not resolved
 
 	/** The link type. */
-	private final LinkType	linkType;
+	private final LinkType linkType;
 
 	/** The kind. */
-	private int				kind;
+	private int kind;
 
 	/** The info. */
-	private String			info;
+	private String info;
 
 	/** The version. */
-	private int				version;
-	
-	int[]	compatibleVersions	= null;
+	private int version;
+
+	int[] compatibleVersions = null;
+
 	/**
 	 * Instanciate an unresolved link. <br/>
 	 * 
@@ -91,12 +90,12 @@ public class LinkImpl extends DBObject implements Link {
 	 * by Item in order to assure model's global coherence when creating a new
 	 * link.
 	 * 
-	 * @param source :
-	 *            link's origin.
-	 * @param lt :
-	 *            link type.
-	 * @param destination :
-	 *            link's destination id.
+	 * @param source
+	 *            : link's origin.
+	 * @param lt
+	 *            : link type.
+	 * @param destination
+	 *            : link's destination id.
 	 */
 	LinkImpl(int objectId, Item source, LinkType lt, Item destination) {
 		this(objectId, source, lt, destination, true);
@@ -109,38 +108,41 @@ public class LinkImpl extends DBObject implements Link {
 	 * by Item in order to assure model's global coherence when creating a new
 	 * link.
 	 * 
-	 * @param source :
-	 *            link's origin.
-	 * @param lt :
-	 *            link type.
+	 * @param source
+	 *            : link's origin.
+	 * @param lt
+	 *            : link type.
 	 * @param destination
 	 *            the destination
 	 * @param addInIncommingList
 	 *            the add in incomming list
-	 * @param dblw 
+	 * @param dblw
 	 */
-	LinkImpl(int objectId, 
-			Item source, LinkType lt, Item destination, boolean addInIncommingList) {
+	LinkImpl(int objectId, Item source, LinkType lt, Item destination,
+			boolean addInIncommingList) {
 		super(objectId);
 		if (objectId == -1) {
 			try {
-				objectId = _dblw.getDB().createLinkIfNeed(lt.getObjectId(), source.getObjectId(), destination.getObjectId());
+				objectId = _dblw.getDB().createLinkIfNeed(lt.getObjectId(),
+						source.getObjectId(), destination.getObjectId());
 			} catch (ModelVersionDBException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-        assert source != null;
+		assert source != null;
 		assert destination != null;
 		if (lt == null && this instanceof LinkType) {
 			lt = (LinkType) this;
 		}
 		assert lt != null;
 		if (lt.isNatif() && destination.isResolved()) {
-			throw new IllegalArgumentException("cannot create a link natif resolved " + lt.getName());
+			throw new IllegalArgumentException(
+					"cannot create a link natif resolved " + lt.getName());
 		}
 		if (lt == null) {
-			throw new NullPointerException("link " + source + " -- >" + destination + " null type");
+			throw new NullPointerException("link " + source + " -- >"
+					+ destination + " null type");
 		}
 		this.source = source;
 		this.destination = destination;
@@ -168,7 +170,8 @@ public class LinkImpl extends DBObject implements Link {
 		}
 	}
 
-	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
+	public boolean commitSetAttribute(IAttributeType<?> type, String key,
+			Object value) {
 		if (key.equals(CadseGCST.LINK_TYPE_TYPE_at_VERSION_)) {
 			this.version = Convert.toInt(value, null, -1);
 			return true;
@@ -179,8 +182,9 @@ public class LinkImpl extends DBObject implements Link {
 	/**
 	 * Delete a link.
 	 * 
-	 * NOTE: D�tacher les references de la source et de la destination point� �
-	 * ce lien. Si la destination de ce lien est un contenu, supprimer le aussi.
+	 * NOTE: D�tacher les references de la source et de la destination
+	 * point� � ce lien. Si la destination de ce lien est un contenu,
+	 * supprimer le aussi.
 	 */
 	@Deprecated
 	public void delete() throws CadseException {
@@ -203,7 +207,8 @@ public class LinkImpl extends DBObject implements Link {
 	public boolean equals(Object obj) {
 		if (obj instanceof Link) {
 			Link l = (Link) obj;
-			return l.getSource().equals(getSource()) && l.getLinkType().equals(getLinkType())
+			return l.getSource().equals(getSource())
+					&& l.getLinkType().equals(getLinkType())
 					&& l.getDestinationId().equals(getDestinationId());
 		}
 		return super.equals(obj);
@@ -234,7 +239,8 @@ public class LinkImpl extends DBObject implements Link {
 		// cas particulier si la source est dans l'etat new, le lien n'est pas
 		// resolu.
 		// nous faisons une resolution lazy.
-		if (source.isOrphan() && !(destination.isResolved() && destination.isOrphan())) {
+		if (source.isOrphan()
+				&& !(destination.isResolved() && destination.isOrphan())) {
 			return source.getLogicalWorkspace().getItem(destination.getId());
 		}
 		return isLinkResolved() ? destination : null;
@@ -258,7 +264,6 @@ public class LinkImpl extends DBObject implements Link {
 	public UUID getDestinationId() {
 		return destination.getId();
 	}
-
 
 	/*
 	 * (non-Javadoc)
@@ -299,9 +304,11 @@ public class LinkImpl extends DBObject implements Link {
 	@Override
 	public <T> T getLinkAttributeOwner(IAttributeType<T> attDef) {
 		try {
-			return (T) _dblw.getDB().getObjectValue(getObjectId(), attDef.getObjectId());
+			return (T) _dblw.getDB().getObjectValue(getObjectId(),
+					attDef.getObjectId());
 		} catch (ModelVersionDBException e) {
-			throw new CadseIllegalArgumentException("Cannot get attribute of {0}", e, attDef);
+			throw new CadseIllegalArgumentException(
+					"Cannot get attribute of {0}", e, attDef);
 		}
 	}
 
@@ -319,8 +326,9 @@ public class LinkImpl extends DBObject implements Link {
 	 * 
 	 * @return destination of this link.
 	 * 
-	 * NOTE: Si ce lien est non-resolu, avant de retouner l'objet, essayer de
-	 * r�cup�rer cet item dans le workspace. Si non trouv�, retourner null.
+	 *         NOTE: Si ce lien est non-resolu, avant de retouner l'objet,
+	 *         essayer de r�cup�rer cet item dans le workspace. Si non
+	 *         trouv�, retourner null.
 	 */
 	public Item getResolvedDestination() {
 		return getDestination(true);
@@ -373,7 +381,8 @@ public class LinkImpl extends DBObject implements Link {
 	public int hashCode() {
 		if (_objectId != -1)
 			return _objectId;
-		return getSource().getObjectId()^ getLinkType().getObjectId() ^ getDestinationId().hashCode();
+		return getSource().getObjectId() ^ getLinkType().getObjectId()
+				^ getDestinationId().hashCode();
 	}
 
 	/*
@@ -425,8 +434,8 @@ public class LinkImpl extends DBObject implements Link {
 	public boolean isInterCadseLink() {
 		UUID scId = getSourceCadseId();
 		UUID dcId = getDestinationCadseId();
-		return !((scId == null && dcId == null) 
-				|| (scId != null && dcId != null && scId.equals(dcId)));
+		return !((scId == null && dcId == null) || (scId != null
+				&& dcId != null && scId.equals(dcId)));
 	}
 
 	/**
@@ -457,8 +466,6 @@ public class LinkImpl extends DBObject implements Link {
 		return (kind & LinkType.PART) != 0;
 	}
 
-	
-
 	/**
 	 * Checks if is read only.
 	 * 
@@ -488,25 +495,31 @@ public class LinkImpl extends DBObject implements Link {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.Link#moveAfter(fr.imag.adele.cadse.core.Link)
+	 * @see
+	 * fr.imag.adele.cadse.core.Link#moveAfter(fr.imag.adele.cadse.core.Link)
 	 */
 	public void moveAfter(Link link) throws CadseException {
 
 		// ((ItemImpl)this.source).moveAfter(this,link);
 
-		LogicalWorkspaceTransaction copy = getSource().getLogicalWorkspace().createTransaction();
-		copy.getItem(getSourceId()).getOutgoingLinkOperation(this).moveAfter(link);
+		LogicalWorkspaceTransaction copy = getSource().getLogicalWorkspace()
+				.createTransaction();
+		copy.getItem(getSourceId()).getOutgoingLinkOperation(this).moveAfter(
+				link);
 		copy.commit();
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.Link#moveBefore(fr.imag.adele.cadse.core.Link)
+	 * @see
+	 * fr.imag.adele.cadse.core.Link#moveBefore(fr.imag.adele.cadse.core.Link)
 	 */
 	public void moveBefore(Link link) throws CadseException {
-		LogicalWorkspaceTransaction copy = getSource().getLogicalWorkspace().createTransaction();
-		copy.getItem(getSourceId()).getOutgoingLinkOperation(this).moveBefore(link);
+		LogicalWorkspaceTransaction copy = getSource().getLogicalWorkspace()
+				.createTransaction();
+		copy.getItem(getSourceId()).getOutgoingLinkOperation(this).moveBefore(
+				link);
 		copy.commit();
 		// ((ItemImpl)this.source).moveBefore(this,link);
 	}
@@ -524,8 +537,8 @@ public class LinkImpl extends DBObject implements Link {
 	/**
 	 * Resolve a link.
 	 * 
-	 * NOTE: Ce m�thode essaie de r�cup�rer par id dans le workspace l'object
-	 * destination de ce lien .
+	 * NOTE: Ce m�thode essaie de r�cup�rer par id dans le workspace
+	 * l'object destination de ce lien .
 	 * 
 	 * @return true, if resolve
 	 */
@@ -606,8 +619,10 @@ public class LinkImpl extends DBObject implements Link {
 		}
 
 		try {
-			destination = ((LogicalWorkspaceImpl) source.getLogicalWorkspace()).getItem(destination.getId(),
-					destination.getType(), destination.getQualifiedName(), destination.getName());
+			destination = ((LogicalWorkspaceImpl) source.getLogicalWorkspace())
+					.getItem(destination.getId(), destination.getType(),
+							destination.getQualifiedName(), destination
+									.getName());
 		} catch (CadseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -616,5 +631,4 @@ public class LinkImpl extends DBObject implements Link {
 		destination.addIncomingLink(this, false);
 	}
 
-	
 }

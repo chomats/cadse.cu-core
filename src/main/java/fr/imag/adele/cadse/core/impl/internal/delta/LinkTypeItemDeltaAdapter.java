@@ -39,7 +39,8 @@ import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.util.IErrorCollector;
 import fr.imag.adele.cadse.util.OrderWay;
 
-public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements LinkType {
+public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
+		LinkType {
 
 	public LinkTypeItemDeltaAdapter(ItemDelta itemDelta) {
 		super(itemDelta);
@@ -307,7 +308,7 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements Li
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 	@Override
 	public boolean containsPartChild(Item item) {
 		// TODO Auto-generated method stub
@@ -758,7 +759,6 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements Li
 
 	}
 
-
 	@Override
 	public Link setOutgoingItem(LinkType linkType, Item dest)
 			throws CadseException {
@@ -774,7 +774,7 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements Li
 	}
 
 	@Override
-	public void setReadOnly(boolean readOnly)  {
+	public void setReadOnly(boolean readOnly) {
 		// TODO Auto-generated method stub
 
 	}
@@ -1117,7 +1117,6 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements Li
 		return false;
 	}
 
-
 	@Override
 	public void setHidden(boolean hidden) {
 		// TODO Auto-generated method stub
@@ -1136,7 +1135,6 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements Li
 
 	}
 
-
 	@Override
 	public String getCSTName() {
 		// TODO Auto-generated method stub
@@ -1146,13 +1144,13 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements Li
 	@Override
 	public void setCSTName(String cst) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setIsGroup(boolean b) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -1201,13 +1199,13 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements Li
 	@Override
 	public void setFinal(boolean flag) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setHiddenInComputedPages(boolean flag) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -1240,26 +1238,26 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements Li
 		return null;
 	}
 
+	@Override
+	public <T> T adapt(Class<T> clazz) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 
-    @Override
-    public <T> T adapt(Class<T> clazz) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+	@Override
+	public void addLogicalWorkspaceTransactionListener(
+			LogicalWorkspaceTransactionListener listener) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 
+	@Override
+	public void removeLogicalWorkspaceTransactionListener(
+			LogicalWorkspaceTransactionListener listener) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 
-    @Override
-    public void addLogicalWorkspaceTransactionListener(LogicalWorkspaceTransactionListener listener) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void removeLogicalWorkspaceTransactionListener(LogicalWorkspaceTransactionListener listener) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public LogicalWorkspaceTransactionListener[] getLogicalWorkspaceTransactionListener() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+	@Override
+	public LogicalWorkspaceTransactionListener[] getLogicalWorkspaceTransactionListener() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 
 }

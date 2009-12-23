@@ -49,7 +49,8 @@ import fr.imag.adele.cadse.core.ui.view.FilterContext;
 import fr.imag.adele.cadse.core.ui.view.NewContext;
 import fr.imag.adele.cadse.util.ArraysUtil;
 
-public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, TypeDefinition.Internal {
+public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
+		TypeDefinition.Internal {
 
 	/**
 	 * old string
@@ -57,7 +58,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 	 * @deprecated use {@link CadseGCST#ITEM_TYPE_at_QUALIFIED_NAME_}
 	 */
 	@Deprecated
-	static final String							UNIQUE_NAME_KEY				= "#unique-name";
+	static final String UNIQUE_NAME_KEY = "#unique-name";
 
 	/**
 	 * old string
@@ -65,7 +66,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 	 * @deprecated use {@link CadseGCST#ITEM_TYPE_at_DISPLAY_NAME_}
 	 */
 	@Deprecated
-	static final String							DISPLAY_NAME_KEY			= "#display-name";
+	static final String DISPLAY_NAME_KEY = "#display-name";
 
 	/**
 	 * old string
@@ -73,35 +74,31 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 	 * @deprecated use {@link CadseGCST#ITEM_TYPE_at_NAME_}
 	 */
 	@Deprecated
-	public static final String					SHORT_NAME_KEY				= "#short-name";
+	public static final String SHORT_NAME_KEY = "#short-name";
 
 	/*
 	 * old string
 	 */
 	@Deprecated
-	public static final String					ATTR_SHORT_NAME				= "ws::private::short-name";
-	
+	public static final String ATTR_SHORT_NAME = "ws::private::short-name";
+
 	/** The Constant EMPTY_ACTION_CONTRIBUTORS. */
-	public static final IActionContributor[]	EMPTY_ACTION_CONTRIBUTORS	= new IActionContributor[0];
+	public static final IActionContributor[] EMPTY_ACTION_CONTRIBUTORS = new IActionContributor[0];
 
-        public TypeDefinitionImpl() {
-        }
+	public TypeDefinitionImpl() {
+	}
 
-
-
-	public TypeDefinitionImpl(UUID id,
-			ItemType type, String qualifiedName, String name, Item parent,
-			LinkType lt) throws CadseException {
+	public TypeDefinitionImpl(UUID id, ItemType type, String qualifiedName,
+			String name, Item parent, LinkType lt) throws CadseException {
 		super(id, type, qualifiedName, name, parent, lt);
 	}
 
-	public TypeDefinitionImpl(UUID id, ItemType it,
-			String uniqueName, String shortName) {
+	public TypeDefinitionImpl(UUID id, ItemType it, String uniqueName,
+			String shortName) {
 		super(id, it, uniqueName, shortName);
 	}
 
-	public TypeDefinitionImpl(ItemType itemtype,
-			ItemDelta desc) {
+	public TypeDefinitionImpl(ItemType itemtype, ItemDelta desc) {
 		super(itemtype, desc);
 	}
 
@@ -109,29 +106,28 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 		super(type);
 	}
 
-	protected IAttributeType<?>[]	_attributesDefinitions	= null;
-	protected IPage[]               _creationPages		= null;
-	protected IPage[]		_modificationPages	= null;
-	protected UIField[]		_fields			= null;
-	protected UIValidator[]		_validators		= null;
-	protected GroupOfAttributes[]	_groupOfAttributes	= null;
-	
+	protected IAttributeType<?>[] _attributesDefinitions = null;
+	protected IPage[] _creationPages = null;
+	protected IPage[] _modificationPages = null;
+	protected UIField[] _fields = null;
+	protected UIValidator[] _validators = null;
+	protected GroupOfAttributes[] _groupOfAttributes = null;
+
 	/** The action contributors. */
-	protected IActionContributor[]	_actionContributors	= null;
-	
-	
-	protected String									_cadseName					= null;
+	protected IActionContributor[] _actionContributors = null;
+
+	protected String _cadseName = null;
 
 	int _it_definedflag;
 	int _it_flag;
-	
+
 	public boolean getITFlag(int f) {
 		if ((_it_definedflag & f) == 0) {
 			return (Item.DEFAULT_FLAG_VALUE & f) != 0;
 		}
 		return (_it_flag & f) != 0;
 	}
-	
+
 	public boolean isITDefinedFlag(int f) {
 		return (_it_definedflag & f) != 0;
 	}
@@ -146,7 +142,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 		this._it_definedflag |= f;
 		return oldv != flag;
 	}
-	
+
 	/**
 	 * return les actions contributions du propre du type. cf
 	 * {@link #getAllActionContribution()};
@@ -154,19 +150,24 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 	 * @return the action contribution
 	 */
 	public IActionContributor[] getActionContribution() {
-		return _actionContributors == null ? EMPTY_ACTION_CONTRIBUTORS : _actionContributors;
+		return _actionContributors == null ? EMPTY_ACTION_CONTRIBUTORS
+				: _actionContributors;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see fr.imag.adele.cadse.core.ItemType#getCreationPage()
 	 */
-	/* (non-Javadoc)
-	 * @see fr.imag.adele.cadse.core.impl.internal.TypeDefinition#getCreationPage()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * fr.imag.adele.cadse.core.impl.internal.TypeDefinition#getCreationPage()
 	 */
 	public IPage[] getCreationPage() {
-		return this._creationPages == null ? PageRuntimeModel.EMPTY_PAGE : this._creationPages;
+		return this._creationPages == null ? PageRuntimeModel.EMPTY_PAGE
+				: this._creationPages;
 	}
 
 	/*
@@ -174,21 +175,28 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 	 * 
 	 * @see fr.imag.adele.cadse.core.ItemType#getModificationPage()
 	 */
-	/* (non-Javadoc)
-	 * @see fr.imag.adele.cadse.core.impl.internal.TypeDefinition#getModificationPage()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * fr.imag.adele.cadse.core.impl.internal.TypeDefinition#getModificationPage
+	 * ()
 	 */
 	public IPage[] getModificationPage() {
-		return this._modificationPages == null ? PageRuntimeModel.EMPTY_PAGE : this._modificationPages;
+		return this._modificationPages == null ? PageRuntimeModel.EMPTY_PAGE
+				: this._modificationPages;
 	}
-	
-	protected void collectOutgoingLinks(LinkType linkType, CollectedReflectLink ret) {
+
+	protected void collectOutgoingLinks(LinkType linkType,
+			CollectedReflectLink ret) {
 		if (linkType == CadseGCST.TYPE_DEFINITION_lt_CADSE) {
-			ret.addOutgoing(CadseGCST.TYPE_DEFINITION_lt_CADSE, getCadse(), Item.IS_HIDDEN);
+			ret.addOutgoing(CadseGCST.TYPE_DEFINITION_lt_CADSE, getCadse(),
+					Item.IS_HIDDEN);
 			return;
 		}
 		super.collectOutgoingLinks(linkType, ret);
 	}
-	
+
 	@Override
 	public Link commitLoadCreateLink(LinkType lt, Item destination)
 			throws CadseException {
@@ -203,8 +211,9 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 			}
 			if (destination.getType() == CadseGCST.LINK_TYPE) {
 				if (!(destination instanceof LinkType)) {
-					throw new CadseException("Destination is not a LinkType : {0}", destination
-							.getQualifiedDisplayName());
+					throw new CadseException(
+							"Destination is not a LinkType : {0}", destination
+									.getQualifiedDisplayName());
 				}
 				LinkType atlt = (LinkType) destination;
 				if (!this.m_outgoings.contains(atlt)) {
@@ -216,28 +225,34 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 			}
 
 			if (!(destination instanceof IAttributeType)) {
-				throw new CadseException("Destination is not an IAttributeType : {0}", destination
-						.getQualifiedDisplayName());
+				throw new CadseException(
+						"Destination is not an IAttributeType : {0}",
+						destination.getQualifiedDisplayName());
 			}
 			return _addAttributeType((IAttributeType<?>) destination);
 		}
-		
+
 		if (lt == CadseGCST.TYPE_DEFINITION_lt_CREATION_PAGES) {
-			this._creationPages = ArraysUtil.add(IPage.class, this._creationPages, (IPage) destination);
-			return new ReflectLink(lt, this, destination, this._creationPages.length - 1);
+			this._creationPages = ArraysUtil.add(IPage.class,
+					this._creationPages, (IPage) destination);
+			return new ReflectLink(lt, this, destination,
+					this._creationPages.length - 1);
 		}
 		if (lt == CadseGCST.TYPE_DEFINITION_lt_MODIFICATION_PAGES) {
-			this._modificationPages = ArraysUtil.add(IPage.class, this._modificationPages, (IPage) destination);
-			return new ReflectLink(lt, this, destination, this._modificationPages.length - 1);
+			this._modificationPages = ArraysUtil.add(IPage.class,
+					this._modificationPages, (IPage) destination);
+			return new ReflectLink(lt, this, destination,
+					this._modificationPages.length - 1);
 		}
 		return super.commitLoadCreateLink(lt, destination);
 	}
-	
+
 	@Override
 	public synchronized void removeOutgoingLink(Link link, boolean notifie) {
 		LinkType lt = link.getLinkType();
 		Item destination = link.getDestination();
-		if (lt == CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES && destination.isResolved()) {
+		if (lt == CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES
+				&& destination.isResolved()) {
 			removeAttributeType((IAttributeType<?>) destination);
 			if (destination.getType() == CadseGCST.LINK_TYPE) {
 				LinkType atlt = (LinkType) destination;
@@ -253,39 +268,42 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 			}
 			return;
 		}
-		if (lt == CadseGCST.TYPE_DEFINITION_lt_CREATION_PAGES && destination.isResolved()) {
-			this._creationPages = ArraysUtil.remove(IPage.class, this._creationPages, (IPage) destination);
+		if (lt == CadseGCST.TYPE_DEFINITION_lt_CREATION_PAGES
+				&& destination.isResolved()) {
+			this._creationPages = ArraysUtil.remove(IPage.class,
+					this._creationPages, (IPage) destination);
 			return;
 		}
-		if (lt == CadseGCST.TYPE_DEFINITION_lt_MODIFICATION_PAGES && destination.isResolved()) {
-			this._modificationPages = ArraysUtil.remove(IPage.class, this._modificationPages, (IPage) destination);
+		if (lt == CadseGCST.TYPE_DEFINITION_lt_MODIFICATION_PAGES
+				&& destination.isResolved()) {
+			this._modificationPages = ArraysUtil.remove(IPage.class,
+					this._modificationPages, (IPage) destination);
 			return;
 		}
 		super.removeOutgoingLink(link, notifie);
 	}
-	
 
-	
-	public LinkType createLinkType(UUID uuid, String id, int kind, int min, int max, String selection,
-			TypeDefinition destination) {
-		return createLinkType(uuid, -1, id, kind, min, max, selection, destination);
+	public LinkType createLinkType(UUID uuid, String id, int kind, int min,
+			int max, String selection, TypeDefinition destination) {
+		return createLinkType(uuid, -1, id, kind, min, max, selection,
+				destination);
 	}
-	
-	public LinkType createLinkType(UUID uuid, int intID, String name, int _kind, int min, int max,
-			String selection, TypeDefinition destination) {
+
+	public LinkType createLinkType(UUID uuid, int intID, String name,
+			int _kind, int min, int max, String selection,
+			TypeDefinition destination) {
 		LinkType ret = null;
-		
 
 		preconditions_createLinkType(name, _kind, min, max, destination);
 
-		ret = new LinkTypeImpl(uuid, _kind, this, name, intID, min, max, selection, destination);
+		ret = new LinkTypeImpl(uuid, _kind, this, name, intID, min, max,
+				selection, destination);
 		Link l = addOutgoingLinkType(ret);
 		return ret;
 	}
-	
 
-	public LinkType createLinkType(UUID uuid, String id, int kind, int min, int max, String selection,
-			LinkType inverse) throws CadseException {
+	public LinkType createLinkType(UUID uuid, String id, int kind, int min,
+			int max, String selection, LinkType inverse) throws CadseException {
 		return createLinkType(uuid, -1, id, kind, min, max, selection, inverse);
 	}
 
@@ -306,7 +324,8 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 		// CadseGCST.LINK_TYPE_lt_DESTINATION);
 		// addInconmmingLink(ret, ret.getInverse(),
 		// CadseGCST.LINK_TYPE_lt_INVERSE_LINK);
-		// addInconmmingLink(ret, ret.getSource(), CadseGCST.LINK_TYPE_lt_SOURCE);
+		// addInconmmingLink(ret, ret.getSource(),
+		// CadseGCST.LINK_TYPE_lt_SOURCE);
 		return l;
 	}
 
@@ -334,8 +353,6 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 		}
 	}
 
-	
-
 	/**
 	 * Get an ougoing link type by id.
 	 * 
@@ -348,7 +365,8 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 		return _getOutgoingLinkType(this, name);
 	}
 
-	static public LinkType _getOutgoingLinkType(TypeDefinition _this, String name) {
+	static public LinkType _getOutgoingLinkType(TypeDefinition _this,
+			String name) {
 		IAttributeType<? extends Object> a = _this.getAttributeType(name);
 		if (a instanceof LinkType) {
 			return (LinkType) a;
@@ -364,15 +382,17 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 	 * fr.imag.adele.cadse.core.ItemType#getOutgoingLinkType(fr.imag.adele.cadse
 	 * .core.ItemType, java.lang.String)
 	 */
-	public LinkType getOutgoingLinkType(ItemType destination, String name) {
+	public LinkType getOutgoingLinkType(TypeDefinition destination, String name) {
 		return _getOutgoingLinkType(this, destination, name);
 	}
 
-	static public LinkType _getOutgoingLinkType(TypeDefinition _this, TypeDefinition destination, String name) {
+	static public LinkType _getOutgoingLinkType(TypeDefinition _this,
+			TypeDefinition destination, String name) {
 		Iterator<LinkType> iter = _this.getOutgoingLinkTypes().iterator();
 		while (iter.hasNext()) {
 			LinkType lt = iter.next();
-			if (lt.getDestination().equals(destination) && (lt.getName().equals(name))) {
+			if (lt.getDestination().equals(destination)
+					&& (lt.getName().equals(name))) {
 				return lt;
 			}
 		}
@@ -391,7 +411,8 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 		return _getOutgoingLinkType(this, dest, kind);
 	}
 
-	static public LinkType _getOutgoingLinkType(TypeDefinition _this, TypeDefinition dest, int kind) {
+	static public LinkType _getOutgoingLinkType(TypeDefinition _this,
+			TypeDefinition dest, int kind) {
 		Iterator<LinkType> iter = _this.getOutgoingLinkTypes().iterator();
 		while (iter.hasNext()) {
 			LinkType lt = iter.next();
@@ -452,19 +473,21 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 	 * java.lang.String, int, int, int, java.lang.String,
 	 * fr.imag.adele.cadse.core.LinkType)
 	 */
-	public LinkType createLinkType(UUID uuid, int intID, String id, int kind, int min, int max,
-			String selection, LinkType inverse) throws CadseException {
+	public LinkType createLinkType(UUID uuid, int intID, String id, int kind,
+			int min, int max, String selection, LinkType inverse)
+			throws CadseException {
 		if (!inverse.getDestination().equals(this)) {
-			throw new CadseException(Messages.error_destination_bad_inverse_link, getName(), inverse.getDestination()
-					.getName());
+			throw new CadseException(
+					Messages.error_destination_bad_inverse_link, getName(),
+					inverse.getDestination().getName());
 		}
-		LinkTypeImpl lt = (LinkTypeImpl) createLinkType(uuid, intID, id, kind, min, max, selection, inverse.getSource());
+		LinkTypeImpl lt = (LinkTypeImpl) createLinkType(uuid, intID, id, kind,
+				min, max, selection, inverse.getSource());
 		lt.setInverseLinkType(inverse);
 		((LinkTypeImpl) inverse).setInverseLinkType(lt);
 		return lt;
 	}
 
-	
 	/**
 	 * Ajoute des pages de creation.
 	 * 
@@ -475,21 +498,18 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 		if (creationPages == null || creationPages.size() == 0) {
 			return; // todo nothing
 		}
-		this._creationPages = ArraysUtil.addList(IPage.class, this._creationPages,
-				creationPages);
+		this._creationPages = ArraysUtil.addList(IPage.class,
+				this._creationPages, creationPages);
 	}
 
-	
 	public synchronized void addValidators(UIValidator v) {
 		_validators = ArraysUtil.add(UIValidator.class, _validators, v);
 	}
-	
+
 	public synchronized void addField(UIField v) {
 		_fields = ArraysUtil.add(UIField.class, _fields, v);
 	}
-	
-	
-	
+
 	/**
 	 * Ajoute des pages de modification.
 	 * 
@@ -500,10 +520,10 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 		if (modificationPages == null || modificationPages.size() == 0) {
 			return; // todo nothing
 		}
-		this._modificationPages = ArraysUtil.addList(IPage.class, this._modificationPages,
-				modificationPages);
+		this._modificationPages = ArraysUtil.addList(IPage.class,
+				this._modificationPages, modificationPages);
 	}
-	
+
 	public <T> Link addAttributeType(IAttributeType<T> type) {
 		Link l = _addAttributeType(type);
 		_dblw.registerItem(type);
@@ -512,7 +532,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 		}
 		return l;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -523,11 +543,13 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 	public <T> Link _addAttributeType(IAttributeType<T> type) {
 		int index = ArraysUtil.indexOf(_attributesDefinitions, type);
 		if (index != -1) {
-			_dblw.getCadseDomain().log(getDisplayName(), "Cannot add " + type, null);
+			_dblw.getCadseDomain().log(getDisplayName(), "Cannot add " + type,
+					null);
 			return null;
 		}
 
-		_attributesDefinitions = ArraysUtil.add(IAttributeType.class, _attributesDefinitions, type);
+		_attributesDefinitions = ArraysUtil.add(IAttributeType.class,
+				_attributesDefinitions, type);
 		type.setParent(this, CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES);
 		index = _attributesDefinitions.length - 1;
 
@@ -536,7 +558,8 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 			return null;
 		}
 
-		return new ReflectLink(CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES, this, type, index);
+		return new ReflectLink(CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES, this,
+				type, index);
 	}
 
 	/*
@@ -551,18 +574,23 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 		if (index == -1) {
 			return index;
 		}
-		_attributesDefinitions = ArraysUtil.remove(IAttributeType.class, _attributesDefinitions, index);
+		_attributesDefinitions = ArraysUtil.remove(IAttributeType.class,
+				_attributesDefinitions, index);
 		// Pose un probleme lors de la destruction d'un lien
 		// type.setParent(null); (note 22)
 		return index;
 	}
 
-	
-		
-	/* (non-Javadoc)
-	 * @see fr.imag.adele.cadse.core.impl.internal.TypeDefinition#recurcifComputeCreationPage(fr.imag.adele.cadse.core.ui.view.FilterContext, java.util.List, java.util.Set)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seefr.imag.adele.cadse.core.impl.internal.TypeDefinition#
+	 * recurcifComputeCreationPage
+	 * (fr.imag.adele.cadse.core.ui.view.FilterContext, java.util.List,
+	 * java.util.Set)
 	 */
-	public void recurcifComputeCreationPage(FilterContext context, List<IPage> list, Set<IAttributeType<?>> ro) {
+	public void recurcifComputeCreationPage(FilterContext context,
+			List<IPage> list, Set<IAttributeType<?>> ro) {
 		if (_creationPages != null) {
 			for (IPage f : _creationPages) {
 				IPage[] owPages = f.getOverwritePage();
@@ -577,18 +605,23 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 						}
 					}
 					list.removeAll(owPagesList);
-				} 
-				if (!setPage){
+				}
+				if (!setPage) {
 					list.add(f);
 				}
 			}
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see fr.imag.adele.cadse.core.impl.internal.TypeDefinition#getAllAttributeTypes(java.util.List, fr.imag.adele.cadse.core.ItemFilter)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * fr.imag.adele.cadse.core.impl.internal.TypeDefinition#getAllAttributeTypes
+	 * (java.util.List, fr.imag.adele.cadse.core.ItemFilter)
 	 */
-	public void getAllAttributeTypes(List<IAttributeType<?>> all, ItemFilter filter) {
+	public void getAllAttributeTypes(List<IAttributeType<?>> all,
+			ItemFilter filter) {
 		if (_attributesDefinitions != null) {
 			if (filter == null) {
 				all.addAll(Arrays.asList(_attributesDefinitions));
@@ -601,17 +634,23 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 			}
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see fr.imag.adele.cadse.core.impl.internal.TypeDefinition#computeValidators(fr.imag.adele.cadse.core.ui.view.FilterContext, java.util.List)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * fr.imag.adele.cadse.core.impl.internal.TypeDefinition#computeValidators
+	 * (fr.imag.adele.cadse.core.ui.view.FilterContext, java.util.List)
 	 */
-	public void computeValidators(FilterContext context, List<UIValidator> validators) {
+	public void computeValidators(FilterContext context,
+			List<UIValidator> validators) {
 		if (_validators != null) {
 			for (UIValidator f : _validators) {
 				UIValidator[] owValidators = f.getOverwriteValidator();
 				boolean setPage = false;
 				if (owValidators != null && owValidators.length != 0) {
-					List<UIValidator> owValidatorsList = Arrays.asList(owValidators);
+					List<UIValidator> owValidatorsList = Arrays
+							.asList(owValidators);
 					for (int i = 0; i < validators.size(); i++) {
 						if (owValidatorsList.indexOf(validators.get(i)) != -1) {
 							validators.set(i, f);
@@ -620,18 +659,24 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 						}
 					}
 					validators.removeAll(owValidatorsList);
-				} 
-				if (!setPage){
+				}
+				if (!setPage) {
 					validators.add(f);
 				}
 			}
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see fr.imag.adele.cadse.core.impl.internal.TypeDefinition#recurcifComputeModificationPage(fr.imag.adele.cadse.core.ui.view.FilterContext, java.util.List, java.util.Set)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seefr.imag.adele.cadse.core.impl.internal.TypeDefinition#
+	 * recurcifComputeModificationPage
+	 * (fr.imag.adele.cadse.core.ui.view.FilterContext, java.util.List,
+	 * java.util.Set)
 	 */
-	public void recurcifComputeModificationPage(FilterContext context, List<IPage> list, Set<IAttributeType<?>> ro) {
+	public void recurcifComputeModificationPage(FilterContext context,
+			List<IPage> list, Set<IAttributeType<?>> ro) {
 		if (_modificationPages != null) {
 			for (IPage f : _modificationPages) {
 				IPage[] owPages = f.getOverwritePage();
@@ -646,19 +691,27 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 						}
 					}
 					list.removeAll(owPagesList);
-				} 
-				if (!setPage){
+				}
+				if (!setPage) {
 					list.add(f);
 				}
 			}
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see fr.imag.adele.cadse.core.impl.internal.TypeDefinition#computeGenericPage(fr.imag.adele.cadse.core.ui.view.FilterContext, fr.imag.adele.cadse.core.impl.internal.ui.HierachicPageImpl, java.util.HashSet, java.util.Set)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * fr.imag.adele.cadse.core.impl.internal.TypeDefinition#computeGenericPage
+	 * (fr.imag.adele.cadse.core.ui.view.FilterContext,
+	 * fr.imag.adele.cadse.core.impl.internal.ui.HierachicPageImpl,
+	 * java.util.HashSet, java.util.Set)
 	 */
-	public void computeGenericPage(FilterContext context, HierarchicPage genericPage,
-		HashSet<IAttributeType<?>> inSpecificPages, Set<IAttributeType<?>> ro, IAttributeType<?>... firstAttributes) {
+	public void computeGenericPage(FilterContext context,
+			HierarchicPage genericPage,
+			HashSet<IAttributeType<?>> inSpecificPages,
+			Set<IAttributeType<?>> ro, IAttributeType<?>... firstAttributes) {
 		ArrayList<IAttributeType> notPutAttr = new ArrayList<IAttributeType>();
 		for (IAttributeType firstAtt : firstAttributes) {
 			if (!inSpecificPages.contains(firstAtt)) {
@@ -668,7 +721,8 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 		}
 		if (_attributesDefinitions != null) {
 			for (IAttributeType<?> attr : _attributesDefinitions) {
-				if (!inSpecificPages.contains(attr) && canBeAddedInGenericPage(genericPage, attr)) {
+				if (!inSpecificPages.contains(attr)
+						&& canBeAddedInGenericPage(genericPage, attr)) {
 					notPutAttr.add(attr);
 				}
 			}
@@ -678,7 +732,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 		IPage bloc = genericPage.insertNewBloc(getDisplayName());
 		bloc.addLast(notPutAttr);
 	}
-	
+
 	public void computeGroup(Set<GroupOfAttributes> groups) {
 		if (_groupOfAttributes != null) {
 			for (GroupOfAttributes g : _groupOfAttributes) {
@@ -688,9 +742,13 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 			}
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see fr.imag.adele.cadse.core.impl.internal.TypeDefinition#findField(fr.imag.adele.cadse.core.attribute.IAttributeType)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * fr.imag.adele.cadse.core.impl.internal.TypeDefinition#findField(fr.imag
+	 * .adele.cadse.core.attribute.IAttributeType)
 	 */
 	public UIField findField(IAttributeType<?> att) {
 		if (_fields != null) {
@@ -712,7 +770,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 			return true;
 		return false;
 	}
-	
+
 	/**
 	 * Creates the default creation action.
 	 * 
@@ -728,7 +786,8 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 	 * @throws CadseException
 	 *             the melusine exception
 	 */
-	public IActionPage createDefaultCreationAction(NewContext context) throws CadseException {
+	public IActionPage createDefaultCreationAction(NewContext context)
+			throws CadseException {
 		return new CreationAction(context);
 	}
 
@@ -743,23 +802,23 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 	public IActionPage createDefaultModificationAction(FilterContext context) {
 		return new ModificationAction(context);
 	}
-	
-	public void addGroupOfAttributes( GroupOfAttributes g) {
-		_groupOfAttributes = ArraysUtil.add(GroupOfAttributes.class, _groupOfAttributes, g);
+
+	public void addGroupOfAttributes(GroupOfAttributes g) {
+		_groupOfAttributes = ArraysUtil.add(GroupOfAttributes.class,
+				_groupOfAttributes, g);
 	}
-	
+
 	public GroupOfAttributes[] getGroupOfAttributes() {
 		return _groupOfAttributes;
 	}
-	
-	
+
 	public boolean isRuntime() {
 		CadseRuntime cr = getCadse();
 		if (cr == null)
 			return false;
 		return cr.getType() == CadseGCST.CADSE;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -802,24 +861,22 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 		}
 		return found;
 	}
-	
-
-	
 
 	/**
 	 * Compute incoming link types.
 	 */
 	protected void computeIncomingLinkTypes(List<LinkType> ret) {
 		for (Link l : this._incomings) {
-			if (l.getLinkType() == CadseCore.theLinkType && l instanceof LinkType) {
+			if (l.getLinkType() == CadseCore.theLinkType
+					&& l instanceof LinkType) {
 				ret.add((LinkType) l);
 			}
 		}
 	}
-	
+
 	/**
-	 * List<LinkType> ret = new ArrayList<LinkType>();
-	 * Compute ougoing link types.
+	 * List<LinkType> ret = new ArrayList<LinkType>(); Compute ougoing link
+	 * types.
 	 */
 	protected void computeOutgoingLinkTypes(List<LinkType> ret) {
 		for (Link l : this.m_outgoings) {
@@ -839,9 +896,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 		computeIncomingLinkTypes(ret);
 		return ret;
 	}
-	
-	
-	
+
 	public IAttributeType<?>[] getAllAttributeTypes() {
 		ArrayList<IAttributeType<?>> all = new ArrayList<IAttributeType<?>>();
 		getAllAttributeTypes(all);
@@ -851,8 +906,9 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 	public void getAllAttributeTypes(List<IAttributeType<?>> all) {
 		getAllAttributeTypes(all, null);
 	}
-	
-	public void getAllAttributeTypes(Map<String, IAttributeType<?>> all, boolean keepLastAttribute) {
+
+	public void getAllAttributeTypes(Map<String, IAttributeType<?>> all,
+			boolean keepLastAttribute) {
 		getAllAttributeTypes(all, keepLastAttribute, null);
 	}
 
@@ -888,7 +944,6 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 		return null;
 	}
 
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -906,11 +961,12 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 	 * @param contributor
 	 *            the contributor
 	 */
-	public synchronized void addActionContributeur(IActionContributor contributor) {
-		_actionContributors = ArraysUtil.add(IActionContributor.class, _actionContributors, contributor);
+	public synchronized void addActionContributeur(
+			IActionContributor contributor) {
+		_actionContributors = ArraysUtil.add(IActionContributor.class,
+				_actionContributors, contributor);
 	}
 
-	
 	/**
 	 * @deprecated Use {@link #getCadse()} instead
 	 */
@@ -921,7 +977,8 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 	public CadseRuntime getCadse() {
 		Item parent = _parent;
 		while (parent != null) {
-			if (parent.isInstanceOf(CadseGCST.CADSE) && parent instanceof CadseRuntime)
+			if (parent.isInstanceOf(CadseGCST.CADSE)
+					&& parent instanceof CadseRuntime)
 				return (CadseRuntime) parent;
 			parent = parent.getPartParent();
 		}
@@ -929,6 +986,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 			return _dblw.getCadseRuntime(_cadseName);
 		return null;
 	}
+
 	public String getCadseName() {
 		CadseRuntime cr = getCadse();
 		if (cr != null) {
@@ -945,7 +1003,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 		}
 		this._cadseName = cadseName;
 	}
-	
+
 	/**
 	 * Test preconditions before creating a link type.<br/>
 	 * <br/>
@@ -991,34 +1049,41 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 	 *                IllegalArgumentException: Invalid assignment, verify the
 	 *                values min and max.<br/>
 	 */
-	protected void preconditions_createLinkType(String name, int kind, int min, int max, TypeDefinition destination) {
+	protected void preconditions_createLinkType(String name, int kind, int min,
+			int max, TypeDefinition destination) {
 
 		// 1. pre: name <> null
 		if (name == null) {
-			throw new CadseIllegalArgumentException(Messages.error_linktype_id_is_null);
+			throw new CadseIllegalArgumentException(
+					Messages.error_linktype_id_is_null);
 		}
 
 		// 2. pre: id <> ''
 		if (name.length() == 0) {
-			throw new CadseIllegalArgumentException(Messages.error_linktype_id_is_empty);
+			throw new CadseIllegalArgumentException(
+					Messages.error_linktype_id_is_empty);
 		}
 
 		// 3. pre: destination <> null
 		if (destination == null) {
-			throw new CadseIllegalArgumentException(Messages.error_item_type_can_not_be_null);
+			throw new CadseIllegalArgumentException(
+					Messages.error_item_type_can_not_be_null);
 		}
 
 		// 4. pre: self.to->forAll(rt | rt.name <> id)
-		for (Iterator outgoers = getOutgoingLinkTypes().iterator(); outgoers.hasNext();) {
+		for (Iterator outgoers = getOutgoingLinkTypes().iterator(); outgoers
+				.hasNext();) {
 			LinkType lt = (LinkType) outgoers.next();
 			if (lt.getName().equals(name)) {
-				throw new CadseIllegalArgumentException(Messages.error_linktype_id_already_exits, name, getId());
+				throw new CadseIllegalArgumentException(
+						Messages.error_linktype_id_already_exits, name, getId());
 			}
 		}
 
 		// 6. pre: ((max>=min)||(max==-1))&&(min>=0))
 		if (!(((max >= min) || (max == -1)) && (min >= 0))) {
-			throw new CadseIllegalArgumentException(Messages.error_linktype_min_max);
+			throw new CadseIllegalArgumentException(
+					Messages.error_linktype_min_max);
 		}
 
 		// in Item not in ItemType
@@ -1029,23 +1094,20 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 		// desti
 
 	}
-	
-	@Override
-	public LinkType getOutgoingLinkType(TypeDefinition destination, String name) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	
-	protected LogicalWorkspaceTransactionListener[]	workspaceLogiqueCopyListeners;
+	protected LogicalWorkspaceTransactionListener[] workspaceLogiqueCopyListeners;
 
-	public void addLogicalWorkspaceTransactionListener(LogicalWorkspaceTransactionListener l) {
-		workspaceLogiqueCopyListeners = ArraysUtil.add(LogicalWorkspaceTransactionListener.class,
+	public void addLogicalWorkspaceTransactionListener(
+			LogicalWorkspaceTransactionListener l) {
+		workspaceLogiqueCopyListeners = ArraysUtil.add(
+				LogicalWorkspaceTransactionListener.class,
 				workspaceLogiqueCopyListeners, l);
 	}
 
-	public void removeLogicalWorkspaceTransactionListener(LogicalWorkspaceTransactionListener l) {
-		workspaceLogiqueCopyListeners = ArraysUtil.remove(LogicalWorkspaceTransactionListener.class,
+	public void removeLogicalWorkspaceTransactionListener(
+			LogicalWorkspaceTransactionListener l) {
+		workspaceLogiqueCopyListeners = ArraysUtil.remove(
+				LogicalWorkspaceTransactionListener.class,
 				workspaceLogiqueCopyListeners, l);
 	}
 
@@ -1060,7 +1122,8 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 	}
 
 	@Override
-	public void getAllAttributeTypes(Map<String, IAttributeType<?>> all, boolean keepLastAttribute, ItemFilter filter) {
+	public void getAllAttributeTypes(Map<String, IAttributeType<?>> all,
+			boolean keepLastAttribute, ItemFilter filter) {
 		if (_attributesDefinitions != null) {
 			for (IAttributeType<?> att : _attributesDefinitions) {
 				if (keepLastAttribute && all.containsKey(att.getName())) {
@@ -1093,7 +1156,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 	public boolean isMainType() {
 		return false;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1108,9 +1171,33 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 		return false;
 	}
 
-        @Override
-        public IAttributeType<?> getCStructuralFeatures(int index) {
-            return _attributesDefinitions[index];
-        }
+	@Override
+	public IAttributeType<?> getCStructuralFeatures(int index) {
+		return _attributesDefinitions[index];
+	}
+
+	@Override
+	public IItemManager getItemManager() {
+		throw new UnsupportedOperationException("By default no manager");
+	}
+
+	CPackage _package = null;
+
+	@Override
+	public CPackage getPackage() {
+		return _package;
+	}
+
+	@Override
+	public void setPackage(CPackage p) {
+		_package = p;
+	}
+
+	@Override
+	public LinkType getOutgoingLinkType(UUID idLinkType) {
+		LinkType ret = (LinkType) _dblw.getItem(idLinkType);
+
+		return ret;
+	}
 
 }

@@ -25,7 +25,8 @@ import fr.imag.adele.cadse.core.transaction.delta.OperationTypeCst;
 import fr.imag.adele.cadse.core.transaction.delta.WLWCOperationImpl;
 import fr.imag.adele.cadse.util.Assert;
 
-public class CreateOperationImpl extends WLWCOperationImpl implements CreateOperation {
+public class CreateOperationImpl extends WLWCOperationImpl implements
+		CreateOperation {
 
 	public CreateOperationImpl(ItemOrLinkDelta parent) throws CadseException {
 		super(OperationTypeCst.CREATE_OPERATION, parent);
