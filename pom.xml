@@ -95,5 +95,11 @@
         	<version>1.7.0-R2-SNAPSHOT</version>
         	<type>bundle</type>
         </dependency>
+        <dependency>
+        	<groupId>org.apache.felix</groupId>
+        	<artifactId>org.apache.felix.ipojo</artifactId>
+        	<version>1.4.0</version>
+        	<type>bundle</type>
+        </dependency>
     </dependencies>
 </project>

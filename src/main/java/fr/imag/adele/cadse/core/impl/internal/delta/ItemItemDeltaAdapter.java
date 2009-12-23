@@ -611,14 +611,17 @@ public class ItemItemDeltaAdapter implements Item {
 
 	@Override
 	public CadseRuntime getCadse() {
-		// TODO Auto-generated method stub
-		return null;
+		return _delta.getCadse();
+	}
+	
+	@Override
+	public UUID getCadseId() {
+		return _delta.getCadseId();
 	}
 
 	@Override
 	public void setCadse(CadseRuntime cr) {
-		// TODO Auto-generated method stub
-		
+		_delta.setCadse(cr);
 	}
 
     @Override
@@ -651,6 +654,12 @@ public class ItemItemDeltaAdapter implements Item {
 	public void setUUID(UUID uuid) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public IAttributeType<?> getLocalAttributeType(UUID attrName) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

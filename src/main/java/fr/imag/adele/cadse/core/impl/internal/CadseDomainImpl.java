@@ -35,6 +35,7 @@ import fr.imag.adele.cadse.core.ItemDescriptionRef;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.WSEvent;
 import fr.imag.adele.cadse.core.impl.db.DBLogicalWorkspace;
+import fr.imag.adele.cadse.core.impl.db.DBObject;
 import fr.imag.adele.cadse.core.transaction.delta.ImmutableWorkspaceDelta;
 import fr.imag.adele.fede.workspace.as.initmodel.IInitModel;
 import fr.imag.adele.teamwork.db.ModelVersionDBService;
@@ -133,6 +134,7 @@ public class CadseDomainImpl implements CadseDomain {
 		INSTANCE = this;
 		eventsManager = new EventsManagerImpl(this);
 		_logicalWorkspace = new DBLogicalWorkspace(this);
+		DBObject._dblw = _logicalWorkspace;
 		eventsManager.start();
 		Logger mLogger = Logger.getLogger("CU.Workspace.Workspace");
 		mLogger.info("start");
@@ -166,7 +168,7 @@ public class CadseDomainImpl implements CadseDomain {
 		// e.printStackTrace();
 		// }
 		// }
-
+		DBObject._dblw = null;
 		INSTANCE = null;
 		mLogger.info("stop");
 

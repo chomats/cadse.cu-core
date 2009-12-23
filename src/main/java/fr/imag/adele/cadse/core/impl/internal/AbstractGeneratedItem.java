@@ -1785,6 +1785,13 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 
 		return getType().getAttributeType(attName);
 	}
+	
+	@Override
+	public IAttributeType<?> getLocalAttributeType(UUID attrName) {
+		Item ret = _dblw.getItem(attrName);
+		return (IAttributeType<?>) ret;
+	}
+	
 
 	public IAttributeType<?>[] getLocalAllAttributeTypes() {
 		if (_group != null) {
@@ -1855,6 +1862,13 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 	@Override
 	public CadseRuntime getCadse() {
 		return _cadse;
+	}
+	
+	@Override
+	public UUID getCadseId() {
+		if (_cadse == null)
+			return null;
+		return _cadse.getId();
 	}
 
 	@Override

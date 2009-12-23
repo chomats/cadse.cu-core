@@ -1373,6 +1373,16 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 			}
 		return null;
 	}
+	
+
+
+	@Override
+	public IAttributeType<?> getLocalAttributeType(UUID attrName) {
+		ItemDelta delta = _copy.getItem(attrName);
+		return delta.getAdapter(IAttributeType.class);
+	}
+	
+	
 
 	/*
 	 * (non-Javadoc)
@@ -4078,6 +4088,13 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	}
 
 	@Override
+	public UUID getCadseId() {
+		if (_cadse == null)
+			return null;
+		return _cadse.getId();
+	}
+	
+	@Override
 	public void setCadse(CadseRuntime cr) {
 		_cadse = cr;
 	}
@@ -4088,10 +4105,11 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	}
 
 	@Override
-	public void loadLink(int linkId, LinkType linkType, ItemDelta destItem)
+	public LinkDelta loadLink(int linkId, LinkType linkType, ItemDelta destItem)
 			throws CadseException {
 		LinkDelta ld = loadLink(linkType, destItem);
 		ld.setObjectID(linkId);
+		return ld;
 	}
 
 	@Override
