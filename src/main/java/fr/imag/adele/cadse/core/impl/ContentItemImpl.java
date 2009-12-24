@@ -611,5 +611,10 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 		}
 		super.collectOutgoingLinks(linkType, ret);
 	}
+	
+	public <T> T getMainMappingContent(ContextVariable cxt, Class<T> clazz) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }
