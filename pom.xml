@@ -7,83 +7,50 @@
     <artifactId>cu.core</artifactId>
     <name>fr.imag.adele.cadse.cu.core</name>
     <version>2.3.0-SNAPSHOT</version>
-
+	<parent>
+		<artifactId>fr.imag.adele.cadse.parent.ipojo</artifactId>
+		<groupId>fr.imag.adele.cadse</groupId>
+		<version>2.3.0-SNAPSHOT</version>
+		<relativePath>../fr.imag.adele.cadse.parent.ipojo</relativePath>
+	</parent>
     <build>
-        <finalName>${project.name}_${project.version}</finalName>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <extensions>true</extensions>
                 <configuration>
-                    <manifestLocation>META-INF</manifestLocation>
                     <instructions>
-                        <Bundle-Name>${pom.name}</Bundle-Name>
-                        <Bundle-Description>${pom.description}</Bundle-Description>
-                        <Export-Package>fr.imag.adele.cadse.core.impl.*</Export-Package>
-                        <Private-Package></Private-Package>
-                        <Import-Package>*</Import-Package>
-						<Ipojo-auto-start>true</Ipojo-auto-start>
-                       	<_removeheaders>Bnd-LastModified</_removeheaders>
+                        <Export-Package>fr.imag.adele.cadse.core.impl.*;version="2.3.0"</Export-Package>
                     </instructions>
                 </configuration>
             </plugin>
-            <!-- iPOJO Maven Plugin Configuration : nothing to do -->
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-ipojo-plugin</artifactId>
-				<version>1.4.0</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>ipojo-bundle</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-            
         </plugins>
     </build>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>as.cu</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>as.initmodel</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>as.platformeIDE</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>bak.pcj</groupId>
             <artifactId>bak.pcje</artifactId>
-            <version>1.2.0-SNAPSHOT</version>
         </dependency>
         <dependency>
         	<groupId>rhino</groupId>
         	<artifactId>js.bundle</artifactId>
-        	<version>1.7.0-R2-SNAPSHOT</version>
-        	<type>bundle</type>
         </dependency>
         <dependency>
         	<groupId>org.apache.felix</groupId>
         	<artifactId>org.apache.felix.ipojo</artifactId>
-        	<version>1.4.0</version>
-        	<type>bundle</type>
         </dependency>
     </dependencies>
 </project>
