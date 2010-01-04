@@ -27,9 +27,7 @@ import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.WorkspaceListener;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
-import fr.imag.adele.cadse.core.build.Composer;
 import fr.imag.adele.cadse.core.build.Exporter;
-import fr.imag.adele.cadse.core.build.IBuildingContext;
 import fr.imag.adele.cadse.core.content.ContentItem;
 import fr.imag.adele.cadse.core.transaction.delta.ImmutableWorkspaceDelta;
 import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
@@ -662,36 +660,6 @@ public class ItemItemDeltaAdapter implements Item {
 	public IAttributeType<?> getLocalAttributeType(UUID attrName) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public void build(IBuildingContext context) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void clean(IBuildingContext context, boolean componentsContent) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void compose(IBuildingContext context) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setComposers(Composer... composers) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setExporters(Exporter... exporters) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }
