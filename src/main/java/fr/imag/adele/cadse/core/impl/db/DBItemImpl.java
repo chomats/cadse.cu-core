@@ -14,7 +14,9 @@ import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseRuntime;
 import java.util.UUID;
 
+import fr.imag.adele.cadse.core.build.Composer;
 import fr.imag.adele.cadse.core.build.Exporter;
+import fr.imag.adele.cadse.core.build.IBuildingContext;
 import fr.imag.adele.cadse.core.content.ContentItem;
 import fr.imag.adele.cadse.core.DerivedLink;
 import fr.imag.adele.cadse.core.DerivedLinkDescription;
@@ -910,5 +912,35 @@ public class DBItemImpl extends DBObject implements Item {
 	public UUID getCadseId() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void build(IBuildingContext context) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void clean(IBuildingContext context, boolean componentsContent) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void compose(IBuildingContext context) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setComposers(Composer... composers) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setExporters(Exporter... exporters) {
+		// TODO Auto-generated method stub
+		
 	}
 }
