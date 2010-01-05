@@ -186,16 +186,16 @@ public class DBLogicalWorkspace extends LogicalWorkspaceImpl implements
 		return null;
 	}
 
-	public TypeDefinition[] getAllTypes(INamedUUID object)
-			throws CadseException {
-		int objId = obj(object);
-		try {
-			DBIteratorID<ID3> typesIds = _db.getAllObjectTypes(objId);
-			return toArray(TypeDefinition.class, typesIds);
-		} catch (ModelVersionDBException e) {
-			throw new CadseException(e);
-		}
-	}
+//	public TypeDefinition[] getAllTypes(INamedUUID object)
+//			throws CadseException {
+//		int objId = obj(object);
+//		try {
+//			DBIteratorID<ID3> typesIds = _db.getAllObjectTypes(objId);
+//			return toArray(TypeDefinition.class, typesIds);
+//		} catch (ModelVersionDBException e) {
+//			throw new CadseException(e);
+//		}
+//	}
 
 	public void addBindExendsItemType(INamedUUID typeId, ItemType extType)
 			throws CadseException {
