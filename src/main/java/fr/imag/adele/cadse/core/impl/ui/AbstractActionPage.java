@@ -28,7 +28,7 @@ import fr.imag.adele.cadse.core.ui.UIPlatform;
  */
 
 public class AbstractActionPage implements IActionPage {
-	UIPlatform _uiPlatform;
+	public UIPlatform _uiPlatform;
 	
 	/**
 	 * Instantiates a new abstract action page.
