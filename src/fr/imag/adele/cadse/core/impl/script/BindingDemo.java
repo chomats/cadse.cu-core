@@ -5,22 +5,22 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
-import sun.org.mozilla.javascript.internal.Scriptable;
-import sun.org.mozilla.javascript.internal.ScriptableObject;
-
-class XX extends ScriptableObject {
-
-	@Override
-	public String getClassName() {
-		return "Item";
-	}
-
-	@Override
-	public Object get(int arg0, Scriptable arg1) {
-		// TODO Auto-generated method stub
-		return super.get(arg0, arg1);
-	}
-}
+//import sun.org.mozilla.javascript.internal.Scriptable;
+//import sun.org.mozilla.javascript.internal.ScriptableObject;
+//
+//class XX extends ScriptableObject {
+//
+//	@Override
+//	public String getClassName() {
+//		return "Item";
+//	}
+//
+//	@Override
+//	public Object get(int arg0, Scriptable arg1) {
+//		// TODO Auto-generated method stub
+//		return super.get(arg0, arg1);
+//	}
+//}
 
 public class BindingDemo {
 	public static void main(String[] args) throws Exception {
