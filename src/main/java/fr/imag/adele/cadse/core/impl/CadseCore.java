@@ -22,6 +22,8 @@ package fr.imag.adele.cadse.core.impl;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import fr.imag.adele.cadse.core.CadseDomain;
@@ -32,6 +34,7 @@ import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.LogicalWorkspace;
+import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.impl.internal.CadseDomainImpl;
 import fr.imag.adele.cadse.core.oper.WSOperation;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
@@ -52,6 +55,8 @@ public class CadseCore {
 
 	/** The link type of any link type. */
 	static public LinkType theLinkType = null;
+
+	private static Map<String, IAttributeType<?>> _oldname = new HashMap<String, IAttributeType<?>>();
 
 	/**
 	 * Gets the name.
@@ -382,6 +387,10 @@ public class CadseCore {
 
 	public static boolean isStarted() {
 		return CadseDomainImpl.STARTED;
+	}
+
+	public static Map<String, IAttributeType<?>> getOldNameMap() {
+		return _oldname;
 	}
 
 }

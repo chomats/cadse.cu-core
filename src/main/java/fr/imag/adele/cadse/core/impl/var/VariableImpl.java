@@ -21,9 +21,11 @@ package fr.imag.adele.cadse.core.impl.var;
 
 import java.util.UUID;
 
+import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.impl.attribute.AttributeType;
 import fr.imag.adele.cadse.core.ui.UIField;
+import fr.imag.adele.cadse.core.var.ContextVariable;
 
 /**
  * The Class Variable.
@@ -102,4 +104,5 @@ public abstract class VariableImpl extends AttributeType implements fr.imag.adel
 	public UIField generateDefaultField() {
 		return null;
 	}
+
 }
