@@ -29,6 +29,7 @@ public class PageRuntimeModel {
 	public static final IPage[]			EMPTY_PAGE		= new IPage[0];
 	public static PageRuntimeModel	INSTANCE = new PageRuntimeModel();
 	
+	public Pages lastCreationPages = null;
 	
 	
 	public Pages getModificationPages(Item item, FilterContext context) {
@@ -53,11 +54,13 @@ public class PageRuntimeModel {
 		iComputeValidators(item, context, validators);
 		HashSet<GroupOfAttributes> groups = new HashSet<GroupOfAttributes>();
 		iComputeGroup(item, groups);
-		return new PagesImpl(context, false, 
+		lastCreationPages = new PagesImpl(context, false, 
 				((TypeDefinition.Internal) item.getType()).createDefaultCreationAction(context), 
 				iComputeFields(item), 
 				iGetAllCreationPage(item, context, ro), 
 				createRunning(validators), ro, groups);
+		
+		return lastCreationPages;
 	}
 	
 	
