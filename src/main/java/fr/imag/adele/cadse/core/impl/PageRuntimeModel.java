@@ -53,7 +53,7 @@ public class PageRuntimeModel {
 		iComputeValidators(item, context, validators);
 		HashSet<GroupOfAttributes> groups = new HashSet<GroupOfAttributes>();
 		iComputeGroup(item, groups);
-		lastCreationPages = return new PagesImpl(context, false, ((TypeDefinition.Internal) item
+		lastCreationPages = new PagesImpl(context, false, ((TypeDefinition.Internal) item
 				.getType()).createDefaultCreationAction(context),
 				iComputeFields(item), iGetAllCreationPage(item, context, ro),
 				createRunning(validators), ro, groups);
