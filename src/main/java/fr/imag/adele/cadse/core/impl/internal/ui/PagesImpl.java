@@ -212,4 +212,9 @@ public final class PagesImpl implements Pages {
 			return (NewContext) _context;
 		return null;
 	}
+
+	@Override
+	public ItemType getMainType() {
+		return _context.getDestinationType();
+	}
 }
