@@ -15,7 +15,7 @@ public class DBObject extends AdaptableObjectImpl implements INamedUUID, INamed 
 
 	public int _objectId;
 	static public DBLogicalWorkspace _dblw;
-
+	UUID _uuid;
 	public DBObject() {
 	}
 
@@ -26,14 +26,15 @@ public class DBObject extends AdaptableObjectImpl implements INamedUUID, INamed 
 
 	@Override
 	public UUID getId() {
-		if (_objectId == -1)
-			return null;
-		try {
-			return _dblw.getDB().getUniqueIdentifier(_objectId);
-		} catch (ModelVersionDBException e) {
-			throw new CadseIllegalArgumentException(
-					"Cannot get identifier from {0}.", e, _objectId);
-		}
+//		if (_objectId == -1)
+//			return null;
+//		try {
+//			return _dblw.getDB().getUniqueIdentifier(_objectId);
+//		} catch (ModelVersionDBException e) {
+//			throw new CadseIllegalArgumentException(
+//					"Cannot get identifier from {0}.", e, _objectId);
+//		}
+		return _uuid;
 	}
 
 	@Override
@@ -43,15 +44,16 @@ public class DBObject extends AdaptableObjectImpl implements INamedUUID, INamed 
 
 	@Override
 	public String getName() {
-		try {
-			if (_dblw.getDB().objExists(_objectId))
-				return _dblw.getDB().getName(_objectId);
-			return Item.NO_VALUE_STRING;
-
-		} catch (ModelVersionDBException e) {
-			throw new CadseIllegalArgumentException(
-					"Cannot get identifier from {0}.", e, _objectId);
-		}
+//		try {
+//			if (_dblw.getDB().objExists(_objectId))
+//				return _dblw.getDB().getName(_objectId);
+//			return Item.NO_VALUE_STRING;
+//
+//		} catch (ModelVersionDBException e) {
+//			throw new CadseIllegalArgumentException(
+//					"Cannot get identifier from {0}.", e, _objectId);
+//		}
+		return Item.NO_VALUE_STRING;
 	}
 
 	/*
@@ -61,7 +63,9 @@ public class DBObject extends AdaptableObjectImpl implements INamedUUID, INamed 
 	 */
 	@Override
 	public int hashCode() {
-		return _objectId;
+		return _objectId!=-1 ?
+					_objectId : 
+						_uuid != null ? _uuid.hashCode() : super.hashCode();
 	}
 
 	/*
@@ -93,11 +97,12 @@ public class DBObject extends AdaptableObjectImpl implements INamedUUID, INamed 
 
 	@Override
 	public void setUUID(UUID uuid) {
-		try {
-			_objectId = _dblw.getDB().getOrCreateLocalIdentifier(uuid);
-		} catch (ModelVersionDBException ex) {
-			Logger.getLogger(DBObject.class.getName()).log(Level.SEVERE,
-					"Cannot create UUID id db", ex);
-		}
+		_uuid = uuid;
+//		try {
+//			_objectId = _dblw.getDB().getOrCreateLocalIdentifier(uuid);
+//		} catch (ModelVersionDBException ex) {
+//			Logger.getLogger(DBObject.class.getName()).log(Level.SEVERE,
+//					"Cannot create UUID id db", ex);
+//		}
 	}
 }
