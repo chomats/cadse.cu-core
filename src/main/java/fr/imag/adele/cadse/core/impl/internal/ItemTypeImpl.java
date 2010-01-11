@@ -1428,13 +1428,5 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	public ExtendedType[] getExtendedType() {
 		return _extendedBy;
 	}
-
-	@Override
-	public LinkType createLinkType(UUID id, int intID, String name, int kind,
-			int min, int max, String selection, ItemType destination)
-			throws CadseException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 }
