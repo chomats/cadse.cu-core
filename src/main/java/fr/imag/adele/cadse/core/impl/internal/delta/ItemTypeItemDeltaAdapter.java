@@ -705,14 +705,6 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	}
 
 	@Override
-	public LinkType createLinkType(UUID id, int intID, String name, int kind,
-			int min, int max, String selection, ItemType destination)
-			throws CadseException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public ExtendedType[] getExtendedType() {
 		// TODO Auto-generated method stub
 		return null;

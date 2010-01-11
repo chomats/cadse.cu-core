@@ -282,12 +282,14 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 		}
 		super.removeOutgoingLink(link, notifie);
 	}
+	
+	
 
-	public LinkType createLinkType(UUID uuid, String id, int kind, int min,
-			int max, String selection, TypeDefinition destination) {
-		return createLinkType(uuid, -1, id, kind, min, max, selection,
-				destination);
-	}
+//	public LinkType createLinkType(UUID uuid, String id, int kind, int min,
+//			int max, String selection, TypeDefinition destination) {
+//		return createLinkType(uuid, -1, id, kind, min, max, selection,
+//				destination);
+//	}
 
 	public LinkType createLinkType(UUID uuid, int intID, String name,
 			int _kind, int min, int max, String selection,
@@ -302,10 +304,10 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 		return ret;
 	}
 
-	public LinkType createLinkType(UUID uuid, String id, int kind, int min,
-			int max, String selection, LinkType inverse) throws CadseException {
-		return createLinkType(uuid, -1, id, kind, min, max, selection, inverse);
-	}
+//	public LinkType createLinkType(UUID uuid, String id, int kind, int min,
+//			int max, String selection, LinkType inverse) throws CadseException {
+//		return createLinkType(uuid, -1, id, kind, min, max, selection, inverse);
+//	}
 
 	/**
 	 * Adds the outgoing link type.
@@ -1199,5 +1201,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 
 		return ret;
 	}
+
+	
 
 }
