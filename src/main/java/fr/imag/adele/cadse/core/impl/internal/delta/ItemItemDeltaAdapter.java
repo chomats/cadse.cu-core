@@ -104,6 +104,10 @@ public class ItemItemDeltaAdapter implements Item {
 		_delta.computeAttributes();
 	}
 
+	public boolean containsComponent(UUID itemId) {
+		return _delta.containsComponent(itemId);
+	}
+
 	public boolean containsPartChild(Item item) {
 		return _delta.containsPartChild(item);
 	}
@@ -163,7 +167,19 @@ public class ItemItemDeltaAdapter implements Item {
 	public CadseDomain getCadseDomain() {
 		return _delta.getCadseDomain();
 	}
-	
+
+	public Set<UUID> getComponentIds() {
+		return _delta.getComponentIds();
+	}
+
+	public Item getComponentInfo(UUID itemId) {
+		return _delta.getComponentInfo(itemId);
+	}
+
+	public Set<Item> getComponents() {
+		return _delta.getComponents();
+	}
+
 	public ContentItem getContentItem() {
 		return _delta.getContentItem();
 	}
@@ -497,7 +513,6 @@ public class ItemItemDeltaAdapter implements Item {
 	public void setAttribute(IAttributeType<?> att, Object value) throws CadseException {
 		_delta.setAttribute(att, value);
 	}
-	
 
 	public boolean setFlag(int f, boolean flag) {
 		return _delta.setFlag(f, flag);
@@ -607,8 +622,7 @@ public class ItemItemDeltaAdapter implements Item {
 
 	@Override
 	public boolean isInstanceOf(TypeDefinition it) {
-		// TODO Auto-generated method stub
-		return false;
+		return _delta.isInstanceOf(it);
 	}
 
 	@Override
@@ -642,7 +656,7 @@ public class ItemItemDeltaAdapter implements Item {
     }
 
 	@Override
-	public Exporter[] getExporter(Class<?> exporterType) {
+	public Exporter[] getExporter(String exporterType) {
 		// TODO Auto-generated method stub
 		return null;
 	}

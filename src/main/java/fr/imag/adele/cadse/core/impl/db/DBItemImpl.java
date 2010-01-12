@@ -873,12 +873,6 @@ public class DBItemImpl extends DBObject implements Item {
 	}
 
 	@Override
-	public Exporter[] getExporter(Class<?> exporterType) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public int getIdInPackage() {
 		// TODO Auto-generated method stub
 		return 0;
@@ -942,5 +936,35 @@ public class DBItemImpl extends DBObject implements Item {
 	public void setExporters(Exporter... exporters) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public boolean containsComponent(UUID itemIdentification) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Set<UUID> getComponentIds() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Item getComponentInfo(UUID id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Set<Item> getComponents() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Exporter[] getExporter(String exporterType) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
