@@ -1073,7 +1073,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 		}
 
 		// 4. pre: self.to->forAll(rt | rt.name <> id)
-		for (Iterator outgoers = getOutgoingLinkTypes().iterator(); outgoers
+		for (Iterator outgoers = getOwnerOutgoingLinkTypes().iterator(); outgoers
 				.hasNext();) {
 			LinkType lt = (LinkType) outgoers.next();
 			if (lt.getName().equals(name)) {

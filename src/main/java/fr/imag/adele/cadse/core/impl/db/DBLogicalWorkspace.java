@@ -130,15 +130,15 @@ public class DBLogicalWorkspace extends LogicalWorkspaceImpl implements
 
 	}
 
-	public boolean exists(INamedUUID object) throws CadseException {
-		int objectId = obj(object);
-		try {
-			boolean ret = _db.objExists(objectId);
-			return ret;
-		} catch (ModelVersionDBException e) {
-			throw new CadseException("Cannot bind type/ext", e);
-		}
-	}
+//	public boolean exists(INamedUUID object) throws CadseException {
+//		int objectId = obj(object);
+//		try {
+//			boolean ret = _db.objExists(objectId);
+//			return ret;
+//		} catch (ModelVersionDBException e) {
+//			throw new CadseException("Cannot bind type/ext", e);
+//		}
+//	}
 
 	public List<Link> getAggregations(INamedUUID object) throws CadseException {
 		int objId = obj(object);

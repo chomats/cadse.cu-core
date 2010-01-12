@@ -2795,6 +2795,10 @@ public class LogicalWorkspaceTransactionImpl implements
 			IAttributeType<?>[] attribuesDefintions = keyType.getKeyElements();
 			Object[] keyvaluse = new Object[attribuesDefintions.length];
 			for (int i = 0; i < keyvaluse.length; i++) {
+				if (attribuesDefintions[i] == CadseGCST.ITEM_at_NAME_) {
+					keyvaluse[i] = shortName;
+					continue;
+				}
 				for (int j = 0; j < attributes.length;) {
 					SetAttrVal<?> v = attributes[j++];
 					if (attribuesDefintions[i] == v.getAttrDef()) {
@@ -2922,6 +2926,10 @@ public class LogicalWorkspaceTransactionImpl implements
 			IAttributeType<?>[] attribuesDefintions = keyType.getKeyElements();
 			Object[] keyvaluse = new Object[attribuesDefintions.length];
 			for (int i = 0; i < keyvaluse.length; i++) {
+				if (attribuesDefintions[i] == CadseGCST.ITEM_at_NAME_) {
+					keyvaluse[i] = shortname;
+					continue;
+				}
 				for (int j = 0; j < attributes.length;) {
 					Object key = attributes[j++];
 					Object value = attributes[j++];

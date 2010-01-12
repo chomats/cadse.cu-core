@@ -39,5 +39,8 @@ public class ExtendedTypeImpl extends TypeDefinitionImpl implements ExtendedType
 		_exendsItemType = ArraysUtil.addList(ItemType.class, _exendsItemType, exendsItemType);
 	}
 
-
+	@Override
+	public boolean isExtendedType() {
+		return true;
+	}
 }

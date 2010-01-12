@@ -1044,6 +1044,10 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace,
 
 		return true;
 	}
+	
+	public boolean exists(INamedUUID object) {
+		return _items.containsKey(object.getId());
+	}
 
 	/**
 	 * 
