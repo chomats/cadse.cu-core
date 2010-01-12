@@ -1429,4 +1429,9 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 		return _extendedBy;
 	}
 	
+	@Override
+	public boolean isMainType() {
+		return true;
+	}
+	
 }

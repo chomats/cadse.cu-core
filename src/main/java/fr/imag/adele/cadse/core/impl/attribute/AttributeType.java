@@ -41,7 +41,7 @@ import fr.imag.adele.cadse.core.ui.UIPlatform;
 import fr.imag.adele.cadse.core.util.Convert;
 import fr.imag.adele.teamwork.db.ModelVersionDBException;
 
-public abstract class AttributeType extends AbstractGeneratedItem implements IInternalTWAttribute {
+public abstract class AttributeType extends AbstractGeneratedItem implements IInternalTWAttribute, Comparable<AttributeType> {
 
 	private String			_name;
 	String					_cstName;
@@ -376,5 +376,11 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 		if (_parent instanceof TypeDefinition)
 			return (TypeDefinition) _parent;
 		return null;
+	}
+
+
+	@Override
+	public int compareTo(AttributeType o) {
+		return getName().compareTo(o.getName());
 	}
 }

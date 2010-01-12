@@ -168,13 +168,7 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 
 	@Override
 	public boolean exists() {
-		try {
-			return _dblw.getObj(_objectId) == this;
-		} catch (ModelVersionDBException ex) {
-			Logger.getLogger(AbstractGeneratedItem.class.getName()).log(
-					Level.SEVERE, null, ex);
-			return false;
-		}
+		return _dblw.exists(this);
 	}
 
 	public void addListener(WorkspaceListener l, int eventFilter) {
