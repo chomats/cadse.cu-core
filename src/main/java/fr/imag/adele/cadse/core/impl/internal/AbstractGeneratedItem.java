@@ -160,6 +160,7 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 
 	public AbstractGeneratedItem(ItemDelta item) {
 		_objectId = item.getObjectId();
+		setUUID( item.getId());
 		if (_objectId == -1) {
 			// this._id = UUID.randomUUID();
 		}
@@ -413,6 +414,19 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 		return getContentItem();
 	}
 
+	public Item getComponentInfo(UUID id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Set<Item> getComponents() {
+		return Collections.emptySet();
+	}
+
+	public Set<UUID> getComponentIds() {
+		return Collections.emptySet();
+	}
+
 	public List<Item> getCompositeParent() {
 		return Collections.emptyList();
 	}
@@ -637,6 +651,7 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 		return getMainMappingContent(File.class);
 	}
 
+	@Override
 	public <T> T getMainMappingContent(Class<T> clazz) {
 		ContentItem cm = getContentItem();
 		if (cm == null) {
@@ -653,6 +668,7 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 		return cm.getMappingContents();
 	}
 
+	@Override
 	public <T> List<T> getMappingContents(Class<T> clazz) {
 		ContentItem cm = getContentItem();
 		if (cm == null) {
@@ -1086,6 +1102,7 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 		setFlag(IS_MODIFIED, flag);
 	}
 
+	@Override
 	public Collection<Link> setOutgoingItems(LinkType lt, Collection<Item> value)
 			throws CadseException {
 		return Accessor.setOutgoingItem(this, lt, value);
@@ -1909,7 +1926,7 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 	 * 
 	 * @see fr.imag.adele.cadse.core.ContentItem#getExporter(java.lang.String)
 	 */
-	public Exporter[] getExporter(Class<?> exporterType) {
+	public Exporter[] getExporter(String exporterType) {
 		Exporter[] ex = getExporters();
 		List<Exporter> ret = new ArrayList<Exporter>();
 		for (int i = 0; i < ex.length; i++) {

@@ -1828,6 +1828,111 @@ public class ItemImpl extends AbstractItem implements Item {
 
 	// ///////////
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see fr.imag.adele.cadse.core.Item#getComponents()
+	 */
+	@Override
+	public Set<Item> getComponents() {
+		tryToRecomputeComponent();
+		if (_composants == null) {
+			return Collections.emptySet();
+		}
+		return new ComponentsSet();
+	}
+
+	/**
+	 * The Class ComponentsSet.
+	 */
+	class ComponentsSet extends AbstractSet<Item> {
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.util.AbstractCollection#contains(java.lang.Object)
+		 */
+		@Override
+		public boolean contains(Object o) {
+			return _composants.containsValue(o);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.util.AbstractCollection#retainAll(java.util.Collection)
+		 */
+		@Override
+		public boolean retainAll(Collection<?> c) {
+			throw new UnsupportedOperationException();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.util.AbstractCollection#addAll(java.util.Collection)
+		 */
+		@Override
+		public boolean addAll(Collection<? extends Item> c) {
+			throw new UnsupportedOperationException();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.util.AbstractCollection#iterator()
+		 */
+		@Override
+		public Iterator<Item> iterator() {
+			return Collections.unmodifiableCollection(_composants.values()).iterator();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.util.AbstractCollection#size()
+		 */
+		@Override
+		public int size() {
+			return _composants.size();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.util.AbstractCollection#toArray()
+		 */
+		@Override
+		public Object[] toArray() {
+			return _composants.values().toArray();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.util.AbstractCollection#toArray(T[])
+		 */
+		@Override
+		public <T> T[] toArray(T[] a) {
+			return _composants.values().toArray(a);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see fr.imag.adele.cadse.core.Item#getComponentsId()
+	 */
+	@Override
+	public Set<UUID> getComponentIds() {
+		Set<Item> c = getComponents();
+		Set<UUID> ids = new HashSet<UUID>();
+		for (Item il : c) {
+			ids.add(il.getId());
+		}
+		return ids;
+	}
+
 	// -------------------------------------------------//
 
 	/*
@@ -1920,9 +2025,29 @@ public class ItemImpl extends AbstractItem implements Item {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * fr.imag.adele.cadse.core.Item#canCreateLink(fr.imag.adele.cadse.core.
-	 * LinkType, fr.imag.adele.cadse.core.UUID)
+	 * @see fr.imag.adele.cadse.core.Item#getComponentInfo(fr.imag.adele.cadse.core.CompactUUID)
+	 */
+	@Override
+	public Item getComponentInfo(UUID id) {
+		return _composants == null ? null : _composants.get(id);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see fr.imag.adele.cadse.core.internal.AbstractItem#isInstanceOf(fr.imag.adele.cadse.core.ItemType)
+	 */
+	@Override
+	public boolean isInstanceOf(TypeDefinition it) {
+		// return this.type.equals(it) || it.isSuperTypeOf(this.type);
+		return Accessor.isInstanceOf(this, it);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see fr.imag.adele.cadse.core.Item#canCreateLink(fr.imag.adele.cadse.core.LinkType,
+	 *      fr.imag.adele.cadse.core.CompactUUID)
 	 */
 	@Override
 	public boolean canCreateLink(LinkType lt, UUID destination) {

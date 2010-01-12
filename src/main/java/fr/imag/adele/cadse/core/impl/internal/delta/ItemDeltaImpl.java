@@ -4150,7 +4150,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	}
 
 	@Override
-	public Exporter[] getExporter(Class<?> exporterType) {
+	public Exporter[] getExporter(String exporterType) {
 		// TODO Auto-generated method stub
 		return null;
 	}
