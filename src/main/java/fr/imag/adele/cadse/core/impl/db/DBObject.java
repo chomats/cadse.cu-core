@@ -26,15 +26,16 @@ public class DBObject extends AdaptableObjectImpl implements INamedUUID, INamed 
 
 	@Override
 	public UUID getId() {
-//		if (_objectId == -1)
-//			return null;
-//		try {
-//			return _dblw.getDB().getUniqueIdentifier(_objectId);
-//		} catch (ModelVersionDBException e) {
-//			throw new CadseIllegalArgumentException(
-//					"Cannot get identifier from {0}.", e, _objectId);
-//		}
-		return _uuid;
+		//
+		//return _uuid;
+		if (_objectId == -1)
+			return null;
+		try {
+			return _dblw.getDB().getUniqueIdentifier(_objectId);
+		} catch (ModelVersionDBException e) {
+			throw new CadseIllegalArgumentException(
+					"Cannot get identifier from {0}.", e, _objectId);
+		}
 	}
 
 	@Override
@@ -98,11 +99,11 @@ public class DBObject extends AdaptableObjectImpl implements INamedUUID, INamed 
 	@Override
 	public void setUUID(UUID uuid) {
 		_uuid = uuid;
-//		try {
-//			_objectId = _dblw.getDB().getOrCreateLocalIdentifier(uuid);
-//		} catch (ModelVersionDBException ex) {
-//			Logger.getLogger(DBObject.class.getName()).log(Level.SEVERE,
-//					"Cannot create UUID id db", ex);
-//		}
+		try {
+			_objectId = _dblw.getDB().getOrCreateLocalIdentifier(uuid);
+		} catch (ModelVersionDBException ex) {
+			Logger.getLogger(DBObject.class.getName()).log(Level.SEVERE,
+					"Cannot create UUID id db", ex);
+		}
 	}
 }
