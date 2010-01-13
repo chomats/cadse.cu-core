@@ -121,15 +121,15 @@ public class LinkImpl extends DBObject implements Link {
 	LinkImpl(int objectId, Item source, LinkType lt, Item destination,
 			boolean addInIncommingList) {
 		super(objectId);
-//		if (objectId == -1) {
-//			try {
-//				objectId = _dblw.getDB().createLinkIfNeed(lt.getObjectId(),
-//						source.getObjectId(), destination.getObjectId());
-//			} catch (ModelVersionDBException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
+		if (objectId == -1) {
+			try {
+				objectId = _dblw.getDB().createLinkIfNeed(lt.getObjectId(),
+						source.getObjectId(), destination.getObjectId());
+			} catch (ModelVersionDBException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		assert source != null;
 		assert destination != null;
 		if (lt == null && this instanceof LinkType) {

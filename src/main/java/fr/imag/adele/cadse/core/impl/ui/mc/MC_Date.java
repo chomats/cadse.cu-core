@@ -28,7 +28,7 @@ import fr.imag.adele.cadse.core.ui.UIField;
 
 public class MC_Date extends MC_AttributesItem {
 
-	private static final String DD_MM_YY = "dd/MM/YY";
+	private static final String DD_MM_YY = "yyyy-MM-dd'T'HH:mm:ss";
 	private String _pattern = DD_MM_YY;
 
 	public MC_Date() {
@@ -45,16 +45,22 @@ public class MC_Date extends MC_AttributesItem {
 	@Override
 	public Object getValue() {
 		Object value = super.getValue();
-		if (value == null) {
-			IAttributeType<?> attDef = getUIField().getAttributeDefinition();
-			if (attDef != null) {
-				value = attDef.getDefaultValue();
+		try {
+			if (value == null) {
+				IAttributeType<?> attDef = getUIField().getAttributeDefinition();
+				if (attDef != null) {
+					value = attDef.getDefaultValue();
+				}
 			}
+			if (value == null) {
+				return "";
+			}
+			return getDateFormat().format(value);
+		} catch (Throwable e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return value;
 		}
-		if (value == null) {
-			return "";
-		}
-		return getDateFormat().format(value);
 	}
 
 	@Override
