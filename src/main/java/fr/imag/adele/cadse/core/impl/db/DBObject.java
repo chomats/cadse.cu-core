@@ -98,6 +98,7 @@ public class DBObject extends AdaptableObjectImpl implements INamedUUID, INamed 
 
 	@Override
 	public void setUUID(UUID uuid) {
+		if (uuid == null) return;
 		_uuid = uuid;
 		try {
 			_objectId = _dblw.getDB().getOrCreateLocalIdentifier(uuid);
