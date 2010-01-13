@@ -752,7 +752,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 					Messages.attribute_definition_is_null);
 		}
 		if (this._attributes != null) {
-			SetAttributeOperation oa = this._attributes.get(att.getName());
+			SetAttributeOperation oa = this._attributes.get(att);
 			if (oa != null) {
 				Object v = oa.getCurrentValue();
 				if (v != null) {
