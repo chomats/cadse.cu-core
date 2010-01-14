@@ -11,6 +11,7 @@ import java.util.Set;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.Item;
+import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.attribute.GroupOfAttributes;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
@@ -38,10 +39,11 @@ public class PageRuntimeModel {
 
 		HashSet<GroupOfAttributes> groups = new HashSet<GroupOfAttributes>();
 		iComputeGroup(item, groups);
+		IPage[] pages = iGetAllModificationPage(item, context, ro);
 		return new PagesImpl(context, true, ((TypeDefinition.Internal) item
 				.getType()).createDefaultModificationAction(context),
-				iComputeFields(item),
-				iGetAllModificationPage(item, context, ro),
+				iComputeFields(item, pages),
+				pages,
 				createRunning(validators), ro, groups);
 	}
 
@@ -53,9 +55,10 @@ public class PageRuntimeModel {
 		iComputeValidators(item, context, validators);
 		HashSet<GroupOfAttributes> groups = new HashSet<GroupOfAttributes>();
 		iComputeGroup(item, groups);
+		IPage[] pages = iGetAllCreationPage(item, context, ro);
 		lastCreationPages = new PagesImpl(context, false, ((TypeDefinition.Internal) item
 				.getType()).createDefaultCreationAction(context),
-				iComputeFields(item), iGetAllCreationPage(item, context, ro),
+				iComputeFields(item, pages), pages,
 				createRunning(validators), ro, groups);
 		return lastCreationPages;
 	}
@@ -180,9 +183,14 @@ public class PageRuntimeModel {
 				validators);
 	}
 
-	protected Map<IAttributeType<?>, UIField> iComputeFields(Item item) {
+	protected Map<IAttributeType<?>, UIField> iComputeFields(Item item, IPage[] pages) {
 		Map<IAttributeType<?>, UIField> fiedls = new HashMap<IAttributeType<?>, UIField>();
-		for (IAttributeType<?> att : item.getLocalAllAttributeTypes()) {
+		HashSet<IAttributeType<?>> localAllAttributeTypes = new HashSet<IAttributeType<?>>(Arrays.asList(item.getLocalAllAttributeTypes()));
+		for (IPage p : pages) {
+			localAllAttributeTypes.addAll(Arrays.asList(p.getAttributes()));
+		}
+		
+		for (IAttributeType<?> att : localAllAttributeTypes) {
 			UIField f = iFindField(item, att);
 			if (f == null)
 				f = att.generateDefaultField();
@@ -194,7 +202,9 @@ public class PageRuntimeModel {
 
 	protected UIField iFindField(Item item, IAttributeType<?> att) {
 		UIField ret = null;
-		ret = ((TypeDefinition) item.getType()).findField(att);
+		ItemType type = item.getType();
+		ret = type.findField(att);
+		
 		return ret;
 	}
 
