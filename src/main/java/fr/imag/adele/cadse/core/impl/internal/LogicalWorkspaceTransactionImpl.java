@@ -406,7 +406,9 @@ public class LogicalWorkspaceTransactionImpl implements
 		if (itemTypeDelta == null)
 			return null;
 
-		return itemTypeDelta.getAdapter(ItemType.class);
+		if (itemTypeDelta.isModified())
+			return itemTypeDelta.getAdapter(ItemType.class);
+		return (ItemType) itemTypeDelta.getBaseItem();
 	}
 
 	public TypeDefinition getTypeDefinition(UUID cadseId, UUID id,
@@ -3214,6 +3216,15 @@ public class LogicalWorkspaceTransactionImpl implements
 	@Override
 	public TypeDefinition findTypeDefinition(UUID id, UUID cadse,
 			boolean createUnresolved) throws CadseException {
+		if (cadse == null) {
+			ItemDelta itemTypeDelta = getItem(id, false);
+			if (itemTypeDelta != null) {
+				if (itemTypeDelta.isModified())
+					return itemTypeDelta.getAdapter(TypeDefinition.class);
+				else
+					return (TypeDefinition) itemTypeDelta.getBaseItem();
+			}
+		}
 		ItemDelta cadseItem = getItem(cadse);
 		if (cadseItem == null) {
 			if (createUnresolved)
@@ -3222,7 +3233,7 @@ public class LogicalWorkspaceTransactionImpl implements
 		CadseRuntime cr = cadseItem.getAdapter(CadseRuntime.class);
 		if (cr == null || !cr.isExecuted()) {
 			if (createUnresolved)
-				return createUnresolvedItemType(id, cadse);
+				return createUnresolvedItemType(cadse, id);
 		}
 
 		return getTypeDefinition(cadse, id, createUnresolved);

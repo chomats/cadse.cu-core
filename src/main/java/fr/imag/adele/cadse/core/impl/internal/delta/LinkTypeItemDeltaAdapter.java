@@ -385,8 +385,7 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 
 	@Override
 	public UUID getId() {
-		// TODO Auto-generated method stub
-		return null;
+		return _delta.getId();
 	}
 
 	@Override
