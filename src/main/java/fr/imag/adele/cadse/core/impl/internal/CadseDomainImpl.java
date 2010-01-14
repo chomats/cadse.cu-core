@@ -63,10 +63,10 @@ public class CadseDomainImpl implements CadseDomain {
 	public static boolean STOPPED = false;
 	public static boolean STARTED = false;
 
-	private ModelVersionDBService2 _modelDB2Service;
-	private IInitModel _initModelService;
-	private IPlatformIDE _platformService;
-	private ModelVersionDBService _modelDBService;
+	public ModelVersionDBService2 _modelDB2Service;
+	public IInitModel _initModelService;
+	public IPlatformIDE _platformService;
+	public ModelVersionDBService _modelDBService;
 
 	/**
 	 * Instantiates a new workspace domain impl.

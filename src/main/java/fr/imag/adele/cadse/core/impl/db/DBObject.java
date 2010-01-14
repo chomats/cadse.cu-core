@@ -26,7 +26,6 @@ public class DBObject extends AdaptableObjectImpl implements INamedUUID, INamed 
 
 	@Override
 	public UUID getId() {
-		//
 		//return _uuid;
 		if (_objectId == -1)
 			return null;
