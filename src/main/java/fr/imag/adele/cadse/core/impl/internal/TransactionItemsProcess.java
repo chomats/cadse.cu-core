@@ -863,7 +863,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems,
 			}
 			ContentItem ret = null;
 			try {
-				ret = contentItemFactory.createContentItem(idContent);
+				ret = contentItemFactory.createContentItem(idContent, ownerItem);
 			} catch (CadseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
