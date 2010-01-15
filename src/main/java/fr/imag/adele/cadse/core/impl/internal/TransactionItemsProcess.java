@@ -862,12 +862,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems,
 				return ContentItem.NO_CONTENT;
 			}
 			ContentItem ret = null;
-			try {
-				ret = contentItemFactory.createContentItem(idContent, ownerItem);
-			} catch (CadseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			ret = contentItemFactory.createContentItem(idContent, ownerItem);
 			if (ret == null) {
 				ret = ContentItem.INVALID_CONTENT;
 			} else if (ret != ContentItem.NO_CONTENT
