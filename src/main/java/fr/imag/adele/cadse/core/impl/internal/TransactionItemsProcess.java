@@ -32,6 +32,7 @@ import fr.imag.adele.cadse.core.impl.CadseCore;
 import fr.imag.adele.cadse.core.impl.ContentItemImpl;
 import fr.imag.adele.cadse.core.impl.ItemFactory;
 import fr.imag.adele.cadse.core.impl.ReflectLink;
+import fr.imag.adele.cadse.core.impl.db.DBObject;
 import fr.imag.adele.cadse.core.internal.IWorkingLoadingItems;
 import fr.imag.adele.cadse.core.internal.IWorkspaceNotifier;
 import fr.imag.adele.cadse.core.key.DefaultKeyImpl;
@@ -46,6 +47,8 @@ import fr.imag.adele.cadse.core.util.ElementsOrder;
 import fr.imag.adele.cadse.core.util.IErrorCollector;
 import fr.imag.adele.cadse.util.ArraysUtil;
 import fr.imag.adele.cadse.util.Assert;
+import fr.imag.adele.teamwork.db.ModelVersionDBException;
+import fr.imag.adele.teamwork.db.ModelVersionDBService2;
 
 public final class TransactionItemsProcess implements IWorkingLoadingItems,
 		IErrorCollector {
@@ -597,6 +600,9 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems,
 				wl.addId(goodItem, notifie, this);
 				// add created item in visited hashset
 				visited.put(goodItem.getId(), goodItem);
+				if (!DBObject._dblw.getDB().isType(it.getObjectId())) {
+					commitType(DBObject._dblw.getDB(), it);
+				}
 				return goodItem;
 			} else if (item.isDeleted()) {
 				Item deletedItem = getItem(item.getId());
@@ -677,6 +683,21 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems,
 		return null;
 	}
 
+	private void commitType(ModelVersionDBService2 db, ItemType it) throws ModelVersionDBException {
+		if (db.isType(it.getObjectId())) {
+			return;
+		}
+		db.saveObject(it.getObjectId(), 
+				it.isStatic() ?
+						ModelVersionDBService2.OBJECT_STATE_STATIC :ModelVersionDBService2.OBJECT_STATE_NORMAL
+							, ids(it.getType().getObjectId()),
+							it.getCadse().getObjectId(), it.getQualifiedName(), it.getName(), null);
+		db.saveObjectType(it.getObjectId(), ids(it.getSuperType().getObjectId()), ids(), ids());
+	}
+
+	int[] ids(int ... ids) {
+		return ids;
+	}
 	private ItemType findOrCreateItemTypeFromItemOperation(ItemDelta item)
 			throws CadseException {
 		// do not create a unresolved item type
