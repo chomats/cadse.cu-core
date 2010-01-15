@@ -79,7 +79,7 @@ public class DBObject extends AdaptableObjectImpl implements INamedUUID, INamed 
 			return true;
 		}
 		if (obj instanceof INamedUUID) {
-			return _objectId == ((Item) obj).getObjectId();
+			return _objectId == ((INamedUUID) obj).getObjectId();
 		}
 
 		return false;
