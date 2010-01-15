@@ -1260,7 +1260,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 			}
 			localSuperIT = (ItemTypeImpl) localSuperIT._superType;
 		}
-		return workspaceLogiqueCopyListeners;
+		return ret;
 
 	}
 
