@@ -195,15 +195,6 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 		return getMainMappingContent(ContextVariableImpl.DEFAULT, clazz);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#getMainMappingContent(fr.imag.adele.cadse.core.var.ContextVariable,
-	 *      java.lang.Class, java.lang.Object)
-	 */
-	public <T> T getMainMappingContent(ContextVariableImpl cxt, Class<T> clazz) {
-		return null;
-	}
 
 	/*
 	 * (non-Javadoc)

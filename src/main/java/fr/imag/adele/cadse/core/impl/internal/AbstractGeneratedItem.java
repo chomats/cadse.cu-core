@@ -1570,7 +1570,11 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 		Assert.isNotNull(destination);
 		_outgoings = ArraysUtil.addList2(Object.class, _outgoings, lt,
 				destination);
-		return new ReflectLink(lt, this, destination, -1);
+		ReflectLink reflectLink = new ReflectLink(lt, this, destination, -1);
+		if (reflectLink != null) {
+			destination.addIncomingLink(reflectLink, false);
+		}
+		return reflectLink;
 	}
 
 	public int indexOf(Link link) {

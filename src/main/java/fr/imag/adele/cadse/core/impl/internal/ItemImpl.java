@@ -394,10 +394,9 @@ public class ItemImpl extends AbstractItem implements Item {
 				if (lt.getMax() == 1 && getOutgoingLink(lt) != null) {
 					continue;
 				}
+				// create link and add incoming link ...
 				goodLink = createDefaultLink(lt, dest);
-				if (goodLink != null) {
-					dest.addIncomingLink(goodLink, false);
-				}
+				
 			} catch (Throwable e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
