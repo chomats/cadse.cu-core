@@ -650,7 +650,7 @@ public class LogicalWorkspaceTransactionImpl implements
 			Item[] outDest = context.getOutgoingDestinations();
 			for (int i = 0; i < outDest.length; i++) {
 				ItemDelta deltaDest = getOrCreateItemOperation(outDest[i]);
-				linkToNotifie.add(ret.createLink(outLT[i], deltaDest, false));
+				linkToNotifie.add(ret.createLink(outLT[i], deltaDest, false, false));
 			}
 		}
 		Item parent = context.getPartParent();
@@ -666,7 +666,7 @@ public class LogicalWorkspaceTransactionImpl implements
 			if (inLT != null) {
 				for (int i = 0; i < inSrc.length; i++) {
 					ItemDeltaImpl deltaSrc = (ItemDeltaImpl) getOrCreateItemOperation(inSrc[i]);
-					linkToNotifie.add(deltaSrc.createLink(inLT[i], ret, false));
+					linkToNotifie.add(deltaSrc.createLink(inLT[i], ret, false, false));
 				}
 			}
 		}
@@ -684,6 +684,9 @@ public class LogicalWorkspaceTransactionImpl implements
 			}
 		}
 		validateCreatedItem(ret);
+		for (LinkDelta createdLink : linkToNotifie) {
+			validateCreatedLink(createdLink);
+		}
 		for (SetAttributeOperation setAtt : setAttToNotifie) {
 			validateChangeAttribute(ret, setAtt);
 		}

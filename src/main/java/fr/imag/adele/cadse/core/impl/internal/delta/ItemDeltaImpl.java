@@ -466,7 +466,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 
 	public LinkDelta createLink(LinkType lt, Item destination)
 			throws CadseException {
-		return createLink(lt, destination, true);
+		return createLink(lt, destination, true, true);
 	}
 
 	/*
@@ -476,7 +476,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#createLink(fr.imag.adele
 	 * .cadse.core.LinkType, fr.imag.adele.cadse.core.Item)
 	 */
-	public LinkDelta createLink(LinkType lt, Item destination, boolean notify)
+	public LinkDelta createLink(LinkType lt, Item destination, boolean notify, boolean validate)
 			throws CadseException {
 		// 2. Type of destination must be the same type as item type destination
 		// defined in lt
@@ -520,7 +520,8 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		}
 		LogicalWorkspaceImpl.constraints_SourceItem(linkOperation, lt, this);
 
-		_copy.validateCreatedLink(linkOperation);
+		if (validate)
+			_copy.validateCreatedLink(linkOperation);
 
 		// synchronize _parentItem attribute
 		if (lt == CadseGCST.ITEM_lt_PARENT
@@ -3623,10 +3624,10 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 
 				LinkDelta l = getOutgoingLink(CadseGCST.ITEM_lt_PARENT);
 				if (l == null)
-					createLink(CadseGCST.ITEM_lt_PARENT, _parentItem, notify);
+					createLink(CadseGCST.ITEM_lt_PARENT, _parentItem, notify, true);
 				else if (l.getDestination() != parent) {
 					l.delete();
-					createLink(CadseGCST.ITEM_lt_PARENT, _parentItem, notify);
+					createLink(CadseGCST.ITEM_lt_PARENT, _parentItem, notify, true);
 				}
 
 				if (lt != null) {
