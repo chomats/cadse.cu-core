@@ -145,7 +145,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	}
 
 	@Override
-	public URL getImage() {
+	public String getImage() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -374,7 +374,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	}
 
 	@Override
-	public void setIcon(URL url) {
+	public void setIcon(String url) {
 		// TODO Auto-generated method stub
 
 	}
