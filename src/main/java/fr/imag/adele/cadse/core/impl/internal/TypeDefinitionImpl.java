@@ -1185,6 +1185,8 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 
 	CPackage _package = null;
 
+	protected String _image;
+
 	@Override
 	public CPackage getPackage() {
 		return _package;
@@ -1200,6 +1202,16 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 		LinkType ret = (LinkType) _dblw.getItem(idLinkType);
 
 		return ret;
+	}
+
+	@Override
+	public String getImage() {
+		return _image;
+	}
+
+	@Override
+	public void setIcon(String uri) {
+		_image = uri;
 	}
 
 	

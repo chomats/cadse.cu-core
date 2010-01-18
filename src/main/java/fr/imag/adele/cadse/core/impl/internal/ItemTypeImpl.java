@@ -136,9 +136,6 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 
 	private String _cstName;
 
-	/** The icon. */
-	private URL _icon;
-
 	/** The clazz action. */
 	private Class<? extends IActionPage> _clazzAction;
 
@@ -252,7 +249,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 		try {
 			String icon = itemOperation
 					.getAttribute(CadseGCST.ITEM_TYPE_at_ICON_);
-			this._icon = icon == null ? null : new URL(icon);
+			this._image = icon;
 		} catch (Throwable e) {
 			errorCollector
 					.addError(
@@ -801,9 +798,9 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 					.valueOf((this._kind & ItemType.IT_INSTACES_IS_ROOT_ELEMENT) != 0);
 		}
 		if (CadseGCST.ITEM_TYPE_at_ICON_ == type) {
-			if (_icon == null)
+			if (_image == null)
 				return null;
-			return (T) _icon.getPath();
+			return (T) _image;
 		}
 		if (CadseGCST.ITEM_TYPE_at_ITEM_FACTORY_ == type) {
 			if (_itemFactory == null)
@@ -900,13 +897,8 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 			return true;
 		}
 		if (CadseGCST.ITEM_TYPE_at_ICON_ == type) {
-			try {
-				_icon = Convert.toURL(value);
-				return true;
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			_image = Convert.toString(value);
+			return true;
 		}
 		if (CadseGCST.ITEM_TYPE_at_ITEM_FACTORY_ == type) {
 			if (value instanceof String) {
@@ -1132,11 +1124,11 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	 * 
 	 * @see fr.imag.adele.cadse.core.ItemType#getIcon()
 	 */
-	public URL getImage() {
-		if (_icon == null && _superType != null) {
+	public String getImage() {
+		if (_image == null && _superType != null) {
 			return _superType.getImage();
 		}
-		return _icon;
+		return _image;
 	}
 
 	/*
@@ -1144,8 +1136,8 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	 * 
 	 * @see fr.imag.adele.cadse.core.ItemType#setIcon(java.net.URL)
 	 */
-	public void setIcon(URL url) {
-		_icon = url;
+	public void setIcon(String url) {
+		_image = url;
 		Logger.getLogger("icon").log(Level.INFO,
 				"set icon to " + url + " of ItemType " + getDisplayName());
 	}
