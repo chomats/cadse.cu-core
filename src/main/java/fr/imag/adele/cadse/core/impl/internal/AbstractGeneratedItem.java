@@ -1222,7 +1222,12 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 			for (int i = 0; i < _outgoings.length; i += 2) {
 				if (linkType == _outgoings[i]) {
 					Item dest = (Item) _outgoings[i + 1];
-					ret.add(new ReflectLink(linkType, this, dest, -1));
+					try {
+						ret.add(new ReflectLink(linkType, this, dest, -1));
+					} catch (Throwable e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			}
 		}
