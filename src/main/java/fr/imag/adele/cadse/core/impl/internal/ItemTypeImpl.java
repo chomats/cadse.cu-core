@@ -134,15 +134,13 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	/** The __action contributors. */
 	IActionContributor[] __actionContributors = null;
 
-	private String _cstName;
-
 	/** The clazz action. */
 	private Class<? extends IActionPage> _clazzAction;
 
 	/** The default short name action. */
 	protected String _defaultInstanceName;
 
-	private String _packageName = NO_VALUE_STRING;
+	
 
 	private IItemFactory _itemFactory;
 
@@ -1222,17 +1220,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 		_itemFactory = factory;
 	}
 
-	public void setPackageName(String packageName) {
-		if (packageName == null) {
-			this._packageName = NO_VALUE_STRING;
-		} else {
-			this._packageName = packageName;
-		}
-	}
-
-	public String getPackageName() {
-		return _packageName;
-	}
+	
 
 	public LogicalWorkspaceTransactionListener[] getLogicalWorkspaceTransactionListener() {
 		ItemTypeImpl localSuperIT = (ItemTypeImpl) this;
@@ -1268,14 +1256,6 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 			_managerClass = getItemManager().getClass().getName();
 
 		return _managerClass;
-	}
-
-	public String getCSTName() {
-		return _cstName;
-	}
-
-	public void setCSTName(String cst) {
-		_cstName = cst;
 	}
 
 	@Override
@@ -1424,6 +1404,19 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	@Override
 	public boolean isMainType() {
 		return true;
+	}
+
+	@Override
+	public void addExtendedType(ExtendedType et) {
+		int index = ArraysUtil.indexOf(_extendedBy, et);
+		if (index == -1) {
+			_extendedBy = ArraysUtil.add(ExtendedType.class, _extendedBy, et);
+		}
+	}
+
+	@Override
+	public void removeExtendedType(ExtendedType et) {
+		_extendedBy = ArraysUtil.remove(ExtendedType.class, _extendedBy, et);
 	}
 	
 }

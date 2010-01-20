@@ -194,7 +194,10 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace,
 
 	/** The item types. */
 	private Collection<ItemType> _itemTypes;
-
+	/** The item types. */
+	
+	private Collection<ExtendedType> _extTypes;
+	
 	protected CadseRuntime[] _cadses = null;
 
 	/** The state. */
@@ -334,6 +337,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace,
 		this._items_by_qualified_name = new HashMap<String, Item>();
 		this._wd = wd;
 		_itemTypes = new ArrayList<ItemType>();
+		_extTypes = new ArrayList<ExtendedType>();
 		addListener(new WorkspaceLogigueWorkspaceListener(), ChangeID.toFilter(
 				ChangeID.REMOVE_COMPONENT, ChangeID.ADD_COMPONENT,
 				ChangeID.DELETE_OUTGOING_LINK, ChangeID.CREATE_ITEM,
@@ -638,7 +642,26 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace,
 			this._items_by_qualified_name.remove(item.getQualifiedName());
 		}
 		if (item instanceof ItemType) {
-			this._itemTypes.remove(item);
+			removeItemType((ItemType) item);
+		}
+		if (item instanceof ExtendedType) {
+			removeExtendedType((ExtendedType) item);
+		}
+	}
+
+	protected void removeItemType(ItemType item) {
+		this._itemTypes.remove(item);
+		ExtendedType[] exts = item.getExtendedType();
+		for (ExtendedType extendedType : exts) {
+			extendedType.removeExendsItemType(item);
+		}
+	}
+	
+	protected void removeExtendedType(ExtendedType item) {
+		this._extTypes.remove(item);
+		ItemType[] exts = item.getExendsItemType();
+		for (ItemType it : exts) {
+			it.removeExtendedType(item);
 		}
 	}
 
@@ -699,6 +722,11 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace,
 			// if item is a type
 			// add this in item type register
 			_itemTypes.add((ItemType) newItem);
+		}
+		if (newItem instanceof ExtendedType) {
+			// if item is a type
+			// add this in item type register
+			_extTypes.add((ExtendedType) newItem);
 		}
 		resolveItem(newItem, notifier, oldItem);
 		return oldItem;
@@ -1422,57 +1450,6 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace,
 
 	}
 
-	// @Deprecated
-	// protected ItemTypeImpl createAnyType() throws CadseException {
-	// throw new CadseException("You must load Model.Workspace.Common");
-	// // ItemTypeImpl itemTypeAny ;
-	// //
-	// // itemTypeAny = (ItemTypeImpl) createItemType(null,
-	// WorkspaceDomain.ID_ITEM_TYPE_ANY, WorkspaceDomain.ANY_ID, "any", "any",
-	// false, true);
-	// // itemTypeAny.setItemManager(new ItemManagerImpl(itemTypeAny) {
-	// // @Override
-	// // public boolean isAbstract(Item parent, LinkType type) {
-	// // return true;
-	// // }
-	// // @Override
-	// // public String canCreateMeItem(Item itemParent, LinkType lt, ItemType
-	// destType) {
-	// // return "Cannot create an item of this type";
-	// // }
-	// // });
-	// // return itemTypeAny;
-	// }
-
-	// /**
-	// * Creates the mit.
-	// *
-	// * @return the item type impl
-	// */
-	// public ItemTypeImpl createMITIfNeed() {
-	// ItemTypeImpl mIT ;
-	//
-	// mIT = (ItemTypeImpl) new
-	// ItemTypeImpl(this,WorkspaceDomain.META_ITEMTYPE_ID, "#mIT");
-	// mIT.setType(mIT);
-	// mIT.setModified(false);
-	// mIT.setItemManager(new ItemManagerImpl(mIT) {
-	// @Override
-	// public boolean isAbstract(Item parent, LinkType type) {
-	// return true;
-	// }
-	// @Override
-	// public String canCreateMeItem(Item itemParent, LinkType lt, ItemType
-	// destType) {
-	// return "Cannot create an item of this type";
-	// }
-	// });
-	//
-	// mIT.setCadseName("internal");
-	// registerItemType(mIT);
-	// return mIT;
-	// }
-
 	/**
 	 * Get all item types.
 	 * 
@@ -1480,6 +1457,11 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace,
 	 */
 	public synchronized Collection<ItemType> getItemTypes() {
 		return Collections.unmodifiableCollection(_itemTypes);
+	}
+	
+	@Override
+	public Collection<ExtendedType> getExtendedTypes() {
+		return Collections.unmodifiableCollection(_extTypes);
 	}
 
 	/**
@@ -1567,26 +1549,16 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace,
 			it.setItemManager(manager);
 		}
 		return it;
-
-	};
-
-	// public ItemType createItemType(CadseRuntime cadseName, ItemType
-	// superType, int intID, UUID id,
-	// String shortName, String displayName, boolean hasContent, boolean
-	// isAbstract, IItemManager manager) {
-	// return createItemType(null, cadseName, superType, intID, id, shortName,
-	// displayName, hasContent, isAbstract,
-	// manager);
-	// }
-
-	// public ItemType createItemType(CadseRuntime cadseName, ItemType
-	// superType, int intID, UUID id,
-	// String shortName, String displayName, boolean hasContent, boolean
-	// isAbstract) {
-	//
-	// return createItemType(cadseName, superType, intID, id, shortName,
-	// displayName, hasContent, isAbstract, null);
-	// }
+	}
+	
+	@Override
+	public ExtendedType createExtendedType(ItemType metaType, CadseRuntime cadseName, 
+			UUID uuid, String qualifiedName, String name) {
+		ExtendedTypeImpl et = new ExtendedTypeImpl(uuid, metaType, qualifiedName, name);
+		cadseName.addExtendedType(et);
+		registerExtendedType(et);
+		return et;
+	}
 
 	/**
 	 * Register a type.
@@ -1608,6 +1580,19 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace,
 		}
 		_items.put(it.getId(), it);
 		_itemTypes.add(it);
+
+		resolveItem(it, null, item);
+	}
+	
+	protected void registerExtendedType(ExtendedType it) {
+		final Item item = _items.get(it.getId());
+		if (item != null && item.isResolved()) {
+			throw new CadseIllegalArgumentException(
+					"Invalid assignment, this item type {0}"
+							+ " already exist.", it.getId());
+		}
+		_items.put(it.getId(), it);
+		_extTypes.add(it);
 
 		resolveItem(it, null, item);
 	}
@@ -2391,8 +2376,12 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace,
 	@Override
 	public CadseRuntime createCadseRuntime(String name, UUID runtimeId,
 			UUID definitionId) {
-		// TODO Auto-generated method stub
-		return null;
+		CadseRuntime cadseRuntime = new CadseRuntimeImpl(name, runtimeId,
+				definitionId);
+		this._cadses = ArraysUtil.add(CadseRuntime.class, this._cadses,
+				cadseRuntime);
+		registerItem(cadseRuntime);
+		return cadseRuntime;
 	}
 
 	@Override
@@ -2400,4 +2389,6 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace,
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	
 }

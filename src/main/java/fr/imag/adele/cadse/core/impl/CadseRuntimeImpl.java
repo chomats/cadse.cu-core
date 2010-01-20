@@ -24,6 +24,7 @@ import java.util.UUID;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CadseRuntime;
+import fr.imag.adele.cadse.core.ExtendedType;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
@@ -39,6 +40,9 @@ import fr.imag.adele.cadse.util.ArraysUtil;
 public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRuntime, InternalCadseRuntime {
 	protected String		_cadseName;
 	private ItemType[]		_itemTypes;
+	private ExtendedType[]	_extendedTypes;
+	private Binding[]		_binding;
+	
 	private CadseRuntime[]	_requiredCadses;
 	private TreeView		_views;
 	private UUID		_idCadseDefinition;
@@ -401,6 +405,41 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 	@Override
 	public void removeDefineNewContext(DefineNewContext d) {
 		_defineNewContext = ArraysUtil.remove(DefineNewContext.class, _defineNewContext, d);
+	}
+
+	@Override
+	public void addBinding(Binding b) {
+		_binding = ArraysUtil.add(Binding.class, _binding, b);
+	}
+
+	@Override
+	public void addExtendedType(ExtendedType et) {
+		_extendedTypes = ArraysUtil.add(ExtendedType.class, _extendedTypes, et);
+	}
+
+	@Override
+	public ExtendedType[] getExtendedType() {
+		return _extendedTypes;
+	}
+
+	@Override
+	public void removeBinding(Binding b) {
+		_binding = ArraysUtil.remove(Binding.class, _binding, b);
+	}
+
+	@Override
+	public void removeExtendedType(ExtendedType et) {
+		_extendedTypes = ArraysUtil.remove(ExtendedType.class, _extendedTypes, et);
+	}
+
+	@Override
+	public Binding[] getBinding() {
+		return _binding;
+	}
+
+	@Override
+	public ItemType[] getItemTypes() {
+		return _itemTypes;
 	}
 
 }

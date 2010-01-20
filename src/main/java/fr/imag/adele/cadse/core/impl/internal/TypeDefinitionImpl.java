@@ -51,7 +51,9 @@ import fr.imag.adele.cadse.util.ArraysUtil;
 
 public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 		TypeDefinition.Internal {
-
+	
+	protected String _packageName = NO_VALUE_STRING;
+	
 	/**
 	 * old string
 	 * 
@@ -118,6 +120,8 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 
 	protected String _cadseName = null;
 
+
+	protected String _cstName;
 	int _it_definedflag;
 	int _it_flag;
 
@@ -1212,6 +1216,26 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 	@Override
 	public void setIcon(String uri) {
 		_image = uri;
+	}
+
+	public String getCSTName() {
+		return _cstName;
+	}
+
+	public void setCSTName(String cst) {
+		_cstName = cst;
+	}
+
+	public void setPackageName(String packageName) {
+		if (packageName == null) {
+			this._packageName = NO_VALUE_STRING;
+		} else {
+			this._packageName = packageName;
+		}
+	}
+
+	public String getPackageName() {
+		return _packageName;
 	}
 
 	

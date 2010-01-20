@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CadseRuntime;
+import fr.imag.adele.cadse.core.ExtendedType;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
@@ -164,6 +165,48 @@ public class CadseRuntimeItemDeltaAdapter extends ItemItemDeltaAdapter implement
 	public void removeDefineNewContext(DefineNewContext d) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void addBinding(Binding b) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addExtendedType(ExtendedType et) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Binding[] getBinding() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ExtendedType[] getExtendedType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ItemType[] getItemTypes() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void removeBinding(Binding b) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeExtendedType(ExtendedType et) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

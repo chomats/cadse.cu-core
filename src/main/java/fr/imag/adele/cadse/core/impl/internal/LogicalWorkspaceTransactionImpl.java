@@ -38,6 +38,7 @@ import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CadseRuntime;
 import fr.imag.adele.cadse.core.ContentChangeInfo;
 import fr.imag.adele.cadse.core.EventFilter;
+import fr.imag.adele.cadse.core.ExtendedType;
 import fr.imag.adele.cadse.core.IItemManager;
 import fr.imag.adele.cadse.core.INamedUUID;
 import fr.imag.adele.cadse.core.Item;
@@ -3381,6 +3382,19 @@ public class LogicalWorkspaceTransactionImpl implements
 			UUID ltId, String ltName, boolean createUnresolvedObject) {
 		return base.findLinkType(sourceType, destType, ltId, ltName,
 				createUnresolvedObject);
+	}
+
+	@Override
+	public ExtendedType createExtendedType(ItemType metaType,
+			CadseRuntime cadseName, UUID uuid,
+			String qualifiedName, String name) {
+		// TODO Auto-generated method stub
+		return base.createExtendedType(metaType, cadseName , uuid, qualifiedName, name);
+	}
+
+	@Override
+	public Collection<ExtendedType> getExtendedTypes() {
+		return base.getExtendedTypes();
 	}
 
 }

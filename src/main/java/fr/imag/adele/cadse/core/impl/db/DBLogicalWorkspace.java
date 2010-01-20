@@ -261,14 +261,5 @@ public class DBLogicalWorkspace extends LogicalWorkspaceImpl implements
 		}
 	}
 
-	@Override
-	public CadseRuntime createCadseRuntime(String name, UUID runtimeId,
-			UUID definitionId) {
-		CadseRuntime cadseRuntime = new CadseRuntimeImpl(name, runtimeId,
-				definitionId);
-		this._cadses = ArraysUtil.add(CadseRuntime.class, this._cadses,
-				cadseRuntime);
-		registerItem(cadseRuntime);
-		return cadseRuntime;
-	}
+	
 }
