@@ -56,7 +56,11 @@ public class CadseCore {
 	/** The link type of any link type. */
 	static public LinkType theLinkType = null;
 
+	public static ItemType theExtendedType = null;
+	
 	private static Map<String, IAttributeType<?>> _oldname = new HashMap<String, IAttributeType<?>>();
+
+	
 
 	/**
 	 * Gets the name.

@@ -770,4 +770,16 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 		return null;
 	}
 
+	@Override
+	public void addExtendedType(ExtendedType et) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeExtendedType(ExtendedType et) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
