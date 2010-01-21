@@ -25,9 +25,11 @@ import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.impl.Item_Descriptor;
+import fr.imag.adele.cadse.core.impl.ui.mc.UIValidator_Descriptor;
 import fr.imag.adele.cadse.core.ui.UIField;
+import fr.imag.adele.cadse.core.ui.UIRunningValidator;
 
-public class IC_Descriptor extends Item_Descriptor  {
+public class IC_Descriptor extends UIValidator_Descriptor  {
 	
 	
 
@@ -59,6 +61,12 @@ public class IC_Descriptor extends Item_Descriptor  {
 			return (T) "ic";
 		}
 		return super.internalGetOwnerAttribute(type);
+	}
+
+	@Override
+	public UIRunningValidator create() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not implemented method");
 	}
 
 }

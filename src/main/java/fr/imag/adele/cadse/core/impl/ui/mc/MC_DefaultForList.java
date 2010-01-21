@@ -36,6 +36,11 @@ public class MC_DefaultForList extends MC_AttributesItem {
 		this.min = min;
 		this.max = max;
 	}
+	
+	public MC_DefaultForList() {
+		this.min = 0;
+		this.max = -1;
+	}
 
 	@Override
 	public Object getValue() {

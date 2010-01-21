@@ -3,9 +3,10 @@ package fr.imag.adele.cadse.core.impl.ui.mc;
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.impl.Item_Descriptor;
+import fr.imag.adele.cadse.core.ui.UIRunningValidator;
 import fr.imag.adele.cadse.core.util.CreatedObjectManager;
 
-public class MC_Descriptor extends Item_Descriptor {
+public class MC_Descriptor extends UIValidator_Descriptor {
 	
 	static {
 		CreatedObjectManager.DEFAULTObjectMANAGER.register(CadseGCST.MC_LINK, LinkModelController.class);
@@ -17,5 +18,10 @@ public class MC_Descriptor extends Item_Descriptor {
 	
 	public MC_Descriptor(ItemType it, Object ... keyvalues) {
 		super(it, keyvalues);
+	}
+
+	@Override
+	public UIRunningValidator create() {
+		return CreatedObjectManager.DEFAULTObjectMANAGER.create(this);
 	}
 }
