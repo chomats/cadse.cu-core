@@ -1026,7 +1026,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 	@Override
 	public void setParent(Item parent, LinkType lt) {
-		if (parent != null && !(parent instanceof ItemType)) {
+		if (parent != null && !(parent instanceof TypeDefinition)) {
 			throw new CadseIllegalArgumentException("parent is not of class ItemType : linktype is " + parent.getName()
 					+ "::" + getName());
 		}

@@ -1553,7 +1553,9 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace,
 	
 	@Override
 	public ExtendedType createExtendedType(ItemType metaType, CadseRuntime cadseName, 
-			UUID uuid, String qualifiedName, String name) {
+			UUID uuid, String qualifiedName, String name) throws CadseException {
+		if (metaType == null)
+			throw new CadseException("Type is null !!!");
 		ExtendedTypeImpl et = new ExtendedTypeImpl(uuid, metaType, qualifiedName, name);
 		cadseName.addExtendedType(et);
 		registerExtendedType(et);
