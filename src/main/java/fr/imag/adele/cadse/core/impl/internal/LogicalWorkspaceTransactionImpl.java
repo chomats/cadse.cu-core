@@ -3387,7 +3387,7 @@ public class LogicalWorkspaceTransactionImpl implements
 	@Override
 	public ExtendedType createExtendedType(ItemType metaType,
 			CadseRuntime cadseName, UUID uuid,
-			String qualifiedName, String name) {
+			String qualifiedName, String name) throws CadseException {
 		// TODO Auto-generated method stub
 		return base.createExtendedType(metaType, cadseName , uuid, qualifiedName, name);
 	}
