@@ -1019,15 +1019,15 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	 *            the list
 	 */
 	public void recurcifComputeCreationPage(FilterContext context,
-			List<IPage> list, Set<IAttributeType<?>> ro) {
+			List<IPage> list) {
 		if (_superType != null) {
 			((ItemTypeImpl) _superType).recurcifComputeCreationPage(context,
-					list, ro);
+					list);
 		}
-		super.recurcifComputeCreationPage(context, list, ro);
+		super.recurcifComputeCreationPage(context, list);
 		if (_extendedBy != null) {
 			for (TypeDefinition ext : _extendedBy) {
-				ext.recurcifComputeCreationPage(context, list, ro);
+				ext.recurcifComputeCreationPage(context, list);
 			}
 		}
 	}

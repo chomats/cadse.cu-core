@@ -142,5 +142,29 @@ public class HierachicPageImpl extends AbstractGeneratedItem implements IPage, H
 				p.getAllAttributes(allAttributes);
 			}
 	}
+
+
+	@Override
+	public IAttributeType<?>[] getHiddenAttributes() {
+		throw new UnsupportedOperationException();
+	}
+
+
+	@Override
+	public void addHiddenAttributes(IAttributeType<?>... attr) {
+		throw new UnsupportedOperationException();
+	}
+
+
+	@Override
+	public void addReadOnlyAttributes(IAttributeType<?>... attr) {
+		throw new UnsupportedOperationException();
+	}
+
+
+	@Override
+	public IAttributeType<?>[] getReadOnlyAttributes() {
+		throw new UnsupportedOperationException();
+	}
 	
 }

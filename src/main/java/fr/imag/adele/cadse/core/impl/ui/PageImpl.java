@@ -50,6 +50,8 @@ import fr.imag.adele.cadse.util.OrderWay;
 public class PageImpl extends AbstractGeneratedItem implements IPage {
 
 	IAttributeType<?>[] 		_attributes;
+	IAttributeType<?>[] 		_hiddenAttributes;
+	IAttributeType<?>[] 		_readonlyAttributes;
 
 	/** The _label. */
 	String					_label;
@@ -451,6 +453,32 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	public void getAllAttributes(HashSet<IAttributeType<?>> allAttributes) {
 		if (_attributes != null)
 			allAttributes.addAll(Arrays.asList(_attributes));
+	}
+
+	@Override
+	public void addHiddenAttributes(IAttributeType<?>... attr) {
+		_hiddenAttributes = ArraysUtil.addList(IAttributeType.class, _hiddenAttributes, attr);
+	}
+
+	@Override
+	public IAttributeType<?>[] getHiddenAttributes() {
+		if (_hiddenAttributes == null) {
+			return EMPTY_UIFIELD;
+		}
+		return _hiddenAttributes;
+	}
+	
+	@Override
+	public void addReadOnlyAttributes(IAttributeType<?>... attr) {
+		_readonlyAttributes = ArraysUtil.addList(IAttributeType.class, _readonlyAttributes, attr);
+	}
+
+	@Override
+	public IAttributeType<?>[] getReadOnlyAttributes() {
+		if (_readonlyAttributes == null) {
+			return EMPTY_UIFIELD;
+		}
+		return _readonlyAttributes;
 	}
 
 }
