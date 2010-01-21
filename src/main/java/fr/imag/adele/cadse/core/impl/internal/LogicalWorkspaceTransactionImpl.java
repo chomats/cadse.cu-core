@@ -3396,5 +3396,10 @@ public class LogicalWorkspaceTransactionImpl implements
 	public Collection<ExtendedType> getExtendedTypes() {
 		return base.getExtendedTypes();
 	}
+	
+	@Override
+	public void addBinding(CadseRuntime cadse, ItemType it, ExtendedType et) {
+		base.addBinding(cadse, it, et);
+	}
 
 }

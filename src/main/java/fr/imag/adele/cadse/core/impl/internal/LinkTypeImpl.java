@@ -279,7 +279,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 	@Override
 	public TypeDefinition getParent() {
-		if (super.getParent() instanceof ItemType) {
+		if (super.getParent() instanceof TypeDefinition) {
 			return (TypeDefinition) super.getParent();
 		}
 		return null;
