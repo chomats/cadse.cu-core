@@ -218,4 +218,8 @@ public final class PagesImpl implements Pages {
 	public ItemType getMainType() {
 		return _context.getDestinationType();
 	}
+	
+	public Set<IAttributeType<?>> getReadOnlyAttributes() {
+		return _readOnlyAttributes;
+	}
 }

@@ -500,8 +500,9 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 	 * @param creationPages
 	 *            the creation pages
 	 */
-	public synchronized void addCreationPages(List<IPage> creationPages) {
-		if (creationPages == null || creationPages.size() == 0) {
+	@Override
+	public synchronized void addCreationPages(IPage... creationPages) {
+		if (creationPages == null || creationPages.length == 0) {
 			return; // todo nothing
 		}
 		this._creationPages = ArraysUtil.addList(IPage.class,
@@ -522,8 +523,9 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 	 * @param modificationPages
 	 *            the modification pages
 	 */
-	public void addModificationPages(List<IPage> modificationPages) {
-		if (modificationPages == null || modificationPages.size() == 0) {
+	@Override
+	public void addModificationPages(IPage... modificationPages) {
+		if (modificationPages == null || modificationPages.length == 0) {
 			return; // todo nothing
 		}
 		this._modificationPages = ArraysUtil.addList(IPage.class,
@@ -596,7 +598,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 	 * java.util.Set)
 	 */
 	public void recurcifComputeCreationPage(FilterContext context,
-			List<IPage> list, Set<IAttributeType<?>> ro) {
+			List<IPage> list) {
 		if (_creationPages != null) {
 			for (IPage f : _creationPages) {
 				IPage[] owPages = f.getOverwritePage();

@@ -622,13 +622,13 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	}
 
 	@Override
-	public void addCreationPages(List<IPage> creationPages) {
+	public void addCreationPages(IPage... creationPages) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void addModificationPages(List<IPage> modificationPages) {
+	public void addModificationPages(IPage... modificationPages) {
 		// TODO Auto-generated method stub
 
 	}
@@ -752,7 +752,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 
 	@Override
 	public void recurcifComputeCreationPage(FilterContext context,
-			List<IPage> list, Set<IAttributeType<?>> ro) {
+			List<IPage> list) {
 		// TODO Auto-generated method stub
 
 	}

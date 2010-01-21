@@ -20,12 +20,22 @@ public class GroupOfAttributesDescriptor extends AttributeType implements
 	private IAttributeType<?>[] _attr = null;
 	private int _column;
 	private String _label;
+	private boolean _hasBoxGroup;
 
 	public GroupOfAttributesDescriptor(UUID id, String label, int column,
 			Object[] keyvalues) {
 		super(id, label, 0);
 		_column = column;
 		_label = label;
+		_hasBoxGroup = true;
+	}
+
+	public boolean isHasBoxGroup() {
+		return _hasBoxGroup;
+	}
+	
+	public void setHasBoxGroup(boolean hasBoxGroup) {
+		_hasBoxGroup = hasBoxGroup;
 	}
 
 	public GroupOfAttributesDescriptor(String label, int column,
@@ -107,6 +117,8 @@ public class GroupOfAttributesDescriptor extends AttributeType implements
 	public IAttributeType<?>[] getChildren() {
 		return _attr;
 	}
+	
+	
 
 	@Override
 	public CheckStatus check(Item item, Object value) {
@@ -115,9 +127,11 @@ public class GroupOfAttributesDescriptor extends AttributeType implements
 
 	@Override
 	public UIField generateDefaultField() {
-		return new UIFieldImpl(CadseGCST.DGROUP, UUID.randomUUID(), this,
-				getName(), EPosLabel.none, null, null,
+		UIFieldImpl uiFieldImpl = new UIFieldImpl(CadseGCST.DGROUP, UUID.randomUUID(), this,
+				_hasBoxGroup? getName() : null, EPosLabel.none, null, null,
 				CadseGCST.DGROUP_at_COLUMN_, _column,
 				CadseGCST.DGROUP_at_MAKE_COLUMNS_EQUAL_WIDTH_, false);
+		uiFieldImpl.setFlag(UI_NO_BORDER, !_hasBoxGroup);
+		return uiFieldImpl;
 	}
 }

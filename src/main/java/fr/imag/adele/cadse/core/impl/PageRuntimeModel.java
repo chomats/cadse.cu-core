@@ -129,12 +129,22 @@ public class PageRuntimeModel {
 		}
 	}
 
+	/** 
+	 * Calcul les pages spécifique à partir d'item et la page calculé.
+	 * Return l'information dans list.
+	 * 
+	 * @param item
+	 * @param context
+	 * @param list
+	 * @param ro
+	 */
 	protected void iComputeCreationPage(Item item, FilterContext context,
 			List<IPage> list, Set<IAttributeType<?>> ro) {
 		iRecurcifComputeCreationPage(item, context, list, ro);
 		HashSet<IAttributeType<?>> inSpecificPages = new HashSet<IAttributeType<?>>();
 		for (IPage iPage : list) {
 			inSpecificPages.addAll(Arrays.asList(iPage.getAttributes()));
+			inSpecificPages.addAll(Arrays.asList(iPage.getHiddenAttributes()));
 		}
 
 		HierachicPageImpl genericPage = new HierachicPageImpl(item.getType(),
@@ -149,6 +159,7 @@ public class PageRuntimeModel {
 		HashSet<IAttributeType<?>> inSpecificPages = new HashSet<IAttributeType<?>>();
 		for (IPage iPage : list) {
 			inSpecificPages.addAll(Arrays.asList(iPage.getAttributes()));
+			inSpecificPages.addAll(Arrays.asList(iPage.getHiddenAttributes()));
 		}
 
 		HierachicPageImpl genericPage = new HierachicPageImpl(item.getType(),
@@ -156,11 +167,22 @@ public class PageRuntimeModel {
 		iComputeGenericPage(item, context, genericPage, inSpecificPages, ro);
 		list.add(0, genericPage);
 	}
+	
+	/** 
+	 * Calcul les pages spécifique à partir d'un instance item et retourn l'information dans list et ro pour les attribut readonly
+	 * @param item
+	 * @param context
+	 * @param list
+	 * @param ro
+	 */
 
 	protected void iRecurcifComputeCreationPage(Item item,
 			FilterContext context, List<IPage> list, Set<IAttributeType<?>> ro) {
 		((TypeDefinition.Internal) item.getType()).recurcifComputeCreationPage(
-				context, list, ro);
+				context, list);
+		for (IPage page : list) {
+			ro.addAll(Arrays.asList(page.getReadOnlyAttributes()));
+		}
 	}
 
 	protected void iRecurcifComputeModificationPage(Item item,
