@@ -153,7 +153,7 @@ public class UIFieldImpl extends Item_Descriptor implements
 	 */
 	@Override
 	final public String getName() {
-		return this._label + "(" + _attributeRef.getName() + ")";
+		return this._label + "(" + (_attributeRef== null? "?": _attributeRef.getName()) + ")";
 	}
 
 	/*
