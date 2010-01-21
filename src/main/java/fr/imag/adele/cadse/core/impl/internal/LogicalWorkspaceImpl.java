@@ -59,6 +59,7 @@ import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.WSEvent;
 import fr.imag.adele.cadse.core.WSModelState;
 import fr.imag.adele.cadse.core.WorkspaceListener;
+import fr.imag.adele.cadse.core.CadseRuntime.Binding;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.transaction.delta.ImmutableWorkspaceDelta;
 import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
@@ -1560,6 +1561,13 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace,
 		cadseName.addExtendedType(et);
 		registerExtendedType(et);
 		return et;
+	}
+	
+	@Override
+	public void addBinding(CadseRuntime cadse, ItemType it, ExtendedType et) {
+		it.addExtendedType(et);
+		et.addExendsItemType(it);
+		cadse.addBinding(new Binding(it, et));
 	}
 
 	/**

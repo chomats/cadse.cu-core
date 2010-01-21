@@ -388,10 +388,14 @@ public class Accessor {
 		if (it instanceof ItemType) {
 			return it == type || ((ItemType) it).isSuperTypeOf(type);
 		}
-		ExtendedType[] ext = type.getExtendedType();
-		for (ExtendedType extendedType : ext) {
-			if (it == extendedType) {
-				return true;
+		else if (it instanceof ExtendedType) {
+			ExtendedType et = (ExtendedType) it;
+			ItemType[] ext =	et.getExendsItemType();
+			if (ext == null)
+				return false;
+			for (ItemType it2 : ext) {
+				boolean ret = it2 == type || it2.isSuperTypeOf(type);
+				if (ret) return true;
 			}
 		}
 		return false;
