@@ -33,7 +33,13 @@ import fr.imag.adele.cadse.core.attribute.CheckStatus;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.impl.CollectedReflectLink;
 import fr.imag.adele.cadse.core.impl.ReflectLink;
+import fr.imag.adele.cadse.core.impl.ui.UIFieldImpl;
+import fr.imag.adele.cadse.core.impl.ui.ic.IC_Descriptor;
+import fr.imag.adele.cadse.core.impl.ui.mc.MC_DefaultForList;
+import fr.imag.adele.cadse.core.impl.ui.mc.MC_Descriptor;
 import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
+import fr.imag.adele.cadse.core.ui.EPosLabel;
+import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.ui.UIPlatform;
 
 /**
@@ -215,5 +221,13 @@ public class ListAttributeType<X> extends AttributeType implements
 	public List convertTo(Object v) {
 		// TODO Auto-generated method stub
 		return (List) v;
+	}
+	
+	@Override
+	public UIField generateDefaultField() {
+		return new UIFieldImpl(CadseGCST.DLIST, UUID.randomUUID(), this, getDisplayName(), EPosLabel.top, 
+				new MC_Descriptor(CadseGCST.MC_LIST_OF_STRING), 
+				null);
+		
 	}
 }

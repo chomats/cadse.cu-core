@@ -102,14 +102,14 @@ public class UIFieldImpl extends Item_Descriptor implements
 		this._attributeRef = attr;
 		_hspan = 1;
 		if (it == CadseGCST.DBROWSER || it == CadseGCST.DLIST)
-			_hspan = 2;
+			_hspan = 3;
 	}
 
 	public UIFieldImpl(ItemType it, UUID id) {
 		super(id, it);
 		_hspan = 1;
 		if (it == CadseGCST.DBROWSER || it == CadseGCST.DLIST)
-			_hspan = 2;
+			_hspan = 3;
 	}
 
 	/*
