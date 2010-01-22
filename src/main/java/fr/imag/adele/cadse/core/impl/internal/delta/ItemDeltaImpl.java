@@ -3669,8 +3669,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 */
 	public void setReadOnly(boolean readOnly, boolean loaded)
 			throws CadseException {
-		setAttribute(CadseGCST.ITEM_at_ITEM_READONLY_,
-				CadseGCST.ITEM_at_ITEM_READONLY, readOnly, loaded);
+		setAttribute(CadseGCST.ITEM_at_ITEM_READONLY_, readOnly, loaded);
 	}
 
 	/*

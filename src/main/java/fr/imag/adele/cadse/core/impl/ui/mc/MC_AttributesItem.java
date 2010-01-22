@@ -114,7 +114,7 @@ public class MC_AttributesItem extends AbstractModelController implements Runnin
 	 */
 	public void notifieValueChanged( UIField field, Object value) {
 		Item item = _uiPlatform.getItem(getUIField());
-		if (item.isReadOnly() || item.isStatic())
+		if (item == null || item.isReadOnly() || item.isStatic())
 			return;
 		// item.setAttribute(getUIField().getKey(),value);
 		IAttributeType<?> attrType = getUIField().getAttributeDefinition();
