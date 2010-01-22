@@ -31,6 +31,7 @@ import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
+import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.impl.CollectedReflectLink;
 import fr.imag.adele.cadse.core.impl.ReflectLink;
@@ -72,7 +73,7 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	private String			_description;
 
 
-	private ItemType		_parentItemType;
+	private TypeDefinition		_parentItemType;
 
 
 	private IPage[]			_owPages;
@@ -293,12 +294,12 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	 * 
 	 * @see fr.imag.adele.cadse.core.ui.IPage#getParentItemType()
 	 */
-	public ItemType getParentItemType() {
+	public TypeDefinition getParentItemType() {
 		return _parentItemType;
 	}
 
 	public void setParent(Item parent, LinkType lt) {
-		_parentItemType = (ItemType) parent;
+		_parentItemType = (TypeDefinition) parent;
 	}
 
 
