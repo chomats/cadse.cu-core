@@ -236,6 +236,7 @@ public class PageRuntimeModel {
 		for (UIValidator v : validators) {
 			AbstractUIRunningValidator rv = (AbstractUIRunningValidator) v
 					.create();
+			if (rv == null) continue;
 			rv._desc = v;
 			ret.add(rv);
 		}
