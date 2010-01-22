@@ -38,6 +38,12 @@ public class GroupOfAttributesDescriptor extends AttributeType implements
 		_hasBoxGroup = hasBoxGroup;
 	}
 
+	/**
+	 * 
+	 * @param label the group label
+	 * @param column the number column
+	 * @param keyvalues attributes (key,value)
+	 */
 	public GroupOfAttributesDescriptor(String label, int column,
 			Object... keyvalues) {
 		this(UUID.randomUUID(), label, column, keyvalues);
