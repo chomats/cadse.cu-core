@@ -29,6 +29,7 @@ import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
+import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.impl.CadseIllegalArgumentException;
 import fr.imag.adele.cadse.core.ui.IPage;
 import fr.imag.adele.cadse.core.ui.IPageFactory;
@@ -90,7 +91,7 @@ public class ConfigurablePageFactory extends PageImpl implements IPageFactory {
 	 *      fr.imag.adele.cadse.core.ItemType,
 	 *      fr.imag.adele.cadse.core.LinkType)
 	 */
-	public IPage createPage(int cas, Link l, Item item, IItemNode node, ItemType type, LinkType lt) {
+	public IPage createPage(int cas, Link l, Item item, IItemNode node, TypeDefinition type, LinkType lt) {
 		if (this.cas != cas) {
 			return null;
 		}
