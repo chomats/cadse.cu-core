@@ -23,7 +23,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import fr.imag.adele.cadse.core.CadseDomain;
@@ -59,6 +61,8 @@ public class CadseCore {
 	public static ItemType theExtendedType = null;
 	
 	private static Map<String, IAttributeType<?>> _oldname = new HashMap<String, IAttributeType<?>>();
+
+	private static Set<String> _oldRemovedElemets = new HashSet<String>();
 
 	
 
@@ -395,6 +399,10 @@ public class CadseCore {
 
 	public static Map<String, IAttributeType<?>> getOldNameMap() {
 		return _oldname;
+	}
+	
+	public static Set<String> getRemovedElements() {
+		return _oldRemovedElemets ;
 	}
 
 }
