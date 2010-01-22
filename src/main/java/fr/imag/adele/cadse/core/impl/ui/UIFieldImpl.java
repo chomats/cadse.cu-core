@@ -24,10 +24,12 @@ import java.util.UUID;
 
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
+import fr.imag.adele.cadse.core.CadseRuntime;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
+import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.impl.CollectedReflectLink;
 import fr.imag.adele.cadse.core.impl.Item_Descriptor;
@@ -98,6 +100,18 @@ public class UIFieldImpl extends Item_Descriptor implements
 			_ic.setParent(this, CadseGCST.FIELD_lt_IC);
 		this._mc = mc;
 		this._label = label;
+		if (attr != null) {
+			TypeDefinition source = attr.getSource();
+			if (source != null) {
+				CadseRuntime cr = source.getCadse();
+				if (cr  != null) {
+					String l = cr.getLocalizedLabel(attr);
+					if (l != null) {
+						_label = l;
+					}
+				}
+			}
+		}
 		this._posLabel = poslabel;
 		this._attributeRef = attr;
 		_hspan = 1;

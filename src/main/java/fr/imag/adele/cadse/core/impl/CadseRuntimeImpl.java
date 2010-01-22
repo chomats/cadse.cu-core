@@ -19,6 +19,7 @@
 package fr.imag.adele.cadse.core.impl;
 
 import java.net.URL;
+import java.util.Properties;
 import java.util.UUID;
 
 import fr.imag.adele.cadse.core.CadseException;
@@ -59,6 +60,7 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 	private String[]		_errors;
 	private String			_cstClassName;
 	DefineNewContext[]		_defineNewContext;
+	Properties				_localizedLabels;
 
 	public CadseRuntimeImpl(String name, UUID runtimeId, UUID definitionId) {
 		super(runtimeId, 0);
@@ -441,5 +443,17 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 	public ItemType[] getItemTypes() {
 		return _itemTypes;
 	}
+
+	@Override
+	public String getLocalizedLabel(IAttributeType<?> attr) {
+		if (_localizedLabels == null)
+			return null;
+		return _localizedLabels.getProperty("label."+attr.getSource().getName()+"."+attr.getName());
+	}
+	
+	public void setLocalizedLabels(Properties localizedLabels) {
+		_localizedLabels = localizedLabels;
+	}
+	
 
 }

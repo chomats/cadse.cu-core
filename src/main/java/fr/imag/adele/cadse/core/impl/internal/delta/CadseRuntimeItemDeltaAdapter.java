@@ -1,6 +1,7 @@
 package fr.imag.adele.cadse.core.impl.internal.delta;
 
 import java.util.ArrayList;
+import java.util.Properties;
 import java.util.UUID;
 
 import fr.imag.adele.cadse.core.CadseGCST;
@@ -8,6 +9,7 @@ import fr.imag.adele.cadse.core.CadseRuntime;
 import fr.imag.adele.cadse.core.ExtendedType;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
+import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
 import fr.imag.adele.cadse.core.transaction.delta.LinkDelta;
 import fr.imag.adele.cadse.core.ui.view.DefineNewContext;
@@ -207,6 +209,18 @@ public class CadseRuntimeItemDeltaAdapter extends ItemItemDeltaAdapter implement
 	public void removeExtendedType(ExtendedType et) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public String getLocalizedLabel(IAttributeType<?> attr) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not implemented method");
+	}
+
+	@Override
+	public void setLocalizedLabels(Properties localizedLabels) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not implemented method");
 	}
 
 }
