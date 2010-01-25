@@ -77,12 +77,10 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 	@Override
 	public void notifyChangeAttribute(LogicalWorkspaceTransaction wc, ItemDelta modifiedItem,
 			SetAttributeOperation attOperation) throws CadseException {
-		if (modifiedItem.isDeleted()) { // TODO if item is deleted ???
+		if (modifiedItem.isDeleted()) { 
 			return;
 		}
-		String attrName = attOperation.getAttributeName();
 		IAttributeType<?> attrDef = attOperation.getAttributeDefinition();
-		// TODO use raw type
 		if (CadseGCST.ITEM_at_REV_MODIFIED_ == attrDef) {
 			return;
 		}
@@ -98,7 +96,7 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 			if (oldItem != null) {
 				isOldRequireNewRev = TWUtil.isRequireNewRev(oldItem);
 			}
-			if (!isOldRequireNewRev) {
+			if (isOldRequireNewRev) {
 				return; // it is not case of X -> RequireNewRev but RequireNewRev -> RequireNewRev
 				// should not happen
 			}
@@ -115,9 +113,13 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 					; // TODO should notify of a warning
 				} else if (TWDestEvol.immutable.equals(ltDestEvol)) {
 					TWUtil.setRequireNewRev(sourceItem);
-				} else if (TWDestEvol.mutable.equals(ltDestEvol) || TWDestEvol.effective.equals(ltDestEvol)) {
+				} else if (TWDestEvol.mutable.equals(ltDestEvol)) {
+					TWUtil.setRevModified(sourceItem);
+				} else if (TWDestEvol.effective.equals(ltDestEvol)) {
+					incomingLink.clearCompatibleVersions();
 					TWUtil.setRevModified(sourceItem);
 				}
+				// no state propagation if link is BranchDestination 
 			}
 
 			return;
@@ -137,7 +139,7 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 	 * @throws CadseException
 	 */
 	private void computeAndSetAttrModified(WLWCOperation attOperation, ItemDelta modifiedItem,
-			IAttributeType attrDef) throws CadseException {
+			IAttributeType<?> attrDef) throws CadseException {
 		// manage old cadse
 		if (attrDef == null || !attrDef.isResolved()) {
 			return;
@@ -252,6 +254,7 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 					// to newRev
 
 					TWUtil.setRequireNewRev(modifiedItem);
+					modifiedItem.setVersion(0);
 				}
 			}
 
@@ -260,25 +263,6 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 
 		// a link has been added
 		computeAndSetAttrModified(link, modifiedItem, linkType);
-
-		// manage state propagation
-//		TWDestEvol ltDestEvol = getDestEvol(linkType);
-//		Item destItem = link.getDestination();
-//		if (destItem == null) {
-//			return;
-//		}
-//
-//		if (!isRequireNewRev(destItem)) {
-//			return;
-//		}
-//
-//		if (TWDestEvol.finalDest.equals(ltDestEvol)) {
-//			; // TODO should notify of a warning
-//		} else if (TWDestEvol.immutable.equals(ltDestEvol)) {
-//			setRequireNewRev(modifiedItem);
-//		} else if (TWDestEvol.mutable.equals(ltDestEvol) || TWDestEvol.effective.equals(ltDestEvol)) {
-//			setRevModified(modifiedItem);
-//		}
 	}
 
 	@Override
@@ -303,7 +287,7 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 			return;
 		}
 
-		// a link has been added
+		// a link has been deleted
 		computeAndSetAttrModified(link, modifiedItem, linkType);
 	}
 
