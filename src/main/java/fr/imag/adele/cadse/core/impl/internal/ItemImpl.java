@@ -55,7 +55,9 @@ import fr.imag.adele.cadse.core.impl.CollectedReflectLink;
 import fr.imag.adele.cadse.core.internal.IWorkingLoadingItems;
 import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
 import fr.imag.adele.cadse.core.transaction.delta.LinkDelta;
+import fr.imag.adele.cadse.core.ui.IPage;
 import fr.imag.adele.cadse.core.util.IErrorCollector;
+import fr.imag.adele.cadse.util.ArraysUtil;
 import fr.imag.adele.cadse.util.OrderWay;
 
 /**
@@ -582,6 +584,10 @@ public class ItemImpl extends AbstractItem implements Item {
 	 */
 	@Override
 	public synchronized void removeOutgoingLink(Link link, boolean notifie) {
+		if (link.getLinkType() == CadseGCST.ITEM_lt_MODIFIED_ATTRIBUTES) {
+			super.removeOutgoingLink(link, notifie);
+			return;
+		}
 		m_outgoings.remove(link);
 		if (notifie) {
 			_dblw.getCadseDomain().notifieChangeEvent(
