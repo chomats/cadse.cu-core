@@ -297,25 +297,24 @@ public class CadseCore {
 		return getInstance().getLogicalWorkspace();
 	}
 
-	// /**
-	// * Load from persistence.
-	// *
-	// * @param url
-	// * the url
-	// *
-	// * @return the item description
-	// *
-	// * @throws IOException
-	// * Signals that an I/O exception has occurred.
-	// */
-	// public static ItemDelta loadFromPersistence(LogicalWorkspaceTransaction
-	// transaction, URL url) throws CadseException {
-	// if (getInstance() == null) {
-	// return null;
-	// }
-	// return ((CadseDomainImpl)
-	// getInstance()).getPersistence().loadFromPersistence(transaction, url);
-	// }
+	 /**
+	 * Load from persistence.
+	 *
+	 * @param url
+	 * the url
+	 *
+	 * @return the item description
+	 *
+	 * @throws IOException
+	 * Signals that an I/O exception has occurred.
+	 */
+	 public static ItemDelta loadFromPersistence(LogicalWorkspaceTransaction
+	 transaction, URL url) throws CadseException {
+		 if (getInstance() == null) {
+			 return null;
+		 }
+		 return ((CadseDomainImpl)  getInstance()).getPersistence().loadFromPersistence(transaction, url);
+	 }
 
 	/**
 	 * Sets the item persistence id.
