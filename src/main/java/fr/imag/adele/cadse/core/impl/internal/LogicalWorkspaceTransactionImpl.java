@@ -743,19 +743,19 @@ public class LogicalWorkspaceTransactionImpl implements
 		// }
 		ret.createLink(CadseGCST.ITEM_lt_INSTANCE_OF, ret.getType());
 
-		if (itemDescriptionRef.getName() != null) {
-			ret.setName(itemDescriptionRef.getName());
-		}
-		if (itemDescriptionRef.getQualifiedName() != null) {
-			ret.setQualifiedName(itemDescriptionRef.getQualifiedName());
-		}
-
 		IAttributeType<?>[] attributes = ret.getType().getAllAttributeTypes();
 		for (IAttributeType<?> attributeType : attributes) {
 			Object v = attributeType.getDefaultValue();
 			if (v == null)
 				continue;
 			ret.setAttribute(attributeType, v);
+		}
+		
+		if (itemDescriptionRef.getName() != null) {
+			ret.setName(itemDescriptionRef.getName());
+		}
+		if (itemDescriptionRef.getQualifiedName() != null) {
+			ret.setQualifiedName(itemDescriptionRef.getQualifiedName());
 		}
 
 		if (log != null) {
