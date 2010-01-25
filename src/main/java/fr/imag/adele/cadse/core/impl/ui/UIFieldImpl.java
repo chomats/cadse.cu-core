@@ -205,6 +205,12 @@ public class UIFieldImpl extends Item_Descriptor implements
 	public int getHSpan() {
 		return _hspan;
 	}
+	
+	@Override
+	public void setHSpan(int h) {
+		_hspan = h;
+	}
+	
 
 	/*
 	 * (non-Javadoc)
