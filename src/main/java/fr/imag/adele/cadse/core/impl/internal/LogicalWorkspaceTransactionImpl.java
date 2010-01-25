@@ -572,9 +572,9 @@ public class LogicalWorkspaceTransactionImpl implements
 
 	public void loadItems(Collection<URL> itemdescription)
 			throws CadseException, IOException {
-		// for (URL itemURL : itemdescription) {
-		// CadseCore.loadFromPersistence(this, itemURL);
-		// }
+		 for (URL itemURL : itemdescription) {
+			 CadseCore.loadFromPersistence(this, itemURL);
+		 }
 	}
 
 	public void loadMetaModel() {

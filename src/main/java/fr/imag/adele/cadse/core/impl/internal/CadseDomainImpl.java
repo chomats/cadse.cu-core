@@ -34,12 +34,14 @@ import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemDescriptionRef;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.WSEvent;
+import fr.imag.adele.cadse.core.impl.CadseCore;
 import fr.imag.adele.cadse.core.impl.db.DBLogicalWorkspace;
 import fr.imag.adele.cadse.core.impl.db.DBObject;
 import fr.imag.adele.cadse.core.transaction.delta.ImmutableWorkspaceDelta;
 import fr.imag.adele.fede.workspace.as.initmodel.IInitModel;
 import fr.imag.adele.teamwork.db.ModelVersionDBService;
 import fr.imag.adele.teamwork.db.ModelVersionDBService2;
+import fr.imag.adele.fede.workspace.as.persistence.IPersistence;
 
 /**
  * The Class WorkspaceDomainImpl.
@@ -67,7 +69,7 @@ public class CadseDomainImpl implements CadseDomain {
 	public IInitModel _initModelService;
 	public IPlatformIDE _platformService;
 	public ModelVersionDBService _modelDBService;
-
+	public IPersistence _peristence;
 	/**
 	 * Instantiates a new workspace domain impl.
 	 */
@@ -409,6 +411,10 @@ public class CadseDomainImpl implements CadseDomain {
 
 	public boolean inDevelopmentMode() {
 		return _platformService != null && _platformService.inDevelopmentMode();
+	}
+
+	public IPersistence getPersistence() {
+		return _peristence;
 	}
 
 }
