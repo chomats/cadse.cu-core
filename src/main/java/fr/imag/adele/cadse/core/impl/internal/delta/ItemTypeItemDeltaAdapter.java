@@ -104,13 +104,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	@Override
-	public IActionContributor[] getAllActionContribution() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 	@Override
 	public String getCadseName() {
 		return _delta.getAttribute(CadseGCST.CADSE_DEFINITION_at_CADSE_NAME_);
@@ -496,12 +490,6 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	}
 
 	@Override
-	public void resetContributions() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void setSuperType(ItemType it) {
 		try {
 			LinkDelta oldSuperLink = _delta
@@ -780,6 +768,12 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	public void removeExtendedType(ExtendedType et) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public Set<IActionContributor> getAllActionContribution() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not implemented method");
 	}
 
 }
