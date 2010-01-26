@@ -23,6 +23,7 @@ import fr.imag.adele.cadse.core.IItemManager;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemState;
 import fr.imag.adele.cadse.core.impl.CadseCore;
+import fr.imag.adele.cadse.core.key.DefaultKeyImpl;
 import fr.imag.adele.cadse.core.key.Key;
 import fr.imag.adele.cadse.core.ui.UIField;
 
@@ -134,6 +135,10 @@ public class MC_Name extends MC_AttributesItem {
 			Key key;
 			try {
 				key = item.getType().getKeyDefinition().computeKey(item);
+				if (key == DefaultKeyImpl.INVALID) {
+					_uiPlatform.setMessageError("Cannot compute key");
+					return true;
+				}
 				key.setName(shortId);
 			} catch (CadseException e) {
 				CadseCore.getCadseDomain().log("MC_Name",
