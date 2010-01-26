@@ -120,13 +120,14 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 	protected String _cadseName = null;
 
 
+	public static final int		IT_DEFAULT_FLAG_VALUE						= 0;
 	protected String _cstName;
-	int _it_definedflag;
+	int _it_definedflag = IT_ABSTRACT; // IT_ABSTRACT All ready defined not heritable.
 	int _it_flag;
 
 	public boolean getITFlag(int f) {
 		if ((_it_definedflag & f) == 0) {
-			return (Item.DEFAULT_FLAG_VALUE & f) != 0;
+			return (IT_DEFAULT_FLAG_VALUE & f) != 0;
 		}
 		return (_it_flag & f) != 0;
 	}
