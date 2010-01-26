@@ -677,6 +677,13 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	public boolean isAbstract() {
 		return (_kind & ItemType.IT_ABSTRACT) != 0;
 	}
+	
+	public void setIsAbstract(boolean b) {
+		if (b)
+			_kind |= ItemType.IT_ABSTRACT;
+		else
+			_kind &= ~ItemType.IT_ABSTRACT;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -892,6 +899,10 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 		}
 		if (CadseGCST.ITEM_TYPE_at_ICON_ == type) {
 			_image = Convert.toString(value);
+			return true;
+		}		
+		if (CadseGCST.ITEM_TYPE_at_IS_INSTANCE_ABSTRACT_ == type) {
+			setIsAbstract(Convert.toBoolean(value,CadseGCST.ITEM_TYPE_at_IS_INSTANCE_ABSTRACT_,false));
 			return true;
 		}
 		if (CadseGCST.ITEM_TYPE_at_ITEM_FACTORY_ == type) {

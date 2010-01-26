@@ -776,4 +776,10 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 		throw new UnsupportedOperationException("Not implemented method");
 	}
 
+	@Override
+	public void setIsAbstract(boolean b) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not implemented method");
+	}
+
 }
