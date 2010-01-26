@@ -382,6 +382,11 @@ public class LogicalWorkspaceTransactionImpl implements
 	public ItemType getItemType(UUID id) {
 		return getItemType(null, id, false);
 	}
+	
+	@Override
+	public ExtendedType getExtendedType(UUID extUUID) {
+		return base.getExtendedType(extUUID);
+	}
 
 	/*
 	 * (non-Javadoc)
