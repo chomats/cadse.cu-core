@@ -118,9 +118,6 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	/** The has content. */
 	private boolean _hasContent; // contenu
 
-	/** The kind. */
-	private int _kind;
-
 	/** The item manager. */
 	private IItemManager _itemManager = null;
 
@@ -194,11 +191,9 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 		this._superType = superType == null ? CadseGCST.ITEM : superType;
 
 		this._hasContent = hasContent;
-		this._kind = 0;
 		this._displayName = displayName == null ? shortname : displayName;
-		this._kind = 0;
 		if (isAbstract) {
-			_kind |= ItemType.IT_ABSTRACT;
+			setITFlag(ItemType.IT_ABSTRACT, true);
 		}
 		this._intId = intId;
 		_subTypes = null;
@@ -212,7 +207,6 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 
 	public ItemTypeImpl(ItemType it, ItemDelta desc) {
 		super(it, desc);
-		this._kind = 0;
 
 		_subTypes = null;
 		_superType = null;
@@ -321,6 +315,16 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	 */
 	public void setItemManager(IItemManager itemManager) {
 		this._itemManager = itemManager;
+	}
+	
+	@Override
+	public boolean getITFlag(int f) {
+		if (isITDefinedFlag(f))
+			return super.getITFlag(f);
+		if (_superType != null) {
+			return ((ItemTypeImpl) _superType).getITFlag(f);
+		}
+		return (IT_DEFAULT_FLAG_VALUE & f) != 0;
 	}
 
 	@Override
@@ -589,11 +593,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	 * @see fr.imag.adele.cadse.core.ItemType#setHasUniqueNameAttribute(boolean)
 	 */
 	public void setHasQualifiedNameAttribute(boolean val) {
-		if (val) {
-			_kind |= IT_HAS_QUALIFIED_NAME;
-		} else {
-			_kind &= ~IT_HAS_QUALIFIED_NAME;
-		}
+		setITFlag(ItemType.IT_HAS_QUALIFIED_NAME, val);
 	}
 
 	/*
@@ -603,7 +603,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	 */
 	@Override
 	public boolean hasQualifiedNameAttribute() {
-		return (_kind & IT_HAS_QUALIFIED_NAME) != 0;
+		return getITFlag(IT_HAS_QUALIFIED_NAME);
 	}
 
 	/*
@@ -612,11 +612,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	 * @see fr.imag.adele.cadse.core.ItemType#setHasShortNameAttribute(boolean)
 	 */
 	public void setHasNameAttribute(boolean val) {
-		if (val) {
-			_kind |= IT_HAS_NAME;
-		} else {
-			_kind &= ~IT_HAS_NAME;
-		}
+		setITFlag(ItemType.IT_HAS_NAME, val);
 	}
 
 	/*
@@ -625,7 +621,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	 * @see fr.imag.adele.cadse.core.ItemType#hasShortNameAttribute()
 	 */
 	public boolean hasShortNameAttribute() {
-		return (_kind & IT_HAS_NAME) != 0;
+		return getITFlag(IT_HAS_NAME);
 	}
 
 	/*
@@ -634,11 +630,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	 * @see fr.imag.adele.cadse.core.ItemType#setRootElement(boolean)
 	 */
 	public void setRootElement(boolean val) {
-		if (val) {
-			_kind |= IT_INSTACES_IS_ROOT_ELEMENT;
-		} else {
-			_kind &= ~IT_INSTACES_IS_ROOT_ELEMENT;
-		}
+		setITFlag(IT_INSTACES_IS_ROOT_ELEMENT, val);
 	}
 
 	/*
@@ -647,7 +639,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	 * @see fr.imag.adele.cadse.core.ItemType#isRootElement()
 	 */
 	public boolean isRootElement() {
-		return (_kind & IT_INSTACES_IS_ROOT_ELEMENT) != 0;
+		return getITFlag(IT_INSTACES_IS_ROOT_ELEMENT);
 	}
 
 	/*
@@ -657,16 +649,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	 */
 	@Override
 	public boolean isComposite() {
-		if ((_kind & IT_COMPOSITE) != 0) {
-			return true;
-		}
-		if (_superType != null) {
-			if (_superType.isComposite()) {
-				this._kind |= IT_COMPOSITE;
-				return true;
-			}
-		}
-		return false;
+		return getITFlag(IT_COMPOSITE);
 	}
 
 	/*
@@ -675,14 +658,11 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	 * @see fr.imag.adele.cadse.core.ItemType#isAbstract()
 	 */
 	public boolean isAbstract() {
-		return (_kind & ItemType.IT_ABSTRACT) != 0;
+		return getITFlag(IT_ABSTRACT);
 	}
 	
 	public void setIsAbstract(boolean b) {
-		if (b)
-			_kind |= ItemType.IT_ABSTRACT;
-		else
-			_kind &= ~ItemType.IT_ABSTRACT;
+		setITFlag(IT_INSTACES_IS_ROOT_ELEMENT, b);
 	}
 
 	/*
@@ -796,7 +776,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 		}
 		if (CadseGCST.ITEM_TYPE_at_IS_ROOT_ELEMENT_ == type) {
 			return (T) Boolean
-					.valueOf((this._kind & ItemType.IT_INSTACES_IS_ROOT_ELEMENT) != 0);
+					.valueOf(isRootElement());
 		}
 		if (CadseGCST.ITEM_TYPE_at_ICON_ == type) {
 			if (_image == null)
