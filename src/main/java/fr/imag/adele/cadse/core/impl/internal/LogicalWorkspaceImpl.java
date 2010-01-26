@@ -1450,6 +1450,24 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace,
 		return null;
 
 	}
+	@Override
+	public ExtendedType getExtendedType(UUID id) {
+		Item i = _items.get(id);
+		if (i != null) {
+			if (i instanceof ExtendedType) {
+				return (ExtendedType) i;
+			}
+			if (i instanceof ItemUnresolved) {
+				return null;
+			}
+
+			throw new CadseIllegalArgumentException(
+					"Le type est attendu est metaItemType pour l'id " + id
+							+ " alors qu'il est " + i.getType().getName()
+							+ " : bad type for " + id);
+		}
+		return null;
+	}
 
 	/**
 	 * Get all item types.
