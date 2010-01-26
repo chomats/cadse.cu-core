@@ -39,6 +39,7 @@ import fr.imag.adele.cadse.core.impl.db.DBLogicalWorkspace;
 import fr.imag.adele.cadse.core.impl.ui.CreationAction;
 import fr.imag.adele.cadse.core.impl.ui.ModificationAction;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransactionListener;
+import fr.imag.adele.cadse.core.ui.AbstractActionContributor;
 import fr.imag.adele.cadse.core.ui.HierarchicPage;
 import fr.imag.adele.cadse.core.ui.IActionContributor;
 import fr.imag.adele.cadse.core.ui.IActionPage;
@@ -84,8 +85,6 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 	@Deprecated
 	public static final String ATTR_SHORT_NAME = "ws::private::short-name";
 
-	/** The Constant EMPTY_ACTION_CONTRIBUTORS. */
-	public static final IActionContributor[] EMPTY_ACTION_CONTRIBUTORS = new IActionContributor[0];
 
 	public TypeDefinitionImpl() {
 	}
@@ -154,7 +153,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 	 * @return the action contribution
 	 */
 	public IActionContributor[] getActionContribution() {
-		return _actionContributors == null ? EMPTY_ACTION_CONTRIBUTORS
+		return _actionContributors == null ? AbstractActionContributor.EMPTY
 				: _actionContributors;
 	}
 
@@ -973,6 +972,26 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 			IActionContributor contributor) {
 		_actionContributors = ArraysUtil.add(IActionContributor.class,
 				_actionContributors, contributor);
+	}
+	
+	@Override
+	final public Set<IActionContributor> getAllActionContribution() {
+		Set<IActionContributor> overwrittenAction = new HashSet<IActionContributor>();
+		Set<IActionContributor> action = new HashSet<IActionContributor>();
+		computeAllActionContribution(action, overwrittenAction);
+		action.removeAll(overwrittenAction);
+		return action;
+	}
+	
+	protected void computeAllActionContribution(Set<IActionContributor> action, Set<IActionContributor> overwrittenAction) {
+		IActionContributor[] localAction = getActionContribution();
+		if (localAction.length == 0) return;
+		action.addAll(Arrays.asList(localAction));
+		for (IActionContributor iActionContributor : localAction) {
+			IActionContributor[] overwriteActionContributor = iActionContributor.getOverwriteActionContributor();
+			if (overwriteActionContributor.length == 0) continue;
+			overwrittenAction.addAll(Arrays.asList(overwriteActionContributor));
+		}
 	}
 
 	/**

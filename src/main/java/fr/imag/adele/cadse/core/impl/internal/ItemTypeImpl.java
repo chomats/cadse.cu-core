@@ -130,10 +130,6 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	/** The display name. */
 	private String _displayName;
 
-	// cache
-	/** The __action contributors. */
-	IActionContributor[] __actionContributors = null;
-
 	/** The clazz action. */
 	private Class<? extends IActionPage> _clazzAction;
 
@@ -948,21 +944,6 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 		}
 	}
 
-	/**
-	 * reset du cache des contributions.
-	 */
-	public void resetContributions() {
-		if (__actionContributors == null) {
-			return;
-		}
-		__actionContributors = null;
-		if (_subTypes != null) {
-			for (ItemType subT : _subTypes) {
-				subT.resetContributions();
-
-			}
-		}
-	}
 
 	/**
 	 * Red�finition de la class d'action lors de la creation d'un item avec
@@ -978,35 +959,19 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 		this._clazzAction = clazz;
 		this._defaultInstanceName = defaultShortName;
 	}
-
-	/**
-	 * return toutes les actions contributions du type et des sous type ...
-	 * 
-	 * @return the all action contribution
-	 */
-	public IActionContributor[] getAllActionContribution() {
-		if (__actionContributors == null) {
-			if (_superType != null) {
-				if (_actionContributors == null
-						|| _actionContributors.length == 0) {
-					__actionContributors = _superType
-							.getAllActionContribution();
-				} else {
-					IActionContributor[] super_a = _superType
-							.getAllActionContribution();
-					if (super_a.length == 0) {
-						__actionContributors = getActionContribution();
-					} else {
-						__actionContributors = ArraysUtil.merge(
-								IActionContributor.class, super_a,
-								_actionContributors);
-					}
-				}
-			} else {
-				__actionContributors = getActionContribution();
+	
+	@Override
+	protected void computeAllActionContribution(Set<IActionContributor> action,
+			Set<IActionContributor> overwrittenAction) {
+		if (_superType != null) {
+			((TypeDefinitionImpl) _superType).computeAllActionContribution(action, overwrittenAction);
+		}
+		super.computeAllActionContribution(action, overwrittenAction);
+		if (_extendedBy != null) {
+			for (TypeDefinition ext : _extendedBy) {
+				((TypeDefinitionImpl) ext).computeAllActionContribution(action, overwrittenAction);
 			}
 		}
-		return __actionContributors;
 	}
 
 	/**
