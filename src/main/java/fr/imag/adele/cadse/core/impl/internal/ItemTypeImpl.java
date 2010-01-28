@@ -356,6 +356,9 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 			// _cadseRuntime = destination
 			return new ReflectLink(lt, this, destination, 0, Item.IS_HIDDEN);
 		}
+		if (lt == CadseGCST.GROUP_EXT_ITEM_lt_MEMBER_OF) {
+			_group = (ItemType) destination;
+		}
 
 		return super.commitLoadCreateLink(lt, destination);
 	}
