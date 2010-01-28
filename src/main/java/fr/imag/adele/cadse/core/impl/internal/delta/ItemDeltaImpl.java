@@ -149,7 +149,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	private SpaceKeyDeltaImpl _keyDelta;
 	private Item _baseItem;
 	private Key _nextKey;
-	private GroupType _group;
+	private ItemType _group;
 	private int _parentID;
 	private int _cadseID;
 	private ItemType[] _types;
@@ -4063,7 +4063,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	}
 
 	@Override
-	public GroupType getGroup() {
+	public ItemType getGroup() {
 		return _group;
 	}
 

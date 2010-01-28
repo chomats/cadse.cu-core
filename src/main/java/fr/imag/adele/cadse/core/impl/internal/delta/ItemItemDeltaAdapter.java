@@ -600,9 +600,8 @@ public class ItemItemDeltaAdapter implements Item {
 	}
 
 	@Override
-	public GroupType getGroup() {
-		// TODO Auto-generated method stub
-		return null;
+	public ItemType getGroup() {
+		return _delta.getGroup();
 	}
 
 	@Override

@@ -193,7 +193,7 @@ public class DBItemImpl extends DBObject implements Item {
 	}
 
 	@Override
-	public GroupType getGroup() {
+	public ItemType getGroup() {
 		// TODO Auto-generated method stub
 		return null;
 	}

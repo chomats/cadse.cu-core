@@ -544,12 +544,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 		return null;
 	}
 
-	@Override
-	public GroupType getGroup() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 	@Override
 	public ItemType getGroupType() {
 		// TODO Auto-generated method stub

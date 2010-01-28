@@ -1159,12 +1159,6 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	}
 
 	@Override
-	public GroupType getGroup() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public boolean commitSetAttribute(IAttributeType<?> type, String key,
 			Object value) {
 		// TODO Auto-generated method stub
