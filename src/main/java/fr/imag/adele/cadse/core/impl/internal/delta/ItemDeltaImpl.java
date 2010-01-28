@@ -2716,6 +2716,8 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		if (getType() == null) {
 			return false;
 		}
+		if (it == CadseGCST.ITEM_TYPE && getType().isGroupType())
+			return true;
 		return Accessor.isInstanceOf(this, it);
 	}
 
