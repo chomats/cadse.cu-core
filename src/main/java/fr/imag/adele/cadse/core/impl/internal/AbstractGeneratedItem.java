@@ -1609,7 +1609,7 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 		return -1;
 	}
 
-	public void setState(ItemState modifing) {
+	final public void setState(ItemState modifing) {
 		this._state = modifing;
 
 	}
