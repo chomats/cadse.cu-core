@@ -256,10 +256,6 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 		return _name;
 	}
 
-	@Override
-	public void setState(ItemState modifing) {
-	}
-
 	public Item getParent() {
 		return _parent;
 	}
