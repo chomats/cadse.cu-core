@@ -665,7 +665,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	}
 
 	@Override
-	public void computeGroup(Set<GroupOfAttributes> groups) {
+	public void computeGroup(Set<GroupOfAttributes> groups, Set<TypeDefinition> visited) {
 		// TODO Auto-generated method stub
 
 	}
@@ -715,14 +715,14 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	public void computeGenericPage(FilterContext context,
 			HierarchicPage genericPage,
 			HashSet<IAttributeType<?>> inSpecificPages,
-			Set<IAttributeType<?>> ro, IAttributeType<?>... firstAttributes) {
+			Set<IAttributeType<?>> ro, Set<TypeDefinition> visited, IAttributeType<?>... firstAttributes) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void computeValidators(FilterContext context,
-			List<UIValidator> validators) {
+			List<UIValidator> validators, Set<TypeDefinition> visited) {
 		// TODO Auto-generated method stub
 
 	}
@@ -735,14 +735,14 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 
 	@Override
 	public void recurcifComputeCreationPage(FilterContext context,
-			List<IPage> list) {
+			List<IPage> list, Set<TypeDefinition> visited) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void recurcifComputeModificationPage(FilterContext context,
-			List<IPage> list, Set<IAttributeType<?>> ro) {
+			List<IPage> list, Set<IAttributeType<?>> ro, Set<TypeDefinition> visited) {
 		// TODO Auto-generated method stub
 
 	}

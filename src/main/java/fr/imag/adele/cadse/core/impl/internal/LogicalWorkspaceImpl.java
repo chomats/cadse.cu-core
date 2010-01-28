@@ -1450,6 +1450,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace,
 		return null;
 
 	}
+	
 	@Override
 	public ExtendedType getExtendedType(UUID id) {
 		Item i = _items.get(id);
