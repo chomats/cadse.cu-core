@@ -1860,7 +1860,7 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 	}
 
 	@Override
-	public GroupType getGroup() {
+	public ItemType getGroup() {
 		return _group;
 	}
 
