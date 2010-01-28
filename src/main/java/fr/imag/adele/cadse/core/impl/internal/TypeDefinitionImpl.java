@@ -655,20 +655,20 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 		if (_validators != null) {
 			for (UIValidator f : _validators) {
 				UIValidator[] owValidators = f.getOverwriteValidator();
-				boolean setPage = false;
+				boolean addValidator = false;
 				if (owValidators != null && owValidators.length != 0) {
 					List<UIValidator> owValidatorsList = Arrays
 							.asList(owValidators);
 					for (int i = 0; i < validators.size(); i++) {
 						if (owValidatorsList.indexOf(validators.get(i)) != -1) {
 							validators.set(i, f);
-							setPage = true;
+							addValidator = true;
 							break;
 						}
 					}
 					validators.removeAll(owValidatorsList);
 				}
-				if (!setPage) {
+				if (!addValidator) {
 					validators.add(f);
 				}
 			}

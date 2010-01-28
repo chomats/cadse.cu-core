@@ -25,6 +25,7 @@ import fr.imag.adele.cadse.core.ui.UIRunningValidator;
 import fr.imag.adele.cadse.core.ui.UIValidator;
 import fr.imag.adele.cadse.core.ui.view.FilterContext;
 import fr.imag.adele.cadse.core.ui.view.NewContext;
+import fr.imag.adele.cadse.util.ArraysUtil;
 
 public class PageRuntimeModel {
 	public static final IPage[] EMPTY_PAGE = new IPage[0];
@@ -204,6 +205,57 @@ public class PageRuntimeModel {
 		((TypeDefinition.Internal) item.getType()).computeValidators(context,
 				validators);
 	}
+	
+	static class TypeOrder {
+		ItemType it;
+		int count;
+		int index;
+		TypeOrder[] parents;
+	}
+	
+//	protected TypeDefinition[] computeTypeOrder(Item item) {
+//		HashMap<ItemType, TypeOrder> maps = new HashMap<ItemType, TypeOrder>();
+//		TypeOrder[] instanceTypeOrder = compute(maps, item.getType());
+//		if (item.getGroup() != null)
+//			instanceTypeOrder = ArraysUtil.addList(TypeOrder.class, instanceTypeOrder, compute(maps, item.getGroup()));
+//		
+//		ArrayList<TypeDefinition> ret = new ArrayList<TypeDefinition>();
+//		for (int i = 0; i < instanceTypeOrder.length; i++) {
+//			compute(ret, instanceTypeOrder[i]);
+//		}
+//	}
+//
+//	private void compute(TypeOrder ... typeOrder ) {
+//		ArrayList<TypeOrder> v;
+//		ArrayList<TypeOrder> next;
+//		int index = 0;
+//		
+//	}
+//
+//	private TypeOrder[] compute(HashMap<ItemType, TypeOrder> maps, ItemType... types) {
+//		if (types.length == 0)
+//			return null;
+//		if (types.length == 1 && types[0] == null)
+//			return null;
+//		int i = 0;
+//		TypeOrder[] retArray = new TypeOrder[types.length];
+//		for (ItemType type : types) {
+//			TypeOrder ret = maps.get(type);
+//			if (ret == null) {
+//				ret = new TypeOrder();
+//				ret.it = type;
+//				ret.count = 1;
+//				ret.parents = compute(maps, type.getSuperType());
+//				maps.put(type, ret);
+//			} else {
+//				ret.count++;
+//				compute(maps, type.getSuperType());
+//			}
+//			retArray[i++] = ret;
+//		}
+//		
+//		return retArray;
+//	}
 
 	protected Map<IAttributeType<?>, UIField> iComputeFields(Item item, IPage[] pages) {
 		Map<IAttributeType<?>, UIField> fiedls = new HashMap<IAttributeType<?>, UIField>();
