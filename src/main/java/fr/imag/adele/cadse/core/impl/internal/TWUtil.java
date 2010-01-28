@@ -19,11 +19,13 @@
 package fr.imag.adele.cadse.core.impl.internal;
 
 import java.util.List;
+import java.util.UUID;
 
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.Link;
+import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.enumdef.TWDestEvol;
 import fr.imag.adele.cadse.core.enumdef.TWEvol;
@@ -182,5 +184,67 @@ public class TWUtil {
 			return true;
 		
 		return false;
+	}
+	
+	/**
+	 * Returns true if specified item cannot be imported.
+	 * Import an item which is already present in the workspace is forbidden.
+	 * 
+	 * @param item an item
+	 * @return true if specified item cannot be imported.
+	 */
+	public static boolean cannotImport(UUID itemId, LogicalWorkspace lw) {
+		return (itemId != null) || isPresentInWorkspace(itemId, lw);
+	}
+
+	/**
+	 * Returns true if specified item is present in specified workspace.
+	 * 
+	 * @param itemId id of an item 
+	 * @param lw     a logical workspace
+	 * @return true if specified item is present in specified workspace.
+	 */
+	public static boolean isPresentInWorkspace(UUID itemId, LogicalWorkspace lw) {
+		return (lw.getItem(itemId) != null);
+	}
+
+	/**
+	 * Returns true if specified item is ignored for an update operation.
+	 * 
+	 * @param item an item
+	 * @return true if specified item is ignored for an update operation.
+	 */
+	public static boolean cannotUpdate(Item item) {
+		return (item == null) || item.isStatic() || hasNeverBeenCommited(item);
+	}
+
+	/**
+	 * Returns true if specified item has never been commited.
+	 * 
+	 * @param item an item	
+	 * @return true if specified item has never been commited.
+	 */
+	public static boolean hasNeverBeenCommited(Item item) {
+		return (item.getVersion() == 0);
+	}
+	
+	/**
+	 * Returns true if specified item is ignored for a commit operation.
+	 * 
+	 * @param item an item
+	 * @return true if specified item is ignored for a commit operation.
+	 */
+	public static boolean cannotCommit(Item item) {
+		return (item == null) || item.isStatic() || !item.isRevModified();
+	}
+	
+	/**
+	 * Returns true if specified item is ignored for a revert operation.
+	 * 
+	 * @param item an item
+	 * @return true if specified item is ignored for a revert operation.
+	 */
+	public static boolean cannotRevert(Item item) {
+		return (item == null) || item.isStatic() || item.isRevModified() || hasNeverBeenCommited(item);
 	}
 }
