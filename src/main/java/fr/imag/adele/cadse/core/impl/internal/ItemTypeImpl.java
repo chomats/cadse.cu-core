@@ -1159,6 +1159,10 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 					Item.IS_HIDDEN, _modificationPages);
 			return;
 		}
+		if (linkType == CadseGCST.GROUP_EXT_ITEM_lt_MEMBER_OF) {
+			ret.addOutgoing(CadseGCST.GROUP_EXT_ITEM_lt_MEMBER_OF,
+					 _group, Item.IS_HIDDEN);
+		}
 		super.collectOutgoingLinks(linkType, ret);
 	}
 
@@ -1250,8 +1254,6 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 
 	@Override
 	public boolean isGroupType() {
-		if (isGroupHead())
-			return true;
 		for (LinkType l : getOutgoingLinkTypes()) {
 			if (l.isGroup())
 				return true;
@@ -1364,6 +1366,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	public boolean isMainType() {
 		return true;
 	}
+	
 
 	@Override
 	public void addExtendedType(ExtendedType et) {
@@ -1376,6 +1379,91 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	@Override
 	public void removeExtendedType(ExtendedType et) {
 		_extendedBy = ArraysUtil.remove(ExtendedType.class, _extendedBy, et);
+	}
+	
+	// IMPLEMENATION Group HEad
+/***
+ * override group head
+ */
+	public boolean isInstanceOf(TypeDefinition it) {
+		if (it == CadseGCST.ITEM_TYPE && _type.isGroupType())
+			return true;
+		return super.isInstanceOf(it);
+	}
+	
+	@Override
+	public IAttributeType<?>[] getLocalAllAttributeTypes() {
+		if (isGroupHead()) {
+			HashSet<IAttributeType<?>> ret = new HashSet<IAttributeType<?>>();
+			ret.addAll(Arrays.asList(super.getLocalAllAttributeTypes()));
+			ret.addAll(Arrays.asList(CadseGCST.ITEM_TYPE.getAllAttributeTypes()));
+			return (IAttributeType<?>[]) ret.toArray(new IAttributeType<?>[ret
+					.size()]);
+		}
+		return getType().getAllAttributeTypes();
+	}
+	
+	
+	
+	public void getLocalAllAttributeTypes(List<IAttributeType<?>> all) {
+		if (getType() == null) {
+			throw new UnsupportedOperationException("type is undefined");
+		}
+		super.getLocalAllAttributeTypes(all);
+		if (isGroupHead())
+			CadseGCST.ITEM_TYPE.getAllAttributeTypes(all);
+	}
+
+	public void getLocalAllAttributeTypes(Map<String, IAttributeType<?>> all,
+			boolean keepLastAttribute) {
+		if (getType() == null) {
+			throw new UnsupportedOperationException("type is undefined");
+		}
+		super.getLocalAllAttributeTypes(all, keepLastAttribute);
+
+		if (isGroupHead())
+			CadseGCST.ITEM_TYPE.getAllAttributeTypes(all, keepLastAttribute);
+	}
+
+	public void getLocalAllAttributeTypes(List<IAttributeType<?>> all,
+			ItemFilter filter) {
+		if (getType() == null) {
+			throw new UnsupportedOperationException("type is undefined");
+		}
+		super.getLocalAllAttributeTypes(all, filter);
+		if (isGroupHead())
+			CadseGCST.ITEM_TYPE.getAllAttributeTypes(all);
+	}
+
+	public void getLocalAllAttributeTypes(Map<String, IAttributeType<?>> all,
+			boolean keepLastAttribute, ItemFilter filter) {
+		if (getType() == null) {
+			throw new UnsupportedOperationException("type is undefined");
+		}
+		super.getLocalAllAttributeTypes(all, keepLastAttribute, filter);
+		if (isGroupHead())
+			CadseGCST.ITEM_TYPE.getAllAttributeTypes(all, keepLastAttribute, filter);
+	}
+
+	public void getLocalAllAttributeTypesKeys(Set<String> all, ItemFilter filter) {
+		if (getType() == null) {
+			throw new UnsupportedOperationException("type is undefined");
+		}
+		super.getLocalAllAttributeTypesKeys(all, filter);
+		if (isGroupHead())
+			CadseGCST.ITEM_TYPE.getAllAttributeTypesKeys(all, filter);
+	}
+
+	public IAttributeType<?> getLocalAttributeType(String attName) {
+		if (getType() == null) {
+			throw new UnsupportedOperationException("type is undefined");
+		}
+		IAttributeType<?> ret = super.getLocalAttributeType(attName);
+		if (ret != null)
+			return ret;
+		if (isGroupHead())
+			ret = CadseGCST.ITEM_TYPE.getAttributeType(attName);
+		return ret;
 	}
 	
 }

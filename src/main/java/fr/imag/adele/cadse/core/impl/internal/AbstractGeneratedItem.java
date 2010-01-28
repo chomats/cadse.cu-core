@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -1765,6 +1766,8 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 			throw new UnsupportedOperationException("type is undefined");
 		}
 		getType().getAllAttributeTypes(all);
+		if (_group != null)
+			_group.getLocalAllAttributeTypes(all);
 	}
 
 	public void getLocalAllAttributeTypes(Map<String, IAttributeType<?>> all,
@@ -1773,6 +1776,9 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 			throw new UnsupportedOperationException("type is undefined");
 		}
 		getType().getAllAttributeTypes(all, keepLastAttribute);
+
+		if (_group != null)
+			_group.getLocalAllAttributeTypes(all, keepLastAttribute);
 	}
 
 	public void getLocalAllAttributeTypes(List<IAttributeType<?>> all,
@@ -1781,6 +1787,8 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 			throw new UnsupportedOperationException("type is undefined");
 		}
 		getType().getAllAttributeTypes(all, filter);
+		if (_group != null)
+			_group.getLocalAllAttributeTypes(all, filter);
 	}
 
 	public void getLocalAllAttributeTypes(Map<String, IAttributeType<?>> all,
@@ -1789,6 +1797,8 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 			throw new UnsupportedOperationException("type is undefined");
 		}
 		getType().getAllAttributeTypes(all, keepLastAttribute, filter);
+		if (_group != null)
+			_group.getLocalAllAttributeTypes(all, keepLastAttribute, filter);
 	}
 
 	public void getLocalAllAttributeTypesKeys(Set<String> all, ItemFilter filter) {
@@ -1796,14 +1806,20 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 			throw new UnsupportedOperationException("type is undefined");
 		}
 		getType().getAllAttributeTypesKeys(all, filter);
+		if (_group != null)
+			_group.getLocalAllAttributeTypesKeys(all, filter);
 	}
 
 	public IAttributeType<?> getLocalAttributeType(String attName) {
 		if (getType() == null) {
 			throw new UnsupportedOperationException("type is undefined");
 		}
-
-		return getType().getAttributeType(attName);
+		IAttributeType<?> ret = getType().getAttributeType(attName);
+		if (ret != null)
+			return ret;
+		if (_group != null)
+			ret = _group.getLocalAttributeType(attName);
+		return ret;
 	}
 	
 	@Override
@@ -1815,7 +1831,7 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 
 	public IAttributeType<?>[] getLocalAllAttributeTypes() {
 		if (_group != null) {
-			ArrayList<IAttributeType<?>> ret = new ArrayList<IAttributeType<?>>();
+			HashSet<IAttributeType<?>> ret = new HashSet<IAttributeType<?>>();
 			ret.addAll(Arrays.asList(getType().getAllAttributeTypes()));
 			ret.addAll(Arrays.asList(_group.getLocalAllAttributeTypes()));
 			return (IAttributeType<?>[]) ret.toArray(new IAttributeType<?>[ret
