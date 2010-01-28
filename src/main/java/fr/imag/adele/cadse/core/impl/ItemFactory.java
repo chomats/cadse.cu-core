@@ -52,7 +52,7 @@ public class ItemFactory implements IItemFactory {
 
 	public Item newForCommitItem(LogicalWorkspace wl, ItemType it,
 			ItemDelta item) {
-		if (isThisOrSubType(it, CadseGCST.ITEM_TYPE)) {
+		if (isThisOrSubType(it, CadseGCST.ITEM_TYPE) || it.isGroupType()) {
 			return new ItemTypeImpl(it, item);
 		}
 		UUID id = item.getId();

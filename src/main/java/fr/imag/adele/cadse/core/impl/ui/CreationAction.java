@@ -70,8 +70,13 @@ public class CreationAction extends AbstractActionPage implements IActionPage {
 	public void doCancel(UIPlatform uiPlatform, Object monitor) {
 		Item item = uiPlatform.getItem(null);
 		
-		if (item.getState() == ItemState.NOT_IN_WORKSPACE) {
-			cancelContent(item);
+		if (item != null && item.getState() == ItemState.NOT_IN_WORKSPACE) {
+			try {
+				cancelContent(item);
+			} catch (Throwable e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 

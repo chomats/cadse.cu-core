@@ -211,15 +211,16 @@ public class PageRuntimeModel {
 				genericPage, inSpecificPages, ro, visited, CadseGCST.ITEM_at_NAME_);
 		list.add(0, genericPage);
 		ItemType group = item.getGroup();
-		int index = 1;
+		genericPage = new HierachicPageImpl(group,
+				modificationPage);
 		while (group != null) {
-			genericPage = new HierachicPageImpl(group,
-					modificationPage);
 			group.computeGenericPage(context,
 					genericPage, inSpecificPages, ro, visited);
-			list.add(index++, genericPage);
 			group = group.getGroup();
 		}
+		if (!genericPage.isEmptyPage())
+			list.add(1, genericPage);
+		
 	}
 
 	protected void iComputeValidators(Item item, FilterContext context,
