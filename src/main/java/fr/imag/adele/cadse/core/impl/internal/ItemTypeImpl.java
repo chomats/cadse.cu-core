@@ -968,58 +968,59 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	/**
 	 * Cette method est appeler pour calculer l'ensemble des pages spécifique
 	 * à afficher.
-	 * 
-	 * @param map
-	 *            the map
 	 * @param list
 	 *            the list
+	 * @param map
+	 *            the map
 	 */
 	public void recurcifComputeCreationPage(FilterContext context,
-			List<IPage> list) {
+			List<IPage> list, Set<TypeDefinition> visited) {
+		if (visited.contains(this)) return;
 		if (_superType != null) {
 			((ItemTypeImpl) _superType).recurcifComputeCreationPage(context,
-					list);
+					list, visited);
 		}
-		super.recurcifComputeCreationPage(context, list);
+		super.recurcifComputeCreationPage(context, list, visited);
 		if (_extendedBy != null) {
 			for (TypeDefinition ext : _extendedBy) {
-				ext.recurcifComputeCreationPage(context, list);
+				ext.recurcifComputeCreationPage(context, list, visited);
 			}
 		}
 	}
 
 	/**
 	 * Compute good modification page.
-	 * 
-	 * @param map
-	 *            the map
 	 * @param list
 	 *            the list
+	 * @param map
+	 *            the map
 	 */
 	public void recurcifComputeModificationPage(FilterContext context,
-			List<IPage> list, Set<IAttributeType<?>> ro) {
+			List<IPage> list, Set<IAttributeType<?>> ro, Set<TypeDefinition> visited) {
+		if (visited.contains(this)) return;
 		if (_superType != null) {
 			((ItemTypeImpl) _superType).recurcifComputeModificationPage(
-					context, list, ro);
+					context, list, ro, visited);
 		}
-		super.recurcifComputeModificationPage(context, list, ro);
+		super.recurcifComputeModificationPage(context, list, ro, visited);
 		if (_extendedBy != null) {
 			for (TypeDefinition ext : _extendedBy) {
-				ext.recurcifComputeModificationPage(context, list, ro);
+				ext.recurcifComputeModificationPage(context, list, ro, visited);
 			}
 		}
 	}
 
 	@Override
 	public void computeValidators(FilterContext context,
-			List<UIValidator> validators) {
+			List<UIValidator> validators, Set<TypeDefinition> visited) {
+		if (visited.contains(this)) return;
 		if (_superType != null) {
-			((ItemTypeImpl) _superType).computeValidators(context, validators);
+			((ItemTypeImpl) _superType).computeValidators(context, validators, visited);
 		}
-		super.computeValidators(context, validators);
+		super.computeValidators(context, validators, visited);
 		if (_extendedBy != null) {
 			for (TypeDefinition ext : _extendedBy) {
-				ext.computeValidators(context, validators);
+				ext.computeValidators(context, validators, visited);
 			}
 		}
 	}
@@ -1046,31 +1047,33 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	public void computeGenericPage(FilterContext context,
 			HierarchicPage genericPage,
 			HashSet<IAttributeType<?>> inSpecificPages,
-			Set<IAttributeType<?>> ro, IAttributeType<?>... firstAttributes) {
+			Set<IAttributeType<?>> ro, Set<TypeDefinition> visited, IAttributeType<?>... firstAttributes) {
+		if (visited.contains(this)) return;
 		super.computeGenericPage(context, genericPage, inSpecificPages, ro,
-				firstAttributes);
+				visited, firstAttributes);
 		if (_extendedBy != null) {
 			for (TypeDefinition ext : _extendedBy) {
 				ext.computeGenericPage(context, genericPage, inSpecificPages,
-						ro);
+						ro, visited);
 			}
 		}
 		if (_superType != null) {
 			((ItemTypeImpl) _superType).computeGenericPage(context,
-					genericPage, inSpecificPages, ro);
+					genericPage, inSpecificPages, ro, visited);
 		}
 	}
 
-	public void computeGroup(Set<GroupOfAttributes> groups) {
+	public void computeGroup(Set<GroupOfAttributes> groups, Set<TypeDefinition> visited) {
+		if (visited.contains(this)) return;
 		if (_superType != null) {
-			((ItemTypeImpl) _superType).computeGroup(groups);
+			((ItemTypeImpl) _superType).computeGroup(groups, visited);
 		}
 		if (_extendedBy != null) {
 			for (TypeDefinition ext : _extendedBy) {
-				ext.computeGroup(groups);
+				ext.computeGroup(groups, visited);
 			}
 		}
-		super.computeGroup(groups);
+		super.computeGroup(groups, visited);
 	}
 
 	/*

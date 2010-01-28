@@ -65,7 +65,8 @@ public class PageRuntimeModel {
 	}
 
 	private void iComputeGroup(Item item, HashSet<GroupOfAttributes> groups) {
-		((TypeDefinition.Internal) item.getType()).computeGroup(groups);
+		Set<TypeDefinition> visited = new HashSet<TypeDefinition>();
+		((TypeDefinition.Internal) item.getType()).computeGroup(groups, visited);
 	}
 
 	/**
@@ -109,8 +110,8 @@ public class PageRuntimeModel {
 		List<IPage> list = new ArrayList<IPage>();
 		iComputeCreationPage(item, context, list, ro);
 		int count = list.size();
-		for (IPage factory : list) {
-			if (factory.isEmptyPage()) {
+		for (IPage p : list) {
+			if (p.isEmptyPage()) {
 				count--;
 			}
 		}
@@ -119,11 +120,11 @@ public class PageRuntimeModel {
 		} else {
 			IPage[] creationPages = new IPage[count];
 			int i = 0;
-			for (IPage factory : list) {
-				if (factory.isEmptyPage()) {
+			for (IPage p : list) {
+				if (p.isEmptyPage()) {
 					continue;
 				}
-				creationPages[i++] = factory;
+				creationPages[i++] = p;
 			}
 			assert i == count;
 			return creationPages;
@@ -148,10 +149,7 @@ public class PageRuntimeModel {
 			inSpecificPages.addAll(Arrays.asList(iPage.getHiddenAttributes()));
 		}
 
-		HierachicPageImpl genericPage = new HierachicPageImpl(item.getType(),
-				false);
-		iComputeGenericPage(item, context, genericPage, inSpecificPages, ro);
-		list.add(0, genericPage);
+		iComputeGenericPage(item, context, inSpecificPages, ro, list, false);
 	}
 
 	protected void iComputeModificationPage(Item item, FilterContext context,
@@ -162,11 +160,8 @@ public class PageRuntimeModel {
 			inSpecificPages.addAll(Arrays.asList(iPage.getAttributes()));
 			inSpecificPages.addAll(Arrays.asList(iPage.getHiddenAttributes()));
 		}
-
-		HierachicPageImpl genericPage = new HierachicPageImpl(item.getType(),
-				true);
-		iComputeGenericPage(item, context, genericPage, inSpecificPages, ro);
-		list.add(0, genericPage);
+		iComputeGenericPage(item, context, inSpecificPages, ro, list, true);
+		
 	}
 	
 	/** 
@@ -179,8 +174,16 @@ public class PageRuntimeModel {
 
 	protected void iRecurcifComputeCreationPage(Item item,
 			FilterContext context, List<IPage> list, Set<IAttributeType<?>> ro) {
+		Set<TypeDefinition> visited = new HashSet<TypeDefinition>();
 		((TypeDefinition.Internal) item.getType()).recurcifComputeCreationPage(
-				context, list);
+				context, list, visited);
+		
+		ItemType group = item.getGroup();
+		while (group != null) {
+			group.recurcifComputeCreationPage(context, list, visited);
+			group = group.getGroup();
+		}
+		
 		for (IPage page : list) {
 			ro.addAll(Arrays.asList(page.getReadOnlyAttributes()));
 		}
@@ -188,30 +191,55 @@ public class PageRuntimeModel {
 
 	protected void iRecurcifComputeModificationPage(Item item,
 			FilterContext context, List<IPage> list, Set<IAttributeType<?>> ro) {
-		((TypeDefinition.Internal) item.getType())
-				.recurcifComputeModificationPage(context, list, ro);
+		Set<TypeDefinition> visited = new HashSet<TypeDefinition>();
+		item.getType()
+				.recurcifComputeModificationPage(context, list, ro, visited);
+		ItemType group = item.getGroup();
+		while (group != null) {
+			group.recurcifComputeModificationPage(context, list, ro, visited);
+			group = group.getGroup();
+		}	
 	}
 
 	protected void iComputeGenericPage(Item item, FilterContext context,
-			HierachicPageImpl genericPage,
 			HashSet<IAttributeType<?>> inSpecificPages,
-			Set<IAttributeType<?>> ro) {
-		((TypeDefinition.Internal) item.getType()).computeGenericPage(context,
-				genericPage, inSpecificPages, ro, CadseGCST.ITEM_at_NAME_);
+			Set<IAttributeType<?>> ro, List<IPage> list, boolean modificationPage) {
+		HierachicPageImpl genericPage = new HierachicPageImpl(item.getType(),
+				modificationPage);
+		Set<TypeDefinition> visited = new HashSet<TypeDefinition>();
+		item.getType().computeGenericPage(context,
+				genericPage, inSpecificPages, ro, visited, CadseGCST.ITEM_at_NAME_);
+		list.add(0, genericPage);
+		ItemType group = item.getGroup();
+		int index = 1;
+		while (group != null) {
+			genericPage = new HierachicPageImpl(group,
+					modificationPage);
+			group.computeGenericPage(context,
+					genericPage, inSpecificPages, ro, visited);
+			list.add(index++, genericPage);
+			group = group.getGroup();
+		}
 	}
 
 	protected void iComputeValidators(Item item, FilterContext context,
 			List<UIValidator> validators) {
-		((TypeDefinition.Internal) item.getType()).computeValidators(context,
-				validators);
+		Set<TypeDefinition> visited = new HashSet<TypeDefinition>();
+		item.getType().computeValidators(context,
+				validators, visited );
+		ItemType group = item.getGroup();
+		while (group != null) {
+			group.computeValidators(context, validators, visited);
+			group = group.getGroup();
+		}
 	}
 	
-	static class TypeOrder {
-		ItemType it;
-		int count;
-		int index;
-		TypeOrder[] parents;
-	}
+//	static class TypeOrder {
+//		ItemType it;
+//		int count;
+//		int index;
+//		TypeOrder[] parents;
+//	}
 	
 //	protected TypeDefinition[] computeTypeOrder(Item item) {
 //		HashMap<ItemType, TypeOrder> maps = new HashMap<ItemType, TypeOrder>();

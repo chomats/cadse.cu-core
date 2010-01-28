@@ -598,7 +598,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 	 * java.util.Set)
 	 */
 	public void recurcifComputeCreationPage(FilterContext context,
-			List<IPage> list) {
+			List<IPage> list, Set<TypeDefinition> visited) {
 		if (_creationPages != null) {
 			for (IPage f : _creationPages) {
 				IPage[] owPages = f.getOverwritePage();
@@ -650,8 +650,10 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 	 * fr.imag.adele.cadse.core.impl.internal.TypeDefinition#computeValidators
 	 * (fr.imag.adele.cadse.core.ui.view.FilterContext, java.util.List)
 	 */
+	@Override
 	public void computeValidators(FilterContext context,
-			List<UIValidator> validators) {
+			List<UIValidator> validators, Set<TypeDefinition> visited) {
+		if (!visited.add(this)) return;
 		if (_validators != null) {
 			for (UIValidator f : _validators) {
 				UIValidator[] owValidators = f.getOverwriteValidator();
@@ -684,7 +686,8 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 	 * java.util.Set)
 	 */
 	public void recurcifComputeModificationPage(FilterContext context,
-			List<IPage> list, Set<IAttributeType<?>> ro) {
+			List<IPage> list, Set<IAttributeType<?>> ro, Set<TypeDefinition> visited) {
+		if (!visited.add(this)) return;
 		if (_modificationPages != null) {
 			for (IPage f : _modificationPages) {
 				IPage[] owPages = f.getOverwritePage();
@@ -719,7 +722,8 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 	public void computeGenericPage(FilterContext context,
 			HierarchicPage genericPage,
 			HashSet<IAttributeType<?>> inSpecificPages,
-			Set<IAttributeType<?>> ro, IAttributeType<?>... firstAttributes) {
+			Set<IAttributeType<?>> ro, Set<TypeDefinition> visited, IAttributeType<?>... firstAttributes) {
+		if (!visited.add(this)) return;
 		ArrayList<IAttributeType> notPutAttr = new ArrayList<IAttributeType>();
 		for (IAttributeType firstAtt : firstAttributes) {
 			if (!inSpecificPages.contains(firstAtt)) {
@@ -741,7 +745,8 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 		bloc.addLast(notPutAttr);
 	}
 
-	public void computeGroup(Set<GroupOfAttributes> groups) {
+	public void computeGroup(Set<GroupOfAttributes> groups, Set<TypeDefinition> visited) {
+		if (!visited.add(this)) return;
 		if (_groupOfAttributes != null) {
 			for (GroupOfAttributes g : _groupOfAttributes) {
 				if (g.getOverWriteGroup() != null)
