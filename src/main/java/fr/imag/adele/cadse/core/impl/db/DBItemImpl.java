@@ -538,7 +538,7 @@ public class DBItemImpl extends DBObject implements Item {
 	}
 
 	@Override
-	public boolean isRequierNewRev() {
+	public boolean isRequireNewRev() {
 		// TODO Auto-generated method stub
 		return false;
 	}
