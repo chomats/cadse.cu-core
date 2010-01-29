@@ -666,7 +666,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	}
 	
 	public void setIsAbstract(boolean b) {
-		setITFlag(IT_INSTACES_IS_ROOT_ELEMENT, b);
+		setITFlag(IT_ABSTRACT, b);
 	}
 
 	/*
