@@ -55,6 +55,7 @@ import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.Messages;
 import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.WorkspaceListener;
+import fr.imag.adele.cadse.core.TypeDefinition.Internal;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.build.Composer;
 import fr.imag.adele.cadse.core.build.Exporter;
@@ -1187,12 +1188,37 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 			return ret;
 		}
 
-		List<LinkType> lts = type.getOutgoingLinkTypes();
+		List<LinkType> lts = getLocalOutgoingLinkTypes();
 		for (LinkType linkType : lts) {
 			collectOutgoingLinks(linkType, ret);
 		}
 		return ret;
 	}
+
+	public List<LinkType> getLocalOutgoingLinkTypes() {
+		Set<TypeDefinition> visited = new HashSet<TypeDefinition>();
+		List<LinkType> ret = new ArrayList<LinkType>();
+		computeLocalOutgoingLinkTypes(ret , visited);
+		return ret;
+	}
+
+	protected void computeLocalIncomingLinkTypes(List<LinkType> ret, Set<TypeDefinition> visited) {
+		if (visited.contains(this)) return;
+		if (getType() != null) {
+			((Internal) getType()).computeIncomingLinkTypes(ret, visited);
+		}
+		if (_group != null)
+			((Internal) _group).computeIncomingLinkTypes(ret, visited);
+	}
+
+	protected void computeLocalOutgoingLinkTypes(List<LinkType> ret, Set<TypeDefinition> visited) {
+		if (getType() != null) {
+			((Internal) getType()).computeOutgoingLinkTypes(ret, visited);
+		}
+		if (_group != null)
+			((Internal) _group).computeOutgoingLinkTypes(ret, visited);
+	}
+
 
 	protected void collectOutgoingLinks(LinkType linkType,
 			CollectedReflectLink ret) {
@@ -1917,6 +1943,26 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 	public ItemType getType() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public ItemType[] getTypes() {
+		ItemType type = getType();
+		if (type == null && _group == null)
+			return ItemTypeImpl.NO_SUB_TYPES;
+		if (this instanceof ItemType && ((ItemType)this).isGroupType() ) {
+			if (_group == null && type != null)
+				return new ItemType[] { type, CadseGCST.ITEM_TYPE };
+			if (_group != null && type != null)
+				return new ItemType[] { type, _group, CadseGCST.ITEM_TYPE };
+		} else {
+			if (_group == null && type != null)
+				return new ItemType[] { type, CadseGCST.ITEM_TYPE };
+			if (_group != null && type != null)
+				return new ItemType[] { type, _group, CadseGCST.ITEM_TYPE };
+		}
+		return ItemTypeImpl.NO_SUB_TYPES;
+		
 	}
 
 	@Override
