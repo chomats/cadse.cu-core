@@ -1278,7 +1278,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 
 	@Override
 	public boolean isGroupType() {
-		for (LinkType l : getOutgoingLinkTypes()) {
+		for (LinkType l : getOwnerOutgoingLinkTypes()) {
 			if (l.isGroup())
 				return true;
 		}
