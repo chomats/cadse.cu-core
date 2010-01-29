@@ -1779,7 +1779,7 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 		return 0;
 	}
 
-	public boolean isRequierNewRev() {
+	public boolean isRequireNewRev() {
 		return getFlag(Item.EVOL_REQUIRER_NEW_REV);
 	}
 

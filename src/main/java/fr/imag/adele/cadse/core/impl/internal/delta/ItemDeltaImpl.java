@@ -2776,7 +2776,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * 
 	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#isRequierNewRev()
 	 */
-	public boolean isRequierNewRev() {
+	public boolean isRequireNewRev() {
 		return getAttributeWithDefaultValue(CadseGCST.ITEM_at_REQUIRE_NEW_REV_,
 				false);
 	}
