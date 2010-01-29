@@ -967,4 +967,16 @@ public class DBItemImpl extends DBObject implements Item {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public List<LinkType> getLocalOutgoingLinkTypes() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not implemented method");
+	}
+
+	@Override
+	public ItemType[] getTypes() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not implemented method");
+	}
 }

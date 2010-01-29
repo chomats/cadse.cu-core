@@ -194,7 +194,7 @@ public class Accessor {
 					}
 
 					Object value = v.getCurrentValue();
-					item.commitSetAttribute(null, value);
+					item.commitSetAttribute(v.getAttributeDefinition(), value);
 				} catch (Throwable e) {
 					e.printStackTrace();
 					errorCollector.addError(item, "Cannot load attribute from " + v.getAttributeName()
@@ -410,6 +410,8 @@ public class Accessor {
 		}
 		if (item instanceof ItemType && it == CadseGCST.ITEM_TYPE && ((ItemType)item).isGroupType())
 			return true;
+		if (item instanceof ItemType && it == CadseGCST.TYPE_DEFINITION && ((ItemType)item).isGroupType())
+			return true;		
 		return false;
 	}
 

@@ -707,4 +707,16 @@ public class ItemItemDeltaAdapter implements Item {
 		
 	}
 
+	@Override
+	public List<LinkType> getLocalOutgoingLinkTypes() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not implemented method");
+	}
+
+	@Override
+	public ItemType[] getTypes() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not implemented method");
+	}
+
 }
