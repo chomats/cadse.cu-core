@@ -777,4 +777,18 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 		throw new UnsupportedOperationException("Not implemented method");
 	}
 
+	@Override
+	public void computeIncomingLinkTypes(List<LinkType> ret,
+			Set<TypeDefinition> visited) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not implemented method");
+	}
+
+	@Override
+	public void computeOutgoingLinkTypes(List<LinkType> ret,
+			Set<TypeDefinition> visited) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not implemented method");
+	}
+
 }

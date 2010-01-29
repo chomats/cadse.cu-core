@@ -410,6 +410,8 @@ public class Accessor {
 		}
 		if (item instanceof ItemType && it == CadseGCST.ITEM_TYPE && ((ItemType)item).isGroupType())
 			return true;
+		if (item instanceof ItemType && it == CadseGCST.TYPE_DEFINITION && ((ItemType)item).isGroupType())
+			return true;		
 		return false;
 	}
 

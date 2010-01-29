@@ -452,7 +452,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 	 */
 	public List<LinkType> getOutgoingLinkTypes() {
 		ArrayList<LinkType> ret = new ArrayList<LinkType>();
-		computeOutgoingLinkTypes(ret);
+		computeOutgoingLinkTypes(ret, new HashSet<TypeDefinition>());
 		return ret;
 	}
 
@@ -745,6 +745,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 		bloc.addLast(notPutAttr);
 	}
 
+	@Override
 	public void computeGroup(Set<GroupOfAttributes> groups, Set<TypeDefinition> visited) {
 		if (!visited.add(this)) return;
 		if (_groupOfAttributes != null) {
@@ -763,6 +764,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 	 * fr.imag.adele.cadse.core.impl.internal.TypeDefinition#findField(fr.imag
 	 * .adele.cadse.core.attribute.IAttributeType)
 	 */
+	@Override
 	public UIField findField(IAttributeType<?> att) {
 		if (_fields != null) {
 			for (UIField f : _fields) {
@@ -799,6 +801,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 	 * @throws CadseException
 	 *             the melusine exception
 	 */
+	@Override
 	public IActionPage createDefaultCreationAction(NewContext context)
 			throws CadseException {
 		return new CreationAction(context);
@@ -812,15 +815,18 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 	 * 
 	 * @return the i action page
 	 */
+	@Override
 	public IActionPage createDefaultModificationAction(FilterContext context) {
 		return new ModificationAction(context);
 	}
 
+	@Override
 	public void addGroupOfAttributes(GroupOfAttributes g) {
 		_groupOfAttributes = ArraysUtil.add(GroupOfAttributes.class,
 				_groupOfAttributes, g);
 	}
 
+	@Override
 	public GroupOfAttributes[] getGroupOfAttributes() {
 		return _groupOfAttributes;
 	}
@@ -878,7 +884,9 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 	/**
 	 * Compute incoming link types.
 	 */
-	protected void computeIncomingLinkTypes(List<LinkType> ret) {
+	@Override
+	public void computeIncomingLinkTypes(List<LinkType> ret, Set<TypeDefinition> visited) {
+		if (!visited.add(this)) return;
 		for (Link l : this._incomings) {
 			if (l.getLinkType() == CadseCore.theLinkType
 					&& l instanceof LinkType) {
@@ -891,7 +899,9 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 	 * List<LinkType> ret = new ArrayList<LinkType>(); Compute ougoing link
 	 * types.
 	 */
-	protected void computeOutgoingLinkTypes(List<LinkType> ret) {
+	@Override
+	public void computeOutgoingLinkTypes(List<LinkType> ret, Set<TypeDefinition> visited) {
+		if (!visited.add(this)) return;
 		for (Link l : this.m_outgoings) {
 			if (l.getLinkType() == CadseCore.theLinkType) {
 				ret.add((LinkType) l);
@@ -904,27 +914,32 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 	 * 
 	 * @return an unmodifiable list all incoming link types.
 	 */
+	@Override
 	public List<LinkType> getIncomingLinkTypes() {
 		List<LinkType> ret = new ArrayList<LinkType>();
-		computeIncomingLinkTypes(ret);
+		computeIncomingLinkTypes(ret, new HashSet<TypeDefinition>());
 		return ret;
 	}
 
+	@Override
 	public IAttributeType<?>[] getAllAttributeTypes() {
 		ArrayList<IAttributeType<?>> all = new ArrayList<IAttributeType<?>>();
 		getAllAttributeTypes(all);
 		return all.toArray(new IAttributeType<?>[all.size()]);
 	}
 
+	@Override
 	public void getAllAttributeTypes(List<IAttributeType<?>> all) {
 		getAllAttributeTypes(all, null);
 	}
 
+	@Override
 	public void getAllAttributeTypes(Map<String, IAttributeType<?>> all,
 			boolean keepLastAttribute) {
 		getAllAttributeTypes(all, keepLastAttribute, null);
 	}
 
+	@Override
 	public IAttributeType<?> getAttributeType(String name) {
 		if (SHORT_NAME_KEY.equals(name) || ATTR_SHORT_NAME.equals(name)) {
 			return CadseGCST.ITEM_at_NAME_;
@@ -962,6 +977,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 	 * 
 	 * @see fr.imag.adele.cadse.core.IAttributableType#getAttributeTypeIds()
 	 */
+	@Override
 	public String[] getAttributeTypeIds() {
 		HashSet<String> returnKeys = new HashSet<String>();
 		getAllAttributeTypesKeys(returnKeys, new FilterOutLinkType());
@@ -974,6 +990,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 	 * @param contributor
 	 *            the contributor
 	 */
+	@Override
 	public synchronized void addActionContributeur(
 			IActionContributor contributor) {
 		_actionContributors = ArraysUtil.add(IActionContributor.class,
