@@ -445,8 +445,8 @@ public class ItemItemDeltaAdapter implements Item {
 		return _delta.isReadOnly();
 	}
 
-	public boolean isRequierNewRev() {
-		return _delta.isRequierNewRev();
+	public boolean isRequireNewRev() {
+		return _delta.isRequireNewRev();
 	}
 
 	public boolean isResolved() {

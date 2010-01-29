@@ -698,7 +698,7 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	}
 
 	@Override
-	public boolean isRequierNewRev() {
+	public boolean isRequireNewRev() {
 		// TODO Auto-generated method stub
 		return false;
 	}
