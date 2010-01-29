@@ -58,6 +58,7 @@ import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.Messages;
 import fr.imag.adele.cadse.core.TypeDefinition;
+import fr.imag.adele.cadse.core.TypeDefinition.Internal;
 import fr.imag.adele.cadse.core.attribute.GroupOfAttributes;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.build.Exporter;
@@ -104,7 +105,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	/** The Constant EMPTY_PAGE_FACTORIES. */
 
 	/** The Constant NO_SUB_TYPES. */
-	private final static ItemType[] NO_SUB_TYPES = new ItemType[0];
+	final static ItemType[] NO_SUB_TYPES = new ItemType[0];
 
 	/** The int id. */
 	private int _intId;
@@ -665,7 +666,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	}
 	
 	public void setIsAbstract(boolean b) {
-		setITFlag(IT_INSTACES_IS_ROOT_ELEMENT, b);
+		setITFlag(IT_ABSTRACT, b);
 	}
 
 	/*
@@ -688,28 +689,48 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	}
 
 	@Override
-	protected void computeIncomingLinkTypes(List<LinkType> ret) {
+	public void computeIncomingLinkTypes(List<LinkType> ret, Set<TypeDefinition> visited) {
+		if (visited.contains(this)) return;
 		if (_superType != null) {
-			((TypeDefinitionImpl) _superType).computeIncomingLinkTypes(ret);
+			((Internal) _superType).computeIncomingLinkTypes(ret, visited);
 		}
-		super.computeIncomingLinkTypes(ret);
+		super.computeIncomingLinkTypes(ret, visited);
 		if (_extendedBy != null) {
 			for (TypeDefinition ext : _extendedBy) {
-				((TypeDefinitionImpl) ext).computeIncomingLinkTypes(ret);
+				((Internal) ext).computeIncomingLinkTypes(ret, visited);
 			}
 		}
 	}
 
 	@Override
-	protected void computeOutgoingLinkTypes(List<LinkType> ret) {
+	public void computeOutgoingLinkTypes(List<LinkType> ret, Set<TypeDefinition> visited) {
+		if (visited.contains(this)) return;
 		if (_superType != null) {
-			((TypeDefinitionImpl) _superType).computeOutgoingLinkTypes(ret);
+			((Internal) _superType).computeOutgoingLinkTypes(ret, visited);
 		}
-		super.computeOutgoingLinkTypes(ret);
+		super.computeOutgoingLinkTypes(ret, visited);
 		if (_extendedBy != null) {
 			for (TypeDefinition ext : _extendedBy) {
-				((TypeDefinitionImpl) ext).computeOutgoingLinkTypes(ret);
+				((Internal) ext).computeOutgoingLinkTypes(ret, visited);
 			}
+		}
+	}
+	
+	@Override
+	protected void computeLocalIncomingLinkTypes(List<LinkType> ret,
+			Set<TypeDefinition> visited) {
+		super.computeLocalIncomingLinkTypes(ret, visited);
+		if (_type.isGroupType()) {
+			((Internal) CadseGCST.ITEM_TYPE).computeIncomingLinkTypes(ret, visited); 
+		}
+	}
+	
+	@Override
+	protected void computeLocalOutgoingLinkTypes(List<LinkType> ret,
+			Set<TypeDefinition> visited) {
+		super.computeLocalOutgoingLinkTypes(ret, visited);
+		if (_type.isGroupType()) {
+			((Internal) CadseGCST.ITEM_TYPE).computeOutgoingLinkTypes(ret, visited); 
 		}
 	}
 
@@ -1390,6 +1411,8 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
  */
 	public boolean isInstanceOf(TypeDefinition it) {
 		if (it == CadseGCST.ITEM_TYPE && _type.isGroupType())
+			return true;
+		if (it == CadseGCST.TYPE_DEFINITION && _type.isGroupType())
 			return true;
 		return super.isInstanceOf(it);
 	}

@@ -456,7 +456,7 @@ public class ItemImpl extends AbstractItem implements Item {
 	public List<Link> getOutgoingLinks(LinkType lt) {
 		CollectedReflectLink ret = new CollectedReflectLink(this);
 		if (lt == null) {
-			List<LinkType> lts = getType().getOutgoingLinkTypes();
+			List<LinkType> lts = getLocalOutgoingLinkTypes();
 			for (LinkType linkType : lts) {
 				collectOutgoingLinks(linkType, ret);
 			}
