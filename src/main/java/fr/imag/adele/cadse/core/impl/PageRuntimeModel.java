@@ -307,7 +307,11 @@ public class PageRuntimeModel {
 		UIField ret = null;
 		ItemType type = item.getType();
 		ret = type.findField(att);
-		
+		ItemType group = item.getGroup();
+		while (ret == null && group != null) {
+			ret = group.findField(att);
+			group = group.getGroup();
+		}
 		return ret;
 	}
 

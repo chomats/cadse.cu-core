@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import fr.imag.adele.cadse.core.CadseException;
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.ExtendedType;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
@@ -385,19 +386,30 @@ public class Accessor {
 
 	public static boolean isInstanceOf(Item item, TypeDefinition it) {
 		ItemType type = item.getType();
+		boolean ret = false;
 		if (it instanceof ItemType) {
-			return it == type || ((ItemType) it).isSuperTypeOf(type);
+			ret = it == type || ((ItemType) it).isSuperTypeOf(type);
+			if (ret)
+				return true;
 		}
 		else if (it instanceof ExtendedType) {
 			ExtendedType et = (ExtendedType) it;
 			ItemType[] ext =	et.getExendsItemType();
-			if (ext == null)
-				return false;
-			for (ItemType it2 : ext) {
-				boolean ret = it2 == type || it2.isSuperTypeOf(type);
-				if (ret) return true;
-			}
+			if (ext != null)
+				for (ItemType it2 : ext) {
+					ret = it2 == type || it2.isSuperTypeOf(type);
+					if (ret) return true;
+				}
 		}
+		ItemType group = item.getGroup();
+		while (group != null) {
+			ret = it == group || ((ItemType) it).isSuperTypeOf(group);
+			if (ret)
+				return true;
+			group = group.getGroup();
+		}
+		if (item instanceof ItemType && it == CadseGCST.ITEM_TYPE && ((ItemType)item).isGroupType())
+			return true;
 		return false;
 	}
 
