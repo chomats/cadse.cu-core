@@ -4070,11 +4070,6 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	}
 
 	@Override
-	public List<LinkType> getInstanceOutgoingLinkTypes() {
-		return getType().getOutgoingLinkTypes();
-	}
-
-	@Override
 	public Pages getCreationPages(NewContext context) throws CadseException {
 		return PageRuntimeModel.INSTANCE.getCreationPages(this, context);
 	}

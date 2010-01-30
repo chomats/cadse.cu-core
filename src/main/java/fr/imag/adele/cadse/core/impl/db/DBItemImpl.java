@@ -233,13 +233,7 @@ public class DBItemImpl extends DBObject implements Item {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	@Override
-	public List<LinkType> getInstanceOutgoingLinkTypes() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 	@Override
 	public Key getKey() {
 		// TODO Auto-generated method stub

@@ -1223,7 +1223,7 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 	protected void collectOutgoingLinks(LinkType linkType,
 			CollectedReflectLink ret) {
 		if (linkType == CadseGCST.GROUP_EXT_ITEM_lt_MEMBER_OF) {
-			ret.addOutgoing(CadseGCST.GROUP_EXT_ITEM_lt_MEMBERS, _group);
+			ret.addOutgoing(CadseGCST.GROUP_EXT_ITEM_lt_MEMBER_OF, _group);
 			return;
 		}
 		if (linkType == CadseGCST.ITEM_lt_INSTANCE_OF) {
@@ -1904,11 +1904,6 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 	@Override
 	public ItemType getGroup() {
 		return _group;
-	}
-
-	@Override
-	public List<LinkType> getInstanceOutgoingLinkTypes() {
-		return getType().getOutgoingLinkTypes();
 	}
 
 	@Override
