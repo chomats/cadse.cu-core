@@ -605,11 +605,6 @@ public class ItemItemDeltaAdapter implements Item {
 	}
 
 	@Override
-	public List<LinkType> getInstanceOutgoingLinkTypes() {
-		return _delta.getInstanceOutgoingLinkTypes();
-	}
-
-	@Override
 	public Pages getCreationPages(NewContext context) throws CadseException {
 		return _delta.getCreationPages(context);
 	}
