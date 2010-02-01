@@ -802,6 +802,10 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 			return (T) Boolean
 					.valueOf(isRootElement());
 		}
+		if (CadseGCST.ITEM_TYPE_at_IS_INSTANCE_ABSTRACT_ == type) {
+			return (T) Boolean
+					.valueOf(isAbstract());
+		}
 		if (CadseGCST.ITEM_TYPE_at_ICON_ == type) {
 			if (_image == null)
 				return null;
