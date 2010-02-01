@@ -1863,7 +1863,7 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 		if (_group != null) {
 			HashSet<IAttributeType<?>> ret = new HashSet<IAttributeType<?>>();
 			ret.addAll(Arrays.asList(getType().getAllAttributeTypes()));
-			ret.addAll(Arrays.asList(_group.getLocalAllAttributeTypes()));
+			ret.addAll(Arrays.asList(_group.getAllAttributeTypes()));
 			return (IAttributeType<?>[]) ret.toArray(new IAttributeType<?>[ret
 					.size()]);
 		}
