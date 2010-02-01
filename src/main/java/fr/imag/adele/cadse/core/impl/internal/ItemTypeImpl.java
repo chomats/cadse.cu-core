@@ -1496,4 +1496,31 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 		return ret;
 	}
 	
+	IAttributeType<?>[] _delegated = null;
+	
+	@Override
+	public boolean isDelegatedAttribute(IAttributeType<?> attr) {
+		return ArraysUtil.indexOf(_delegated, attr) != -1;
+	}
+	
+	@Override
+	public void setDelegatedAttribute(IAttributeType<?> attr, boolean val) {
+		if (val) {
+			if (isDelegatedAttribute(attr))
+				return;
+			_delegated = ArraysUtil.add(IAttributeType.class, _delegated, attr);
+		} else {
+			_delegated = ArraysUtil.remove(IAttributeType.class, _delegated, attr);
+		}
+	}
+	
+	@Override
+	public boolean canBeDelegatedAttribute(IAttributeType<?> attr) {
+		if (attr.getSource() == CadseGCST.ITEM)
+			return false;
+		if (attr.getSource() == CadseGCST.ITEM_TYPE)
+			return false;
+		return isGroupHead();
+	}
+	
 }

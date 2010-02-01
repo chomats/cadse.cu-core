@@ -56,6 +56,7 @@ import fr.imag.adele.cadse.core.Messages;
 import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.WorkspaceListener;
 import fr.imag.adele.cadse.core.TypeDefinition.Internal;
+import fr.imag.adele.cadse.core.attribute.DelegateValue;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.build.Composer;
 import fr.imag.adele.cadse.core.build.Exporter;
@@ -2084,6 +2085,19 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 				context.report("Error in composition {0}", e.getMessage());
 			}
 		}
+	}
+	
+	@Override
+	public boolean canInstantiateValue(IAttributeType<?> attr) {
+		return true;
+	}
+	
+	@Override
+	public DelegateValue getDelegateValue(IAttributeType<?> attr) {
+		Object v = internalGetGenericOwnerAttribute(attr);
+		if (v instanceof DelegateValue)
+			return (DelegateValue) v;
+		return null;
 	}
 
 }
