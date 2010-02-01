@@ -1797,7 +1797,7 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 		}
 		getType().getAllAttributeTypes(all);
 		if (_group != null)
-			_group.getLocalAllAttributeTypes(all);
+			_group.getAllAttributeTypes(all);
 	}
 
 	public void getLocalAllAttributeTypes(Map<String, IAttributeType<?>> all,
@@ -1808,7 +1808,7 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 		getType().getAllAttributeTypes(all, keepLastAttribute);
 
 		if (_group != null)
-			_group.getLocalAllAttributeTypes(all, keepLastAttribute);
+			_group.getAllAttributeTypes(all, keepLastAttribute);
 	}
 
 	public void getLocalAllAttributeTypes(List<IAttributeType<?>> all,
@@ -1818,7 +1818,7 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 		}
 		getType().getAllAttributeTypes(all, filter);
 		if (_group != null)
-			_group.getLocalAllAttributeTypes(all, filter);
+			_group.getAllAttributeTypes(all, filter);
 	}
 
 	public void getLocalAllAttributeTypes(Map<String, IAttributeType<?>> all,
@@ -1828,7 +1828,7 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 		}
 		getType().getAllAttributeTypes(all, keepLastAttribute, filter);
 		if (_group != null)
-			_group.getLocalAllAttributeTypes(all, keepLastAttribute, filter);
+			_group.getAllAttributeTypes(all, keepLastAttribute, filter);
 	}
 
 	public void getLocalAllAttributeTypesKeys(Set<String> all, ItemFilter filter) {
@@ -1837,7 +1837,7 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 		}
 		getType().getAllAttributeTypesKeys(all, filter);
 		if (_group != null)
-			_group.getLocalAllAttributeTypesKeys(all, filter);
+			_group.getAllAttributeTypesKeys(all, filter);
 	}
 
 	public IAttributeType<?> getLocalAttributeType(String attName) {
@@ -1848,7 +1848,7 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 		if (ret != null)
 			return ret;
 		if (_group != null)
-			ret = _group.getLocalAttributeType(attName);
+			ret = _group.getAttributeType(attName);
 		return ret;
 	}
 	
