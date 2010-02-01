@@ -445,8 +445,8 @@ public class ItemItemDeltaAdapter implements Item {
 		return _delta.isReadOnly();
 	}
 
-	public boolean isRequierNewRev() {
-		return _delta.isRequierNewRev();
+	public boolean isRequireNewRev() {
+		return _delta.isRequireNewRev();
 	}
 
 	public boolean isResolved() {
@@ -602,11 +602,6 @@ public class ItemItemDeltaAdapter implements Item {
 	@Override
 	public ItemType getGroup() {
 		return _delta.getGroup();
-	}
-
-	@Override
-	public List<LinkType> getInstanceOutgoingLinkTypes() {
-		return _delta.getInstanceOutgoingLinkTypes();
 	}
 
 	@Override

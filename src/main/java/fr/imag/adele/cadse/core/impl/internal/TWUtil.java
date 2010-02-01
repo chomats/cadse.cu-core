@@ -235,7 +235,17 @@ public class TWUtil {
 	 * @return true if specified item is ignored for a commit operation.
 	 */
 	public static boolean cannotCommit(Item item) {
-		return (item == null) || item.isStatic() || !item.isRevModified();
+		return (item == null) || item.isStatic() || !item.isRevModified() || representsContent(item);
+	}
+
+	/**
+	 * Returns true if specified represents content.
+	 * 
+	 * @param item an item
+	 * @return true if specified represents content.
+	 */
+	private static boolean representsContent(Item item) {
+		return CadseGCST.CONTENT_ITEM.equals(item.getType());
 	}
 	
 	/**
@@ -246,5 +256,71 @@ public class TWUtil {
 	 */
 	public static boolean cannotRevert(Item item) {
 		return (item == null) || item.isStatic() || item.isRevModified() || hasNeverBeenCommited(item);
+	}
+
+	/**
+	 * Returns true if specified attribute is an attribute used for CADSE internal purposes.
+	 * 
+	 * @return true if specified attribute is an attribute used for CADSE internal purposes.
+	 */
+	public static boolean isInternalCadseAttribute(IAttributeType<?> attrDef) {
+		
+		if ((attrDef == CadseGCST.ITEM_lt_INSTANCE_OF) ||
+				(attrDef == CadseGCST.ITEM_lt_CONTENTS) ||
+				(attrDef == CadseGCST.ITEM_lt_PARENT) ||
+				(attrDef == CadseGCST.ITEM_at_ID_))
+			return true;
+		
+		return false;
+	}
+
+	/**
+	 * Returns true if specified link type has BranchDestination evolution politic.
+	 * 
+	 * @param linkType a link type
+	 * @return true if specified link type has BranchDestination evolution politic.
+	 */
+	public static boolean isBranchDestination(IAttributeType<?> linkType) {
+		return TWDestEvol.branch.equals(getDestEvol(linkType));
+	}
+
+	/**
+	 * Returns true if specified attribute type has transient evolution politic.
+	 * 
+	 * @param attrType an attribute type
+	 * @return true if specified attribute type has transient evolution politic.
+	 */
+	public static boolean isTransient(IAttributeType<?> attrType) {
+		return TWEvol.twTransient.equals(getEvol(attrType));
+	}
+
+	/**
+	 * Returns true if specified attribute must not be saved by TeamWork.
+	 * 
+	 * @param attrType an attribute type
+	 * @return true if specified attribute must not be saved by TeamWork.
+	 */
+	public static boolean isToIgnoreForCommit(IAttributeType attrType) {
+		if (isTWAttribute(attrType))
+			return true;
+		if (isInternalCadseAttribute(attrType))
+			return true;
+		
+		return false;
+	}
+	
+	/**
+	 * Returns true if specified attribute not saved by TeamWork or needs a specific treatment.
+	 * 
+	 * @param attrType an attribute type
+	 * @return true if specified attribute not saved by TeamWork or needs a specific treatment.
+	 */
+	public static boolean isToIgnoreForUpdate(IAttributeType attrType) {
+		if (isTWAttribute(attrType))
+			return true;
+		if (isInternalCadseAttribute(attrType))
+			return true;
+		
+		return false;
 	}
 }

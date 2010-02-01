@@ -148,7 +148,11 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 		// ignore TeamWork attributes
 		if (TWUtil.isTWAttribute(attrDef))
 			return;
-
+		
+		// ignore internal attributes of CADSE meta model
+		if (TWUtil.isInternalCadseAttribute(attrDef))
+			return;
+		
 		// ignore if it is already considered as modified
 		if (modifiedItem.isTWAttributeModified(attrDef)) {
 			return;

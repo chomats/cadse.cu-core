@@ -2776,7 +2776,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * 
 	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#isRequierNewRev()
 	 */
-	public boolean isRequierNewRev() {
+	public boolean isRequireNewRev() {
 		return getAttributeWithDefaultValue(CadseGCST.ITEM_at_REQUIRE_NEW_REV_,
 				false);
 	}
@@ -4067,11 +4067,6 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	@Override
 	public ItemType getGroup() {
 		return _group;
-	}
-
-	@Override
-	public List<LinkType> getInstanceOutgoingLinkTypes() {
-		return getType().getOutgoingLinkTypes();
 	}
 
 	@Override
