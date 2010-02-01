@@ -1593,6 +1593,10 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 			_parent = destination;
 			return new ReflectLink(lt, this, destination, 0);
 		}
+		if (lt == CadseGCST.GROUP_EXT_ITEM_lt_MEMBER_OF) {
+			_group = (ItemType) destination;
+			return new ReflectLink(lt, this, destination, 0);
+		}
 		return createDefaultLink(lt, destination);
 	}
 
