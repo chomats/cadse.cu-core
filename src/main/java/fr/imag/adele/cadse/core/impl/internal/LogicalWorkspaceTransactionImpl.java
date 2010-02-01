@@ -39,11 +39,13 @@ import fr.imag.adele.cadse.core.CadseRuntime;
 import fr.imag.adele.cadse.core.ContentChangeInfo;
 import fr.imag.adele.cadse.core.EventFilter;
 import fr.imag.adele.cadse.core.ExtendedType;
+import fr.imag.adele.cadse.core.IItemFactory;
 import fr.imag.adele.cadse.core.IItemManager;
 import fr.imag.adele.cadse.core.INamedUUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemDescription;
 import fr.imag.adele.cadse.core.ItemDescriptionRef;
+import fr.imag.adele.cadse.core.ItemState;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkDescription;
@@ -56,6 +58,7 @@ import fr.imag.adele.cadse.core.WorkspaceListener;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.attribute.SetAttrVal;
 import fr.imag.adele.cadse.core.impl.CadseCore;
+import fr.imag.adele.cadse.core.impl.ItemFactory;
 import fr.imag.adele.cadse.core.impl.internal.delta.CreateOperationImpl;
 import fr.imag.adele.cadse.core.impl.internal.delta.DeleteOperationImpl;
 import fr.imag.adele.cadse.core.impl.internal.delta.ItemDeltaImpl;
@@ -477,8 +480,24 @@ public class LogicalWorkspaceTransactionImpl implements
 			return loadingItem;
 		}
 
-		return new ItemDeltaImpl(this, new UUID(id.getMostSignificantBits(), id
+		ItemDeltaImpl itemDeltaImpl = new ItemDeltaImpl(this, new UUID(id.getMostSignificantBits(), id
 				.getLeastSignificantBits()), type, true);
+		createRealItem(itemDeltaImpl);
+		return itemDeltaImpl;
+	}
+	
+	private void createRealItem(ItemDeltaImpl d) {
+		// find the item factory
+		if (d.isInstanceOf(CadseGCST.CONTENT_ITEM))
+			return;
+		IItemFactory factory = d.getType().getItemFactory();
+		if (factory == null) {
+			factory = ItemFactory.SINGLETON;
+		}
+		Item goodItem = null;
+		goodItem = factory.newForCommitItem(this, d.getType(), d);
+		goodItem.setState(ItemState.NOT_IN_WORKSPACE);
+		d._realItem = goodItem;
 	}
 
 	public Item loadItem(ItemDescription desc, boolean update)
@@ -636,7 +655,8 @@ public class LogicalWorkspaceTransactionImpl implements
 		UUID itemId = UUID.randomUUID();
 		ItemDeltaImpl ret = new ItemDeltaImpl(this, itemId, context
 				.getDestinationType(), false);
-
+		createRealItem(ret);
+		
 		if (ret.isAdded()) {
 			return ret;
 		}

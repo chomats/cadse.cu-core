@@ -143,17 +143,19 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 
 	/** The type. */
 	private ItemType _itemType;
+	private ItemType[] _types;
 	private boolean _update;
 	private boolean _finishLoad;
 	private boolean _doubleClick;
 	private Key _key;
 	private SpaceKeyDeltaImpl _keyDelta;
 	private Item _baseItem;
+	public Item _realItem;
+	
 	private Key _nextKey;
 	private ItemType _group;
 	private int _parentID;
 	private int _cadseID;
-	private ItemType[] _types;
 	private CadseRuntime _cadse;
 
 	public ItemDeltaImpl(LogicalWorkspaceTransactionImpl copy, UUID id,
@@ -201,6 +203,11 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		if (add) {
 			addInParent();
 		}
+	}
+	
+	@Override
+	public Item getRealItem() {
+		return _realItem;
 	}
 
 	/*
@@ -3379,6 +3386,8 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		if (getBaseItem() != null && getBaseItem().isStatic()) {
 			return null;
 		}
+		if (_realItem != null)
+			_realItem.commitSetAttribute(key, newCurrentValue);
 		String attributeName = key.getName();
 
 		if (attributeName.equals(ItemTypeImpl.ATTR_SHORT_NAME)
