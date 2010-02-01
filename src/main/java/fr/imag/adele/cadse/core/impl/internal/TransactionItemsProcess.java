@@ -489,11 +489,11 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems,
 			ItemDelta loadedOperation) throws CadseException {
 		try {
 			Item goodItem = itemsLoaded.get(loadedOperation);
-			ItemType it = goodItem.getType();
-			IItemFactory factory = it.getItemFactory();
-			if (factory == null) {
-				factory = ItemFactory.SINGLETON;
-			}
+//			ItemType it = goodItem.getType();
+//			IItemFactory factory = it.getItemFactory();
+//			if (factory == null) {
+//				factory = ItemFactory.SINGLETON;
+//			}
 			ContentItem contentItem = null;
 			try {
 				UUID idContent = UUID.randomUUID();
@@ -593,9 +593,11 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems,
 			}
 
 			if (item.isAdded()) {
-				Item goodItem = null;
-				goodItem = factory.newForCommitItem(wl, it, item);
-				goodItem.setState(ItemState.NOT_IN_WORKSPACE);
+				Item goodItem = item.getRealItem();
+				if (goodItem == null) {
+					goodItem = factory.newForCommitItem(wl, it, item);
+					goodItem.setState(ItemState.NOT_IN_WORKSPACE);
+				}
 				itemsAdded.put(item, goodItem);
 				wl.addId(goodItem, notifie, this);
 				// add created item in visited hashset
@@ -664,7 +666,9 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems,
 					findOrCreateSuperItemTypeFromItemOperation(item);
 
 				}
-				goodItem = factory.newForCommitItem(wl, it, item);
+				goodItem = item.getRealItem();
+				if (goodItem == null)
+					goodItem = factory.newForCommitItem(wl, it, item);
 				if (CadseGCST.ITEM_TYPE.isSuperTypeOf(it)) {
 					assert goodItem instanceof ItemTypeImpl;
 					// assert si le type a s un super type
