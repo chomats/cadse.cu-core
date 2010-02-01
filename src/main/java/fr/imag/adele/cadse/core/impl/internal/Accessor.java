@@ -408,9 +408,13 @@ public class Accessor {
 				return true;
 			group = group.getGroup();
 		}
-		if (item instanceof ItemType && it == CadseGCST.ITEM_TYPE && ((ItemType)item).isGroupType())
+		if (item instanceof ItemDelta) {
+			item = ((ItemDelta) item).getBaseItem();
+			if (item == null) return false;
+		}
+		if (item instanceof ItemType && it == CadseGCST.ITEM_TYPE && ((ItemType)item.getType()).isGroupType())
 			return true;
-		if (item instanceof ItemType && it == CadseGCST.TYPE_DEFINITION && ((ItemType)item).isGroupType())
+		if (item instanceof ItemType && it == CadseGCST.TYPE_DEFINITION && ((ItemType)item.getType()).isGroupType())
 			return true;		
 		return false;
 	}
