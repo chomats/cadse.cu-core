@@ -653,8 +653,10 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace,
 	protected void removeItemType(ItemType item) {
 		this._itemTypes.remove(item);
 		ExtendedType[] exts = item.getExtendedType();
-		for (ExtendedType extendedType : exts) {
-			extendedType.removeExendsItemType(item);
+		if (exts != null) {
+			for (ExtendedType extendedType : exts) {
+				extendedType.removeExendsItemType(item);
+			}
 		}
 	}
 	
