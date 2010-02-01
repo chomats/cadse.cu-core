@@ -33,6 +33,7 @@ import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.WorkspaceListener;
+import fr.imag.adele.cadse.core.attribute.DelegateValue;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.transaction.delta.ImmutableWorkspaceDelta;
 import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
@@ -972,5 +973,17 @@ public class DBItemImpl extends DBObject implements Item {
 	public ItemType[] getTypes() {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Not implemented method");
+	}
+
+	@Override
+	public boolean canInstantiateValue(IAttributeType<?> attr) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public DelegateValue getDelegateValue(IAttributeType<?> attr) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -791,4 +791,22 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 		throw new UnsupportedOperationException("Not implemented method");
 	}
 
+	@Override
+	public boolean isDelegatedAttribute(IAttributeType<?> attr) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setDelegatedAttribute(IAttributeType<?> attr, boolean val) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean canBeDelegatedAttribute(IAttributeType<?> attr) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }
