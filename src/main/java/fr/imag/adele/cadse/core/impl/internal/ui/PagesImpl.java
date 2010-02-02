@@ -220,6 +220,8 @@ public final class PagesImpl implements Pages {
 	}
 	
 	public Set<IAttributeType<?>> getReadOnlyAttributes() {
+		if (_readOnlyAttributes == null)
+			return Collections.emptySet();
 		return _readOnlyAttributes;
 	}
 }
