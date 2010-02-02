@@ -188,7 +188,7 @@ public class ListAttributeType<X> extends AttributeType implements
 	}
 
 	@Override
-	protected void collectOutgoingLinks(LinkType linkType, CollectedReflectLink ret) {
+	public void collectOutgoingLinks(LinkType linkType, CollectedReflectLink ret) {
 		if (CadseGCST.LIST_lt_SUB_TYPE == linkType) {
 			ret.addOutgoing(CadseGCST.LIST_lt_SUB_TYPE, subtype);
 		}
