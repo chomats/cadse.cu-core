@@ -1156,7 +1156,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	}
 
 	@Override
-	protected void collectOutgoingLinks(LinkType linkType,
+	public void collectOutgoingLinks(LinkType linkType,
 			CollectedReflectLink ret) {
 		if (linkType == CadseGCST.ITEM_TYPE_lt_SUPER_TYPE) {
 			ret.addOutgoing(CadseGCST.ITEM_TYPE_lt_SUPER_TYPE, getSuperType());

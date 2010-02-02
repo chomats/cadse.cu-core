@@ -590,7 +590,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	}
 	
 	@Override
-	protected void collectOutgoingLinks(LinkType linkType,
+	public void collectOutgoingLinks(LinkType linkType,
 			CollectedReflectLink ret) {
 		if (linkType == CadseGCST.CONTENT_ITEM_lt_OWNER_ITEM) {
 			ret.addOutgoing(linkType, _ownerItem);

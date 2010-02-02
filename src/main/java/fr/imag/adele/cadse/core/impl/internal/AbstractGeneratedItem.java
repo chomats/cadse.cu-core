@@ -738,7 +738,10 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 
 	public Link getOutgoingLink(LinkType linkType) {
 		CollectedReflectLink ret = new CollectedReflectLink(this);
-		collectOutgoingLinks(linkType, ret);
+		if (isDelegatedValue(linkType))
+			((AbstractGeneratedItem) _group).collectOutgoingLinks(linkType,ret);
+		else
+			collectOutgoingLinks(linkType, ret);
 		return ret.size() == 1 ? ret.get(0) : null;
 	}
 
@@ -754,7 +757,10 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 
 	public List<Link> getOutgoingLinks(LinkType linkType) {
 		CollectedReflectLink ret = new CollectedReflectLink(this);
-		collectOutgoingLinks(linkType, ret);
+		if (isDelegatedValue(linkType))
+			((AbstractGeneratedItem) _group).collectOutgoingLinks(linkType,ret);
+		else
+			collectOutgoingLinks(linkType, ret);
 		return ret;
 	}
 
@@ -1191,7 +1197,10 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 
 		List<LinkType> lts = getLocalOutgoingLinkTypes();
 		for (LinkType linkType : lts) {
-			collectOutgoingLinks(linkType, ret);
+			if (isDelegatedValue(linkType))
+				((AbstractGeneratedItem) _group).collectOutgoingLinks(linkType,ret);
+			else
+				collectOutgoingLinks(linkType, ret);
 		}
 		return ret;
 	}
@@ -1221,7 +1230,7 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 	}
 
 
-	protected void collectOutgoingLinks(LinkType linkType,
+	public void collectOutgoingLinks(LinkType linkType,
 			CollectedReflectLink ret) {
 		if (linkType == CadseGCST.GROUP_EXT_ITEM_lt_MEMBER_OF) {
 			ret.addOutgoing(CadseGCST.GROUP_EXT_ITEM_lt_MEMBER_OF, _group);
@@ -2104,6 +2113,7 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 	public boolean isDelegatedValue(IAttributeType<?> attr) {
 		return isMember() && !attr.isAttributeHead() && 
 			!attr.isAttributeMember() && _group != null && !_group.isDelegatedAttribute(attr);
+		
 	}
 
 }

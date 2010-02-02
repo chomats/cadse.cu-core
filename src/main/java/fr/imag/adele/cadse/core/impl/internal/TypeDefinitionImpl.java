@@ -191,7 +191,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 				: this._modificationPages;
 	}
 
-	protected void collectOutgoingLinks(LinkType linkType,
+	public void collectOutgoingLinks(LinkType linkType,
 			CollectedReflectLink ret) {
 		if (linkType == CadseGCST.TYPE_DEFINITION_lt_CADSE) {
 			ret.addOutgoing(CadseGCST.TYPE_DEFINITION_lt_CADSE, getCadse(),

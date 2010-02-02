@@ -2212,9 +2212,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace,
 	public <T> T getAttribute(Item source, IAttributeType<T> type,
 			boolean ownerOnly) {
 		LinkedList<Iterator<Item>> stack = null;
-		if (source.isMember()
-				&& !type.isAttributeMember() &&
-				   !type.isAttributeHead() && source.getGroup() != null && !source.getGroup().isDelegatedAttribute(type)) {
+		if (source.isDelegatedValue(type)) {
 			if (ownerOnly)
 				return null;
 			return getAttribute(source.getGroup(), type, ownerOnly);		
