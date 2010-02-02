@@ -34,6 +34,8 @@ public class PageRuntimeModel {
 	public Pages lastCreationPages = null;
 	
 	public Pages getModificationPages(Item item, FilterContext context) {
+		context.setItem(item);
+		
 		Set<IAttributeType<?>> ro = new HashSet<IAttributeType<?>>();
 		List<UIValidator> validators = new ArrayList<UIValidator>();
 		iComputeValidators(item, context, validators);
@@ -50,6 +52,8 @@ public class PageRuntimeModel {
 
 	public Pages getCreationPages(Item item, NewContext context)
 			throws CadseException {
+		context.setItem(item);
+		
 		Set<IAttributeType<?>> ro = new HashSet<IAttributeType<?>>();
 		context.setDefaultName(item.getType().getDefaultInstanceName());
 		List<UIValidator> validators = new ArrayList<UIValidator>();
@@ -77,7 +81,6 @@ public class PageRuntimeModel {
 	protected IPage[] iGetAllModificationPage(Item item, FilterContext context,
 			Set<IAttributeType<?>> ro) {
 		List<IPage> list = new ArrayList<IPage>();
-		context.setItemSource(item);
 		iComputeModificationPage(item, context, list, ro);
 		int count = list.size();
 		for (IPage factory : list) {

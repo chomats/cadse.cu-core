@@ -735,7 +735,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 			for (IAttributeType<?> attr : _attributesDefinitions) {
 				if (!inSpecificPages.contains(attr)
 						&& canBeAddedInGenericPage(genericPage, attr)) {
-					if (context.getItemSource().isDelegatedValue(attr)) {
+					if (context.getItem().isDelegatedValue(attr)) {
 						ro.add(attr);
 					}
 					notPutAttr.add(attr);
