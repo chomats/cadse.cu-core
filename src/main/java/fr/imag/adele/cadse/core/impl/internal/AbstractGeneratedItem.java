@@ -2099,5 +2099,10 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 			return (DelegateValue) v;
 		return null;
 	}
+	
+	@Override
+	public boolean isDelegatedValue(IAttributeType<?> attr) {
+		return isMember() && !attr.isAttributeHead() && _group != null && !_group.isDelegatedAttribute(attr);
+	}
 
 }

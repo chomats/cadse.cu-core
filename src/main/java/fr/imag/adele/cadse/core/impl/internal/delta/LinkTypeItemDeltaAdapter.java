@@ -1253,4 +1253,10 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
+	@Override
+	public boolean isAttributeHead() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not implemented method");
+	}
+
 }

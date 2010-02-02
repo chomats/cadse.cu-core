@@ -16,6 +16,7 @@ public class HierachicPageImpl extends AbstractGeneratedItem implements IPage, H
 	protected IPage[] _bloc = null;
 	private ItemType _it;
 	boolean _modificationPage;
+	boolean _groupPage;
 	
 	public HierachicPageImpl(ItemType it, boolean modificationPage) {
 		_it = it;
@@ -165,6 +166,16 @@ public class HierachicPageImpl extends AbstractGeneratedItem implements IPage, H
 	@Override
 	public IAttributeType<?>[] getReadOnlyAttributes() {
 		throw new UnsupportedOperationException();
+	}
+
+
+	@Override
+	public boolean isGroupPage() {
+		return _groupPage;
+	}
+	
+	public void setGroupPage(boolean groupPage) {
+		_groupPage = groupPage;
 	}
 	
 }

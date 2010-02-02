@@ -4064,8 +4064,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 
 	@Override
 	public boolean isMember() {
-		// TODO Auto-generated method stub
-		return false;
+		return _group != null;
 	}
 
 	@Override
@@ -4220,6 +4219,11 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	public DelegateValue getDelegateValue(IAttributeType<?> attr) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public boolean isDelegatedValue(IAttributeType<?> attr) {
+		return isMember() && !attr.isAttributeHead() && _group != null && !_group.isDelegatedAttribute(attr);
 	}
 
 }
