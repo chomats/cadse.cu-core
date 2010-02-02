@@ -25,6 +25,7 @@ import fr.imag.adele.cadse.core.CadseGCST;
 import java.util.UUID;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemState;
+import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.attribute.CheckStatus;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
@@ -383,5 +384,9 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 
 	public boolean isAttributeHead() {
 		return getFlag(ATTRIBUTE_HEAD);
+	}
+	
+	public boolean isAttributeMember() {
+		return getSource() != null && getSource().isMainType() && ((ItemType) getSource()).getType().isGroupType();
 	}
 }
