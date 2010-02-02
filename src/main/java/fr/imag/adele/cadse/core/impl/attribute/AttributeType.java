@@ -379,4 +379,9 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 	public int compareTo(AttributeType o) {
 		return getName().compareTo(o.getName());
 	}
+	
+
+	public boolean isAttributeHead() {
+		return getFlag(ATTRIBUTE_HEAD);
+	}
 }

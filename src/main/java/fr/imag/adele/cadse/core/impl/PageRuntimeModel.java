@@ -77,6 +77,7 @@ public class PageRuntimeModel {
 	protected IPage[] iGetAllModificationPage(Item item, FilterContext context,
 			Set<IAttributeType<?>> ro) {
 		List<IPage> list = new ArrayList<IPage>();
+		context.setItemSource(item);
 		iComputeModificationPage(item, context, list, ro);
 		int count = list.size();
 		for (IPage factory : list) {
@@ -213,6 +214,7 @@ public class PageRuntimeModel {
 		ItemType group = item.getGroup();
 		genericPage = new HierachicPageImpl(group,
 				modificationPage);
+		genericPage.setGroupPage(true);
 		while (group != null) {
 			group.computeGenericPage(context,
 					genericPage, inSpecificPages, ro, visited);

@@ -1105,4 +1105,11 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 		_attributeDefinitions = ArraysUtil.add(IAttributeType.class, _attributeDefinitions, att);
 	}
 
+	
+	@Override
+	public boolean isAttributeHead() {
+		if (isGroup())
+			return true;
+		return super.isAttributeHead();
+	}
 }

@@ -735,6 +735,9 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 			for (IAttributeType<?> attr : _attributesDefinitions) {
 				if (!inSpecificPages.contains(attr)
 						&& canBeAddedInGenericPage(genericPage, attr)) {
+					if (context.getItemSource().isDelegatedValue(attr)) {
+						ro.add(attr);
+					}
 					notPutAttr.add(attr);
 				}
 			}
@@ -778,6 +781,8 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 	protected boolean canBeAddedInGenericPage(HierarchicPage genericPage,
 			IAttributeType<?> attr) {
 		if (attr.isHiddenInComputedPages())
+			return false;
+		if (genericPage.isGroupPage() && attr.isAttributeHead())
 			return false;
 		if (genericPage.isModificationPage())
 			return true;
