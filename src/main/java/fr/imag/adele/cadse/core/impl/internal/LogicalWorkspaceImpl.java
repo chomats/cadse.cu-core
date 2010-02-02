@@ -2215,6 +2215,8 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace,
 		if (source.isMember()
 				&& !type.isAttributeMember() &&
 				   !type.isAttributeHead() && source.getGroup() != null && !source.getGroup().isDelegatedAttribute(type)) {
+			if (ownerOnly)
+				return null;
 			return getAttribute(source.getGroup(), type, ownerOnly);		
 		}
 		Item s = source;
