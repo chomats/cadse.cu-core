@@ -489,11 +489,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems,
 			ItemDelta loadedOperation) throws CadseException {
 		try {
 			Item goodItem = itemsLoaded.get(loadedOperation);
-//			ItemType it = goodItem.getType();
-//			IItemFactory factory = it.getItemFactory();
-//			if (factory == null) {
-//				factory = ItemFactory.SINGLETON;
-//			}
+			goodItem.setState(ItemState.CREATED);
 			ContentItem contentItem = null;
 			try {
 				UUID idContent = UUID.randomUUID();
