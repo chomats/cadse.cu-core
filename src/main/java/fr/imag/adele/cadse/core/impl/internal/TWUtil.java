@@ -18,18 +18,28 @@
  */
 package fr.imag.adele.cadse.core.impl.internal;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.CadseGCST;
+import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
+import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
+import fr.imag.adele.cadse.core.enumdef.TWCommitKind;
 import fr.imag.adele.cadse.core.enumdef.TWDestEvol;
 import fr.imag.adele.cadse.core.enumdef.TWEvol;
+import fr.imag.adele.cadse.core.enumdef.TWUpdateKind;
+import fr.imag.adele.cadse.core.impl.CadseCore;
 import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
+import fr.imag.adele.teamwork.db.ModelVersionDBService;
+import fr.imag.adele.teamwork.db.TransactionException;
 
 /**
  * Couple of methods useful for TeamWork implementation.
@@ -82,6 +92,26 @@ public class TWUtil {
 	 */
 	public static TWEvol getEvol(IAttributeType<?> attrDef) {
 		return attrDef.getAttribute(CadseGCST.ATTRIBUTE_at_TWEVOL_);
+	}
+	
+	/**
+	 * Returns commit politic flag of the specified attribute.
+	 * 
+	 * @param attrDef an attribute definition
+	 * @return commit politic flag of the specified attribute.
+	 */
+	public static TWCommitKind getCommitPolitic(IAttributeType<?> attrDef) {
+		return attrDef.getAttribute(CadseGCST.ATTRIBUTE_at_TWCOMMIT_KIND_);
+	}
+	
+	/**
+	 * Returns update politic flag of the specified attribute.
+	 * 
+	 * @param attrDef an attribute definition
+	 * @return update politic flag of the specified attribute.
+	 */
+	public static TWUpdateKind getUpdatePolitic(IAttributeType<?> attrDef) {
+		return attrDef.getAttribute(CadseGCST.ATTRIBUTE_at_TWUPDATE_KIND_);
 	}
 
 	/**
@@ -283,6 +313,76 @@ public class TWUtil {
 	public static boolean isBranchDestination(IAttributeType<?> linkType) {
 		return TWDestEvol.branch.equals(getDestEvol(linkType));
 	}
+	
+	/**
+	 * Returns true if specified link type is defined coupled.
+	 * 
+	 * @param linkType a link type
+	 * @return true if specified link type is defined coupled.
+	 */
+	public static boolean isCoupled(LinkType linkType) {
+		return linkType.getAttribute(CadseGCST.LINK_TYPE_at_TWCOUPLED_);
+	}
+	
+	/**
+	 * Returns true if specified attribute type has replace commit politic.
+	 * 
+	 * @param attrType an attribute type
+	 * @return true if specified attribute type has replace commit politic.
+	 */
+	public static boolean hasReplaceCommitPolitic(IAttributeType<?> attrType) {
+		return TWCommitKind.none.equals(getCommitPolitic(attrType));
+	}
+	
+	/**
+	 * Returns true if specified attribute type has conflict commit politic.
+	 * 
+	 * @param attrType an attribute type
+	 * @return true if specified attribute type has conflict commit politic.
+	 */
+	public static boolean hasConflictCommitPolitic(IAttributeType<?> attrType) {
+		return TWCommitKind.conflict.equals(getCommitPolitic(attrType));
+	}
+	
+	/**
+	 * Returns true if specified attribute type has reconcile commit politic.
+	 * 
+	 * @param attrType an attribute type
+	 * @return true if specified attribute type has reconcile commit politic.
+	 */
+	public static boolean hasReconcileCommitPolitic(IAttributeType<?> attrType) {
+		return TWCommitKind.reconcile.equals(getCommitPolitic(attrType));
+	}
+	
+	/**
+	 * Returns true if specified attribute type has replace update politic.
+	 * 
+	 * @param attrType an attribute type
+	 * @return true if specified attribute type has replace update politic.
+	 */
+	public static boolean hasReplaceUpdatePolitic(IAttributeType<?> attrType) {
+		return TWUpdateKind.none.equals(getUpdatePolitic(attrType));
+	}
+	
+	/**
+	 * Returns true if specified attribute type has merge update politic.
+	 * 
+	 * @param attrType an attribute type
+	 * @return true if specified attribute type has merge update politic.
+	 */
+	public static boolean hasMergeUpdatePolitic(IAttributeType<?> attrType) {
+		return TWUpdateKind.merge.equals(getUpdatePolitic(attrType));
+	}
+	
+	/**
+	 * Returns true if specified attribute type has compute update politic.
+	 * 
+	 * @param attrType an attribute type
+	 * @return true if specified attribute type has compute update politic.
+	 */
+	public static boolean hasComputeUpdatePolitic(IAttributeType<?> attrType) {
+		return TWUpdateKind.compute.equals(getUpdatePolitic(attrType));
+	}
 
 	/**
 	 * Returns true if specified attribute type has transient evolution politic.
@@ -322,5 +422,106 @@ public class TWUtil {
 			return true;
 		
 		return false;
+	}
+
+	/**
+	 * Returns a list which is 3 way merge.
+	 * In case of conflicts, newValue2 is considered as master.
+	 * 
+	 * @param oldValue  old list of values (common ancestor of two new values)
+	 * @param newValue  new list of values
+	 * @param newValue2 new list of values
+	 * @return a list which is a 3 way merge.
+	 */
+	public static Object mergeLists(Object oldValue, Object newValue, Object newValue2) {
+		if (!(oldValue instanceof List) || !(newValue instanceof List) || !(newValue2 instanceof List))
+			throw new IllegalArgumentException("one of the parameters is not a list.");
+		
+		List oldList = (List) oldValue;
+		List newList = (List) newValue;
+		List newList2 = (List) newValue2;
+		
+		List resultList = new ArrayList();
+		resultList.addAll(newList2);
+		
+		// compute removal in newList and newList2
+		List removedInNewList = new ArrayList();
+		List removedInNewList2 = new ArrayList();
+		for (Object obj : oldList) {
+			if (!newList.contains(obj))
+				removedInNewList.add(obj);
+			if (!newList2.contains(obj))
+				removedInNewList2.add(obj);
+		}
+		
+		// compute addition in newList
+		List addedInNewList = new ArrayList();
+		for (Object obj : newList) {
+			if (!oldList.contains(obj))
+				addedInNewList.add(obj);
+		}
+		
+		// compute addition in newList2
+		List addedInNewList2 = new ArrayList();
+		for (Object obj : newList2) {
+			if (!oldList.contains(obj))
+				addedInNewList2.add(obj);
+		}
+		
+		// compute merge
+		for (Object obj : addedInNewList) {
+			if (!addedInNewList2.contains(obj) && !removedInNewList2.contains(obj))
+				resultList.add(obj);
+		}
+		for (Object obj : removedInNewList) {
+			if (!addedInNewList2.contains(obj) && !removedInNewList2.contains(obj))
+				resultList.remove(obj);
+		}
+		
+		//TODO define a better 3 way merge algo for lists
+		
+		return resultList;
+	}
+
+	/**
+	 * Returns local items which must be committed if specified item is committed.
+	 * A local item is source of an incomming link of specified item or
+	 * a destination of an outgoing link of specified item.
+	 * 
+	 * @param item an item 
+	 * @return local items which must be committed if specified item is committed.
+	 */
+	public static Set<Item> computeLocalItemsToCommit(Item item) {
+		Set<Item> itemsToCommit = new HashSet<Item>();
+		
+		for (Link link : item.getOutgoingLinks()) {
+			Item destItem = link.getDestination(true);
+			if (destItem == null)
+				continue;
+			
+			if (cannotCommit(destItem)) {
+				continue;
+			}
+
+			if (isRequireNewRev(destItem) || isCoupled(link.getLinkType())) {
+				itemsToCommit.add(destItem);
+			}
+		}
+		
+		for (Link link : item.getIncomingLinks()) {
+			Item sourceItem = link.getSource();
+			if (sourceItem == null)
+				continue;
+			
+			if (cannotCommit(sourceItem)) {
+				continue;
+			}
+
+			if (isCoupled(link.getLinkType())) {
+				itemsToCommit.add(sourceItem);
+			}
+		}
+		
+		return itemsToCommit;
 	}
 }
