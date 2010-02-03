@@ -18,6 +18,7 @@
  */
 package fr.imag.adele.cadse.core.impl.attribute;
 
+import java.util.Date;
 import java.util.UUID;
 
 import fr.imag.adele.cadse.core.CadseGCST;
@@ -139,6 +140,9 @@ public class LongAttributeType extends AttributeType implements
 		}
 		if (v instanceof Long) {
 			return (Long) v;
+		}
+		if (v instanceof Date) {
+			return ((Date) v).getTime();
 		}
 		if (v instanceof Number)
 			return ((Number) v).longValue();
