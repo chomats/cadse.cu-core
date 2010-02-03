@@ -21,15 +21,20 @@ package fr.imag.adele.cadse.core.impl.ui.mc;
 
 import java.util.List;
 
+
 import fr.imag.adele.cadse.core.CadseException;
+import fr.imag.adele.cadse.core.ChangeID;
 import fr.imag.adele.cadse.core.ContentChangeInfo;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.LinkType;
+import fr.imag.adele.cadse.core.WorkspaceListener;
 import fr.imag.adele.cadse.core.attribute.CheckStatus;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.impl.ui.AbstractModelController;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransactionListener;
+import fr.imag.adele.cadse.core.transaction.delta.ImmutableItemDelta;
+import fr.imag.adele.cadse.core.transaction.delta.ImmutableWorkspaceDelta;
 import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
 import fr.imag.adele.cadse.core.transaction.delta.LinkDelta;
 import fr.imag.adele.cadse.core.transaction.delta.MappingOperation;
@@ -47,22 +52,22 @@ import fr.imag.adele.cadse.core.ui.UIPlatform;
  */
 public class MC_AttributesItem extends AbstractModelController implements RunningModelController {
 
-//	class Listener extends WorkspaceListener {
-//
-//		private ImmutableItemDelta	itemDelta;
-//		IPageController _uiPlatform;
-//		@Override
-//		public void workspaceChanged(ImmutableWorkspaceDelta delta) {
-//			itemDelta = delta.getItem(_uiPlatform.getItem(getUIField()));
-//			if (itemDelta == null) {
-//				return;
-//			}
-//			if ((itemDelta.getSetAttributes() != null)
-//					&& (itemDelta.getSetAttributes().get(getAttributeDefinition()) != null)) {
-//				_uiPlatform.resetVisualValue(getUIField());
-//			}
-//		}
-//	}
+	class Listener extends WorkspaceListener {
+
+		private ImmutableItemDelta	itemDelta;
+		
+		@Override
+		public void workspaceChanged(ImmutableWorkspaceDelta delta) {
+			itemDelta = delta.getItem(getItem());
+			if (itemDelta == null) {
+				return;
+			}
+			if ((itemDelta.getSetAttributes() != null)
+					&& (itemDelta.getSetAttributes().get(getAttributeDefinition()) != null)) {
+				_uiPlatform.resetVisualValue(getUIField());
+			}
+		}
+	}
 
 	boolean			_anonymous	= true;
 	private boolean	_inibNotification;
@@ -102,7 +107,10 @@ public class MC_AttributesItem extends AbstractModelController implements Runnin
 	@Override
 	public void init(UIPlatform uiPlatform) {
 		super.init(uiPlatform);
-		_uiPlatform.addLogicalWorkspaceTransactionListener(new MYWCWL(_uiPlatform));
+		if (getItem() != null) {
+			_uiPlatform.addLogicalWorkspaceTransactionListener(new MYWCWL(_uiPlatform));
+			_uiPlatform.addListener(getItem().getBaseItem(), new Listener(), ChangeID.toFilter(ChangeID.SET_ATTRIBUTE));
+		}
 	}
 	
 	/*
