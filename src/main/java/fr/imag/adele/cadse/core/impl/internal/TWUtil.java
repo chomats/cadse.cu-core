@@ -225,7 +225,7 @@ public class TWUtil {
 	 * @return true if specified item cannot be imported.
 	 */
 	public static boolean cannotImport(UUID itemId, LogicalWorkspace lw) {
-		return (itemId != null) || isPresentInWorkspace(itemId, lw);
+		return (itemId != null) && isPresentInWorkspace(itemId, lw);
 	}
 
 	/**
@@ -286,7 +286,7 @@ public class TWUtil {
 	 * @return true if specified item is ignored for a revert operation.
 	 */
 	public static boolean cannotRevert(Item item) {
-		return (item == null) || item.isStatic() || item.isRevModified() || hasNeverBeenCommited(item);
+		return (item == null) || item.isStatic() || !item.isRevModified() || hasNeverBeenCommited(item);
 	}
 
 	/**
