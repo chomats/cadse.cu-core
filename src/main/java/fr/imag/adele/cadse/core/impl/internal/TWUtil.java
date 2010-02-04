@@ -37,6 +37,7 @@ import fr.imag.adele.cadse.core.enumdef.TWDestEvol;
 import fr.imag.adele.cadse.core.enumdef.TWEvol;
 import fr.imag.adele.cadse.core.enumdef.TWUpdateKind;
 import fr.imag.adele.cadse.core.impl.CadseCore;
+import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
 import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
 import fr.imag.adele.teamwork.db.ModelVersionDBService;
 import fr.imag.adele.teamwork.db.TransactionException;
@@ -523,5 +524,38 @@ public class TWUtil {
 		}
 		
 		return itemsToCommit;
+	}
+	
+	/**
+	 * Returns a workspace transaction where teamwork state is not computed on live.
+	 * 
+	 * @return a workspace transaction where teamwork state is not computed on live.
+	 */
+	public static LogicalWorkspaceTransaction createWorkspaceTransactionForTWoperation() {
+		final LogicalWorkspaceTransaction transaction = CadseCore.getLogicalWorkspace().createTransaction();
+		transaction.removeLogicalWorkspaceTransactionListener(
+				((LogicalWorkspaceTransactionImpl) transaction).getTeamWorkLWCListener());
+		return transaction;
+	}
+	
+	/**
+	 * Returns true if this attribute definition is a link type.
+	 * 
+	 * @param attrType an attribute definition
+	 * @return true if this attribute definition is a link type.
+	 */
+	public static boolean isLinkType(IAttributeType<?> attrType) {
+		return attrType.isInstanceOf(CadseGCST.LINK_TYPE);
+	}
+
+	/**
+	 * Returns true if this item is an item type.
+	 * 
+	 * @param item
+	 *            an item
+	 * @return true if this item is an item type.
+	 */
+	public static boolean isItemType(Item item) {
+		return item.isInstanceOf(CadseGCST.ITEM_TYPE);
 	}
 }
