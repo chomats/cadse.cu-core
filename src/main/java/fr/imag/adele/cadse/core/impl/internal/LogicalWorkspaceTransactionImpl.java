@@ -139,6 +139,8 @@ public class LogicalWorkspaceTransactionImpl implements
 
 	private ContextVariable _oldContextVariable;
 
+	private TeamWorkStatePropagationWLWCListener _twListener;
+
 	public LogicalWorkspaceTransactionImpl(InternalLogicalWorkspace base,
 			LogicalWorkspaceTransactionListener[] workspaceLogiqueCopyListeners) {
 		this.base = base;
@@ -151,7 +153,8 @@ public class LogicalWorkspaceTransactionImpl implements
 		this.items_by_unique_name = new HashMap<String, ItemDelta>();
 		this._logicalWorkspaceTransactionListeners = workspaceLogiqueCopyListeners;
 		addLogicalWorkspaceTransactionListener(new WoLProWCListener());
-		addLogicalWorkspaceTransactionListener(new TeamWorkStatePropagationWLWCListener());
+		_twListener = new TeamWorkStatePropagationWLWCListener();
+		addLogicalWorkspaceTransactionListener(_twListener);
 	}
 
 	public boolean canDeleteInverseLink(Link link) {
@@ -3427,4 +3430,7 @@ public class LogicalWorkspaceTransactionImpl implements
 		base.addBinding(cadse, it, et);
 	}
 
+	public LogicalWorkspaceTransactionListener getTeamWorkLWCListener() {
+		return _twListener;
+	}
 }
