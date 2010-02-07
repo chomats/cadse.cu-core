@@ -42,7 +42,7 @@
         </dependency>
         <dependency>
             <groupId>bak.pcj</groupId>
-            <artifactId>bak.pcje</artifactId>
+            <artifactId>bak.pcj</artifactId>
         </dependency>
         <dependency>
         	<groupId>rhino</groupId>
