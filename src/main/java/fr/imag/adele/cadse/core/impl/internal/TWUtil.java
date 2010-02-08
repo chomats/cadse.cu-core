@@ -316,6 +316,56 @@ public class TWUtil {
 	}
 	
 	/**
+	 * Returns true if specified link type has ImmutableDestination evolution politic.
+	 * 
+	 * @param linkType a link type
+	 * @return true if specified link type has ImmutableDestination evolution politic.
+	 */
+	public static boolean isImmutableDestination(IAttributeType<?> linkType) {
+		return TWDestEvol.immutable.equals(getDestEvol(linkType));
+	}
+	
+	/**
+	 * Returns true if specified link type has FinalDestination evolution politic.
+	 * 
+	 * @param linkType a link type
+	 * @return true if specified link type has FinalDestination evolution politic.
+	 */
+	public static boolean isFinalDestination(IAttributeType<?> linkType) {
+		return TWDestEvol.finalDest.equals(getDestEvol(linkType));
+	}
+	
+	/**
+	 * Returns true if specified attribute type has Final evolution politic.
+	 * 
+	 * @param linkType an attribute definition
+	 * @return true if specified attribute type has Final evolution politic.
+	 */
+	public static boolean isFinal(IAttributeType<?> attrType) {
+		return TWEvol.twFinal.equals(getEvol(attrType));
+	}
+	
+	/**
+	 * Returns true if specified link type has MutableDestination evolution politic.
+	 * 
+	 * @param linkType a link type
+	 * @return true if specified link type has MutableDestination evolution politic.
+	 */
+	public static boolean isMutableDestination(IAttributeType<?> linkType) {
+		return TWDestEvol.mutable.equals(getDestEvol(linkType));
+	}
+	
+	/**
+	 * Returns true if specified link type has EffectiveDestination evolution politic.
+	 * 
+	 * @param linkType a link type
+	 * @return true if specified link type has EffectiveDestination evolution politic.
+	 */
+	public static boolean isEffectiveDestination(IAttributeType<?> linkType) {
+		return TWDestEvol.effective.equals(getDestEvol(linkType));
+	}
+	
+	/**
 	 * Returns true if specified link type is defined coupled.
 	 * 
 	 * @param linkType a link type
@@ -434,7 +484,7 @@ public class TWUtil {
 	 * @param newValue2 new list of values
 	 * @return a list which is a 3 way merge.
 	 */
-	public static Object mergeLists(Object oldValue, Object newValue, Object newValue2) {
+	public static List mergeLists(Object oldValue, Object newValue, Object newValue2) {
 		if (!(oldValue instanceof List) || !(newValue instanceof List) || !(newValue2 instanceof List))
 			throw new IllegalArgumentException("one of the parameters is not a list.");
 		

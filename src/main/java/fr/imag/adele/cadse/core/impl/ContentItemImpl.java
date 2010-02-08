@@ -79,6 +79,9 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
     private ContentItem[]		_children;
 	private ContentItem[]		_childrenFromParent;
 	
+	private boolean _scmModified;
+	private String _scmRev;
+	
 	
 	
 	protected ContentItemImpl(UUID id) {
@@ -606,6 +609,26 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	public <T> T getMainMappingContent(ContextVariable cxt, Class<T> clazz) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public String getSCMRevisision() {
+		return _scmRev;
+	}
+	
+	@Override
+	public void setSCMModified(boolean modified) {
+		_scmModified = modified;
+	}
+	
+	@Override
+	public void setSCMRevision(String rev) {
+		_scmRev = rev;
+	}
+	
+	@Override
+	public boolean isSCMModified() {
+		return _scmModified;
 	}
 
 }
