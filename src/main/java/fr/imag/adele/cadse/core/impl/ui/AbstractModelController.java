@@ -25,6 +25,7 @@ import fr.imag.adele.cadse.core.ui.AbstractUIRunningValidator;
 import fr.imag.adele.cadse.core.ui.RunningModelController;
 import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.ui.UIPlatform;
+import fr.imag.adele.cadse.core.ui.UIRunningValidator;
 
 /**
  * The Class AbstractModelController.
@@ -34,6 +35,7 @@ import fr.imag.adele.cadse.core.ui.UIPlatform;
 public class AbstractModelController extends AbstractUIRunningValidator implements RunningModelController {
 
 	public UIField _uiField;
+	public Object 	_ruiField;
 	
 	
 	public AbstractModelController(Item desc) {
