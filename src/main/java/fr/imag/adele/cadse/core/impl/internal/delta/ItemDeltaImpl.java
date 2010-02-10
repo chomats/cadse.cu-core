@@ -867,7 +867,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	public boolean getBooleanAttribut(BooleanAttributeType key,
 			boolean defaultValue) {
 		if (_attributes != null) {
-			SetAttributeOperation setAtt = _attributes.get(key.getName());
+			SetAttributeOperation setAtt = _attributes.get(key);
 			if (setAtt != null && setAtt.getCurrentValue() != null) {
 				return Convert.toBoolean(setAtt.getCurrentValue());
 			}
