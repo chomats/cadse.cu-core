@@ -110,14 +110,6 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 		return _delta.getAttribute(CadseGCST.CADSE_DEFINITION_at_CADSE_NAME_);
 	}
 
-	/**
-	 * @deprecated Use {@link #getCadse()} instead
-	 */
-	@Override
-	public CadseRuntime getCadseRuntime() {
-		return getCadse();
-	}
-
 	@Override
 	public CadseRuntime getCadse() {
 		ItemDelta cadseDelta = _delta.getOutgoingItem(
