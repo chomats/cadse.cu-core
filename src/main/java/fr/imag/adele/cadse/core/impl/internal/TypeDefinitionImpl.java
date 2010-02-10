@@ -198,6 +198,21 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 					Item.IS_HIDDEN);
 			return;
 		}
+		if (linkType == CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES) {
+			ret.addOutgoing(CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES,
+					_attributesDefinitions);
+			return;
+		}
+		if (linkType == CadseGCST.TYPE_DEFINITION_lt_CREATION_PAGES) {
+			ret.addOutgoing(CadseGCST.TYPE_DEFINITION_lt_CREATION_PAGES,
+					Item.IS_HIDDEN, _creationPages);
+			return;
+		}
+		if (linkType == CadseGCST.TYPE_DEFINITION_lt_MODIFICATION_PAGES) {
+			ret.addOutgoing(CadseGCST.TYPE_DEFINITION_lt_MODIFICATION_PAGES,
+					Item.IS_HIDDEN, _modificationPages);
+			return;
+		}
 		super.collectOutgoingLinks(linkType, ret);
 	}
 

@@ -1162,31 +1162,13 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 			ret.addOutgoing(CadseGCST.ITEM_TYPE_lt_SUPER_TYPE, getSuperType());
 			return;
 		}
-		if (linkType == CadseGCST.TYPE_DEFINITION_lt_CADSE) {
-			ret.addOutgoing(CadseGCST.TYPE_DEFINITION_lt_CADSE, getCadse(),
-					Item.IS_HIDDEN);
-			return;
-		}
+		
 		if (linkType == CadseGCST.ITEM_TYPE_lt_SUB_TYPES) {
 			ret.addOutgoing(CadseGCST.ITEM_TYPE_lt_SUB_TYPES, Item.IS_HIDDEN,
 					this._subTypes);
 			return;
 		}
-		if (linkType == CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES) {
-			ret.addOutgoing(CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES,
-					_attributesDefinitions);
-			return;
-		}
-		if (linkType == CadseGCST.TYPE_DEFINITION_lt_CREATION_PAGES) {
-			ret.addOutgoing(CadseGCST.TYPE_DEFINITION_lt_CREATION_PAGES,
-					Item.IS_HIDDEN, _creationPages);
-			return;
-		}
-		if (linkType == CadseGCST.TYPE_DEFINITION_lt_MODIFICATION_PAGES) {
-			ret.addOutgoing(CadseGCST.TYPE_DEFINITION_lt_MODIFICATION_PAGES,
-					Item.IS_HIDDEN, _modificationPages);
-			return;
-		}
+		
 		if (linkType == CadseGCST.GROUP_EXT_ITEM_lt_MEMBER_OF) {
 			ret.addOutgoing(CadseGCST.GROUP_EXT_ITEM_lt_MEMBER_OF,
 					 _group, Item.IS_HIDDEN);
