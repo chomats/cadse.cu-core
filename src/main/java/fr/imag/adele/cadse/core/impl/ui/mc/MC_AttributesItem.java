@@ -53,7 +53,10 @@ import fr.imag.adele.cadse.core.ui.UIPlatform;
 public class MC_AttributesItem extends AbstractModelController implements RunningModelController {
 
 	class Listener extends WorkspaceListener {
-
+		Item _item;
+		public Listener(Item item) {
+			_item = item;
+		}
 		private ImmutableItemDelta	itemDelta;
 		
 		@Override
@@ -64,8 +67,16 @@ public class MC_AttributesItem extends AbstractModelController implements Runnin
 			}
 			if ((itemDelta.getSetAttributes() != null)
 					&& (itemDelta.getSetAttributes().get(getAttributeDefinition()) != null)) {
+				if (_uiPlatform.isDisposed()) {
+					remove();
+					return;
+				}
 				_uiPlatform.resetVisualValue(getUIField());
 			}
+		}
+
+		private void remove() {
+			_item.removeListener(this);
 		}
 	}
 
@@ -109,7 +120,8 @@ public class MC_AttributesItem extends AbstractModelController implements Runnin
 		super.init(uiPlatform);
 		if (getItem() != null) {
 			_uiPlatform.addLogicalWorkspaceTransactionListener(new MYWCWL(_uiPlatform));
-			_uiPlatform.addListener(getItem().getBaseItem(), new Listener(), ChangeID.toFilter(ChangeID.SET_ATTRIBUTE));
+			Item baseItem = getItem().getBaseItem();
+			_uiPlatform.addListener(baseItem, new Listener(baseItem), ChangeID.toFilter(ChangeID.SET_ATTRIBUTE));
 		}
 	}
 	
