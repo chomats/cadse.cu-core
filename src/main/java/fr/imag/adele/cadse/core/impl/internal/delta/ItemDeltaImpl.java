@@ -760,6 +760,11 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 			throw new CadseIllegalArgumentException(
 					Messages.attribute_definition_is_null);
 		}
+		
+		//delegation
+		if (isDelegatedValue(att)) {
+			return _group.getAttributeWithDefaultValue(att, att.getDefaultValue());
+		}
 		if (this._attributes != null) {
 			SetAttributeOperation oa = this._attributes.get(att);
 			if (oa != null) {
