@@ -1580,6 +1580,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace,
 			throw new CadseException("Type is null !!!");
 		ExtendedTypeImpl et = new ExtendedTypeImpl(uuid, metaType, qualifiedName, name);
 		cadseName.addExtendedType(et);
+		et.setCadse(cadseName);
 		registerExtendedType(et);
 		return et;
 	}
