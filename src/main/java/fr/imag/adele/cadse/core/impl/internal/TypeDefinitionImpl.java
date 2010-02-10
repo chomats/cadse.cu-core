@@ -1037,23 +1037,20 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 		}
 	}
 
-	/**
-	 * @deprecated Use {@link #getCadse()} instead
-	 */
-	public CadseRuntime getCadseRuntime() {
-		return getCadse();
-	}
-
 	public CadseRuntime getCadse() {
+		if (_cadse != null) {
+			return _cadse;
+		}
 		Item parent = _parent;
 		while (parent != null) {
 			if (parent.isInstanceOf(CadseGCST.CADSE)
-					&& parent instanceof CadseRuntime)
-				return (CadseRuntime) parent;
+					&& parent instanceof CadseRuntime) {
+				return _cadse = (CadseRuntime) parent;
+			}
 			parent = parent.getPartParent();
 		}
 		if (_cadseName != null)
-			return _dblw.getCadseRuntime(_cadseName);
+			return _cadse = _dblw.getCadseRuntime(_cadseName);
 		return null;
 	}
 
