@@ -327,7 +327,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	 * @see fr.imag.adele.cadse.core.internal.LinkImpl#isPart()
 	 */
 	public boolean isPart() {
-		return (_kind & LinkType.PART) != 0;
+		return (_kind & LinkType.PART) != 0 || isGroup();
 	}
 
 	/*
