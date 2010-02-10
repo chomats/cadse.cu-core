@@ -3382,7 +3382,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * java.lang.Object, boolean)
 	 */
 	public SetAttributeOperation setAttribute(IAttributeType<?> key,
-			Object newCurrentValue, boolean loaded, boolean n) {
+			Object newCurrentValue, boolean loaded, boolean notifie) {
 		if (getBaseItem() != null && getBaseItem().isStatic()) {
 			return null;
 		}
@@ -3429,11 +3429,11 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 					null);
 			add(setAtt);
 		}
-		if (n && !loaded)
+		if (notifie && !loaded)
 			_copy.validateChangeAttribute(this, setAtt);
 
 		setAtt.setLoaded(loaded);
-		if (n && !loaded) {
+		if (notifie && !loaded) {
 			getWorkingCopy().notifyChangeAttribute(this, setAtt);
 		}
 		return setAtt;
