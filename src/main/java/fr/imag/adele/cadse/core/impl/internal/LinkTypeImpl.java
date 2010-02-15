@@ -37,6 +37,7 @@ import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
+import fr.imag.adele.cadse.core.enumdef.TWCommitKind;
 import fr.imag.adele.cadse.core.enumdef.TWDestEvol;
 import fr.imag.adele.cadse.core.impl.AbstractLinkTypeManager;
 import fr.imag.adele.cadse.core.impl.CadseCore;
@@ -546,6 +547,11 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 			_it = CadseGCST.LINK_TYPE;
 		}
 		return _it;
+	}
+	
+	@Override
+	public void setType(ItemType selectedItemType) {
+		_it = selectedItemType;
 	}
 
 	@Override
