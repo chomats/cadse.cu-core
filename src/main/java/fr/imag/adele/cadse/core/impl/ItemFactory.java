@@ -76,8 +76,8 @@ public class ItemFactory implements IItemFactory {
 		if (it == CadseGCST.INTEGER) {
 			return new IntegerAttributeType(item);
 		}
-		if (it == CadseGCST.LINK_TYPE) {
-			return new LinkTypeImpl(item);
+		if (it == CadseGCST.LINK_TYPE || it == CadseGCST.CONTENT_LINK_TYPE) {
+			return new LinkTypeImpl(item, it);
 		}
 		/*
 		 * if (it == CadseGCST.LIST_ATTRIBUTE_TYPE) { return new
