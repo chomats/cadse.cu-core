@@ -1110,7 +1110,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * .imag.adele.cadse.core.LinkType)
 	 */
 	public Item getIncomingItem(LinkType lt) {
-		Collection<Item> incomingItem = getIncomingItems(lt);
+		Collection<Item> incomingItem = Accessor.getIncomingItem(getIncomingLinks(lt, true, true));
 		Item ret = incomingItem.size() == 1 ? incomingItem.iterator().next()
 				: null;
 		return ret;
