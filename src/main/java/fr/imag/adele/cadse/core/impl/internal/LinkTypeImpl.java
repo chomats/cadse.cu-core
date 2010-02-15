@@ -102,6 +102,8 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 	TWDestEvol					_twdestEvol	= TWDestEvol.immutable;
 
+	private ItemType _it = CadseGCST.LINK_TYPE;
+
         public LinkTypeImpl() {
         }
 
@@ -207,7 +209,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 	}
 
-	public LinkTypeImpl(ItemDelta item) {
+	public LinkTypeImpl(ItemDelta item, ItemType it) {
 		super(item);
 		this._linkType = CadseCore.theLinkType;
 		LinkTypeItemDeltaAdapter _delta = new LinkTypeItemDeltaAdapter(item);
@@ -218,6 +220,9 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 		this._max = _delta.getMax();
 		this._selection = null;
 		this._intID = -1;
+		this._it = it;
+		if (it == null)
+			_it = CadseGCST.LINK_TYPE;
 	}
 
 	@Override
@@ -537,7 +542,10 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	}
 
 	public ItemType getType() {
-		return CadseGCST.LINK_TYPE;
+		if (_it == null) {
+			_it = CadseGCST.LINK_TYPE;
+		}
+		return _it;
 	}
 
 	@Override
