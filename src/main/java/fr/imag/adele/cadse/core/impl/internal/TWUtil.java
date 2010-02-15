@@ -251,7 +251,7 @@ public class TWUtil {
 	 * @return true if specified item is ignored for an update operation.
 	 */
 	public static boolean cannotUpdate(Item item) {
-		return (item == null) || item.isStatic() || hasNeverBeenCommited(item);
+		return (item == null) || item.isStatic() || hasNeverBeenCommited(item) || representsContent(item);
 	}
 
 	/**
@@ -683,7 +683,7 @@ public class TWUtil {
 	 * @param item an item
 	 * @return impact flag of a change on content of specified item.
 	 */
-	public static TWEvol getContentEvol(ItemDelta modifiedItem) {
+	public static TWEvol getContentEvol(Item modifiedItem) {
 		// TODO implement it
 		return TWEvol.twImmutable;
 	}
