@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import fr.imag.adele.cadse.as.scm.SCMException;
+import fr.imag.adele.cadse.as.scm.SCMService;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.CadseGCST;
@@ -32,6 +34,7 @@ import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
+import fr.imag.adele.cadse.core.content.ContentItem;
 import fr.imag.adele.cadse.core.enumdef.TWCommitKind;
 import fr.imag.adele.cadse.core.enumdef.TWDestEvol;
 import fr.imag.adele.cadse.core.enumdef.TWEvol;
@@ -39,8 +42,6 @@ import fr.imag.adele.cadse.core.enumdef.TWUpdateKind;
 import fr.imag.adele.cadse.core.impl.CadseCore;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
 import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
-import fr.imag.adele.teamwork.db.ModelVersionDBService;
-import fr.imag.adele.teamwork.db.TransactionException;
 
 /**
  * Couple of methods useful for TeamWork implementation.
@@ -192,6 +193,10 @@ public class TWUtil {
 					e.printStackTrace();
 				}
 			}
+			
+			// set content as no modified
+			setContentModifiedFlag(modifiedItem, false);
+			
 		} catch (CadseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -607,5 +612,100 @@ public class TWUtil {
 	 */
 	public static boolean isItemType(Item item) {
 		return item.isInstanceOf(CadseGCST.ITEM_TYPE);
+	}
+
+	/**
+	 * Call underlying SCM to update modified status for specified item content. 
+	 * 
+	 * @param item an item
+	 * @return true if content is considered as modified
+	 */
+	public static boolean refreshContentStatus(Item item) {
+		ContentItem contentItem = item.getContentItem();
+		if (contentItem == null)
+			return false;
+		
+		SCMService scmService = ((CadseDomainImpl) CadseCore.getCadseDomain()).getSCMService();
+		
+		// recover scm repository url if needed
+		String scmRepoUrl = contentItem.getSCMRepoUrl();
+		if ((scmRepoUrl == null) || (scmRepoUrl.trim().equals(""))) {
+			try {
+				String newScmRepoUrl = scmService.getSCMRepositoryURL(contentItem);
+				if (newScmRepoUrl != null)
+					contentItem.setSCMRepoUrl(newScmRepoUrl);
+			} catch (SCMException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		try {
+			boolean contentHasChanged = scmService.contentHasBeenChanged(contentItem);
+			setContentModifiedFlag(item, contentHasChanged);
+			return contentHasChanged;
+		} catch (SCMException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	/**
+	 * After call it, content of specified item will be considered as modified by TeamWork.
+	 * 
+	 * @param item an item
+	 */
+	public static void setContentAsModified(Item item) {
+		setContentModifiedFlag(item, true);
+	}
+	
+	public static void setContentModifiedFlag(Item item, boolean isModified) {
+		ContentItem contentItem = item.getContentItem();
+		if (contentItem == null)
+			return;
+		
+		contentItem.setSCMModified(isModified);
+	}
+
+	/**
+	 * Returns true if each item revision can have a different content.
+	 * 
+	 * @param item an item
+	 * @return true if each item revision can have a different content.
+	 */
+	public static boolean isContentRevSpecific(Item item) {
+		// TODO implement it
+		return true;
+	}
+
+	/**
+	 * Returns impact flag of a change on content of specified item.
+	 * 
+	 * @param item an item
+	 * @return impact flag of a change on content of specified item.
+	 */
+	public static TWEvol getContentEvol(ItemDelta modifiedItem) {
+		// TODO implement it
+		return TWEvol.twImmutable;
+	}
+
+	public static String getSCMRepoUrl(Item item) {
+		ContentItem contentItem = item.getContentItem();
+		if (contentItem == null)
+			return null;
+		
+		return contentItem.getSCMRepoUrl();
+	}
+
+	/**
+	 * Returns the CADSE which defines specified item type.
+	 * 
+	 * @param itemType an item type
+	 * @return the CADSE which defines specified item type.
+	 */
+	public static String getCadse(ItemType itemType) {
+		Item cadseRuntime = itemType.getOutgoingItem(
+				CadseGCST.TYPE_DEFINITION_lt_CADSE, true);
+		String cadseName = cadseRuntime.getName();
+		return cadseName;
 	}
 }

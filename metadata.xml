@@ -10,6 +10,7 @@
 		<requires field="_initModelService"></requires>
 		<requires field="_platformService"></requires>
 		<requires field="_modelDBService"></requires>
+		<requires field="_scmService"></requires>
 		<requires field="_peristence" optional="true"></requires>
 	</component>
 	<instance component="fr.imag.adele.cadse.core.impl.internal.CadseDomainImpl" 

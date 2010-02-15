@@ -41,6 +41,7 @@ import fr.imag.adele.cadse.core.transaction.delta.ImmutableWorkspaceDelta;
 import fr.imag.adele.fede.workspace.as.initmodel.IInitModel;
 import fr.imag.adele.teamwork.db.ModelVersionDBService;
 import fr.imag.adele.teamwork.db.ModelVersionDBService2;
+import fr.imag.adele.cadse.as.scm.SCMService;
 import fr.imag.adele.fede.workspace.as.persistence.IPersistence;
 
 /**
@@ -70,6 +71,8 @@ public class CadseDomainImpl implements CadseDomain {
 	public IPlatformIDE _platformService;
 	public ModelVersionDBService _modelDBService;
 	public IPersistence _peristence;
+	public SCMService _scmService;
+	
 	/**
 	 * Instantiates a new workspace domain impl.
 	 */
@@ -415,6 +418,10 @@ public class CadseDomainImpl implements CadseDomain {
 
 	public IPersistence getPersistence() {
 		return _peristence;
+	}
+	
+	public SCMService getSCMService() {
+		return _scmService;
 	}
 
 }

@@ -2800,6 +2800,10 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#isResolved()
 	 */
 	public boolean isResolved() {
+		Item base = getBaseItem();
+		if (base != null) {
+			return base.isResolved();
+		}
 		return true;
 	}
 

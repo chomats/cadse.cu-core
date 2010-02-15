@@ -501,7 +501,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems,
 				contentItem = (ContentItem) itemsLoaded.get(contentDelta);
 				if (contentItem == null)
 					contentItem = createContentItem(goodItem.getType(),
-							goodItem, idContent);
+							goodItem, idContent, contentDelta);
 				if (contentItem == null)
 					contentItem = ContentItem.NO_CONTENT;
 				setContent(notifie, goodItem, contentItem);
@@ -840,7 +840,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems,
 			if (goodItem.itemHasContent()) {
 				try {
 					ContentItem contentItem = createContentItem(goodItem
-							.getType(), goodItem, UUID.randomUUID());
+							.getType(), goodItem, UUID.randomUUID(), null);
 					setContent(notifie, goodItem, contentItem);
 				} catch (CadseException e) {
 					addError(item, e.getMessage());
@@ -874,7 +874,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems,
 	}
 
 	public ContentItem createContentItem(ItemType it, Item ownerItem,
-			UUID idContent) {
+			UUID idContent, ItemDelta contentItemDelta) {
 		try {
 			final IItemManager itemManager = it.getItemManager();
 			final IContentItemFactory contentItemFactory = itemManager
@@ -888,6 +888,9 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems,
 				ret = ContentItem.INVALID_CONTENT;
 			} else if (ret != ContentItem.NO_CONTENT
 					&& ret != ContentItem.INVALID_CONTENT) {
+				wl.addId(ret, notifie, this);
+				if (contentItemDelta != null)
+					ret.loadItem(this, contentItemDelta, this);
 				if (ownerItem != null)
 					((ContentItemImpl) ret).setOwnerItem(ownerItem);
 			}
