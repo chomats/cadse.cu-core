@@ -22,6 +22,7 @@ import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemState;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
+import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.Messages;
 import fr.imag.adele.cadse.core.ProjectAssociation;
@@ -842,6 +843,16 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems,
 					ContentItem contentItem = createContentItem(goodItem
 							.getType(), goodItem, UUID.randomUUID(), null);
 					setContent(notifie, goodItem, contentItem);
+					LinkType contentLt = null;
+					List<LinkType> lts = goodItem.getType().getOutgoingLinkTypes();
+					for (LinkType lt : lts) {
+						if (lt.getType() == CadseGCST.CONTENT_LINK_TYPE) {
+							contentLt = lt;
+							break;
+						}
+					}
+					if (contentLt != null)
+						goodItem.commitLoadCreateLink(contentLt, contentItem);
 				} catch (CadseException e) {
 					addError(item, e.getMessage());
 					e.printStackTrace();
