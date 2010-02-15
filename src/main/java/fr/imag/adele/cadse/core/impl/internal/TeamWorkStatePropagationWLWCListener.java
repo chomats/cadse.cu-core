@@ -124,6 +124,32 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 
 			return;
 		}
+		
+		// manage case of item state: X -> RequireNewRev
+		if ((CadseGCST.CONTENT_ITEM_at_SCM_MODIFIED_.equals(attrDef)) && !TWUtil.isRequireNewRev(modifiedItem)) {
+			TWEvol contentEvol = TWUtil.getContentEvol(modifiedItem);
+			boolean isRevSpecific = TWUtil.isContentRevSpecific(modifiedItem);
+
+			if (!TWUtil.isRequireNewRev(modifiedItem)) {
+				if (contentEvol.equals(TWEvol.twMutable)) {
+					TWUtil.setRevModified(modifiedItem);
+				}
+
+				if (contentEvol.equals(TWEvol.twImmutable) && isRevSpecific) {
+					TWUtil.setRequireNewRev(modifiedItem);
+				}
+
+				if (contentEvol.equals(TWEvol.twImmutable) && (!isRevSpecific)) {
+					// TODO change item id, set version to null, set item state
+					// to newRev
+
+					TWUtil.setRequireNewRev(modifiedItem);
+					modifiedItem.setVersion(0);
+				}
+			}
+
+			return;
+		}
 	}
 
 	/**
@@ -228,6 +254,7 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 		 */
 		TWUtil.setRequireNewRev(item);
 		TWUtil.setRevModified(item);
+		TWUtil.setContentModifiedFlag(item, false);
 	}
 
 	@Override
@@ -305,4 +332,15 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 	 * TeamWork never forbid an action on the workspace but only control the
 	 * evolution actions (commit, revert, update, import).
 	 */
+	
+	@Override
+	public void notifyCommitTransaction(LogicalWorkspaceTransaction wc)
+			throws CadseException {
+		for (ItemDelta itemDelta : wc.getItemOperations()) {
+			if (itemDelta.isDeleted() || itemDelta.isStatic() || !itemDelta.isResolved())
+				continue;
+			
+			TWUtil.refreshContentStatus(itemDelta);
+		}
+	}
 }

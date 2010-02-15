@@ -36,14 +36,18 @@ import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
+import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.build.Composer;
 import fr.imag.adele.cadse.core.build.Exporter;
 import fr.imag.adele.cadse.core.build.IBuildingContext;
 import fr.imag.adele.cadse.core.content.ContentItem;
 import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
 import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
+import fr.imag.adele.cadse.core.util.Convert;
+import fr.imag.adele.cadse.core.util.IErrorCollector;
 import fr.imag.adele.cadse.core.impl.db.DBLogicalWorkspace;
 import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
+import fr.imag.adele.cadse.core.internal.IWorkingLoadingItems;
 import fr.imag.adele.cadse.core.var.ContextVariable;
 import fr.imag.adele.cadse.core.var.ContextVariableImpl;
 import fr.imag.adele.cadse.util.ArraysUtil;
@@ -81,7 +85,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	
 	private boolean _scmModified;
 	private String _scmRev;
-	
+	private String _scmRepoUrl;
 	
 	
 	protected ContentItemImpl(UUID id) {
@@ -583,11 +587,6 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 		return getName();
 	}
 	
-	@Override
-	public boolean isReadOnly() {
-		return true;
-	}
-	
 	public void setOwnerItem(Item ownerItem) {
 		_ownerItem = ownerItem;
 	}
@@ -612,23 +611,76 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	}
 	
 	@Override
-	public String getSCMRevisision() {
+	public String getSCMRevision() {
 		return _scmRev;
 	}
 	
 	@Override
 	public void setSCMModified(boolean modified) {
-		_scmModified = modified;
+		try {
+			setAttribute(CadseGCST.CONTENT_ITEM_at_SCM_MODIFIED_, modified);
+		} catch (CadseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
 	public void setSCMRevision(String rev) {
-		_scmRev = rev;
+		try {
+			setAttribute(CadseGCST.CONTENT_ITEM_at_SCM_REVISION_, rev);
+		} catch (CadseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
 	public boolean isSCMModified() {
 		return _scmModified;
 	}
+	
+	@Override
+	public void setSCMRepoUrl(String repoUrl) {
+		_scmRepoUrl = repoUrl;
+	}
 
+	@Override
+	public String getSCMRepoUrl() {
+		return _scmRepoUrl;
+	}
+	
+	@Override
+	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
+		if (type == CadseGCST.CONTENT_ITEM_at_SCM_MODIFIED_)
+			return (T) Boolean.valueOf(_scmModified);
+		if (type == CadseGCST.CONTENT_ITEM_at_SCM_REVISION_)
+			return (T) _scmRev;
+//		if (type == CadseGCST.CONTENT_ITEM_at_SCM_REPO_URL_)
+//			return (T) _scmRepoUrl;
+		
+		return super.internalGetOwnerAttribute(type);
+	}
+	
+	@Override
+	public boolean commitSetAttribute(IAttributeType<?> type, Object value) {
+		if (type == CadseGCST.CONTENT_ITEM_at_SCM_MODIFIED_) {
+			boolean boolVal = Convert.toBoolean(value, CadseGCST.CONTENT_ITEM_at_SCM_MODIFIED_, false);
+			boolean isChanged = CadseGCST.CONTENT_ITEM_at_SCM_MODIFIED_.isValueModified(_scmModified, boolVal);
+			_scmModified = boolVal;
+			return isChanged;
+		}
+		if (type == CadseGCST.CONTENT_ITEM_at_SCM_REVISION_) {
+			String scmRev = Convert.toString(value, CadseGCST.CONTENT_ITEM_at_SCM_REVISION_, null);
+			boolean isChanged = CadseGCST.CONTENT_ITEM_at_SCM_REVISION_.isValueModified(_scmRev, scmRev);
+			_scmRev = scmRev;
+			return isChanged;
+		}
+//		if (type == CadseGCST.CONTENT_ITEM_at_SCM_REPO_URL_)
+//			setSCMRepoUrl(Convert.toString(value, CadseGCST.CONTENT_ITEM_at_SCM_REPO_URL_, null));
+		
+		return super.commitSetAttribute(type, value);
+	}
+	
+	
 }

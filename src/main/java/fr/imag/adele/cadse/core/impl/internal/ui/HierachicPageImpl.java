@@ -47,7 +47,7 @@ public class HierachicPageImpl extends AbstractGeneratedItem implements IPage, H
 		throw new UnsupportedOperationException();
 	}
 	
-	public void addLast(IAttributeType<?>[] attr) {
+	public void addLast(IAttributeType<?>... attr) {
 		throw new UnsupportedOperationException();
 	}
 

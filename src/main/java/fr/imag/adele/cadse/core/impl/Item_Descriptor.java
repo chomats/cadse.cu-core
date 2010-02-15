@@ -29,5 +29,4 @@ public class Item_Descriptor extends AbstractGeneratedItem {
 	public ItemType getType() {
 		return _it;
 	}
-
 }
