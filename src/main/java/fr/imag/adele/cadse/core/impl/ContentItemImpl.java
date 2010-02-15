@@ -642,7 +642,12 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	
 	@Override
 	public void setSCMRepoUrl(String repoUrl) {
-		_scmRepoUrl = repoUrl;
+		try {
+			setAttribute(CadseGCST.CONTENT_ITEM_at_SCM_REPO_URL_, repoUrl);
+		} catch (CadseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -656,8 +661,8 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 			return (T) Boolean.valueOf(_scmModified);
 		if (type == CadseGCST.CONTENT_ITEM_at_SCM_REVISION_)
 			return (T) _scmRev;
-//		if (type == CadseGCST.CONTENT_ITEM_at_SCM_REPO_URL_)
-//			return (T) _scmRepoUrl;
+		if (type == CadseGCST.CONTENT_ITEM_at_SCM_REPO_URL_)
+			return (T) _scmRepoUrl;
 		
 		return super.internalGetOwnerAttribute(type);
 	}
@@ -676,8 +681,12 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 			_scmRev = scmRev;
 			return isChanged;
 		}
-//		if (type == CadseGCST.CONTENT_ITEM_at_SCM_REPO_URL_)
-//			setSCMRepoUrl(Convert.toString(value, CadseGCST.CONTENT_ITEM_at_SCM_REPO_URL_, null));
+		if (type == CadseGCST.CONTENT_ITEM_at_SCM_REPO_URL_) {
+			String scmRepoUrl = Convert.toString(value, CadseGCST.CONTENT_ITEM_at_SCM_REPO_URL_, null);
+			boolean isChanged = CadseGCST.CONTENT_ITEM_at_SCM_REPO_URL_.isValueModified(_scmRepoUrl, scmRepoUrl);
+			_scmRepoUrl = scmRepoUrl;
+			return isChanged;
+		}
 		
 		return super.commitSetAttribute(type, value);
 	}
