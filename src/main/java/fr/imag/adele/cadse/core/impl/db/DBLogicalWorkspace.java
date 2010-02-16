@@ -15,9 +15,11 @@ import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.WSModelState;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
+import fr.imag.adele.cadse.core.attribute.ListAttributeType;
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
 import fr.imag.adele.cadse.core.impl.internal.CadseDomainImpl;
+import fr.imag.adele.cadse.core.impl.internal.LinkImpl;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
 import fr.imag.adele.cadse.core.var.ContextVariable;
 import fr.imag.adele.teamwork.db.ModelVersionDBException;
@@ -259,6 +261,20 @@ public class DBLogicalWorkspace extends LogicalWorkspaceImpl implements
 					Level.SEVERE, null, ex);
 			throw new CadseException("Cannot get a new id.", ex);
 		}
+	}
+
+	public <T> void setLinkAttribute(Link link,
+			IAttributeType<T> att,
+			T value) {
+		try {
+			LogicalWorkspaceTransaction t = createTransaction();
+			t.getLink(link).setAttribute(att, value);
+			t.commit();
+		} catch (CadseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 	

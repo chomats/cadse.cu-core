@@ -220,6 +220,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 	public Link commitLoadCreateLink(LinkType lt, Item destination)
 			throws CadseException {
 		if (lt == CadseGCST.TYPE_DEFINITION_lt_CADSE) {
+			_cadse = (CadseRuntime) destination;
 			_cadseName = destination.getQualifiedName();
 			// _cadseRuntime = destination
 			return new ReflectLink(lt, this, destination, 0, Item.IS_HIDDEN);

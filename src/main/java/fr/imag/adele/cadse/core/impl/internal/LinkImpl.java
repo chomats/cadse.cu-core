@@ -22,6 +22,7 @@
  */
 package fr.imag.adele.cadse.core.impl.internal;
 
+import java.util.List;
 import java.util.UUID;
 
 import fr.imag.adele.cadse.core.CadseException;
@@ -81,7 +82,7 @@ public class LinkImpl extends DBObject implements Link {
 	/** The version. */
 	private int version;
 
-	int[] compatibleVersions = null;
+	int[] _compatibleVersions = null;
 
 	/**
 	 * Instanciate an unresolved link. <br/>
@@ -156,11 +157,12 @@ public class LinkImpl extends DBObject implements Link {
 	}
 
 	public void addCompatibleVersions(int... versions) {
-		compatibleVersions = ArraysUtil.add(compatibleVersions, versions);
+		int[] compatibleVersions = ArraysUtil.add(_compatibleVersions, versions);
+		_dblw.setLinkAttribute(this, CadseGCST.LINK_TYPE_TYPE_at_COMPATIBLE_VERSIONS_, Convert.toArray(compatibleVersions));
 	}
 
 	public void clearCompatibleVersions() {
-		compatibleVersions = null;
+		_dblw.setLinkAttribute(this, CadseGCST.LINK_TYPE_TYPE_at_COMPATIBLE_VERSIONS_, Convert.toArray((int[])null));
 	}
 
 	public void commitDelete() throws CadseException {
@@ -172,12 +174,20 @@ public class LinkImpl extends DBObject implements Link {
 
 	public boolean commitSetAttribute(IAttributeType<?> type, String key,
 			Object value) {
-		if (key.equals(CadseGCST.LINK_TYPE_TYPE_at_VERSION_)) {
+		if (type == CadseGCST.LINK_TYPE_TYPE_at_VERSION_) {
 			this.version = Convert.toInt(value, null, -1);
 			return true;
 		}
+		if (type == CadseGCST.LINK_TYPE_TYPE_at_COMPATIBLE_VERSIONS_) {
+			final int[] compatibleVersionsArray = Convert.toArray((List<Integer>) value);
+			boolean ret = Convert.equals(compatibleVersionsArray, _compatibleVersions);
+			_compatibleVersions = compatibleVersionsArray;
+			return ret;
+		}
 		return false;
 	}
+
+	
 
 	/**
 	 * Delete a link.
@@ -215,7 +225,7 @@ public class LinkImpl extends DBObject implements Link {
 	}
 
 	public int[] getCompatibleVersions() {
-		return compatibleVersions;
+		return _compatibleVersions;
 	}
 
 	/*
@@ -303,6 +313,12 @@ public class LinkImpl extends DBObject implements Link {
 
 	@Override
 	public <T> T getLinkAttributeOwner(IAttributeType<T> attDef) {
+		if (attDef == CadseGCST.LINK_TYPE_TYPE_at_VERSION_) {
+			return (T) new Integer(version);
+		}
+		if (attDef == CadseGCST.LINK_TYPE_TYPE_at_COMPATIBLE_VERSIONS_) {
+			return (T) (List<Integer>) Convert.toArray(_compatibleVersions);
+		}
 		try {
 			return (T) _dblw.getDB().getObjectValue(getObjectId(),
 					attDef.getObjectId());
