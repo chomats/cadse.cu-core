@@ -131,6 +131,7 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 	public void collectOutgoingLinks(LinkType linkType, CollectedReflectLink ret) {
 		if (linkType == CadseGCST.CADSE_lt_ITEM_TYPES) {
 			ret.addOutgoing(CadseGCST.CADSE_lt_ITEM_TYPES, _itemTypes);
+			ret.addOutgoing(CadseGCST.CADSE_lt_ITEM_TYPES, _extendedTypes);
 		}
 		if (linkType == CadseGCST.CADSE_lt_EXTENDS) {
 			ret.addOutgoing(CadseGCST.CADSE_lt_EXTENDS, _requiredCadses);
