@@ -1579,6 +1579,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace,
 		if (metaType == null)
 			throw new CadseException("Type is null !!!");
 		ExtendedTypeImpl et = new ExtendedTypeImpl(uuid, metaType, qualifiedName, name);
+		et.setParent(cadseName, CadseGCST.CADSE_lt_ITEM_TYPES);
 		cadseName.addExtendedType(et);
 		et.setCadse(cadseName);
 		registerExtendedType(et);
