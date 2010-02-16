@@ -498,6 +498,11 @@ public final class LinkDeltaImpl extends ItemOrLinkDeltaImpl implements Link,
 	 */
 	public void setInfo(String info, boolean loaded) {
 	}
+	
+	@Override
+	public void setAttribute(IAttributeType<?> key, Object v) {
+		setAttribute(key, v, null, false);
+	}
 
 	/*
 	 * (non-Javadoc)

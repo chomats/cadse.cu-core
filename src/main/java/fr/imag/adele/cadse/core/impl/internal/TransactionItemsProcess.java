@@ -873,7 +873,8 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems,
 											contentItem));
 					contentItem.init();
 					contentItem.create();
-					wl.addId(contentItem, notifie, this);
+					if (wl.getItem(contentItem.getId()) == null)
+						wl.addId(contentItem, notifie, this);
 					notifie.notifieChangeEvent(ChangeID.CREATE_ITEM,
 							contentItem);
 				}
