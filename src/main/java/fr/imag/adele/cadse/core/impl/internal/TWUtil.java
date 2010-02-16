@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 import fr.imag.adele.cadse.as.scm.SCMException;
 import fr.imag.adele.cadse.as.scm.SCMService;
@@ -644,6 +645,12 @@ public class TWUtil {
 			setContentModifiedFlag(item, contentHasChanged);
 			return contentHasChanged;
 		} catch (SCMException e) {
+			if (e.getMessage().equals(SCMService.CANNOT_RETRIEVE_SCM_URL)) {
+				Logger l = Logger.getLogger("fr.imag.adele.tw");
+				final Item ownerItem = contentItem.getOwnerItem();
+				l.warning(SCMService.CANNOT_RETRIEVE_SCM_URL+" for "+(ownerItem == null? "??": ownerItem.getDisplayName()));
+				return false;
+			}
 			e.printStackTrace();
 		}
 		return false;
