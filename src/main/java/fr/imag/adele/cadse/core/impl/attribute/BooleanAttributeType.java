@@ -111,8 +111,10 @@ public class BooleanAttributeType extends AttributeType implements
 	@Override
 	public boolean commitSetAttribute(IAttributeType<?> type, Object value) {
 		if (CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_ == type) {
-			value = Convert.toBoolean(value,  false);
-			return true;
+			boolean dv = Convert.toBoolean(value,  false);
+			boolean ret = dv !=  _defaultValue;
+			_defaultValue = dv;
+			return ret;
 		}
 		return super.commitSetAttribute(type, value);
 	}
