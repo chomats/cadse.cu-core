@@ -207,7 +207,7 @@ public class DBLinkImpl extends DBObject implements Link {
 	}
 
 	@Override
-	public boolean isStatic() {
+	public boolean isRuntime() {
 		// TODO Auto-generated method stub
 		return false;
 	}

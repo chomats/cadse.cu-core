@@ -1529,12 +1529,15 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 		return !type.getName().startsWith("#");
 	}
 
-	public boolean isStatic() {
-		return getFlag(IS_STATIC);
+	final public boolean isRuntime() {
+		CadseRuntime cr = getCadse();
+		if (cr == null)
+			return getFlag(IS_RUNTIME);
+		return cr.getType() == CadseGCST.CADSE;
 	}
 
-	public void setIsStatic(boolean flag) {
-		setflag(flag, IS_STATIC);
+	final public void setIsRuntime(boolean flag) {
+		setFlag(IS_RUNTIME, flag);
 	}
 
 	public boolean getFlag(int f) {

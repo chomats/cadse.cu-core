@@ -716,7 +716,7 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	}
 
 	@Override
-	public boolean isStatic() {
+	public boolean isRuntime() {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -990,7 +990,7 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	}
 
 	@Override
-	public void setIsStatic(boolean isStatic) {
+	public void setIsRuntime(boolean isStatic) {
 		// TODO Auto-generated method stub
 
 	}

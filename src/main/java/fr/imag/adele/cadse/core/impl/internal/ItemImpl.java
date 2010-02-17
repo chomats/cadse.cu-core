@@ -266,7 +266,7 @@ public class ItemImpl extends AbstractItem implements Item {
 		this.m_outgoings = new ArrayList<Link>();
 		this._state = ItemState.NOT_IN_WORKSPACE;
 
-		setIsStatic(false);
+		setIsRuntime(false);
 	}
 
 	public ItemImpl(UUID id, ItemType type, String uniqueName,
@@ -276,7 +276,7 @@ public class ItemImpl extends AbstractItem implements Item {
 		this.m_outgoings = new ArrayList<Link>();
 		this._state = ItemState.NOT_IN_WORKSPACE;
 
-		setIsStatic(false);
+		setIsRuntime(false);
 		// remove this lines : use outgoing link instead
 		// if (parent != null) {
 		// setParentAndLinkType(parent, lt);

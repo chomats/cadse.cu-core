@@ -321,7 +321,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	public Link commitLoadCreateLink(LinkType lt, Item destination)
 			throws CadseException {
 		if (lt == CadseGCST.ITEM_TYPE_lt_SUPER_TYPE) {
-			if (isStatic() && _superType != null) {
+			if (isRuntime() && _superType != null) {
 				throw new CadseException("Read only");
 			}
 			if (LinkPathUtil.checkNonCicular(destination, this,
@@ -359,7 +359,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 		Item destination = link.getDestination();
 
 		if (lt == CadseGCST.ITEM_TYPE_lt_SUPER_TYPE && destination.isResolved()) {
-			if (isStatic() && _superType != null) {
+			if (isRuntime() && _superType != null) {
 				throw new CadseIllegalArgumentException("Read only");
 			}
 			if (LinkPathUtil.checkNonCicular(destination, this,

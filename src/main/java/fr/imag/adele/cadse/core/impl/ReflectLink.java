@@ -265,7 +265,7 @@ public class ReflectLink extends DBObject implements Link {
 		return _linkType.hashCode() ^ _destination.hashCode() ^ _source.hashCode();
 	}
 
-	public boolean isStatic() {
+	public boolean isRuntime() {
 		return false;
 	}
 

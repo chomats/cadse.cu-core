@@ -458,8 +458,8 @@ public class ItemItemDeltaAdapter implements Item {
 		return _delta.isRevModified();
 	}
 
-	public boolean isStatic() {
-		return _delta.isStatic();
+	public boolean isRuntime() {
+		return _delta.isRuntime();
 	}
 
 	public boolean isTWAttributeModified(IAttributeType<?> att) {
@@ -519,8 +519,8 @@ public class ItemItemDeltaAdapter implements Item {
 		return _delta.setFlag(f, flag);
 	}
 
-	public void setIsStatic(boolean isStatic) {
-		_delta.setIsStatic(isStatic);
+	public void setIsRuntime(boolean isStatic) {
+		_delta.setIsRuntime(isStatic);
 	}
 
 	public void setKey(Key newkey) throws CadseException {

@@ -849,9 +849,9 @@ public final class LinkDeltaImpl extends ItemOrLinkDeltaImpl implements Link,
 	 * 
 	 * @see fr.imag.adele.cadse.core.internal.delta.LinkOperation#isStatic()
 	 */
-	public boolean isStatic() {
+	public boolean isRuntime() {
 		Link linkBase = getBaseLink();
-		return linkBase != null && linkBase.isStatic();
+		return linkBase != null && linkBase.isRuntime();
 	}
 
 	@Override

@@ -1978,7 +1978,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace,
 									ItemDelta item = (ItemDelta) oper
 											.getParentOperDelta();
 									if (item.getBaseItem() != null
-											&& item.getBaseItem().isStatic()) {
+											&& item.getBaseItem().isRuntime()) {
 										throw new CadseException(
 												"Cannot set attribute on a static item");
 									}
@@ -1990,7 +1990,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace,
 								if (opertype == OperationTypeCst.ITEM_OPERATION) {
 									ItemDelta item = (ItemDelta) oper
 											.getParentOperDelta();
-									if (item.getBaseItem().isStatic()) {
+									if (item.getBaseItem().isRuntime()) {
 										throw new CadseException(
 												"Cannot delete a static item");
 									}
@@ -2001,7 +2001,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace,
 											.getParentOperDelta();
 									Link linkbase = linkOperation.getBaseLink();
 
-									if (linkbase != null && linkbase.isStatic()) {
+									if (linkbase != null && linkbase.isRuntime()) {
 										throw new CadseException(
 												"Cannot delete a link of a static item");
 									}
@@ -2358,7 +2358,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace,
 		itemTypeImpl.setFlag(Item.UNRESOLVED, true);
 		itemTypeImpl._qualifiedName = un;
 		itemTypeImpl.setFlag(Item.IS_HIDDEN, true);
-		itemTypeImpl.setFlag(Item.IS_STATIC, true);
+		itemTypeImpl.setFlag(Item.IS_RUNTIME, true);
 		itemTypeImpl.setFlag(Item.READONLY, true);
 		return itemTypeImpl;
 	}
@@ -2368,7 +2368,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace,
 		if (cr != null)
 			return cr;
 		cr = createCadseRuntime("#crUnresolvedItemType", cadseid, cadseid);
-		cr.setIsStatic(true);
+		cr.setIsRuntime(true);
 		cr.setDisplayName("Cadse for id " + cadseid);
 		cr.setFlag(Item.UNRESOLVED, true);
 		return cr;
