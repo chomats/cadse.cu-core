@@ -187,16 +187,16 @@ public class ItemUnresolved extends AbstractItem implements Item {
 		throw new UnsupportedOperationException();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.Item#setDerivedLinks(java.util.Set)
-	 */
-	@Override
-	public void setDerivedLinks(Set<DerivedLinkDescription> derivedLinks) {
-		throw new UnsupportedOperationException();
-
-	}
+//	/*
+//	 * (non-Javadoc)
+//	 * 
+//	 * @see fr.imag.adele.cadse.core.Item#setDerivedLinks(java.util.Set)
+//	 */
+//	@Override
+//	public void setDerivedLinks(Set<DerivedLinkDescription> derivedLinks) {
+//		throw new UnsupportedOperationException();
+//
+//	}
 
 	/*
 	 * (non-Javadoc)

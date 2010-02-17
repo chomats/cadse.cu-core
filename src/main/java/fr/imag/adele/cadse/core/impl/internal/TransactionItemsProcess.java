@@ -888,6 +888,8 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems,
 	public ContentItem createContentItem(ItemType it, Item ownerItem,
 			UUID idContent, ItemDelta contentItemDelta) {
 		try {
+			if (ownerItem.isRuntime())
+				return ContentItem.NO_CONTENT;
 			final IItemManager itemManager = it.getItemManager();
 			final IContentItemFactory contentItemFactory = itemManager
 					.getContentItemFactory();

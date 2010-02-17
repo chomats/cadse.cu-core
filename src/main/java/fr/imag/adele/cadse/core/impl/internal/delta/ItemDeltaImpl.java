@@ -4048,7 +4048,8 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 
 	@Override
 	public boolean setFlag(int f, boolean flag) {
-		// TODO Auto-generated method stub
+		if (_realItem != null)
+			return _realItem.setFlag(f, flag);
 		return false;
 	}
 
@@ -4112,6 +4113,8 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	@Override
 	public void setCadse(CadseRuntime cr) {
 		_cadse = cr;
+		if (_realItem != null)
+			_realItem.setCadse(cr);
 	}
 
 	@Override

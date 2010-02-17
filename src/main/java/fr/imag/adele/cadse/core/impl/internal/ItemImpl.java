@@ -522,16 +522,6 @@ public class ItemImpl extends AbstractItem implements Item {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.Item#itemHasContent()
-	 */
-	@Override
-	public boolean itemHasContent() {
-		return _type.hasContent();
-	}
-
 	/**
 	 * Supprimer un lien dans la liste <tt>incomings</tt> de cet item.<br/>
 	 * This method is called by method delete() of Link
@@ -1961,30 +1951,30 @@ public class ItemImpl extends AbstractItem implements Item {
 		return _dblw.getCadseDomain();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.Item#setComponents(java.util.Set)
-	 */
-	@Override
-	public void setComponents(Set<ItemDescriptionRef> comp)
-			throws CadseException {
-		if (comp == null || comp.size() == 0) {
-			_composants = null;
-			return;
-		}
-		_composants = new HashMap<UUID, Item>();
-		for (ItemDescriptionRef c : comp) {
-			try {
-				Item i = _dblw.loadItem(c);
-				_composants.put(i.getId(), i);
-			} catch (Throwable e) {
-				System.err.println("This composant is ignored.\n+"
-						+ c.toString());
-				e.printStackTrace();
-			}
-		}
-	}
+//	/*
+//	 * (non-Javadoc)
+//	 * 
+//	 * @see fr.imag.adele.cadse.core.Item#setComponents(java.util.Set)
+//	 */
+//	@Override
+//	public void setComponents(Set<ItemDescriptionRef> comp)
+//			throws CadseException {
+//		if (comp == null || comp.size() == 0) {
+//			_composants = null;
+//			return;
+//		}
+//		_composants = new HashMap<UUID, Item>();
+//		for (ItemDescriptionRef c : comp) {
+//			try {
+//				Item i = _dblw.loadItem(c);
+//				_composants.put(i.getId(), i);
+//			} catch (Throwable e) {
+//				System.err.println("This composant is ignored.\n+"
+//						+ c.toString());
+//				e.printStackTrace();
+//			}
+//		}
+//	}
 
 	/*
 	 * (non-Javadoc)
