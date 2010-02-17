@@ -1076,6 +1076,12 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 	}
 
 	public boolean itemHasContent() {
+		if (isRuntime())
+			return false;
+		
+		if (isDefinedFlag(HAS_CONTENT) && !getFlag(HAS_CONTENT)) {
+			return false;
+		}
 		ItemType type = getType();
 		if (type != null)
 			return type.hasContent();
@@ -1091,15 +1097,6 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 		this._contentitem = ContentItem.NO_CONTENT;
 	}
 
-	public void setComponents(Set<ItemDescriptionRef> comp)
-			throws CadseException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Deprecated
-	public void setDerivedLinks(Set<DerivedLinkDescription> derivedLinks) {
-	}
 
 	public void setModified(boolean flag) {
 		setFlag(IS_MODIFIED, flag);
