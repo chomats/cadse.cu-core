@@ -851,14 +851,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 	public GroupOfAttributes[] getGroupOfAttributes() {
 		return _groupOfAttributes;
 	}
-
-	public boolean isRuntime() {
-		CadseRuntime cr = getCadse();
-		if (cr == null)
-			return false;
-		return cr.getType() == CadseGCST.CADSE;
-	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 

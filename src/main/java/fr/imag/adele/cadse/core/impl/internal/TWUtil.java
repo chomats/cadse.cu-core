@@ -252,7 +252,7 @@ public class TWUtil {
 	 * @return true if specified item is ignored for an update operation.
 	 */
 	public static boolean cannotUpdate(Item item) {
-		return (item == null) || item.isStatic() || hasNeverBeenCommited(item) || representsContent(item);
+		return (item == null) || item.isRuntime() || hasNeverBeenCommited(item) || representsContent(item);
 	}
 
 	/**
@@ -272,7 +272,7 @@ public class TWUtil {
 	 * @return true if specified item is ignored for a commit operation.
 	 */
 	public static boolean cannotCommit(Item item) {
-		return (item == null) || item.isStatic() || !item.isRevModified() || representsContent(item);
+		return (item == null) || item.isRuntime() || !item.isRevModified() || representsContent(item);
 	}
 
 	/**
@@ -292,7 +292,7 @@ public class TWUtil {
 	 * @return true if specified item is ignored for a revert operation.
 	 */
 	public static boolean cannotRevert(Item item) {
-		return (item == null) || item.isStatic() || !item.isRevModified() || hasNeverBeenCommited(item);
+		return (item == null) || item.isRuntime() || !item.isRevModified() || hasNeverBeenCommited(item);
 	}
 
 	/**

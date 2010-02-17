@@ -337,7 +337,7 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 	public void notifyCommitTransaction(LogicalWorkspaceTransaction wc)
 			throws CadseException {
 		for (ItemDelta itemDelta : wc.getItemOperations()) {
-			if (itemDelta.isDeleted() || itemDelta.isStatic() || !itemDelta.isResolved())
+			if (itemDelta.isDeleted() || itemDelta.isRuntime() || !itemDelta.isResolved())
 				continue;
 			
 			TWUtil.refreshContentStatus(itemDelta);

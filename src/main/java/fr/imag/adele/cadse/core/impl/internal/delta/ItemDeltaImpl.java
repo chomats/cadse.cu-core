@@ -601,7 +601,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	public void delete(DeleteOperation operation, int flag)
 			throws CadseException {
 		getWorkingCopy().check_write();
-		if (isStatic()) {
+		if (isRuntime()) {
 			// cannot delete a static item
 			throw new CadseException(
 					Messages.cannot_delete_item_not_modifiable, getName(), this); //$NON-NLS-2$
@@ -2822,10 +2822,10 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * 
 	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#isStatic()
 	 */
-	public boolean isStatic() {
+	public boolean isRuntime() {
 		Item base = getBaseItem();
 		if (base != null) {
-			return base.isStatic();
+			return base.isRuntime();
 		}
 		return false;
 	}
@@ -3392,7 +3392,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 */
 	public SetAttributeOperation setAttribute(IAttributeType<?> key,
 			Object newCurrentValue, boolean loaded, boolean notifie) {
-		if (getBaseItem() != null && getBaseItem().isStatic()) {
+		if (getBaseItem() != null && getBaseItem().isRuntime()) {
 			return null;
 		}
 		if (_realItem != null)
@@ -3404,7 +3404,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 			attributeName = CadseGCST.ITEM_at_NAME;
 			key = CadseGCST.ITEM_at_NAME_;
 		}
-		if (!loaded && isStatic()) {
+		if (!loaded && isRuntime()) {
 			addError(Messages.cannot_set_attribute_not_modifiable,
 					attributeName, newCurrentValue); //$NON-NLS-2$ //$NON-NLS-3$
 		}
@@ -3497,7 +3497,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * 
 	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#setIsStatic(boolean)
 	 */
-	public void setIsStatic(boolean flag) {
+	public void setIsRuntime(boolean flag) {
 	}
 
 	/*
@@ -3778,7 +3778,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 			return;
 		}
 
-		if (isDeleted() || isStatic()) {
+		if (isDeleted() || isRuntime()) {
 			return;
 		}
 
@@ -4059,7 +4059,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 
 	@Override
 	public void setLoaded(boolean loaded) {
-		if (isStatic()) {
+		if (isRuntime()) {
 			throw new CadseIllegalArgumentException(
 					Messages.cannot_load_a_static_item + getName(), this);
 		}

@@ -551,7 +551,7 @@ public class DBItemImpl extends DBObject implements Item {
 	}
 
 	@Override
-	public boolean isStatic() {
+	public boolean isRuntime() {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -837,7 +837,7 @@ public class DBItemImpl extends DBObject implements Item {
 	}
 
 	@Override
-	public void setIsStatic(boolean isStatic) {
+	public void setIsRuntime(boolean isStatic) {
 		// TODO Auto-generated method stub
 
 	}

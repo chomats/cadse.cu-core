@@ -503,7 +503,7 @@ public class LinkImpl extends DBObject implements Link {
 		return (kind & LinkType.REQUIRE) != 0;
 	}
 
-	public boolean isStatic() {
+	public boolean isRuntime() {
 		// TODO Auto-generated method stub
 		return false;
 	}

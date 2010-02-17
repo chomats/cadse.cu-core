@@ -649,7 +649,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems,
 					// }
 				}
 
-				if (goodItem != null && goodItem.isStatic()) {
+				if (goodItem != null && goodItem.isRuntime()) {
 					visited.put(goodItem.getId(), goodItem);
 					return goodItem;
 				}
@@ -689,7 +689,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems,
 			return;
 		}
 		db.saveObject(it.getObjectId(), 
-				it.isStatic() ?
+				it.isRuntime() ?
 						ModelVersionDBService2.OBJECT_STATE_STATIC :ModelVersionDBService2.OBJECT_STATE_NORMAL
 							, ids(it.getType().getObjectId()),
 							it.getCadse().getObjectId(), it.getQualifiedName(), it.getName(), null);
