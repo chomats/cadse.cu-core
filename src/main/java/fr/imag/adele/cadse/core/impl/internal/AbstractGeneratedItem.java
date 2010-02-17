@@ -1522,6 +1522,8 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 			}
 			i++;
 		}
+		if (value == null) 
+			return false;
 		_attributes = ArraysUtil.addList2(Object.class, _attributes, type,
 				value);
 		return !type.getName().startsWith("#");
