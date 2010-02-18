@@ -65,7 +65,12 @@ public class MC_Name extends MC_AttributesItem {
 		Item item = getItem();
 
 		if (isEditable(item)) {
-			item.setName((String) value);
+			try {
+				item.setName((String) value);
+			} catch (CadseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 

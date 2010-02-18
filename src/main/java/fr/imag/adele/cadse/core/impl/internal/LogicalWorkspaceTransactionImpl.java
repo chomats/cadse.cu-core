@@ -2386,7 +2386,7 @@ public class LogicalWorkspaceTransactionImpl implements
 	}
 
 	public void validateChangeAttribute(ItemDelta item,
-			SetAttributeOperation attOperation) {
+			SetAttributeOperation attOperation) throws CadseException {
 		if (_logicalWorkspaceTransactionListeners != null) {
 			for (int i = 0; i < _logicalWorkspaceTransactionListeners.length; i++) {
 				try {
@@ -2398,6 +2398,7 @@ public class LogicalWorkspaceTransactionImpl implements
 					Logger.getLogger(
 							LogicalWorkspaceTransactionImpl.class.getName())
 							.log(Level.SEVERE, null, ex);
+					throw ex;
 				}
 			}
 		}
@@ -2417,6 +2418,7 @@ public class LogicalWorkspaceTransactionImpl implements
 										LogicalWorkspaceTransactionImpl.class
 												.getName()).log(Level.SEVERE,
 										null, ex);
+						throw ex;
 					}
 				}
 			}

@@ -527,7 +527,7 @@ public class ItemItemDeltaAdapter implements Item {
 		_delta.setKey(newkey);
 	}
 
-	public void setName(String name) {
+	public void setName(String name) throws CadseException {
 		_delta.setName(name);
 	}
 
@@ -543,7 +543,7 @@ public class ItemItemDeltaAdapter implements Item {
 		_delta.setParent(parent, lt);
 	}
 
-	public void setQualifiedName(String qualifiedName) {
+	public void setQualifiedName(String qualifiedName) throws CadseException {
 		_delta.setQualifiedName(qualifiedName);
 	}
 
@@ -563,7 +563,7 @@ public class ItemItemDeltaAdapter implements Item {
 		_delta.setValid(isValid);
 	}
 
-	public void setVersion(int version) {
+	public void setVersion(int version) throws CadseException {
 		_delta.setVersion(version);
 	}
 
