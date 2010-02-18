@@ -302,14 +302,6 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 		}
 		super.removeOutgoingLink(link, notifie);
 	}
-	
-	
-
-//	public LinkType createLinkType(UUID uuid, String id, int kind, int min,
-//			int max, String selection, TypeDefinition destination) {
-//		return createLinkType(uuid, -1, id, kind, min, max, selection,
-//				destination);
-//	}
 
 	public LinkType createLinkType(UUID uuid, int intID, String name,
 			int _kind, int min, int max, String selection,
@@ -324,11 +316,6 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 		return ret;
 	}
 
-//	public LinkType createLinkType(UUID uuid, String id, int kind, int min,
-//			int max, String selection, LinkType inverse) throws CadseException {
-//		return createLinkType(uuid, -1, id, kind, min, max, selection, inverse);
-//	}
-
 	/**
 	 * Adds the outgoing link type.
 	 * 
@@ -341,26 +328,10 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition,
 		if (ret.isComposition()) {
 			setITFlag(IT_COMPOSITE, true);
 		}
-
-		// addInconmmingLink(ret, ret.getDestination(),
-		// CadseGCST.LINK_TYPE_lt_DESTINATION);
-		// addInconmmingLink(ret, ret.getInverse(),
-		// CadseGCST.LINK_TYPE_lt_INVERSE_LINK);
-		// addInconmmingLink(ret, ret.getSource(),
-		// CadseGCST.LINK_TYPE_lt_SOURCE);
 		return l;
 	}
 
-	public void addInconmmingLink(Item src, Item dst, LinkType lt) {
-		if (lt == null || src == null || dst == null) {
-			return;
-		}
-
-		Link l = src.getOutgoingLink(lt, dst.getId());
-		if (l != null) {
-			dst.addIncomingLink(l, false);
-		}
-	}
+	
 
 	void removeOutgoingLinkType(LinkType ret) {
 		this.m_outgoings.remove(ret);
