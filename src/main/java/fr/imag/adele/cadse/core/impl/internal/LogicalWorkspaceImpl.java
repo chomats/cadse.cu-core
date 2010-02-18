@@ -1980,11 +1980,23 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace,
 					Collection<WLWCOperationImpl> operations;
 					operations = new ArrayList<WLWCOperationImpl>(
 							workingLogiqueCopy.getOperations());
-
+					
 					workingLogiqueCopy.checkAll();
 					if (operations.size() != 0) {
 						for (WLWCOperationImpl oper : operations) {
 							OperationType opertype = oper.getOperationType();
+							if (opertype == OperationTypeCst.ITEM_OPERATION) {
+								ItemDelta d = (ItemDelta) oper;
+								Key nkey = d.getNextKey();
+								if (nkey != null) {
+									final Item item = getItem(nkey);
+									if (item != null && d.getBaseItem() != item) {
+										throw new CadseException(
+												Messages.error_invalid_assignement_key_allready_exists,
+												nkey);
+									}
+								}
+							}
 							if (opertype == OperationTypeCst.SET_ATTRIBUTE_OPERATION) {
 								opertype = oper.getParentType();
 								if (opertype == OperationTypeCst.ITEM_OPERATION) {

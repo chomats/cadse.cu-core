@@ -3365,7 +3365,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#setAttribute(fr.imag.
 	 * adele.cadse.core.attribute.IAttributeType, java.lang.Object)
 	 */
-	public void setAttribute(IAttributeType<?> key, Object value) {
+	public void setAttribute(IAttributeType<?> key, Object value) throws CadseException {
 		setAttribute(key, value, false);
 	}
 
@@ -3378,7 +3378,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * java.lang.Object, boolean)
 	 */
 	public void setAttribute(IAttributeType<?> key, Object newCurrentValue,
-			boolean loaded) {
+			boolean loaded) throws CadseException {
 		setAttribute(key, newCurrentValue, loaded, true);
 	}
 
@@ -3391,7 +3391,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * java.lang.Object, boolean)
 	 */
 	public SetAttributeOperation setAttribute(IAttributeType<?> key,
-			Object newCurrentValue, boolean loaded, boolean notifie) {
+			Object newCurrentValue, boolean loaded, boolean notifie) throws CadseException {
 		if (getBaseItem() != null && getBaseItem().isRuntime()) {
 			return null;
 		}
@@ -3734,7 +3734,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#setShortName(java.lang
 	 * .String)
 	 */
-	public void setName(String shortname) {
+	public void setName(String shortname) throws CadseException {
 		setName(shortname, false);
 	}
 
@@ -3745,7 +3745,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * fr.imag.adele.cadse.core.delta.ItemOperationItf#setShortName(java.lang
 	 * .String, boolean)
 	 */
-	public void setName(String shortname, boolean loaded) {
+	public void setName(String shortname, boolean loaded) throws CadseException {
 		setAttribute(CadseGCST.ITEM_at_NAME_, shortname, loaded);
 	}
 
@@ -3826,7 +3826,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * .String)
 	 */
 	@Override
-	public void setQualifiedName(String qName) {
+	public void setQualifiedName(String qName) throws CadseException {
 		setAttribute(CadseGCST.ITEM_at_QUALIFIED_NAME_, qName, false);
 		_copy.changeQualifiedName(this, qName);
 	}
@@ -3839,7 +3839,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * .String, boolean)
 	 */
 	@Override
-	public void setQualifiedName(String uniqueName, boolean loaded) {
+	public void setQualifiedName(String uniqueName, boolean loaded) throws CadseException {
 		setAttribute(CadseGCST.ITEM_at_QUALIFIED_NAME_, uniqueName, loaded);
 	}
 
@@ -4054,7 +4054,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	}
 
 	@Override
-	public void setVersion(int version) {
+	public void setVersion(int version) throws CadseException {
 		setAttribute(CadseGCST.ITEM_at_TW_VERSION_, Integer.valueOf(version));
 	}
 
