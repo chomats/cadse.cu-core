@@ -1586,6 +1586,17 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace,
 		return et;
 	}
 	
+	public void addInconmmingLink(Item src, Item dst, LinkType lt) {
+		if (lt == null || src == null || dst == null) {
+			return;
+		}
+
+		Link l = src.getOutgoingLink(lt, dst.getId());
+		if (l != null) {
+			dst.addIncomingLink(l, false);
+		}
+	}
+	
 	@Override
 	public void addBinding(CadseRuntime cadse, ItemType it, ExtendedType et) {
 		it.addExtendedType(et);
@@ -1661,8 +1672,10 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace,
 	int stateLoadContentManager = 0; // 0 not loaded, 1 loading, 2 loaded
 
 	public LogicalWorkspaceTransaction createTransaction() {
-		return new LogicalWorkspaceTransactionImpl(this, ArraysUtil
+		final LogicalWorkspaceTransactionImpl logicalWorkspaceTransactionImpl = new LogicalWorkspaceTransactionImpl(this, ArraysUtil
 				.clone(_workspaceLogiqueCopyListeners));
+		logicalWorkspaceTransactionImpl.beginTransaction();
+		return logicalWorkspaceTransactionImpl;
 	}
 
 	/**

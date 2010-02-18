@@ -156,6 +156,19 @@ public class LogicalWorkspaceTransactionImpl implements
 		_twListener = new TeamWorkStatePropagationWLWCListener();
 		addLogicalWorkspaceTransactionListener(_twListener);
 	}
+	
+	public void beginTransaction() {
+		if (_logicalWorkspaceTransactionListeners != null) {
+			for (LogicalWorkspaceTransactionListener l : _logicalWorkspaceTransactionListeners) {
+				try {
+					l.notifyBeginTransaction(this);
+				} catch (Throwable e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 
 	public boolean canDeleteInverseLink(Link link) {
 		return base.canDeleteInverseLink(link);
