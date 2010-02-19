@@ -90,7 +90,7 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	 * @param id
 	 *            the id
 	 * @param label
-	 *            the label
+	 *            the label not used
 	 * @param title
 	 *            the title
 	 * @param description
@@ -117,6 +117,14 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 
 	}
 
+	/**
+	 * 
+	 * @param name
+	 * @param label  not used
+	 * @param title
+	 * @param description
+	 * @param isPageComplete
+	 */
 	public PageImpl(String name, String label, String title, String description, boolean isPageComplete) {
 		super();
 		_attributes = EMPTY_UIFIELD;
@@ -128,6 +136,17 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 		_isPageComplete = isPageComplete;
 	}
 
+	/**
+	 * 
+	 * @param name
+	 * @param label  not used
+	 * @param title
+	 * @param description
+	 * @param isPageComplete
+	 * @param hspan
+	 * @param action
+	 * @param fields
+	 */
 	public PageImpl(String name, String label, String title, String description, boolean isPageComplete, int hspan,
 			IActionPage action, IAttributeType<?>... fields) {
 		super();
@@ -140,7 +159,16 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 		_isPageComplete = isPageComplete;
 
 	}
-
+/**
+ * 
+ * @param id
+ * @param name
+ * @param label not used
+ * @param title
+ * @param description
+ * @param isPageComplete
+ * @param hspan
+ */
 	public PageImpl(UUID id, String name, String label, String title, String description,
 			boolean isPageComplete, int hspan) {
 		super(id, 0);
@@ -459,6 +487,11 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	@Override
 	public void addHiddenAttributes(IAttributeType<?>... attr) {
 		_hiddenAttributes = ArraysUtil.addList(IAttributeType.class, _hiddenAttributes, attr);
+	}
+	
+	@Override
+	public void addOverridePage(IPage... pages) {
+		_owPages = ArraysUtil.addList(IPage.class, _owPages, pages);
 	}
 
 	@Override
