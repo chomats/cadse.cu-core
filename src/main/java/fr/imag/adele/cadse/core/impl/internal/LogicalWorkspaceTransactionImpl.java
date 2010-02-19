@@ -746,6 +746,10 @@ public class LogicalWorkspaceTransactionImpl implements
 			Object v = attributeType.getDefaultValue();
 			if (v == null)
 				continue;
+			Object value = ret.getAttribute(attributeType);
+			if (value != null) 
+				continue;
+			
 			ret.setAttribute(attributeType, v);
 		}
 

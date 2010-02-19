@@ -254,7 +254,7 @@ public class TeamWorkStatePropagationWLWCListener extends AbstractLogicalWorkspa
 		 */
 		TWUtil.setRequireNewRev(item);
 		TWUtil.setRevModified(item);
-		TWUtil.setContentModifiedFlag(item, false);
+		TWUtil.setContentModifiedFlag(item, true);
 	}
 
 	@Override
