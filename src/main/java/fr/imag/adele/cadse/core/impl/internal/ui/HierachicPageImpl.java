@@ -177,5 +177,11 @@ public class HierachicPageImpl extends AbstractGeneratedItem implements IPage, H
 	public void setGroupPage(boolean groupPage) {
 		_groupPage = groupPage;
 	}
+
+
+	@Override
+	public void addOverridePage(IPage... pages) {
+		throw new UnsupportedOperationException();
+	}
 	
 }
