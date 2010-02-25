@@ -1283,7 +1283,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 
 	@Override
 	public boolean isGroupHead() {
-		return getGroupType() != null;
+		return getMembers().size() != 0;
 	}
 
 	@Override
