@@ -204,6 +204,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems,
 			if (visited.containsKey(item.getId())) {
 				continue;
 			}
+			if (!item.isModified()) continue;
 			loadOneItem(item);
 		}
 		// traite les item d��truits...
