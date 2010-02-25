@@ -183,7 +183,7 @@ public class IntegerAttributeType extends AttributeType implements
 			try {
 				value = Integer.parseInt((String) value);
 			} catch (NumberFormatException e) {
-				return new CheckStatus(UIPlatform.ERROR, e.getMessage());
+				return new CheckStatus(UIPlatform.ERROR, "Integer parsing error for input value '"+value+"'");
 			}
 		}
 		if (!(value instanceof Integer)) {
