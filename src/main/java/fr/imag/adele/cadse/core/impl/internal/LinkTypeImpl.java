@@ -36,6 +36,7 @@ import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.TypeDefinition;
+import fr.imag.adele.cadse.core.attribute.CheckStatus;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.enumdef.TWCommitKind;
 import fr.imag.adele.cadse.core.enumdef.TWDestEvol;
@@ -44,6 +45,7 @@ import fr.imag.adele.cadse.core.impl.CadseCore;
 import fr.imag.adele.cadse.core.impl.CollectedReflectLink;
 import fr.imag.adele.cadse.core.impl.ReflectLink;
 import fr.imag.adele.cadse.core.impl.attribute.AttributeType;
+import fr.imag.adele.cadse.core.impl.attribute.Messages;
 import fr.imag.adele.cadse.core.impl.internal.delta.ItemTypeItemDeltaAdapter;
 import fr.imag.adele.cadse.core.impl.internal.delta.LinkTypeItemDeltaAdapter;
 import fr.imag.adele.cadse.core.impl.ui.UIFieldImpl;
@@ -55,6 +57,7 @@ import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransactionListener;
 import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
 import fr.imag.adele.cadse.core.ui.EPosLabel;
 import fr.imag.adele.cadse.core.ui.UIField;
+import fr.imag.adele.cadse.core.ui.UIPlatform;
 import fr.imag.adele.cadse.core.util.Convert;
 import fr.imag.adele.cadse.util.ArraysUtil;
 
@@ -1129,5 +1132,13 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 		if (isGroup())
 			return true;
 		return super.isAttributeHead();
+	}
+	
+	@Override
+	public CheckStatus check(Item item, Object value) {
+		if (getMin() >0 && !getFlag(CAN_BE_UNDEFINED) && value == IAttributeType.NULL) {
+			return new CheckStatus(UIPlatform.ERROR, Messages.cannot_be_undefined);
+		}
+		return null;
 	}
 }
