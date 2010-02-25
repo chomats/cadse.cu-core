@@ -43,6 +43,7 @@ import fr.imag.adele.cadse.core.ContentChangeInfo;
 import fr.imag.adele.cadse.core.DerivedLink;
 import fr.imag.adele.cadse.core.DerivedLinkDescription;
 import fr.imag.adele.cadse.core.EventFilter;
+import fr.imag.adele.cadse.core.ExtendedType;
 import fr.imag.adele.cadse.core.GroupType;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemDescription;
@@ -68,6 +69,7 @@ import fr.imag.adele.cadse.core.build.IBuildingContext;
 import fr.imag.adele.cadse.core.content.ContentItem;
 import fr.imag.adele.cadse.core.impl.CadseIllegalArgumentException;
 import fr.imag.adele.cadse.core.impl.PageRuntimeModel;
+import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
 import fr.imag.adele.cadse.core.impl.internal.Accessor;
 import fr.imag.adele.cadse.core.impl.internal.ItemTypeImpl;
 import fr.imag.adele.cadse.core.impl.internal.LogicalWorkspaceImpl;
@@ -4233,9 +4235,12 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		return null;
 	}
 
+	/**
+	 * La valeur est délégué au group. Elle ne peut pas etre instancié dans le membre.
+	 */
 	@Override
 	public boolean isDelegatedValue(IAttributeType<?> attr) {
-		return isMember() && !attr.isAttributeHead() && _group != null && !_group.isDelegatedAttribute(attr);
+		return AbstractGeneratedItem._isDelegatedValue(this, attr, _group);
 	}
 
 }

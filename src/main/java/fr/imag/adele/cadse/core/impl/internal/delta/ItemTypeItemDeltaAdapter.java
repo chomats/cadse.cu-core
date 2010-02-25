@@ -785,7 +785,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 
 	@Override
 	public boolean isDelegatedAttribute(IAttributeType<?> attr) {
-		// TODO Auto-generated method stub
+		// FIXME: DELEGATE : implements
 		return false;
 	}
 
