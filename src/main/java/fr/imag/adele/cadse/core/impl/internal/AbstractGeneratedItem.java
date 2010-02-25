@@ -42,6 +42,7 @@ import fr.imag.adele.cadse.core.ChangeID;
 import fr.imag.adele.cadse.core.DerivedLink;
 import fr.imag.adele.cadse.core.DerivedLinkDescription;
 import fr.imag.adele.cadse.core.EventFilter;
+import fr.imag.adele.cadse.core.ExtendedType;
 import fr.imag.adele.cadse.core.GroupType;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemDescription;
@@ -2111,11 +2112,29 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 		return null;
 	}
 	
+	static public boolean _isDelegatedValue(Item item, IAttributeType<?> attr, ItemType group) {
+		if (item.isMember() && !attr.isAttributeHead() && group != null && !group.isDelegatedAttribute(attr)) {
+			TypeDefinition attrSource = attr.getSource();
+			if (attrSource == null) {
+				return false;
+			}
+			if (attrSource.isMainType()) {
+				return ((ItemType)attrSource).isSuperTypeOf(group);
+			}
+			ExtendedType eAttrSource = (ExtendedType) attrSource;
+			ItemType[] it = eAttrSource.getExendsItemType();
+			for (ItemType type : it) {
+				if (type.isSuperTypeOf(group))
+					return true;
+			}
+			
+		}
+		return false;
+	}
+	
 	@Override
 	public boolean isDelegatedValue(IAttributeType<?> attr) {
-		return isMember() && !attr.isAttributeHead() && 
-			!attr.isAttributeMember() && _group != null && !_group.isDelegatedAttribute(attr);
-		
+		return _isDelegatedValue(this, attr, _group);
 	}
 
 }

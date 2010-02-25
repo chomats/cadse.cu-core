@@ -764,8 +764,9 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 			return false;
 		}
 		ItemType super_it = it;
+		int _this_object_id = _this.getObjectId();
 		while ((super_it = super_it.getSuperType()) != null) {
-			if (super_it == _this) {
+			if (super_it == _this || super_it.getObjectId() == _this_object_id) {
 				return true;
 			}
 		}
