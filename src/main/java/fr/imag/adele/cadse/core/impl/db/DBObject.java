@@ -63,9 +63,8 @@ public class DBObject extends AdaptableObjectImpl implements INamedUUID, INamed 
 	 */
 	@Override
 	public int hashCode() {
-		return _objectId!=-1 ?
-					_objectId : 
-						_uuid != null ? _uuid.hashCode() : super.hashCode();
+		return _uuid != null ? _objectId!=-1 ?
+					_objectId : _uuid.hashCode() : super.hashCode();
 	}
 
 	/*
@@ -78,7 +77,10 @@ public class DBObject extends AdaptableObjectImpl implements INamedUUID, INamed 
 		if (obj == this) {
 			return true;
 		}
+		if (_uuid == null)
+			return super.equals(obj);
 		if (obj instanceof INamedUUID) {
+			
 			return _objectId == ((INamedUUID) obj).getObjectId();
 		}
 
