@@ -39,7 +39,7 @@ import fr.imag.adele.cadse.core.util.Convert;
 import fr.imag.adele.cadse.util.ArraysUtil;
 
 public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRuntime, InternalCadseRuntime {
-	protected String		_cadseName;
+	protected String		_cadseName = null;
 	private ItemType[]		_itemTypes;
 	private ExtendedType[]	_extendedTypes;
 	private Binding[]		_binding;
@@ -66,7 +66,7 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 		super(runtimeId, 0);
 		_idCadseDefinition = definitionId;
 		internalSetName(name);
-		this._cadseName = "Cadse " + name;
+		
 	}
 
 	private void internalSetName(String name) {
@@ -80,6 +80,8 @@ public class CadseRuntimeImpl extends AbstractGeneratedItem implements CadseRunt
 			this._name = name;
 			this._qname = CADSE_NAME_SUFFIX + name;
 		}
+		if (name != null && name.length() != 0 )
+			this._cadseName = "Cadse " + name;
 	}
 
 	public ItemType getType() {
