@@ -801,4 +801,8 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 		return false;
 	}
 
+	public ItemDelta delta() {
+		return _delta;
+	}
+
 }

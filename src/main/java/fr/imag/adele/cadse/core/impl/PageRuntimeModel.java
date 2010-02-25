@@ -15,6 +15,7 @@ import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.attribute.GroupOfAttributes;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
+import fr.imag.adele.cadse.core.impl.internal.delta.ItemTypeItemDeltaAdapter;
 import fr.imag.adele.cadse.core.impl.internal.ui.HierachicPageImpl;
 import fr.imag.adele.cadse.core.impl.internal.ui.PagesImpl;
 import fr.imag.adele.cadse.core.ui.AbstractUIRunningValidator;
@@ -215,6 +216,9 @@ public class PageRuntimeModel {
 				genericPage, inSpecificPages, ro, visited, CadseGCST.ITEM_at_NAME_);
 		list.add(0, genericPage);
 		ItemType group = item.getGroup();
+		if (group instanceof ItemTypeItemDeltaAdapter) {
+			group = (ItemType) ((ItemTypeItemDeltaAdapter) group).delta().getBaseItem();
+		}
 		genericPage = new HierachicPageImpl(group,
 				modificationPage);
 		genericPage.setGroupPage(true);
