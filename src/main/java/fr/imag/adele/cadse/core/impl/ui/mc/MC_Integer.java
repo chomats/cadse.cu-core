@@ -22,6 +22,7 @@
 package fr.imag.adele.cadse.core.impl.ui.mc;
 
 import fr.imag.adele.cadse.core.CadseGCST;
+import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.ui.UIPlatform;
@@ -57,9 +58,14 @@ public class MC_Integer extends MC_AttributesItem {
 	}
 
 	@Override
-	public boolean validValueChanged(UIField field, Object value) {
+	public boolean validValueChanged(UIField field, Object visualValue) {
+		boolean ret = super.validValueChanged(field, visualValue);
+		if (ret)
+			return true;
+		if (getAttributeDefinition().canBeUndefined() && visualValue == null || visualValue.toString().length() == 0)
+			return false;
 		try {
-			int intValue = Integer.parseInt((String) value);
+			int intValue = Integer.parseInt((String) visualValue);
 			if (msg_min != null && intValue < min) {
 				_uiPlatform.setMessageError(msg_min);
 				return true;
@@ -70,7 +76,7 @@ public class MC_Integer extends MC_AttributesItem {
 				return true;
 			}
 		} catch (NumberFormatException e) {
-			_uiPlatform.setMessageError(e.getMessage());
+			_uiPlatform.setMessageError(getAttributeDefinition().getName()+": integer parsing error for input value '"+visualValue+"'");
 			return true;
 		}
 		return false;
