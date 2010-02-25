@@ -746,7 +746,7 @@ public class LogicalWorkspaceTransactionImpl implements
 			Object v = attributeType.getDefaultValue();
 			if (v == null)
 				continue;
-			Object value = ret.getAttribute(attributeType);
+			SetAttributeOperation value = ret.getSetAttributeOperation(attributeType, false);
 			if (value != null) 
 				continue;
 			
@@ -792,6 +792,9 @@ public class LogicalWorkspaceTransactionImpl implements
 		for (IAttributeType<?> attributeType : attributes) {
 			Object v = attributeType.getDefaultValue();
 			if (v == null)
+				continue;
+			SetAttributeOperation value = ret.getSetAttributeOperation(attributeType, false);
+			if (value != null) 
 				continue;
 			ret.setAttribute(attributeType, v);
 		}
