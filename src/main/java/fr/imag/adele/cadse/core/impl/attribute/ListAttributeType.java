@@ -227,7 +227,8 @@ public class ListAttributeType<X> extends AttributeType implements
 	public UIField generateDefaultField() {
 		return new UIFieldImpl(CadseGCST.DLIST, UUID.randomUUID(), this, getDisplayName(), EPosLabel.top, 
 				new MC_Descriptor(CadseGCST.MC_LIST_OF_STRING), 
-				new IC_Descriptor(CadseGCST.IC_STRING_LIST_FOR_LIST, CadseGCST.IC_STRING_LIST_FOR_LIST_at_ALLOW_DUPLICATE_, false));
+				new IC_Descriptor(CadseGCST.IC_STRING_LIST_FOR_LIST, CadseGCST.IC_STRING_LIST_FOR_LIST_at_ALLOW_DUPLICATE_, false),
+				CadseGCST.DLIST_at_EDITABLE_BUTTON_, Boolean.TRUE);
 		
 	}
 }
