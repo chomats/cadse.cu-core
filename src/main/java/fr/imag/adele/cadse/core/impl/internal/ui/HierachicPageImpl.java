@@ -113,12 +113,6 @@ public class HierachicPageImpl extends AbstractGeneratedItem implements IPage, H
 
 
 	@Override
-	public boolean isPageComplete() {
-		return true;
-	}
-
-
-	@Override
 	public ItemType getType() {
 		return _it;
 	}
