@@ -60,6 +60,7 @@ import fr.imag.adele.cadse.core.WSEvent;
 import fr.imag.adele.cadse.core.WSModelState;
 import fr.imag.adele.cadse.core.WorkspaceListener;
 import fr.imag.adele.cadse.core.CadseRuntime.Binding;
+import fr.imag.adele.cadse.core.attribute.BooleanAttributeType;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.transaction.delta.ImmutableWorkspaceDelta;
 import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
@@ -2241,7 +2242,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace,
 		LinkedList<Iterator<Item>> stack = null;
 		if (source.isDelegatedValue(type)) {
 			if (ownerOnly)
-				return null;
+				return (T) (type instanceof BooleanAttributeType ? Boolean.FALSE: null);
 			return getAttribute(source.getGroup(), type, ownerOnly);		
 		}
 		Item s = source;
@@ -2251,11 +2252,11 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace,
 				T ret = null;
 				// TODO use if (type.isNatif())
 				ret = s.internalGetOwnerAttribute(type);
-				if (ret != null) {
+				if (ret != null && ret != IAttributeType.VALUE_NOT_DEFINED && ret != IAttributeType.VALUE_NOT_INIT) {
 					return ret;
 				}
 				if (ownerOnly) {
-					return type.getDefaultValue();
+					return (T) (type instanceof BooleanAttributeType ? Boolean.FALSE: null);
 				}
 				iterpro = s.propagateValue(type);
 			}
@@ -2266,7 +2267,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace,
 
 			if (iterpro == null) {
 				if (stack.isEmpty()) {
-					return type.getDefaultValue();
+					return (T) (type instanceof BooleanAttributeType ? Boolean.FALSE: null);
 				}
 				iterpro = stack.pollLast();
 			}

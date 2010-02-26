@@ -169,7 +169,7 @@ public class IntegerAttributeType extends AttributeType implements
 
 	@Override
 	public CheckStatus check(Item item, Object value) {
-		if (!getFlag(CAN_BE_UNDEFINED) && (value == NULL || value.toString().length() == 0 || value.equals("null"))) { //$NON-NLS-1$
+		if (!getFlag(CAN_BE_UNDEFINED) && (value == VALUE_NOT_DEFINED || value.toString().length() == 0 || value.equals("null"))) { //$NON-NLS-1$
 			return new CheckStatus(UIPlatform.ERROR, Messages.cannot_be_undefined);
 		}
 		if (value == null) {
