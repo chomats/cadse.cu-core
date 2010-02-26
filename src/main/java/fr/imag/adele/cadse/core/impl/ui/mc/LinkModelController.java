@@ -41,7 +41,7 @@ public class LinkModelController extends MC_AttributesItem implements RunningMod
 	private boolean					mandatory	= false;
 	private String					msg			= null;
 	boolean							init;
-	Object defaultValue = null;
+//	Object defaultValue = null;
 	
 	
 
@@ -136,11 +136,11 @@ public class LinkModelController extends MC_AttributesItem implements RunningMod
 		if (attRef.getType() == CadseGCST.ENUM) {
 			Object value = super.getValue();
 			if (value == null ) {
-				if (defaultValue == null)
+				//if (defaultValue == null)
 					return null;
-				value = toEnum(value);
-				super.notifieValueChanged( getUIField(), value);
-				return value;
+				//value = toEnum(value);
+				//super.notifieValueChanged( getUIField(), value);
+				//return value;
 			}
 			if (value instanceof String)
 				return toEnum(value);

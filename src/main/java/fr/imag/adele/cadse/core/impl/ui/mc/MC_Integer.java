@@ -33,14 +33,14 @@ public class MC_Integer extends MC_AttributesItem {
 	int		max;
 	String	msg_min;
 	String	msg_max;
-	Integer	defaultValue;
+	//Integer	defaultValue;
 
 	public MC_Integer(int min, int max, String msg_min, String msg_max, Integer defaultValue) {
 		this.min = min;
 		this.max = max;
 		this.msg_min = msg_min;
 		this.msg_max = msg_max;
-		this.defaultValue = defaultValue;
+	//	this.defaultValue = defaultValue;
 	}
 
 	public MC_Integer() {
@@ -54,7 +54,7 @@ public class MC_Integer extends MC_AttributesItem {
 		max = _desc.getAttributeWithDefaultValue(CadseGCST.MC_INTEGER_at_MAX_, Integer.MAX_VALUE);
 		msg_min = _desc.getAttribute(CadseGCST.MC_INTEGER_at_ERROR_MSG_MIN_);
 		msg_max = _desc.getAttribute(CadseGCST.MC_INTEGER_at_ERROR_MSG_MAX_);
-		defaultValue = _desc.getAttribute(CadseGCST.MC_INTEGER_at_DEFAULT_VALUE_);
+		//defaultValue = _desc.getAttribute(CadseGCST.MC_INTEGER_at_DEFAULT_VALUE_);
 	}
 
 	@Override
@@ -87,15 +87,15 @@ public class MC_Integer extends MC_AttributesItem {
 		super.notifieValueChanged(field, Convert.toInteger(value));
 	}
 
-	@Override
-	public Object defaultValue() {
-		if (defaultValue == null) {
-			IAttributeType<?> refAttributeDefinition = getUIField().getAttributeDefinition();
-			if (refAttributeDefinition != null) {
-				return refAttributeDefinition.getDefaultValue();
-			}
-		}
-
-		return defaultValue;
-	}
+//	@Override
+//	public Object defaultValue() {
+////		if (defaultValue == null) {
+////			IAttributeType<?> refAttributeDefinition = getUIField().getAttributeDefinition();
+////			if (refAttributeDefinition != null) {
+////				return refAttributeDefinition.getDefaultValue();
+////			}
+////		}
+//
+//		return defaultValue;
+//	}
 }

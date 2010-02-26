@@ -1136,7 +1136,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	
 	@Override
 	public CheckStatus check(Item item, Object value) {
-		if (getMin() >0 && !getFlag(CAN_BE_UNDEFINED) && value == IAttributeType.NULL) {
+		if (getMin() >0 && !getFlag(CAN_BE_UNDEFINED) && value == IAttributeType.VALUE_NOT_DEFINED) {
 			return new CheckStatus(UIPlatform.ERROR, Messages.cannot_be_undefined);
 		}
 		return null;

@@ -46,12 +46,12 @@ public class MC_Date extends MC_AttributesItem {
 	public Object getValue() {
 		Object value = super.getValue();
 		try {
-			if (value == null) {
-				IAttributeType<?> attDef = getUIField().getAttributeDefinition();
-				if (attDef != null) {
-					value = attDef.getDefaultValue();
-				}
-			}
+//			if (value == null) {
+//				IAttributeType<?> attDef = getUIField().getAttributeDefinition();
+//				if (attDef != null) {
+//					value = attDef.getDefaultValue();
+//				}
+//			}
 			if (value == null) {
 				return "";
 			}

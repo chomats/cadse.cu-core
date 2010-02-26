@@ -166,7 +166,7 @@ public class DoubleAttributeType extends AttributeType implements
 			return ret;
 		}
 
-		if (!getFlag(CAN_BE_UNDEFINED) && value == NULL) {
+		if (!getFlag(CAN_BE_UNDEFINED) && value == VALUE_NOT_DEFINED) {
 			return new CheckStatus(UIPlatform.ERROR, Messages.cannot_be_undefined);
 		}
 		if (value == null) {

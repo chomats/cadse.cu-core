@@ -54,10 +54,10 @@ public class MC_StringToBoolean extends MC_AttributesItem {
 
 	@Override
 	public Object defaultValue() {
-		IAttributeType<?> attr = getUIField().getAttributeDefinition();
-		if (attr != null && attr.getDefaultValue() != null) {
-			return attr.getDefaultValue();
-		}
+//		IAttributeType<?> attr = getUIField().getAttributeDefinition();
+//		if (attr != null && attr.getDefaultValue() != null) {
+//			return attr.getDefaultValue();
+//		}
 		return Boolean.FALSE;
 	}
 
