@@ -42,7 +42,7 @@ public class DoubleAttributeType extends AttributeType implements
 		fr.imag.adele.cadse.core.attribute.DoubleAttributeType {
 
 	/** The value. */
-	private double	value;
+	private Double	value;
 
 	private Double	minValue;
 	private Double	maxValue;
@@ -59,7 +59,7 @@ public class DoubleAttributeType extends AttributeType implements
 	 */
 	public DoubleAttributeType(UUID id, int flag, String name, Double minValue, Double maxValue, String value) {
 		super(id, name, flag);
-		this.value = Convert.toDouble(value, Double.NaN);
+		this.value = Convert.toDouble(value, null);
 		this.minValue = minValue;
 		this.maxValue = maxValue;
 	}
@@ -120,7 +120,7 @@ public class DoubleAttributeType extends AttributeType implements
 		this.maxValue = maxValue;
 	}
 
-	public double getValue() {
+	public Double getValue() {
 		return value;
 	}
 
