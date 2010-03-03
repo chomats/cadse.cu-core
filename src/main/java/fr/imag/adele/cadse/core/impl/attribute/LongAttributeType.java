@@ -37,7 +37,7 @@ import fr.imag.adele.cadse.util.NLS;
 public class LongAttributeType extends AttributeType implements
 		fr.imag.adele.cadse.core.attribute.LongAttributeType {
 	/** The value. */
-	private long value;
+	private Long value;
 
 	private Long minValue;
 	private Long maxValue;
@@ -82,7 +82,7 @@ public class LongAttributeType extends AttributeType implements
 	@Override
 	public boolean commitSetAttribute(IAttributeType<?> type, Object value) {
 		if (CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_ == type) {
-			value = (Convert.toLong(value, 0));
+			value = (Convert.toLong(value, null));
 			return true;
 		}
 		return super.commitSetAttribute(type, value);
