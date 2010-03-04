@@ -123,8 +123,6 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	/** The default short name action. */
 	protected String _defaultInstanceName;
 
-	
-
 	private IItemFactory _itemFactory;
 
 	/**
@@ -803,7 +801,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 		}
 		if (CadseGCST.ITEM_TYPE_at_ITEM_FACTORY_ == type) {
 			if (_itemFactory == null)
-				return null;
+				return internalGetGenericOwnerAttribute(type);
 			return (T) _itemFactory.getClass().getName();
 		}
 		if (CadseGCST.ITEM_TYPE_at_ITEM_MANAGER_ == type) {
@@ -905,8 +903,8 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 		}
 		if (CadseGCST.ITEM_TYPE_at_ITEM_FACTORY_ == type) {
 			if (value instanceof String) {
-				// && (value.toString().length() == 0) {
-				return false;
+				_itemFactory = null;
+				return commitGenericSetAttribute(type, value);
 			}
 			_itemFactory = (IItemFactory) value;
 			return true;

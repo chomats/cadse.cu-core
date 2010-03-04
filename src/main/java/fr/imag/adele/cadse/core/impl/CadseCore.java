@@ -24,9 +24,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
@@ -61,9 +64,6 @@ public class CadseCore {
 	public static ItemType theExtendedType = null;
 	
 	private static Map<String, IAttributeType<?>> _oldname = new HashMap<String, IAttributeType<?>>();
-
-	private static Set<String> _oldRemovedElemets = new HashSet<String>();
-
 	
 
 	/**
@@ -399,10 +399,6 @@ public class CadseCore {
 	public static Map<String, IAttributeType<?>> getOldNameMap() {
 		return _oldname;
 	}
-	
-	public static Set<String> getRemovedElements() {
-		return _oldRemovedElemets ;
-	}
 
 	public static IAttributeType<?> findAttributeFrom(ItemType it,
 			String attName) {
@@ -419,5 +415,46 @@ public class CadseCore {
 		}
 		return _oldname.get(attName);
 	}
+
+	public static boolean ignoreAttribute(ItemType it, String attName) {
+		if (_ignoreCompiled == null)
+			_ignoreCompiled = Pattern.compile(_ignore);
+		while (it != null) {
+			if (_ignoreCompiled.matcher((it.getId()+"::"+attName)).matches())
+				return true;
+			if (_ignoreCompiled.matcher((it.getName()+"::"+attName)).matches())
+				return true;
+			it = it.getSuperType();
+		}
+		return _ignoreCompiled.matcher(attName).matches();		
+	}
+	
+	static String _ignore = null;
+	static Pattern _ignoreCompiled = null;
+
+	public static void addIgnore(String s) {
+		if (_ignore == null)
+			_ignore = Pattern.quote(s);
+		else
+			_ignore = _ignore+"|"+Pattern.quote(s);
+		_ignoreCompiled = null;
+	}
+	
+	public static void addIgnorePattern(String p) {
+		if (_ignore == null)
+			_ignore = p;
+		else
+			_ignore = _ignore+"|"+p;
+		_ignoreCompiled = null;
+	
+	}
+
+	public static boolean ignoreType(UUID type) {
+		if (_ignoreCompiled == null)
+			_ignoreCompiled = Pattern.compile(_ignore);
+		return _ignoreCompiled.matcher(type.toString()).matches();		
+	}
+	
+	
 
 }
