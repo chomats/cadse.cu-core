@@ -43,10 +43,10 @@ public class BooleanAttributeType extends AttributeType implements
 		fr.imag.adele.cadse.core.attribute.BooleanAttributeType {
 
 	/** The value. */
-	private boolean	_defaultValue;
+	private Boolean	_defaultValue;
 
-        public BooleanAttributeType() {
-        }
+    public BooleanAttributeType() {
+    }
 
 
 	/**
@@ -61,14 +61,13 @@ public class BooleanAttributeType extends AttributeType implements
 	 */
 	public BooleanAttributeType(UUID id, int flag, String name, String value) {
 		super(id, name, flag);
-		this._defaultValue = value == null ? CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_ == null ? false
-				: Boolean.valueOf(CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_.getDefaultValue()) : Boolean.valueOf(value);
+		this._defaultValue = value == null ? null : Boolean.valueOf(value);
 	}
 
 	public BooleanAttributeType(ItemDelta item) {
 		super(item);
 		this._defaultValue = Convert.toBoolean(item.getAttribute(CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_),
-				false);
+				null);
 	}
 
 	/*
@@ -103,7 +102,7 @@ public class BooleanAttributeType extends AttributeType implements
 	@Override
 	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
 		if (CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_ == type) {
-			return (T) (_defaultValue ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
+			return (T) (_defaultValue  == null ? null : _defaultValue.toString());
 		}
 		return super.internalGetOwnerAttribute(type);
 	}
@@ -111,8 +110,8 @@ public class BooleanAttributeType extends AttributeType implements
 	@Override
 	public boolean commitSetAttribute(IAttributeType<?> type, Object value) {
 		if (CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_ == type) {
-			boolean dv = Convert.toBoolean(value,  false);
-			boolean ret = dv !=  _defaultValue;
+			Boolean dv = Convert.toBoolean(value,  null);
+			boolean ret = Convert.equals(dv, _defaultValue);
 			_defaultValue = dv;
 			return ret;
 		}
@@ -125,7 +124,7 @@ public class BooleanAttributeType extends AttributeType implements
 
 	@Override
 	public Boolean convertTo(Object v) {
-		return Convert.toBoolean(v);
+		return Convert.toBoolean(v, null);
 	}
 
 	@Override
@@ -135,7 +134,7 @@ public class BooleanAttributeType extends AttributeType implements
 			return ret;
 		}
 
-		if (value == null) {
+		if (value == null|| "".equals(value)) {
 			return null;
 		}
 

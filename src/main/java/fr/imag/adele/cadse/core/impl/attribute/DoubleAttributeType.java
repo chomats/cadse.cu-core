@@ -127,7 +127,7 @@ public class DoubleAttributeType extends AttributeType implements
 	@Override
 	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
 		if (CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_ == type) {
-			return (T) new Double(value).toString();
+			return (T) (value == null ? null : value.toString());
 		}
 //		if (CadseGCST.DOUBLE_at_MIN_ == type) {
 //			return (T) minValue;
@@ -141,7 +141,7 @@ public class DoubleAttributeType extends AttributeType implements
 	@Override
 	public boolean commitSetAttribute(IAttributeType<?> type, Object value) {
 		if (CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_ == type) {
-			setValue(Convert.toDouble(value, 0));
+			setValue(Convert.toDouble(value, null));
 			return true;
 		}
 //		if (CadseGCST.DOUBLE_at_MIN_ == type) {
@@ -166,10 +166,10 @@ public class DoubleAttributeType extends AttributeType implements
 			return ret;
 		}
 
-		if (!getFlag(CAN_BE_UNDEFINED) && value == VALUE_NOT_DEFINED) {
+		if (!getFlag(CAN_BE_UNDEFINED) && value == VALUE_NOT_DEFINED || "".equals(value)) {
 			return new CheckStatus(UIPlatform.ERROR, Messages.cannot_be_undefined);
 		}
-		if (value == null) {
+		if (value == null || "".equals(value)) {
 			return null;
 		}
 		if (value instanceof String) {
@@ -199,6 +199,9 @@ public class DoubleAttributeType extends AttributeType implements
 
 	@Override
 	public Double convertTo(Object v) {
+		if (value == null || "".equals(value)) {
+			return null;
+		}
 		if (v instanceof String) {
 			return new Double((String) v);
 		}

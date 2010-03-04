@@ -404,4 +404,20 @@ public class CadseCore {
 		return _oldRemovedElemets ;
 	}
 
+	public static IAttributeType<?> findAttributeFrom(ItemType it,
+			String attName) {
+		while (it != null) {
+			IAttributeType<?> ret = _oldname.get(it.getId()+"::"+attName);
+			if (ret != null) {
+				return ret;
+			}
+			ret = _oldname.get(it.getName()+"::"+attName);
+			if (ret != null) {
+				return ret;
+			}
+			it = it.getSuperType();
+		}
+		return _oldname.get(attName);
+	}
+
 }
