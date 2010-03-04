@@ -74,7 +74,7 @@ public class LongAttributeType extends AttributeType implements
 	@Override
 	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
 		if (CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_ == type) {
-			return (T) Long.toString(value);
+			return (T) (value == null ? null : value.toString());
 		}
 		return super.internalGetOwnerAttribute(type);
 	}
