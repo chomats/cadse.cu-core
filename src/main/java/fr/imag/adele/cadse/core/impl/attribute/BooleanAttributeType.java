@@ -89,15 +89,6 @@ public class BooleanAttributeType extends AttributeType implements
 		return Boolean.class;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.INamed#getIntID()
-	 */
-	public int getIntID() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 
 	@Override
 	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
