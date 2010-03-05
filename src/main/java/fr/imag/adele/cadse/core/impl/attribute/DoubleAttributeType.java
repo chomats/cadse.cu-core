@@ -199,7 +199,7 @@ public class DoubleAttributeType extends AttributeType implements
 
 	@Override
 	public Double convertTo(Object v) {
-		if (_value == null || "".equals(_value)) {
+		if (v == null || "".equals(v)) {
 			return null;
 		}
 		if (v instanceof String) {
