@@ -151,17 +151,20 @@ public class AbstractModelController extends AbstractUIRunningValidator implemen
 
 	@Override
 	public Object getValue() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void initAfterUI(UIField field) {
-		// TODO Auto-generated method stub
-		
+	public void initAfterUI(UIField field) {		
 	}
 
 	public Object visualToModel(Object ret) {
+		final UIField uiField = getUIField();
+		if (uiField == null) return ret;
+		IAttributeType<?> attRef = uiField.getAttributeDefinition();
+		if (attRef != null) {
+			return attRef.convertTo(ret);
+		}
 		return ret;
 	}
 
