@@ -37,10 +37,10 @@ import fr.imag.adele.cadse.util.NLS;
 public class LongAttributeType extends AttributeType implements
 		fr.imag.adele.cadse.core.attribute.LongAttributeType {
 	/** The value. */
-	private Long value;
+	private Long _value;
 
-	private Long minValue;
-	private Long maxValue;
+	private Long _minValue;
+	private Long _maxValue;
 
 	public LongAttributeType(UUID id, String name, int flag) {
 		super(id, name, flag);
@@ -68,13 +68,13 @@ public class LongAttributeType extends AttributeType implements
 
 	@Override
 	public Long getDefaultValue() {
-		return value;
+		return _value;
 	}
 
 	@Override
 	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
 		if (CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_ == type) {
-			return (T) (value == null ? null : value.toString());
+			return (T) (_value == null ? null : _value.toString());
 		}
 		return super.internalGetOwnerAttribute(type);
 	}
@@ -82,7 +82,7 @@ public class LongAttributeType extends AttributeType implements
 	@Override
 	public boolean commitSetAttribute(IAttributeType<?> type, Object value) {
 		if (CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_ == type) {
-			value = (Convert.toLong(value, null));
+			this._value = (Convert.toLong(value, null));
 			return true;
 		}
 		return super.commitSetAttribute(type, value);
@@ -114,16 +114,16 @@ public class LongAttributeType extends AttributeType implements
 			return new CheckStatus(UIPlatform.ERROR, Messages.must_be_a_long);
 		}
 		long v = ((Long) value).longValue();
-		if (minValue != null) {
-			if (v < minValue.longValue()) {
+		if (_minValue != null) {
+			if (v < _minValue.longValue()) {
 				return new CheckStatus(UIPlatform.ERROR,
-						Messages.value_must_be_upper, minValue.intValue());
+						Messages.value_must_be_upper, _minValue.intValue());
 			}
 		}
-		if (maxValue != null) {
-			if (v > maxValue.longValue()) {
+		if (_maxValue != null) {
+			if (v > _maxValue.longValue()) {
 				return new CheckStatus(UIPlatform.ERROR,
-						Messages.value_must_be_lower, maxValue.intValue());
+						Messages.value_must_be_lower, _maxValue.intValue());
 			}
 		}
 
