@@ -23,6 +23,7 @@ import java.util.List;
 
 
 import fr.imag.adele.cadse.core.CadseException;
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.ChangeID;
 import fr.imag.adele.cadse.core.ContentChangeInfo;
 import fr.imag.adele.cadse.core.Item;
@@ -150,12 +151,29 @@ public class MC_AttributesItem extends AbstractModelController implements Runnin
 			}
 		}
 	}
+	
+	@Override
+	public void notifieValueDeleted(UIField field, Object oldvalue) {
+		notifieValueChanged(field, null);
+	}
+	
+	@Override
+	public boolean validValueDeleted(UIField field, Object deletedValue) {
+		return validValueChanged(field, null);
+	}
 
 	@Override
 	public boolean validValueChanged( UIField field, Object visualValue) {
 		IAttributeType<?> attRef = field.getAttributeDefinition();
 		if (attRef != null) {
 			Object value = visualToModel(visualValue);
+			if (attRef.getType() == CadseGCST.ENUM && value == null) {
+				if (visualValue == null)
+					_uiPlatform.setMessage(attRef.getName() + ": enter a valid value", UIPlatform.ERROR);
+				else
+					_uiPlatform.setMessage(attRef.getName() + ": enter a valid value : '"+visualValue+"'", UIPlatform.ERROR);
+				return true;
+			}
 			CheckStatus status = attRef.check(_uiPlatform.getItem(getUIField()), value);
 			if (status != null) {
 				if (status.getType() == UIPlatform.ERROR) {
