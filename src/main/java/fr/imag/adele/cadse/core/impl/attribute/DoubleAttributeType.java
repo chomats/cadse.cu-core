@@ -42,10 +42,10 @@ public class DoubleAttributeType extends AttributeType implements
 		fr.imag.adele.cadse.core.attribute.DoubleAttributeType {
 
 	/** The value. */
-	private Double	value;
+	private Double	_value;
 
-	private Double	minValue;
-	private Double	maxValue;
+	private Double	_minValue;
+	private Double	_maxValue;
 
 	/**
 	 * Instantiates a new double attribute type.
@@ -59,9 +59,9 @@ public class DoubleAttributeType extends AttributeType implements
 	 */
 	public DoubleAttributeType(UUID id, int flag, String name, Double minValue, Double maxValue, String value) {
 		super(id, name, flag);
-		this.value = Convert.toDouble(value, null);
-		this.minValue = minValue;
-		this.maxValue = maxValue;
+		this._value = convertTo(value);
+		this._minValue = minValue;
+		this._maxValue = maxValue;
 	}
 
 	public DoubleAttributeType(ItemDelta item) {
@@ -78,7 +78,7 @@ public class DoubleAttributeType extends AttributeType implements
 	 */
 	@Override
 	public Double getDefaultValue() {
-		return value;
+		return _value;
 	}
 
 	/*
@@ -101,33 +101,33 @@ public class DoubleAttributeType extends AttributeType implements
 	}
 
 	public void setValue(Double value) {
-		this.value = value;
+		this._value = value;
 	}
 
 	public Double getMinValue() {
-		return minValue;
+		return _minValue;
 	}
 
 	public void setMinValue(Double minValue) {
-		this.minValue = minValue;
+		this._minValue = minValue;
 	}
 
 	public Double getMaxValue() {
-		return maxValue;
+		return _maxValue;
 	}
 
 	public void setMaxValue(Double maxValue) {
-		this.maxValue = maxValue;
+		this._maxValue = maxValue;
 	}
 
 	public Double getValue() {
-		return value;
+		return _value;
 	}
 
 	@Override
 	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
 		if (CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_ == type) {
-			return (T) (value == null ? null : value.toString());
+			return (T) (_value == null ? null : _value.toString());
 		}
 //		if (CadseGCST.DOUBLE_at_MIN_ == type) {
 //			return (T) minValue;
@@ -183,14 +183,14 @@ public class DoubleAttributeType extends AttributeType implements
 			return new CheckStatus(UIPlatform.ERROR, Messages.must_be_a_double);
 		}
 		double v = ((Double) value).doubleValue();
-		if (minValue != null) {
-			if (v < minValue.doubleValue()) {
-				return new CheckStatus(UIPlatform.ERROR, Messages.value_must_be_upper , minValue);
+		if (_minValue != null) {
+			if (v < _minValue.doubleValue()) {
+				return new CheckStatus(UIPlatform.ERROR, Messages.value_must_be_upper , _minValue);
 			}
 		}
-		if (maxValue != null) {
-			if (v > maxValue.doubleValue()) {
-				return new CheckStatus(UIPlatform.ERROR, Messages.value_must_be_lower , maxValue);
+		if (_maxValue != null) {
+			if (v > _maxValue.doubleValue()) {
+				return new CheckStatus(UIPlatform.ERROR, Messages.value_must_be_lower , _maxValue);
 			}
 		}
 
@@ -199,7 +199,7 @@ public class DoubleAttributeType extends AttributeType implements
 
 	@Override
 	public Double convertTo(Object v) {
-		if (value == null || "".equals(value)) {
+		if (_value == null || "".equals(_value)) {
 			return null;
 		}
 		if (v instanceof String) {

@@ -54,6 +54,11 @@ public class LongAttributeType extends AttributeType implements
 
 	}
 
+	public LongAttributeType(UUID id, String name, int flag, String value) {
+		super(id, name, flag);
+		_value = convertTo(value);
+	}
+
 	public Class<Long> getAttributeType() {
 		return Long.class;
 	}
