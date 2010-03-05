@@ -49,7 +49,7 @@ public class IntegerAttributeType extends AttributeType implements
 	private Integer	maxValue;
 
 	/** The value. */
-	private Integer	value;
+	private Integer	_value;
 
         public IntegerAttributeType() {
         }
@@ -68,7 +68,7 @@ public class IntegerAttributeType extends AttributeType implements
 	 */
 	public IntegerAttributeType(UUID id, int flag, String name, Integer min, Integer max, String value) {
 		super(id, name, flag);
-		this.value = value == null ? null : Convert.toInteger(value);
+		this._value = Convert.toInteger(value);
 		this.minValue = min;
 		this.maxValue = max;
 	}
@@ -84,7 +84,7 @@ public class IntegerAttributeType extends AttributeType implements
 	 */
 	@Override
 	public Integer getDefaultValue() {
-		return value;
+		return _value;
 	}
 
 	/*
@@ -96,16 +96,6 @@ public class IntegerAttributeType extends AttributeType implements
 		return Integer.class;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.INamed#getIntID()
-	 */
-	public int getIntID() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
 	public ItemType getType() {
 		return CadseGCST.INTEGER;
 	}
@@ -113,9 +103,9 @@ public class IntegerAttributeType extends AttributeType implements
 	@Override
 	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
 		if (CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_ == type) {
-			if (value == null)
+			if (_value == null)
 				return null;
-			return (T) value.toString();
+			return (T) _value.toString();
 		}
 //		if (CadseGCST.INTEGER_ATTRIBUTE_TYPE_at_MIN_ == type) {
 //			return (T) minValue;
@@ -160,11 +150,11 @@ public class IntegerAttributeType extends AttributeType implements
 	}
 
 	public Integer getValue() {
-		return value;
+		return _value;
 	}
 
 	public void setValue(Integer value) {
-		this.value = value;
+		this._value = value;
 	}
 
 	@Override
