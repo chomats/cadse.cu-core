@@ -19,6 +19,7 @@
 
 package fr.imag.adele.cadse.core.impl.ui.mc;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -104,10 +105,17 @@ public class MC_AttributesItem extends AbstractModelController implements Runnin
 		if (item == null) {
 			return null;
 		}
+		Object value = null;
 		if (item instanceof ItemDelta) {
-			return ((ItemDelta) item).getAttribute(getAttributeDefinition(), false);
+			value = ((ItemDelta) item).getAttribute(getAttributeDefinition(), false);
+		} else {
+			value = item.getAttribute(getAttributeDefinition());
 		}
-		return item.getAttribute(getAttributeDefinition());
+		IAttributeType<?> attrType = getUIField().getAttributeDefinition();
+		if (attrType != null && attrType.getType() == CadseGCST.LIST) {
+			value = new ArrayList<Object>((ArrayList) value);
+		}
+		return value;
 	}
 
 	public IAttributeType<?> getAttributeDefinition() {
@@ -140,6 +148,10 @@ public class MC_AttributesItem extends AbstractModelController implements Runnin
 		// item.setAttribute(getUIField().getKey(),value);
 		IAttributeType<?> attrType = getUIField().getAttributeDefinition();
 		if (attrType != null) {
+			if (attrType.getType() == CadseGCST.LIST) {
+				value = new ArrayList<Object>((ArrayList<Object>) value);
+			}
+			
 			value = attrType.convertTo(value);
 			_inibNotification = true;
 			try {
