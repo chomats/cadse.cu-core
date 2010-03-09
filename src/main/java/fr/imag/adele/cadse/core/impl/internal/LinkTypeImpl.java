@@ -38,7 +38,6 @@ import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.attribute.CheckStatus;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
-import fr.imag.adele.cadse.core.enumdef.TWCommitKind;
 import fr.imag.adele.cadse.core.enumdef.TWDestEvol;
 import fr.imag.adele.cadse.core.impl.AbstractLinkTypeManager;
 import fr.imag.adele.cadse.core.impl.CadseCore;
@@ -62,8 +61,8 @@ import fr.imag.adele.cadse.core.util.Convert;
 import fr.imag.adele.cadse.util.ArraysUtil;
 
 /**
- * D�finit un type de lien particulier. Attributs : L'attribut id est une cl�
- * par rapport � la source. Il contient le nom de la relation.
+ * D�finit un type de lien particulier. Attributs : L'attribut id est une cl� par rapport � la source. Il contient le
+ * nom de la relation.
  * 
  * @author nguyent
  * @version 2.0
@@ -74,46 +73,45 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	// public static final String LT_PARENT_SN_PREFIX = "#parent:";
 
 	/** The int id. */
-	private int					_intID;
+	private int _intID;
 
 	/** The kind. */
-	private int					_kind;
+	private int _kind;
 
 	/** The source. Attribute.parent */
 
 	/** The destination. */
-	private TypeDefinition			_destination;
+	private TypeDefinition _destination;
 	/** The min. */
-	private int					_min;
+	private int _min;
 
 	/** The max. */
-	private int					_max;
+	private int _max;
 
 	/** The selection. */
-	private String				_selection;
+	private String _selection;
 
 	/** The manager. */
-	private ILinkTypeManager	_fManager;
+	private ILinkTypeManager _fManager;
 
 	/** The inverse. */
-	LinkType					_inverse;
+	LinkType _inverse;
 
 	/** The link type. */
-	private LinkType			_linkType;
+	private LinkType _linkType;
 
 	/** The info. */
-	private String				_displayName;
+	private String _displayName;
 
-	TWDestEvol					_twdestEvol	= TWDestEvol.immutable;
+	TWDestEvol _twdestEvol = TWDestEvol.immutable;
 
 	private ItemType _it = CadseGCST.LINK_TYPE;
 
-        public LinkTypeImpl() {
-        }
+	public LinkTypeImpl() {
+	}
 
 	// TWCoupled is a flag
 
-        
 	/**
 	 * The Constructor.
 	 * 
@@ -133,17 +131,17 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	 *            the int id
 	 * @param selection
 	 *            the selection
-	 * 
 	 * @version 2.0
 	 */
 	LinkTypeImpl(UUID id, int kind, TypeDefinition source, String name, int intID, int min, int max, String selection,
 			TypeDefinition destination) {
-		super(id, name, min != 0 ? MUST_BE_INITIALIZED_AT_CREATION_TIME : 0);
+		super(id, name, min != 0 ? SHOW_IN_DEFAULT_CP : 0);
 
 		if (CadseCore.theLinkType == null) {
 			this._linkType = this;
 			setFlag(NATIF, true);
-		} else {
+		}
+		else {
 			this._linkType = CadseCore.theLinkType;
 		}
 
@@ -181,7 +179,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	 */
 	LinkTypeImpl(UUID id, int kind, TypeDefinition source, String name, int min, int max, String selection,
 			TypeDefinition destination) {
-		super(id, name, min != 0 ? MUST_BE_INITIALIZED_AT_CREATION_TIME : 0);
+		super(id, name, min != 0 ? SHOW_IN_DEFAULT_CP : 0);
 
 		this._linkType = CadseCore.theLinkType;
 		this._kind = kind;
@@ -225,8 +223,9 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 		this._selection = null;
 		this._intID = -1;
 		this._it = it;
-		if (it == null)
+		if (it == null) {
 			_it = CadseGCST.LINK_TYPE;
+		}
 	}
 
 	@Override
@@ -241,7 +240,6 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.INamed#getIntID()
 	 */
 	public int getIntID() {
@@ -299,13 +297,13 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	 * 
 	 * @return the source type
 	 */
+	@Override
 	public TypeDefinition getSource() {
 		return getParent();
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.LinkType#getKind()
 	 */
 	public int getKind() {
@@ -314,7 +312,6 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.internal.LinkImpl#isAggregation()
 	 */
 	public boolean isAggregation() {
@@ -323,7 +320,6 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.internal.LinkImpl#isAnnotation()
 	 */
 	public boolean isAnnotation() {
@@ -332,7 +328,6 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.internal.LinkImpl#isPart()
 	 */
 	public boolean isPart() {
@@ -341,7 +336,6 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.LinkType#isInversePart()
 	 */
 	public boolean isInversePart() {
@@ -358,7 +352,6 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.internal.LinkImpl#isComposition()
 	 */
 	public boolean isComposition() {
@@ -367,7 +360,6 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.internal.LinkImpl#isRequire()
 	 */
 	public boolean isRequire() {
@@ -376,7 +368,6 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.internal.LinkImpl#equals(java.lang.Object)
 	 */
 	@Override
@@ -394,7 +385,6 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.internal.LinkImpl#hashCode()
 	 */
 	@Override
@@ -404,7 +394,6 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.internal.LinkImpl#toString()
 	 */
 	@Override
@@ -441,7 +430,6 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.internal.LinkImpl#isDerived()
 	 */
 	public boolean isDerived() {
@@ -459,7 +447,6 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.LinkType#getInverse()
 	 */
 	public LinkType getInverse() {
@@ -468,10 +455,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.imag.adele.cadse.core.LinkType#getSelectingDestination(fr.imag.adele
-	 * .cadse.core.Item)
+	 * @see fr.imag.adele.cadse.core.LinkType#getSelectingDestination(fr.imag.adele .cadse.core.Item)
 	 */
 	public Collection<Item> getSelectingDestination(Item source) {
 		Collection<Item> ret = null;
@@ -492,7 +476,6 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.LinkType#getManager()
 	 */
 	public ILinkTypeManager getManager() {
@@ -505,10 +488,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.imag.adele.cadse.core.LinkType#setManager(fr.imag.adele.cadse.core
-	 * .ILinkTypeManager)
+	 * @see fr.imag.adele.cadse.core.LinkType#setManager(fr.imag.adele.cadse.core .ILinkTypeManager)
 	 */
 	public void setManager(ILinkTypeManager manager) {
 		_fManager = manager;
@@ -517,19 +497,15 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.IAttributeType#isMandatory()
 	 */
 	@Override
 	public boolean mustBeInitializedAtCreationTime() {
-		if (isDefinedFlag(MUST_BE_INITIALIZED_AT_CREATION_TIME))
-			return super.mustBeInitializedAtCreationTime();
 		return getMin() > 0;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.IAttributeType#getDefaultValue()
 	 */
 	@Override
@@ -545,13 +521,14 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 		return getSource().getQualifiedDisplayName() + "::" + getName();
 	}
 
+	@Override
 	public ItemType getType() {
 		if (_it == null) {
 			_it = CadseGCST.LINK_TYPE;
 		}
 		return _it;
 	}
-	
+
 	@Override
 	public void setType(ItemType selectedItemType) {
 		_it = selectedItemType;
@@ -654,7 +631,8 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 		boolean oldv = getKind(f);
 		if (flag) {
 			this._kind |= f;
-		} else {
+		}
+		else {
 			this._kind &= ~f;
 		}
 		return oldv != flag;
@@ -723,11 +701,8 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	/**
 	 * Gets the resolved destination.
 	 * 
-	 * @return destination of this link.
-	 * 
-	 *         NOTE: Si ce lien est non-resolu, avant de retouner l'objet,
-	 *         essayer de r�cup�rer cet item dans le workspace. Si non trouv�,
-	 *         retourner null.
+	 * @return destination of this link. NOTE: Si ce lien est non-resolu, avant de retouner l'objet, essayer de
+	 *         r�cup�rer cet item dans le workspace. Si non trouv�, retourner null.
 	 */
 	public Item getResolvedDestination() {
 		return getDestination(true);
@@ -735,7 +710,6 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.Link#getDestination(boolean)
 	 */
 	public Item getDestination(boolean resolved) {
@@ -766,8 +740,9 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	 * @return id destination
 	 */
 	public UUID getDestinationId() {
-		if (_destination == null)
+		if (_destination == null) {
 			return null;
+		}
 		return _destination.getId();
 	}
 
@@ -782,7 +757,8 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 		if ((getLinkType().getKind() & LinkType.READ_ONLY) == 0) {
 			if (readOnly) {
 				_kind |= LinkType.READ_ONLY;
-			} else {
+			}
+			else {
 				_kind &= ~LinkType.READ_ONLY;
 			}
 		}
@@ -811,26 +787,28 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 		if ((getLinkType().getKind() & LinkType.HIDDEN) == 0) {
 			if (hidden) {
 				_kind |= LinkType.HIDDEN;
-			} else {
+			}
+			else {
 				_kind &= ~LinkType.HIDDEN;
 			}
 		}
 	}
-	
+
 	@Override
 	public void setIsGroup(boolean b) {
 		if (b) {
 			_kind |= LinkType.GROUP;
-		} else {
+		}
+		else {
 			_kind &= ~LinkType.GROUP;
-		}		
+		}
 	}
 
 	@Override
 	public boolean isGroup() {
 		return (_kind & LinkType.GROUP) != 0;
 	}
-	
+
 	/**
 	 * Checks if is hidden.
 	 * 
@@ -842,10 +820,8 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	}
 
 	/**
-	 * Delete a link.
-	 * 
-	 * NOTE: D�tacher les references de la source et de la destination point� �
-	 * ce lien. Si la destination de ce lien est un contenu, supprimer le aussi.
+	 * Delete a link. NOTE: D�tacher les references de la source et de la destination point� � ce lien. Si la
+	 * destination de ce lien est un contenu, supprimer le aussi.
 	 */
 	public void delete() {
 		if (isReadOnly()) {
@@ -855,17 +831,15 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 		}
 		try {
 			Accessor.delete(this, true);
-		} catch (CadseException e) {
+		}
+		catch (CadseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
 	/**
-	 * Resolve a link.
-	 * 
-	 * NOTE: Ce m�thode essaie de r�cup�rer par id dans le workspace l'object
-	 * destination de ce lien .
+	 * Resolve a link. NOTE: Ce m�thode essaie de r�cup�rer par id dans le workspace l'object destination de ce lien .
 	 * 
 	 * @return true, if resolve
 	 */
@@ -924,7 +898,6 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.Link#getDestinationType()
 	 */
 	public ItemType getDestinationType() {
@@ -933,7 +906,6 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.Link#getDestinationUniqueName()
 	 */
 	public String getDestinationQualifiedName() {
@@ -942,7 +914,6 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.Link#getDestinationShortName()
 	 */
 	/**
@@ -955,7 +926,6 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.Link#getDestinationShortName()
 	 */
 	public String getDestinationName() {
@@ -964,7 +934,6 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.Link#getIndex()
 	 */
 	public int getIndex() {
@@ -1010,7 +979,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 		return null;
 	}
 
-	private LogicalWorkspaceTransactionListener[]	workspaceLogiqueCopyListeners;
+	private LogicalWorkspaceTransactionListener[] workspaceLogiqueCopyListeners;
 
 	private IAttributeType<?>[] _attributeDefinitions;
 
@@ -1053,30 +1022,25 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	/**
 	 * method du link
 	 */
-	
+
 	@Override
-	public boolean commitSetAttribute(IAttributeType<?> type, String key,
-			Object value) {
+	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
 		return false;
 	}
 
 	@Override
 	public UIField generateDefaultField() {
 		if (getMax() != 1) {
-			return new UIFieldImpl(CadseGCST.DLIST, UUID.randomUUID(), this, getDisplayName(), EPosLabel.defaultpos, 
-					new MC_Descriptor(CadseGCST.MC_LINK), 
-					new IC_Descriptor(
-							CadseGCST.IC_LINK_FOR_BROWSER_COMBO_LIST,
+			return new UIFieldImpl(CadseGCST.DLIST, UUID.randomUUID(), this, getDisplayName(), EPosLabel.defaultpos,
+					new MC_Descriptor(CadseGCST.MC_LINK), new IC_Descriptor(CadseGCST.IC_LINK_FOR_BROWSER_COMBO_LIST,
 							CadseGCST.IC_WITH_TITLE_FOR_DIALOG_at_SELECT_TITLE_, "Select a value."),
-							CadseGCST.DLIST_at_EDITABLE_BUTTON_, Boolean.TRUE);
+					CadseGCST.DLIST_at_EDITABLE_BUTTON_, Boolean.TRUE);
 		}
-		return new UIFieldImpl(CadseGCST.DBROWSER, UUID.randomUUID(), this, getDisplayName(), EPosLabel.defaultpos, 
-				new MC_Descriptor(CadseGCST.MC_LINK), 
-				new IC_Descriptor(
-						CadseGCST.IC_LINK_FOR_BROWSER_COMBO_LIST,
+		return new UIFieldImpl(CadseGCST.DBROWSER, UUID.randomUUID(), this, getDisplayName(), EPosLabel.defaultpos,
+				new MC_Descriptor(CadseGCST.MC_LINK), new IC_Descriptor(CadseGCST.IC_LINK_FOR_BROWSER_COMBO_LIST,
 						CadseGCST.IC_WITH_TITLE_FOR_DIALOG_at_SELECT_TITLE_, "Select a value."));
 	}
-	
+
 	@Override
 	public Link convertTo(Object v) {
 		// TODO Auto-generated method stub
@@ -1085,21 +1049,25 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 	@Override
 	public UUID getDestinationCadseId() {
-		if (_destination == null)
+		if (_destination == null) {
 			return null;
+		}
 		CadseRuntime cr = _destination.getCadse();
-		if (cr == null)
+		if (cr == null) {
 			return null;
+		}
 		return cr.getId();
 	}
 
 	@Override
 	public UUID getSourceCadseId() {
-		if (getSource() == null)
+		if (getSource() == null) {
 			return null;
+		}
 		CadseRuntime cr = getSource().getCadse();
-		if (cr == null)
+		if (cr == null) {
 			return null;
+		}
 		return cr.getId();
 	}
 
@@ -1107,14 +1075,14 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	public boolean isInterCadseLink() {
 		UUID scId = getSourceCadseId();
 		UUID dcId = getDestinationCadseId();
-		return !((scId == null && dcId == null) 
-				|| (scId != null && dcId != null && scId.equals(dcId)));
+		return !((scId == null && dcId == null) || (scId != null && dcId != null && scId.equals(dcId)));
 	}
 
 	@Override
 	public IAttributeType<?>[] getLinkTypeAttributeTypes() {
-		if (_attributeDefinitions == null)
+		if (_attributeDefinitions == null) {
 			return new IAttributeType[0];
+		}
 		return _attributeDefinitions;
 	}
 
@@ -1122,22 +1090,22 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	public <T> T getLinkAttributeOwner(IAttributeType<T> attDef) {
 		return getAttribute(attDef);
 	}
-	
+
 	public void addLinkTypeAttributeType(IAttributeType<?> att) {
 		_attributeDefinitions = ArraysUtil.add(IAttributeType.class, _attributeDefinitions, att);
 	}
 
-	
 	@Override
 	public boolean isAttributeHead() {
-		if (isGroup())
+		if (isGroup()) {
 			return true;
+		}
 		return super.isAttributeHead();
 	}
-	
+
 	@Override
 	public CheckStatus check(Item item, Object value) {
-		if (getMin() >0 && !getFlag(CAN_BE_UNDEFINED) && value == IAttributeType.VALUE_NOT_DEFINED) {
+		if (getMin() > 0 && !getFlag(CAN_BE_UNDEFINED) && value == IAttributeType.VALUE_NOT_DEFINED) {
 			return new CheckStatus(UIPlatform.ERROR, Messages.cannot_be_undefined);
 		}
 		return null;

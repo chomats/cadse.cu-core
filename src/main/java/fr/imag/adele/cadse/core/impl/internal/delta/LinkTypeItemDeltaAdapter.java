@@ -11,14 +11,9 @@ import java.util.UUID;
 import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
-import fr.imag.adele.cadse.core.DerivedLink;
-import fr.imag.adele.cadse.core.DerivedLinkDescription;
 import fr.imag.adele.cadse.core.EventFilter;
-import fr.imag.adele.cadse.core.GroupType;
 import fr.imag.adele.cadse.core.ILinkTypeManager;
 import fr.imag.adele.cadse.core.Item;
-import fr.imag.adele.cadse.core.ItemDescription;
-import fr.imag.adele.cadse.core.ItemDescriptionRef;
 import fr.imag.adele.cadse.core.ItemFilter;
 import fr.imag.adele.cadse.core.ItemState;
 import fr.imag.adele.cadse.core.ItemType;
@@ -39,8 +34,7 @@ import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.util.IErrorCollector;
 import fr.imag.adele.cadse.util.OrderWay;
 
-public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
-		LinkType {
+public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements LinkType {
 
 	public LinkTypeItemDeltaAdapter(ItemDelta itemDelta) {
 		super(itemDelta);
@@ -53,8 +47,9 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 
 	private <T> T _accessor(LinkType lt, Class<T> clazz) {
 		ItemDelta destDelta = _delta.getOutgoingItem(lt, true);
-		if (destDelta == null)
+		if (destDelta == null) {
 			return null;
+		}
 		return destDelta.getAdapter(clazz);
 	}
 
@@ -105,8 +100,9 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	public ItemType getSource() {
 		ItemType ret = _accessor(CadseGCST.LINK_TYPE_lt_SOURCE, ItemType.class);
 		if (ret == null) {
-			if (_delta.getPartParent() != null)
+			if (_delta.getPartParent() != null) {
 				return _delta.getPartParent().getAdapter(ItemType.class);
+			}
 		}
 		return ret;
 	}
@@ -157,7 +153,8 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	public void setInverseLinkType(LinkType lt) {
 		try {
 			_delta.setOutgoingItem(CadseGCST.LINK_TYPE_lt_INVERSE_LINK, lt);
-		} catch (CadseException e) {
+		}
+		catch (CadseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -255,12 +252,6 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	}
 
 	@Override
-	public boolean mustBeInitializedAtCreationTime() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public boolean setIsNatif(boolean isNatif) {
 		// TODO Auto-generated method stub
 		return false;
@@ -279,8 +270,7 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	}
 
 	@Override
-	public Link addOutgoingItem(LinkType linkType, Item destination)
-			throws CadseException {
+	public Link addOutgoingItem(LinkType linkType, Item destination) throws CadseException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -322,8 +312,7 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	}
 
 	@Override
-	public Link createLink(LinkType linkType, Item destItem)
-			throws CadseException {
+	public Link createLink(LinkType linkType, Item destItem) throws CadseException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -335,8 +324,7 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	}
 
 	@Override
-	public List<WorkspaceListener> filter(int eventFilter,
-			ImmutableWorkspaceDelta delta) {
+	public List<WorkspaceListener> filter(int eventFilter, ImmutableWorkspaceDelta delta) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -467,8 +455,7 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	}
 
 	@Override
-	public Item getOutgoingItem(String linkTypeName, UUID itemId,
-			boolean resolvedOnly) {
+	public Item getOutgoingItem(String linkTypeName, UUID itemId, boolean resolvedOnly) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -498,8 +485,7 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	}
 
 	@Override
-	public Collection<Item> getOutgoingItems(String typesLink,
-			boolean resolvedOnly) {
+	public Collection<Item> getOutgoingItems(String typesLink, boolean resolvedOnly) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -571,8 +557,7 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	}
 
 	@Override
-	public Item getPartParent(LinkType linkType, boolean attemptToRecreate)
-			throws CadseException {
+	public Item getPartParent(LinkType linkType, boolean attemptToRecreate) throws CadseException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -746,8 +731,7 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	}
 
 	@Override
-	public Link removeOutgoingItem(LinkType linkType, Item destination)
-			throws CadseException {
+	public Link removeOutgoingItem(LinkType linkType, Item destination) throws CadseException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -759,15 +743,13 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	}
 
 	@Override
-	public Link setOutgoingItem(LinkType linkType, Item dest)
-			throws CadseException {
+	public Link setOutgoingItem(LinkType linkType, Item dest) throws CadseException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Collection<Link> setOutgoingItems(LinkType linkType,
-			Collection<Item> value) throws CadseException {
+	public Collection<Link> setOutgoingItems(LinkType linkType, Collection<Item> value) throws CadseException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -815,8 +797,7 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	}
 
 	@Override
-	public <T> T getAttributeWithDefaultValue(IAttributeType<T> att,
-			T defaultValue) {
+	public <T> T getAttributeWithDefaultValue(IAttributeType<T> att, T defaultValue) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -828,30 +809,25 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	}
 
 	@Override
-	public void setAttribute(IAttributeType<?> att, Object value)
-			throws CadseException {
+	public void setAttribute(IAttributeType<?> att, Object value) throws CadseException {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void getLocalAllAttributeTypes(
-			List<IAttributeType<?>> allLocalAttrDefs) {
+	public void getLocalAllAttributeTypes(List<IAttributeType<?>> allLocalAttrDefs) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void getLocalAllAttributeTypes(
-			Map<String, IAttributeType<?>> allLocalAttrDefs,
-			boolean keepLastAttribute) {
+	public void getLocalAllAttributeTypes(Map<String, IAttributeType<?>> allLocalAttrDefs, boolean keepLastAttribute) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void getLocalAllAttributeTypes(
-			List<IAttributeType<?>> allLocalAttrDefs, ItemFilter filter) {
+	public void getLocalAllAttributeTypes(List<IAttributeType<?>> allLocalAttrDefs, ItemFilter filter) {
 		// TODO Auto-generated method stub
 
 	}
@@ -863,16 +839,14 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	}
 
 	@Override
-	public void getLocalAllAttributeTypes(
-			Map<String, IAttributeType<?>> allLocalAttrDefs,
-			boolean keepLastAttribute, ItemFilter filter) {
+	public void getLocalAllAttributeTypes(Map<String, IAttributeType<?>> allLocalAttrDefs, boolean keepLastAttribute,
+			ItemFilter filter) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void getLocalAllAttributeTypesKeys(Set<String> allLocalAttrDefs,
-			ItemFilter filter) {
+	public void getLocalAllAttributeTypesKeys(Set<String> allLocalAttrDefs, ItemFilter filter) {
 		// TODO Auto-generated method stub
 
 	}
@@ -896,15 +870,13 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	}
 
 	@Override
-	public Link commitLoadCreateLink(LinkType lt, Item destination)
-			throws CadseException {
+	public Link commitLoadCreateLink(LinkType lt, Item destination) throws CadseException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public boolean commitMove(OrderWay kind, Link l1, Link l2)
-			throws CadseException {
+	public boolean commitMove(OrderWay kind, Link l1, Link l2) throws CadseException {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -916,8 +888,7 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	}
 
 	@Override
-	public void computeAttribute(String attributeName, Object theirsValue,
-			Object baseValue, Object mineValue) {
+	public void computeAttribute(String attributeName, Object theirsValue, Object baseValue, Object mineValue) {
 		// TODO Auto-generated method stub
 
 	}
@@ -947,8 +918,8 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	}
 
 	@Override
-	public void loadItem(IWorkingLoadingItems wl, ItemDelta itemOperation,
-			IErrorCollector errorCollector) throws CadseException {
+	public void loadItem(IWorkingLoadingItems wl, ItemDelta itemOperation, IErrorCollector errorCollector)
+			throws CadseException {
 		// TODO Auto-generated method stub
 
 	}
@@ -1014,8 +985,7 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	}
 
 	@Override
-	public void update(IWorkingLoadingItems items, ItemDelta desc,
-			IWorkspaceNotifier notifie) {
+	public void update(IWorkingLoadingItems items, ItemDelta desc, IWorkspaceNotifier notifie) {
 		// TODO Auto-generated method stub
 
 	}
@@ -1159,8 +1129,7 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	}
 
 	@Override
-	public boolean commitSetAttribute(IAttributeType<?> type, String key,
-			Object value) {
+	public boolean commitSetAttribute(IAttributeType<?> type, String key, Object value) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -1184,19 +1153,7 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	}
 
 	@Override
-	public boolean isHiddenInComputedPages() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public void setFinal(boolean flag) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setHiddenInComputedPages(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
@@ -1237,14 +1194,12 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	}
 
 	@Override
-	public void addLogicalWorkspaceTransactionListener(
-			LogicalWorkspaceTransactionListener listener) {
+	public void addLogicalWorkspaceTransactionListener(LogicalWorkspaceTransactionListener listener) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override
-	public void removeLogicalWorkspaceTransactionListener(
-			LogicalWorkspaceTransactionListener listener) {
+	public void removeLogicalWorkspaceTransactionListener(LogicalWorkspaceTransactionListener listener) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
@@ -1263,6 +1218,30 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	public boolean isAttributeMember() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public boolean isShowInDefaultCP() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isShowInDefaultMP() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setShowInDefaultCP(boolean flag) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void setShowInDefaultMP(boolean flag) {
+		// TODO Auto-generated method stub
+
 	}
 
 }
