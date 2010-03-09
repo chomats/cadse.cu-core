@@ -35,7 +35,6 @@ import fr.imag.adele.cadse.core.impl.CollectedReflectLink;
 import fr.imag.adele.cadse.core.impl.ReflectLink;
 import fr.imag.adele.cadse.core.impl.ui.UIFieldImpl;
 import fr.imag.adele.cadse.core.impl.ui.ic.IC_Descriptor;
-import fr.imag.adele.cadse.core.impl.ui.mc.MC_DefaultForList;
 import fr.imag.adele.cadse.core.impl.ui.mc.MC_Descriptor;
 import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
 import fr.imag.adele.cadse.core.ui.EPosLabel;
@@ -51,16 +50,16 @@ public class ListAttributeType<X> extends AttributeType implements
 		fr.imag.adele.cadse.core.attribute.ListAttributeType<X> {
 
 	/** The Constant SUBTYPE. */
-	private static final String	SUBTYPE	= "subtype";
+	private static final String SUBTYPE = "subtype";
 
 	/** The min. */
-	private int					min;
+	private int min;
 
 	/** The max. */
-	private int					max;
+	private int max;
 
 	/** The subtype. */
-	IAttributeType<X>			subtype;
+	IAttributeType<X> subtype;
 
 	/**
 	 * Instantiates a new list attribute type.
@@ -75,7 +74,7 @@ public class ListAttributeType<X> extends AttributeType implements
 	 *            the subtype
 	 */
 	public ListAttributeType(UUID id, int flag, String name, int min, int max, IAttributeType<X> subtype) {
-		super(id, name, min > 0 ? MUST_BE_INITIALIZED_AT_CREATION_TIME : 0 | flag);
+		super(id, name, min > 0 ? SHOW_IN_DEFAULT_CP : 0 | flag);
 		this.min = min;
 		this.max = max;
 		if (subtype != null) {
@@ -90,7 +89,6 @@ public class ListAttributeType<X> extends AttributeType implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.IAttributeType#getDefaultValue()
 	 */
 	@Override
@@ -100,7 +98,6 @@ public class ListAttributeType<X> extends AttributeType implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.IAttributeType#getMax()
 	 */
 	@Override
@@ -110,7 +107,6 @@ public class ListAttributeType<X> extends AttributeType implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.IAttributeType#getMin()
 	 */
 	@Override
@@ -124,7 +120,6 @@ public class ListAttributeType<X> extends AttributeType implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.IAttributeType#getAttributeType()
 	 */
 	public Class<List<X>> getAttributeType() {
@@ -135,7 +130,6 @@ public class ListAttributeType<X> extends AttributeType implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.IComplexAttributeType#getAttributeType(java.lang.String)
 	 */
 	public IAttributeType<? extends Object> getAttributeType(String id) {
@@ -147,7 +141,6 @@ public class ListAttributeType<X> extends AttributeType implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.IComplexAttributeType#getAttributeTypeIds()
 	 */
 	public String[] getAttributeTypeIds() {
@@ -156,7 +149,6 @@ public class ListAttributeType<X> extends AttributeType implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.INamed#getIntID()
 	 */
 	public int getIntID() {
@@ -183,6 +175,7 @@ public class ListAttributeType<X> extends AttributeType implements
 		return new CheckStatus(UIPlatform.ERROR, "Must be a list of {0}", subtype.getClass().getSimpleName());
 	}
 
+	@Override
 	public ItemType getType() {
 		return CadseGCST.LIST;
 	}
@@ -222,13 +215,13 @@ public class ListAttributeType<X> extends AttributeType implements
 		// TODO Auto-generated method stub
 		return (List) v;
 	}
-	
+
 	@Override
 	public UIField generateDefaultField() {
-		return new UIFieldImpl(CadseGCST.DLIST, UUID.randomUUID(), this, getDisplayName(), EPosLabel.top, 
-				new MC_Descriptor(CadseGCST.MC_LIST_OF_STRING), 
-				new IC_Descriptor(CadseGCST.IC_STRING_LIST_FOR_LIST, CadseGCST.IC_STRING_LIST_FOR_LIST_at_ALLOW_DUPLICATE_, false),
+		return new UIFieldImpl(CadseGCST.DLIST, UUID.randomUUID(), this, getDisplayName(), EPosLabel.top,
+				new MC_Descriptor(CadseGCST.MC_LIST_OF_STRING), new IC_Descriptor(CadseGCST.IC_STRING_LIST_FOR_LIST,
+						CadseGCST.IC_STRING_LIST_FOR_LIST_at_ALLOW_DUPLICATE_, false),
 				CadseGCST.DLIST_at_EDITABLE_BUTTON_, Boolean.TRUE);
-		
+
 	}
 }
