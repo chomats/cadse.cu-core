@@ -38,10 +38,11 @@ import fr.imag.adele.cadse.core.util.Convert;
  * 
  * @author <a href="mailto:stephane.chomat@imag.fr">Stephane Chomat</a>
  */
-public class StringAttributeType extends AttributeType implements fr.imag.adele.cadse.core.attribute.StringAttributeType {
+public class StringAttributeType extends AttributeType implements
+		fr.imag.adele.cadse.core.attribute.StringAttributeType {
 
 	/** The value. */
-	private String	value;
+	private String value;
 
 	/**
 	 * Instantiates a new string attribute type.
@@ -54,7 +55,7 @@ public class StringAttributeType extends AttributeType implements fr.imag.adele.
 	 *            the value
 	 */
 	public StringAttributeType(UUID id, String name, int min, String value) {
-		this(id, min != 0 ? MUST_BE_INITIALIZED_AT_CREATION_TIME : 0, name, value);
+		this(id, min != 0 ? SHOW_IN_DEFAULT_CP : 0, name, value);
 	}
 
 	/**
@@ -76,12 +77,11 @@ public class StringAttributeType extends AttributeType implements fr.imag.adele.
 		super(item);
 	}
 
-    public StringAttributeType() {
-    }
+	public StringAttributeType() {
+	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.IAttributeType#getDefaultValue()
 	 */
 	@Override
@@ -91,7 +91,6 @@ public class StringAttributeType extends AttributeType implements fr.imag.adele.
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.IAttributeType#getAttributeType()
 	 */
 	public Class<String> getAttributeType() {
@@ -100,13 +99,13 @@ public class StringAttributeType extends AttributeType implements fr.imag.adele.
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.INamed#getIntID()
 	 */
 	public int getIntID() {
 		return 0;
 	}
 
+	@Override
 	public ItemType getType() {
 		return CadseGCST.STRING;
 	}
@@ -140,7 +139,7 @@ public class StringAttributeType extends AttributeType implements fr.imag.adele.
 	}
 
 	public void setIsNotEmpty(boolean flag) {
-		setflag(flag, NOT_EMPTY);
+		setFlag(NOT_EMPTY, flag);
 	}
 
 	@Override
@@ -170,6 +169,6 @@ public class StringAttributeType extends AttributeType implements fr.imag.adele.
 
 	@Override
 	public UIField generateDefaultField() {
-		return new UIFieldImpl(CadseGCST.DTEXT, UUID.randomUUID(),this, getDisplayName(), EPosLabel.left, null, null);
+		return new UIFieldImpl(CadseGCST.DTEXT, UUID.randomUUID(), this, getDisplayName(), EPosLabel.left, null, null);
 	}
 }

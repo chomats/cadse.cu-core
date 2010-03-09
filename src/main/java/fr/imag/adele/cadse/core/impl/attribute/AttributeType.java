@@ -22,38 +22,33 @@ import java.util.UUID;
 
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
-import java.util.UUID;
 import fr.imag.adele.cadse.core.Item;
-import fr.imag.adele.cadse.core.ItemState;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.attribute.CheckStatus;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
-import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
 import fr.imag.adele.cadse.core.enumdef.TWCommitKind;
 import fr.imag.adele.cadse.core.enumdef.TWEvol;
 import fr.imag.adele.cadse.core.enumdef.TWUpdateKind;
-import fr.imag.adele.cadse.core.impl.db.DBLogicalWorkspace;
 import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
 import fr.imag.adele.cadse.core.internal.attribute.IInternalTWAttribute;
 import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
 import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.ui.UIPlatform;
 import fr.imag.adele.cadse.core.util.Convert;
-import fr.imag.adele.teamwork.db.ModelVersionDBException;
 
-public abstract class AttributeType extends AbstractGeneratedItem implements IInternalTWAttribute, Comparable<AttributeType> {
+public abstract class AttributeType extends AbstractGeneratedItem implements IInternalTWAttribute,
+		Comparable<AttributeType> {
 
-	private String			_name;
-	String					_cstName;
-	private TWEvol			_evol			= TWEvol.twImmutable;
-	private boolean			_TWRevSpecific	= true;
-	private TWCommitKind	_TWCommitKind	= TWCommitKind.conflict;
-	private TWUpdateKind	_TWUpdateKind	= TWUpdateKind.merge;
+	private String _name;
+	String _cstName;
+	private TWEvol _evol = TWEvol.twImmutable;
+	private boolean _TWRevSpecific = true;
+	private TWCommitKind _TWCommitKind = TWCommitKind.conflict;
+	private TWUpdateKind _TWUpdateKind = TWUpdateKind.merge;
 
-        public AttributeType() {
-        }
-
+	public AttributeType() {
+	}
 
 	public AttributeType(UUID id, String name, int flag) {
 		super(id, flag);
@@ -82,15 +77,14 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 			return (T) Boolean.valueOf(!getFlag(CAN_BE_UNDEFINED));
 		}
 		if (CadseGCST.ATTRIBUTE_at_MUST_BE_INITIALIZED_ == type) {
-			return (T) Boolean.valueOf(getFlag(MUST_BE_INITIALIZED_AT_CREATION_TIME));
+			return (T) Boolean.valueOf(getFlag(SHOW_IN_DEFAULT_CP));
 		}
 		/*
 		 * if (CadseGCST.ATTRIBUTE_at_IS_META_ATTRIBUTE_ == type) { return (T)
 		 * Boolean.valueOf(getFlag(IS_META_ATTRIBUTE)); }
 		 */
 		/*
-		 * if (CadseGCST.ATTRIBUTE_at_OVERWRITABLE_ == type) { return (T)
-		 * Boolean.valueOf(getFlag(OVERWRITABLE)); }
+		 * if (CadseGCST.ATTRIBUTE_at_OVERWRITABLE_ == type) { return (T) Boolean.valueOf(getFlag(OVERWRITABLE)); }
 		 */
 		if (CadseGCST.ITEM_at_NAME_ == type) {
 			return (T) _name;
@@ -99,8 +93,7 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 			return (T) _name;
 		}
 		/*
-		 * if (CadseGCST.ITEM_at_QUALIFIED_DISPLAY_NAME_ == type) { return (T)
-		 * _name; }
+		 * if (CadseGCST.ITEM_at_QUALIFIED_DISPLAY_NAME_ == type) { return (T) _name; }
 		 */
 		if (CadseGCST.ITEM_at_QUALIFIED_NAME_ == type) {
 			return (T) _name;
@@ -125,13 +118,12 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 		}
 
 		if (CadseGCST.ATTRIBUTE_at_MUST_BE_INITIALIZED_ == type) {
-			return setFlag(MUST_BE_INITIALIZED_AT_CREATION_TIME, Convert.toBoolean(value, false));
+			return setFlag(SHOW_IN_DEFAULT_CP, Convert.toBoolean(value, false));
 		}
 		/*
-		 * if (CadseGCST.ATTRIBUTE_at_IS_META_ATTRIBUTE_ == type) { return
-		 * setFlag(IS_META_ATTRIBUTE, Convert.toBoolean(value)); } if
-		 * (CadseGCST.ATTRIBUTE_at_OVERWRITABLE_ == type) { return
-		 * setFlag(OVERWRITABLE, Convert.toBoolean(value, false)); }
+		 * if (CadseGCST.ATTRIBUTE_at_IS_META_ATTRIBUTE_ == type) { return setFlag(IS_META_ATTRIBUTE,
+		 * Convert.toBoolean(value)); } if (CadseGCST.ATTRIBUTE_at_OVERWRITABLE_ == type) { return setFlag(OVERWRITABLE,
+		 * Convert.toBoolean(value, false)); }
 		 */
 		if (CadseGCST.ITEM_at_NAME_ == type) {
 			_name = Convert.toString(value);
@@ -189,7 +181,6 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.IAttributeType#getMax()
 	 */
 	public int getMax() {
@@ -198,20 +189,18 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.IAttributeType#getMin()
 	 */
 	public int getMin() {
-		return getFlag(MUST_BE_INITIALIZED_AT_CREATION_TIME) ? 1 : 0;
+		return getFlag(SHOW_IN_DEFAULT_CP) ? 1 : 0;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.IAttributeType#isMandatory()
 	 */
 	public boolean mustBeInitializedAtCreationTime() {
-		return getFlag(MUST_BE_INITIALIZED_AT_CREATION_TIME);
+		return false;
 	}
 
 	public boolean isNatif() {
@@ -229,27 +218,47 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 	public boolean setIsTransient(boolean v) {
 		return setFlag(TRANSIENT, v);
 	}
-	
+
 	public boolean isFinal() {
 		return getFlag(FINAL);
 	}
 
-	public boolean isHiddenInComputedPages() {
-		return getFlag(HIDDEN_IN_COMPUTED_PAGES);
+	/**
+	 * Please see {@link IAttributeType#isShowInDefaultMP()}, the default implementation.
+	 */
+	public boolean isShowInDefaultMP() {
+		return getFlag(SHOW_IN_DEFAULT_MP);
+	}
+
+	/**
+	 * Please see {@link IAttributeType#setShowInDefaultMP()}, the default implementation.
+	 */
+	public void setShowInDefaultMP(boolean flag) {
+		setFlag(SHOW_IN_DEFAULT_MP, flag);
+
+	}
+
+	/**
+	 * Please see {@link IAttributeType#isShowInDefaultCP()}, the default implementation.
+	 */
+	public boolean isShowInDefaultCP() {
+		return getFlag(SHOW_IN_DEFAULT_CP);
+	}
+
+	/**
+	 * Please see {@link IAttributeType#setShowInDefaultCP()}, the default implementation.
+	 */
+	public void setShowInDefaultCP(boolean flag) {
+		setFlag(SHOW_IN_DEFAULT_CP, flag);
+
 	}
 
 	public void setFinal(boolean flag) {
 		setFlag(FINAL, flag);
 	}
 
-	public void setHiddenInComputedPages(boolean flag) {
-		setFlag(HIDDEN_IN_COMPUTED_PAGES, flag);
-		
-	}
-
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.INamed#getShortName()
 	 */
 	@Override
@@ -287,10 +296,7 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.imag.adele.cadse.core.attribute.IInternalTWAttribute#setEvol(fr.imag
-	 * .adele.cadse.core.enumdef.TWEvol)
+	 * @see fr.imag.adele.cadse.core.attribute.IInternalTWAttribute#setEvol(fr.imag .adele.cadse.core.enumdef.TWEvol)
 	 */
 	public void setEvol(TWEvol evol) {
 		this._evol = evol;
@@ -298,10 +304,7 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.imag.adele.cadse.core.attribute.IInternalTWAttribute#setTWRevSpecific
-	 * (boolean)
+	 * @see fr.imag.adele.cadse.core.attribute.IInternalTWAttribute#setTWRevSpecific (boolean)
 	 */
 	public void setTWRevSpecific(boolean revSpecific) {
 		_TWRevSpecific = revSpecific;
@@ -309,9 +312,7 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.imag.adele.cadse.core.attribute.IInternalTWAttribute#setTWCommitKind
+	 * @see fr.imag.adele.cadse.core.attribute.IInternalTWAttribute#setTWCommitKind
 	 * (fr.imag.adele.cadse.core.enumdef.TWCommitKind)
 	 */
 	public void setTWCommitKind(TWCommitKind commitKind) {
@@ -320,9 +321,7 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.imag.adele.cadse.core.attribute.IInternalTWAttribute#setTWUpdateKind
+	 * @see fr.imag.adele.cadse.core.attribute.IInternalTWAttribute#setTWUpdateKind
 	 * (fr.imag.adele.cadse.core.enumdef.TWUpdateKind)
 	 */
 	public void setTWUpdateKind(TWUpdateKind updateKind) {
@@ -364,28 +363,27 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 	public IAttributeType<?>[] getChildren() {
 		return null;
 	}
-	
+
 	public UIField generateDefaultField() {
 		return null;
 	}
-	
+
 	public TypeDefinition getSource() {
-		if (_parent instanceof TypeDefinition)
+		if (_parent instanceof TypeDefinition) {
 			return (TypeDefinition) _parent;
+		}
 		return null;
 	}
-
 
 	@Override
 	public int compareTo(AttributeType o) {
 		return getName().compareTo(o.getName());
 	}
-	
 
 	public boolean isAttributeHead() {
 		return getFlag(ATTRIBUTE_HEAD);
 	}
-	
+
 	public boolean isAttributeMember() {
 		return getSource() != null && getSource().isMainType() && ((ItemType) getSource()).getType().isGroupType();
 	}
