@@ -192,7 +192,7 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 	 * @see fr.imag.adele.cadse.core.IAttributeType#getMin()
 	 */
 	public int getMin() {
-		return getFlag(SHOW_IN_DEFAULT_CP) ? 1 : 0;
+		return 0;
 	}
 
 	/*
