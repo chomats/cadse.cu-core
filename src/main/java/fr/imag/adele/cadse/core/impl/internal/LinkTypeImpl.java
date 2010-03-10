@@ -1043,7 +1043,8 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 	@Override
 	public Link convertTo(Object v) {
-		// TODO Auto-generated method stub
+		if (v instanceof Link)
+			return (Link) v;
 		return null;
 	}
 
