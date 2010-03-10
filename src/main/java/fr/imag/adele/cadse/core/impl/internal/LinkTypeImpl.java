@@ -135,7 +135,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	 */
 	LinkTypeImpl(UUID id, int kind, TypeDefinition source, String name, int intID, int min, int max, String selection,
 			TypeDefinition destination) {
-		super(id, name, min != 0 ? SHOW_IN_DEFAULT_CP : 0);
+		super(id, name, 0);
 
 		if (CadseCore.theLinkType == null) {
 			this._linkType = this;
@@ -179,7 +179,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	 */
 	LinkTypeImpl(UUID id, int kind, TypeDefinition source, String name, int min, int max, String selection,
 			TypeDefinition destination) {
-		super(id, name, min != 0 ? SHOW_IN_DEFAULT_CP : 0);
+		super(id, name, 0);
 
 		this._linkType = CadseCore.theLinkType;
 		this._kind = kind;
