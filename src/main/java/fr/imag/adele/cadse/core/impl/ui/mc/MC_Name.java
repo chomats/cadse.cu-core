@@ -114,7 +114,7 @@ public class MC_Name extends MC_AttributesItem {
 			return false;
 		}
 
-		if (shortId.length() == 0) { // && item.getType().getSpaceKeyType()
+		if (shortId == null || shortId.length() == 0) { // && item.getType().getSpaceKeyType()
 			_uiPlatform.setMessageError(Messages.mc_name_must_be_specified);
 			return true;
 		}
