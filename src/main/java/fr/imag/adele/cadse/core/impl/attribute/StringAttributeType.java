@@ -164,7 +164,7 @@ public class StringAttributeType extends AttributeType implements
 		if (v instanceof String) {
 			return (String) v;
 		}
-		return null;
+		return v == null ? null : v.toString();
 	}
 
 	@Override
