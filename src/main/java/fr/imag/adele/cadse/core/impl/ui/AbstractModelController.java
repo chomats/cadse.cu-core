@@ -92,14 +92,6 @@ public class AbstractModelController extends AbstractUIRunningValidator implemen
 	 * @see fr.imag.adele.cadse.core.ui.IModelController#defaultValue()
 	 */
 	public Object defaultValue() {
-		/*UIField uiLocal = getUIField();
-		if (uiLocal == null) {
-			return null;
-		}
-		IAttributeType<?> attrDef = uiLocal.getAttributeDefinition();
-		if (attrDef != null) {
-			return attrDef.getDefaultValue();
-		}*/
 		return null;
 	}
 
