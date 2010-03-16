@@ -1989,7 +1989,7 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#getExporters()
+	 * @see fr.imag.adele.cadse.core.content.ContentItem#getExporters()
 	 */
 	public Exporter[] getExporters() {
 		if (_exporters == null) {
@@ -2001,7 +2001,7 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#getExporter(java.lang.String)
+	 * @see fr.imag.adele.cadse.core.content.ContentItem#getExporter(java.lang.String)
 	 */
 	public Exporter[] getExporter(String exporterType) {
 		Exporter[] ex = getExporters();
@@ -2018,7 +2018,7 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * fr.imag.adele.cadse.core.ContentItem#setExporters(fr.imag.adele.cadse
+	 * fr.imag.adele.cadse.core.content.ContentItem#setExporters(fr.imag.adele.cadse
 	 * .core.build.Exporter)
 	 */
 	public void setExporters(Exporter... exporters) {
@@ -2032,7 +2032,7 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#getComposers()
+	 * @see fr.imag.adele.cadse.core.content.ContentItem#getComposers()
 	 */
 	public Composer[] getComposers() {
 		if (_composers == null) {
@@ -2045,7 +2045,7 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * fr.imag.adele.cadse.core.ContentItem#setComposers(fr.imag.adele.cadse
+	 * fr.imag.adele.cadse.core.content.ContentItem#setComposers(fr.imag.adele.cadse
 	 * .core.build.Composer)
 	 */
 	public void setComposers(Composer... composers) {
@@ -2060,7 +2060,7 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * fr.imag.adele.cadse.core.ContentItem#clean(fr.imag.adele.cadse.core.build
+	 * fr.imag.adele.cadse.core.content.ContentItem#clean(fr.imag.adele.cadse.core.build
 	 * .IBuildingContext, boolean)
 	 */
 	public void clean(IBuildingContext context, boolean componentsContent) {
@@ -2075,7 +2075,7 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * fr.imag.adele.cadse.core.ContentItem#build(fr.imag.adele.cadse.core.build
+	 * fr.imag.adele.cadse.core.content.ContentItem#build(fr.imag.adele.cadse.core.build
 	 * .IBuildingContext)
 	 */
 	public void build(IBuildingContext context) {
@@ -2085,7 +2085,7 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * fr.imag.adele.cadse.core.ContentItem#compose(fr.imag.adele.cadse.core
+	 * fr.imag.adele.cadse.core.content.ContentItem#compose(fr.imag.adele.cadse.core
 	 * .build.IBuildingContext)
 	 */
 	public void compose(IBuildingContext context) {
