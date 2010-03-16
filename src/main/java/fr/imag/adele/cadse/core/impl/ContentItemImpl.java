@@ -113,7 +113,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 //	/*
 //	 * (non-Javadoc)
 //	 * 
-//	 * @see fr.imag.adele.cadse.core.ContentItem#getItem()
+//	 * @see fr.imag.adele.cadse.core.content.ContentItem#getItem()
 //	 */
 //	@Deprecated
 //	final public Item getItem() {
@@ -127,7 +127,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#init()
+	 * @see fr.imag.adele.cadse.core.content.ContentItem#init()
 	 */
 	public void init() throws CadseException {
 	}
@@ -135,7 +135,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#dispose()
+	 * @see fr.imag.adele.cadse.core.content.ContentItem#dispose()
 	 */
 	public void dispose() {
 	}
@@ -143,7 +143,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#clean(fr.imag.adele.cadse.core.build.IBuildingContext,
+	 * @see fr.imag.adele.cadse.core.content.ContentItem#clean(fr.imag.adele.cadse.core.build.IBuildingContext,
 	 *      boolean)
 	 */
 	public void clean(IBuildingContext context, boolean componentsContent) {
@@ -157,7 +157,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#build(fr.imag.adele.cadse.core.build.IBuildingContext)
+	 * @see fr.imag.adele.cadse.core.content.ContentItem#build(fr.imag.adele.cadse.core.build.IBuildingContext)
 	 */
 	public void build(IBuildingContext context) {
 	}
@@ -165,7 +165,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#compose(fr.imag.adele.cadse.core.build.IBuildingContext)
+	 * @see fr.imag.adele.cadse.core.content.ContentItem#compose(fr.imag.adele.cadse.core.build.IBuildingContext)
 	 */
 	public void compose(IBuildingContext context) {
 		for (Composer composer : getComposers()) {
@@ -185,7 +185,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#getResources()
+	 * @see fr.imag.adele.cadse.core.content.ContentItem#getResources()
 	 */
 	@Deprecated
 	public Object[] getResources() {
@@ -195,7 +195,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#getMainMappingContent(java.lang.Class,
+	 * @see fr.imag.adele.cadse.core.content.ContentItem#getMainMappingContent(java.lang.Class,
 	 *      java.lang.Object)
 	 */
 	public <T> T getMainMappingContent(Class<T> clazz) {
@@ -206,7 +206,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#getResources(java.lang.String)
+	 * @see fr.imag.adele.cadse.core.content.ContentItem#getResources(java.lang.String)
 	 */
 	@Deprecated
 	public abstract Object[] getResources(String kind);
@@ -214,7 +214,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#setResources(java.lang.String,
+	 * @see fr.imag.adele.cadse.core.content.ContentItem#setResources(java.lang.String,
 	 *      java.lang.Object[])
 	 */
 	public abstract void setResources(String kind, Object[] resource) throws CadseException;
@@ -222,28 +222,28 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#getMainResource()
+	 * @see fr.imag.adele.cadse.core.content.ContentItem#getMainResource()
 	 */
 	public abstract Object getMainResource();
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#getKindsResource()
+	 * @see fr.imag.adele.cadse.core.content.ContentItem#getKindsResource()
 	 */
 	public abstract String[] getKindsResource();
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#create()
+	 * @see fr.imag.adele.cadse.core.content.ContentItem#create()
 	 */
 	public abstract void create() throws CadseException;
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#delete()
+	 * @see fr.imag.adele.cadse.core.content.ContentItem#delete()
 	 */
 	public abstract void delete() throws CadseException;
 
@@ -252,7 +252,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#getParentPartContentManager(boolean)
+	 * @see fr.imag.adele.cadse.core.content.ContentItem#getParentPartContentManager(boolean)
 	 */
 	public ContentItem getParentPartContentManager(boolean includeContainers) {
 		if (this._parent != null) {
@@ -288,7 +288,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#migrateContentManager(fr.imag.adele.cadse.core.delta.ItemDelta,
+	 * @see fr.imag.adele.cadse.core.content.ContentItem#migrateContentManager(fr.imag.adele.cadse.core.delta.ItemDelta,
 	 *      fr.imag.adele.cadse.core.var.ContextVariable,
 	 *      fr.imag.adele.cadse.core.var.ContextVariable)
 	 */
@@ -298,7 +298,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#commitChangeParentContent(fr.imag.adele.cadse.core.ContentItem)
+	 * @see fr.imag.adele.cadse.core.content.ContentItem#commitChangeParentContent(fr.imag.adele.cadse.core.content.ContentItem)
 	 */
 	public void setParentContent(ContentItem newParentContentManager) {
 		setParent( newParentContentManager , null);
@@ -341,7 +341,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#getParentContentManager()
+	 * @see fr.imag.adele.cadse.core.content.ContentItem#getParentContentManager()
 	 */
 	@Deprecated
 	public ContentItem getParentContentManager() {
@@ -355,7 +355,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#getParentPartContentManager()
+	 * @see fr.imag.adele.cadse.core.content.ContentItem#getParentPartContentManager()
 	 */
 	@Deprecated
 	public ContentItem getParentPartContentManager() {
@@ -365,7 +365,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#getChildrenContentManager()
+	 * @see fr.imag.adele.cadse.core.content.ContentItem#getChildrenContentManager()
 	 */
 	public ContentItem[] getChildrenContentManager() {
 		return NO_CHILDREN;
@@ -374,7 +374,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#getChildrenPropreContentManager()
+	 * @see fr.imag.adele.cadse.core.content.ContentItem#getChildrenPropreContentManager()
 	 */
 	public ContentItem[] getChildrenPropreContentManager() {
 		return NO_CHILDREN;
@@ -383,7 +383,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#generate(fr.imag.adele.cadse.core.GenStringBuilder,
+	 * @see fr.imag.adele.cadse.core.content.ContentItem#generate(fr.imag.adele.cadse.core.GenStringBuilder,
 	 *      java.lang.String, java.lang.String, java.util.Set,
 	 *      fr.imag.adele.cadse.core.GenContext)
 	 */
@@ -417,7 +417,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#generateParts(fr.imag.adele.cadse.core.GenStringBuilder,
+	 * @see fr.imag.adele.cadse.core.content.ContentItem#generateParts(fr.imag.adele.cadse.core.GenStringBuilder,
 	 *      java.lang.String, java.lang.String, java.util.Set,
 	 *      fr.imag.adele.cadse.core.GenContext)
 	 */
@@ -456,7 +456,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#generatePart(java.lang.String,
+	 * @see fr.imag.adele.cadse.core.content.ContentItem#generatePart(java.lang.String,
 	 *      fr.imag.adele.cadse.core.GenStringBuilder, java.lang.String,
 	 *      java.lang.String, java.util.Set,
 	 *      fr.imag.adele.cadse.core.GenContext)
@@ -477,7 +477,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#generateParts(java.lang.String,
+	 * @see fr.imag.adele.cadse.core.content.ContentItem#generateParts(java.lang.String,
 	 *      fr.imag.adele.cadse.core.GenStringBuilder, java.lang.String,
 	 *      java.lang.String, java.util.Set,
 	 *      fr.imag.adele.cadse.core.GenContext)
@@ -498,7 +498,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#getResourceName()
+	 * @see fr.imag.adele.cadse.core.content.ContentItem#getResourceName()
 	 */
 	@Deprecated
 	public String getResourceName() {
@@ -508,7 +508,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see fr.imag.adele.cadse.core.ContentItem#setResourceName(java.lang.String)
+	 * @see fr.imag.adele.cadse.core.content.ContentItem#setResourceName(java.lang.String)
 	 */
 	@Deprecated
 	public void setResourceName(String resourceName) {
