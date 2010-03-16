@@ -48,6 +48,7 @@ import fr.imag.adele.cadse.core.util.ElementsOrder;
 import fr.imag.adele.cadse.core.util.IErrorCollector;
 import fr.imag.adele.cadse.util.ArraysUtil;
 import fr.imag.adele.cadse.util.Assert;
+import fr.imag.adele.cadse.util.NLS;
 import fr.imag.adele.teamwork.db.ModelVersionDBException;
 import fr.imag.adele.teamwork.db.ModelVersionDBService2;
 
@@ -500,10 +501,17 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems,
 				if (contentDelta != null)
 					idContent = contentDelta.getId();
 
-				contentItem = (ContentItem) itemsLoaded.get(contentDelta);
-				if (contentItem == null)
-					contentItem = createContentItem(goodItem.getType(),
+				final Item loadedContentItem = itemsLoaded.get(contentDelta);
+				if (loadedContentItem instanceof ContentItem)
+					contentItem = (ContentItem) loadedContentItem;
+				else {
+					 if (loadedContentItem != null) {
+						 addError(loadedOperation,
+									NLS.bind("Cannot cast item of class {0} to ContentItem.", loadedContentItem.getClass()));
+					 }
+					 contentItem = createContentItem(goodItem.getType(),
 							goodItem, idContent, contentDelta);
+				}
 				if (contentItem == null)
 					contentItem = ContentItem.NO_CONTENT;
 				setContent(notifie, goodItem, contentItem);
