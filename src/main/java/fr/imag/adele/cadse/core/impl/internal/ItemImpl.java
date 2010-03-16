@@ -1128,7 +1128,7 @@ public class ItemImpl extends AbstractItem implements Item {
 	public Link getOutgoingLink(LinkType lt, UUID destId) {
 		List<Link> links = getOutgoingLinks(lt);
 		for (Link l : links) {
-			if (l.getLinkType() == lt && l.getDestinationId().equals(destId)) {
+			if (l.getLinkType() == lt && destId.equals(l.getDestinationId())) {
 				return l;
 			}
 		}
