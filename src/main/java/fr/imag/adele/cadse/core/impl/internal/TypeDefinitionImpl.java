@@ -42,6 +42,7 @@ import fr.imag.adele.cadse.core.ui.UIValidator;
 import fr.imag.adele.cadse.core.ui.view.FilterContext;
 import fr.imag.adele.cadse.core.ui.view.NewContext;
 import fr.imag.adele.cadse.util.ArraysUtil;
+import fr.imag.adele.cadse.util.OrderWay;
 
 public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, TypeDefinition.Internal {
 
@@ -1157,6 +1158,14 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 
 	public String getPackageName() {
 		return _packageName;
+	}
+	
+	@Override
+	public boolean commitMove(OrderWay kind, Link l1, Link l2) {
+		if (l1.getLinkType() == CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES && l2.getLinkType() == CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES) {
+			return ArraysUtil.move(kind,  _attributesDefinitions, l1.getDestination(), l2.getDestination());
+		}
+		return super.commitMove(kind, l1, l2);
 	}
 
 }

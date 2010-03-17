@@ -213,4 +213,19 @@ public class LinkModelController extends MC_AttributesItem implements RunningMod
 		}
 		return super.defaultValue();
 	}
+	
+	public Object visualToModel(Object ret) {
+//		IAttributeType<?> attRef = getUIField().getAttributeDefinition();
+//		if (attRef.getType() == CadseGCST.LINK_TYPE) {
+//			LinkType lt = (LinkType)attRef;
+//			if (lt.getMax() == 1) {
+//				if (ret instanceof Link)
+//					return ret;
+//				return null;
+//			} else {
+//				if (re)
+//			}
+//		}
+		return ret;
+	}
 }
