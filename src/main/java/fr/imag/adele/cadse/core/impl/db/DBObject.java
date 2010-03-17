@@ -101,11 +101,16 @@ public class DBObject extends AdaptableObjectImpl implements INamedUUID, INamed 
 	public void setUUID(UUID uuid) {
 		if (uuid == null) return;
 		_uuid = uuid;
-		try {
-			_objectId = _dblw.getDB().getOrCreateLocalIdentifier(uuid);
-		} catch (ModelVersionDBException ex) {
-			Logger.getLogger(DBObject.class.getName()).log(Level.SEVERE,
-					"Cannot create UUID id db", ex);
+		if (_dblw != null && _dblw.getDB() == null) {
+				
+			try {
+				_objectId = _dblw.getDB().getOrCreateLocalIdentifier(uuid);
+			} catch (ModelVersionDBException ex) {
+				Logger.getLogger(DBObject.class.getName()).log(Level.SEVERE,
+						"Cannot create UUID id db", ex);
+			}
+		} else {
+			System.out.println("Db not started !!!");
 		}
 	}
 }
