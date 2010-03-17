@@ -2089,7 +2089,7 @@ public class ItemImpl extends AbstractItem implements Item {
 	 * @param linkAfterToMove
 	 *            the link after to move
 	 */
-	private boolean moveAfter(Link linkToMove, Link linkAfterToMove) {
+	protected boolean moveAfter(Link linkToMove, Link linkAfterToMove) {
 		int indexLinkToMove = m_outgoings.indexOf(linkToMove);
 		if (indexLinkToMove == -1) {
 			throw new IllegalArgumentException("Bad link: " + linkToMove); //$NON-NLS-1$
@@ -2117,7 +2117,7 @@ public class ItemImpl extends AbstractItem implements Item {
 	 * @param linkBeforeToMove
 	 *            the link before to move
 	 */
-	private boolean moveBefore(Link linkToMove, Link linkBeforeToMove) {
+	protected boolean moveBefore(Link linkToMove, Link linkBeforeToMove) {
 		int indexLinkToMove = m_outgoings.indexOf(linkToMove);
 		if (indexLinkToMove == -1) {
 			throw new IllegalArgumentException("Bad link: " + linkToMove); //$NON-NLS-1$
