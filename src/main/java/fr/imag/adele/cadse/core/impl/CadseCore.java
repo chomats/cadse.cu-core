@@ -44,6 +44,7 @@ import fr.imag.adele.cadse.core.impl.internal.CadseDomainImpl;
 import fr.imag.adele.cadse.core.oper.WSOperation;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
 import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
+import fr.imag.adele.cadse.util.ArraysUtil;
 
 /**
  * The Class CadseCore.
@@ -400,16 +401,32 @@ public class CadseCore {
 		return _oldname;
 	}
 
+	
 	public static IAttributeType<?> findAttributeFrom(ItemType it,
 			String attName) {
 		while (it != null) {
-			IAttributeType<?> ret = _oldname.get(it.getId()+"::"+attName);
+			IAttributeType<?> ret = null;
+			
+			ret = _oldname.get(it.getId()+"::"+attName);
 			if (ret != null) {
 				return ret;
 			}
 			ret = _oldname.get(it.getName()+"::"+attName);
 			if (ret != null) {
 				return ret;
+			}
+			ret = _oldname.get(attName);
+			if (ret != null) {
+				return ret;
+			}
+			if (_oldNameREs != null) {
+				for (OldNameRE onr : _oldNameREs) {
+					if ((onr._typeRe == null || Pattern.matches(onr._typeRe, it.getName())) &&
+							(onr._attRe == null || Pattern.matches(onr._attRe, attName))) {
+						return onr._att;
+					}
+							
+				}
 			}
 			it = it.getSuperType();
 		}
@@ -453,6 +470,23 @@ public class CadseCore {
 		if (_ignoreCompiled == null)
 			_ignoreCompiled = Pattern.compile(_ignore);
 		return _ignoreCompiled.matcher(type.toString()).matches();		
+	}
+	
+	static OldNameRE[] _oldNameREs = null;
+
+	static class OldNameRE {
+		String _typeRe;
+		String _attRe;
+		IAttributeType<?> _att;
+	}
+	public static void addOldNameRE(String typeRe, String attRe,
+			IAttributeType<?> att) {
+		
+		OldNameRE  oldNameRE = new OldNameRE();
+		oldNameRE._typeRe =typeRe;
+		oldNameRE._attRe = attRe;
+		oldNameRE._att = att;
+		_oldNameREs = ArraysUtil.add(OldNameRE.class, _oldNameREs, oldNameRE);
 	}
 	
 	
