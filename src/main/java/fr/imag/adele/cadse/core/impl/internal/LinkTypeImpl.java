@@ -901,7 +901,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	 * @see fr.imag.adele.cadse.core.Link#getDestinationType()
 	 */
 	public ItemType getDestinationType() {
-		return _destination.getType();
+		return _destination == null ? null : _destination.getType();
 	}
 
 	/*
@@ -1033,14 +1033,15 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 		if (getMax() != 1) {
 			return new UIFieldImpl(CadseGCST.DLIST, UUID.randomUUID(), this, getDisplayName(), EPosLabel.defaultpos,
 					new MC_Descriptor(CadseGCST.MC_LINK), new IC_Descriptor(CadseGCST.IC_LINK_FOR_BROWSER_COMBO_LIST,
-							CadseGCST.IC_WITH_TITLE_FOR_DIALOG_at_SELECT_TITLE_, "Select a value."),
+							CadseGCST.IC_WITH_TITLE_FOR_DIALOG_at_SELECT_TITLE_, "Select a destination."),
 					CadseGCST.DLIST_at_EDITABLE_BUTTON_, Boolean.TRUE);
 		}
 		return new UIFieldImpl(CadseGCST.DBROWSER, UUID.randomUUID(), this, getDisplayName(), EPosLabel.defaultpos,
 				new MC_Descriptor(CadseGCST.MC_LINK), new IC_Descriptor(CadseGCST.IC_LINK_FOR_BROWSER_COMBO_LIST,
-						CadseGCST.IC_WITH_TITLE_FOR_DIALOG_at_SELECT_TITLE_, "Select a value."));
+						CadseGCST.IC_WITH_TITLE_FOR_DIALOG_at_SELECT_TITLE_, "Select a destination."));
 	}
 
+	
 	@Override
 	public Link convertTo(Object v) {
 		if (v instanceof Link)
