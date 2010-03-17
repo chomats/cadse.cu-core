@@ -124,7 +124,8 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	protected String _defaultInstanceName;
 
 	private IItemFactory _itemFactory;
-
+	
+	private IAttributeType<?>[] _delegated = null;
 	/**
 	 * implementation of extension ...
 	 */
@@ -474,100 +475,100 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 
 	/* PRIVATE METHODS */
 
-	/**
-	 * Test preconditions before creating a link type.<br/>
-	 * <br/>
-	 * 
-	 * Preconditions: <br/>
-	 * - 1. <tt>name</tt> cannot be null.<br/>
-	 * - 2. <tt>name</tt> cannot be empty. - 3. <tt>destination</tt> cannot be
-	 * null.<br/>
-	 * - 4. <tt>name</tt> muqt be unique.<br/>
-	 * - 5. <tt>destination</tt> cannot be type workspace.<br/>
-	 * - 6. <tt>min</tt> must greater or equal 0; <tt>max</tt> either equal -1
-	 * (means the instance's number of this link type is undefined), or either
-	 * greater than <tt>min</tt>.
-	 * 
-	 * @param name
-	 *            : name of link type to create.
-	 * @param kind
-	 *            : kind of link type, can be a Aggregation, or a Contaiment, or
-	 *            Other.
-	 * @param min
-	 *            : the minimum instances of this link type that we want create.
-	 * @param max
-	 *            : the maximum instances of this link type that we want create.
-	 * @param destination
-	 *            : link type's destination.<br/>
-	 * <br/>
-	 * 
-	 * @OCL: pre: name <> null pre: id <> '' pre: destination <> null pre:
-	 *       self.to->forAll(rt | rt.name <> id) -- id must be unique. pre: not
-	 *       destination.oclIsTypeOf(WorkspaceType) -- destination cannot be a
-	 *       Workspace Type. pre: ((max>=min)||(max==-1))&&(min>=0))
-	 * @exception IllegalArgumentException
-	 *                : Invalid assignment, <tt>name</tt> can not be null.<br/>
-	 *                IllegalArgumentException: Invalid assignment,
-	 *                <tt>name</tt> can not be empty.<br/>
-	 *                IllegalArgumentException: Invalid assignment, item type
-	 *                <tt>$name</tt> can not be null.<br/>
-	 *                IllegalArgumentException: Invalid assignment, this link
-	 *                type <tt>destination</tt> already exist.<br/>
-	 *                IllegalArgumentException: Invalid assignment, you can not
-	 *                create a link type whose destination is an object of
-	 *                WorkspaceType.<br/>
-	 *                IllegalArgumentException: Invalid assignment, verify the
-	 *                values min and max.<br/>
-	 */
-	private void preconditions_createLinkType(String name, int kind, int min,
-			int max, ItemType destination) {
-
-		// 1. pre: name <> null
-		if (name == null) {
-			throw new CadseIllegalArgumentException(
-					Messages.error_linktype_id_is_null);
-		}
-
-		// 2. pre: id <> ''
-		if (name.length() == 0) {
-			throw new CadseIllegalArgumentException(
-					Messages.error_linktype_id_is_empty);
-		}
-
-		// 3. pre: destination <> null
-		if (destination == null) {
-			throw new CadseIllegalArgumentException(
-					Messages.error_item_type_can_not_be_null);
-		}
-
-		// 4. pre: self.to->forAll(rt | rt.name <> id)
-		for (Iterator outgoers = getOutgoingLinkTypes().iterator(); outgoers
-				.hasNext();) {
-			LinkType lt = (LinkType) outgoers.next();
-			if (lt.getName().equals(name)) {
-				throw new CadseIllegalArgumentException(
-						Messages.error_linktype_id_already_exits, name, getId());
-			}
-		}
-
-		// 6. pre: ((max>=min)||(max==-1))&&(min>=0))
-		if (!(((max >= min) || (max == -1)) && (min >= 0))) {
-			throw new CadseIllegalArgumentException(
-					Messages.error_linktype_min_max);
-		}
-
-		// in Item not in ItemType
-		// // 7. one relation of containment by destination.
-		// if ((kind & LinkType.CONTAINMENT) != 0) {
-		// if ( destination.isContainmentType())
-		// exception("Cannot create a containment link form {0} to {1}, the
-		// destination has allready a link of type
-		// containement.",getId(),destination.getId());
-		// if ( max != 1 && min != 1)
-		// exception("Cannot create a containment link form {0} to {1}, the
-		// cardinality must be 1:1.",getId(),destination.getId());
-		// }
-	}
+//	/**
+//	 * Test preconditions before creating a link type.<br/>
+//	 * <br/>
+//	 * 
+//	 * Preconditions: <br/>
+//	 * - 1. <tt>name</tt> cannot be null.<br/>
+//	 * - 2. <tt>name</tt> cannot be empty. - 3. <tt>destination</tt> cannot be
+//	 * null.<br/>
+//	 * - 4. <tt>name</tt> muqt be unique.<br/>
+//	 * - 5. <tt>destination</tt> cannot be type workspace.<br/>
+//	 * - 6. <tt>min</tt> must greater or equal 0; <tt>max</tt> either equal -1
+//	 * (means the instance's number of this link type is undefined), or either
+//	 * greater than <tt>min</tt>.
+//	 * 
+//	 * @param name
+//	 *            : name of link type to create.
+//	 * @param kind
+//	 *            : kind of link type, can be a Aggregation, or a Contaiment, or
+//	 *            Other.
+//	 * @param min
+//	 *            : the minimum instances of this link type that we want create.
+//	 * @param max
+//	 *            : the maximum instances of this link type that we want create.
+//	 * @param destination
+//	 *            : link type's destination.<br/>
+//	 * <br/>
+//	 * 
+//	 * @OCL: pre: name <> null pre: id <> '' pre: destination <> null pre:
+//	 *       self.to->forAll(rt | rt.name <> id) -- id must be unique. pre: not
+//	 *       destination.oclIsTypeOf(WorkspaceType) -- destination cannot be a
+//	 *       Workspace Type. pre: ((max>=min)||(max==-1))&&(min>=0))
+//	 * @exception IllegalArgumentException
+//	 *                : Invalid assignment, <tt>name</tt> can not be null.<br/>
+//	 *                IllegalArgumentException: Invalid assignment,
+//	 *                <tt>name</tt> can not be empty.<br/>
+//	 *                IllegalArgumentException: Invalid assignment, item type
+//	 *                <tt>$name</tt> can not be null.<br/>
+//	 *                IllegalArgumentException: Invalid assignment, this link
+//	 *                type <tt>destination</tt> already exist.<br/>
+//	 *                IllegalArgumentException: Invalid assignment, you can not
+//	 *                create a link type whose destination is an object of
+//	 *                WorkspaceType.<br/>
+//	 *                IllegalArgumentException: Invalid assignment, verify the
+//	 *                values min and max.<br/>
+//	 */
+//	private void preconditions_createLinkType(String name, int kind, int min,
+//			int max, ItemType destination) {
+//
+//		// 1. pre: name <> null
+//		if (name == null) {
+//			throw new CadseIllegalArgumentException(
+//					Messages.error_linktype_id_is_null);
+//		}
+//
+//		// 2. pre: id <> ''
+//		if (name.length() == 0) {
+//			throw new CadseIllegalArgumentException(
+//					Messages.error_linktype_id_is_empty);
+//		}
+//
+//		// 3. pre: destination <> null
+//		if (destination == null) {
+//			throw new CadseIllegalArgumentException(
+//					Messages.error_item_type_can_not_be_null);
+//		}
+//
+//		// 4. pre: self.to->forAll(rt | rt.name <> id)
+//		for (Iterator outgoers = getOutgoingLinkTypes().iterator(); outgoers
+//				.hasNext();) {
+//			LinkType lt = (LinkType) outgoers.next();
+//			if (lt.getName().equals(name)) {
+//				throw new CadseIllegalArgumentException(
+//						Messages.error_linktype_id_already_exits, name, getId());
+//			}
+//		}
+//
+//		// 6. pre: ((max>=min)||(max==-1))&&(min>=0))
+//		if (!(((max >= min) || (max == -1)) && (min >= 0))) {
+//			throw new CadseIllegalArgumentException(
+//					Messages.error_linktype_min_max);
+//		}
+//
+//		// in Item not in ItemType
+//		// // 7. one relation of containment by destination.
+//		// if ((kind & LinkType.CONTAINMENT) != 0) {
+//		// if ( destination.isContainmentType())
+//		// exception("Cannot create a containment link form {0} to {1}, the
+//		// destination has allready a link of type
+//		// containement.",getId(),destination.getId());
+//		// if ( max != 1 && min != 1)
+//		// exception("Cannot create a containment link form {0} to {1}, the
+//		// cardinality must be 1:1.",getId(),destination.getId());
+//		// }
+//	}
 
 	// /**
 	// * Cette methode est appeler uniquement par createLinkType.
@@ -1404,7 +1405,6 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	}
 	
 	
-	
 	public void getLocalAllAttributeTypes(List<IAttributeType<?>> all) {
 		if (getType() == null) {
 			throw new UnsupportedOperationException("type is undefined");
@@ -1466,7 +1466,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 		return ret;
 	}
 	
-	IAttributeType<?>[] _delegated = null;
+	
 	
 	@Override
 	public boolean isDelegatedAttribute(IAttributeType<?> attr) {
@@ -1490,6 +1490,8 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 			return false;
 		if (attr.getSource() == CadseGCST.ITEM_TYPE)
 			return false;
+		//FIXME attr.isAttributeHead() ???
+		
 		return isGroupHead();
 	}
 	
