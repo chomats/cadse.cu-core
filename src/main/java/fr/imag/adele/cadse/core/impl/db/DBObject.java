@@ -30,7 +30,7 @@ public class DBObject extends AdaptableObjectImpl implements INamedUUID, INamed 
 		if (_objectId == -1)
 			return null;
 		try {
-			return _dblw.getDB().getUniqueIdentifier(_objectId);
+			return (_dblw == null || _dblw.getDB() == null) ? _uuid : _dblw.getDB().getUniqueIdentifier(_objectId);
 		} catch (ModelVersionDBException e) {
 			throw new CadseIllegalArgumentException(
 					"Cannot get identifier from {0}.", e, _objectId);
