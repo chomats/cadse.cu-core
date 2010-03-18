@@ -1147,20 +1147,21 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	@Override
 	public void collectOutgoingLinks(LinkType linkType,
 			CollectedReflectLink ret) {
-		if (linkType == CadseGCST.ITEM_TYPE_lt_SUPER_TYPE) {
+		if (linkType == null || linkType == CadseGCST.ITEM_TYPE_lt_SUPER_TYPE) {
 			ret.addOutgoing(CadseGCST.ITEM_TYPE_lt_SUPER_TYPE, getSuperType());
-			return;
+			if (linkType != null) return;
 		}
 		
-		if (linkType == CadseGCST.ITEM_TYPE_lt_SUB_TYPES) {
+		if (linkType == null || linkType == CadseGCST.ITEM_TYPE_lt_SUB_TYPES) {
 			ret.addOutgoing(CadseGCST.ITEM_TYPE_lt_SUB_TYPES, Item.IS_HIDDEN,
 					this._subTypes);
-			return;
+			if (linkType != null) return;
 		}
 		
-		if (linkType == CadseGCST.GROUP_EXT_ITEM_lt_MEMBER_OF) {
+		if (linkType == null || linkType == CadseGCST.GROUP_EXT_ITEM_lt_MEMBER_OF) {
 			ret.addOutgoing(CadseGCST.GROUP_EXT_ITEM_lt_MEMBER_OF,
 					 _group, Item.IS_HIDDEN);
+			if (linkType != null) return;
 		}
 		super.collectOutgoingLinks(linkType, ret);
 	}

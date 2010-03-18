@@ -251,14 +251,17 @@ public class UIFieldImpl extends Item_Descriptor implements
 	@Override
 	public void collectOutgoingLinks(LinkType linkType,
 			CollectedReflectLink ret) {
-		if (linkType == CadseGCST.FIELD_lt_IC) {
+		if (linkType == null || linkType == CadseGCST.FIELD_lt_IC) {
 			ret.addOutgoing(CadseGCST.FIELD_lt_IC, _ic);
+			if (linkType != null) return;
 		}
-		if (linkType == CadseGCST.FIELD_lt_MC && _mc != null) {
+		if (linkType == null || linkType == CadseGCST.FIELD_lt_MC && _mc != null) {
 			ret.addOutgoing(CadseGCST.FIELD_lt_MC, _mc);
+			if (linkType != null) return;
 		}
-		if (linkType == CadseGCST.FIELD_lt_ATTRIBUTE) {
+		if (linkType == null || linkType == CadseGCST.FIELD_lt_ATTRIBUTE) {
 			ret.addOutgoing(CadseGCST.FIELD_lt_ATTRIBUTE, _attributeRef);
+			if (linkType != null) return;
 		}
 		super.collectOutgoingLinks(linkType, ret);
 	}

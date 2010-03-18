@@ -28,7 +28,7 @@ import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
 import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
 import fr.imag.adele.cadse.core.ui.UIField;
 
-public class MC_DestLink extends LinkModelController {
+public class MC_DestLink extends MC_Link {
 
 	public MC_DestLink(boolean mandatory, String msg) {
 		super(mandatory, msg);

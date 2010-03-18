@@ -594,13 +594,15 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 	@Override
 	public void collectOutgoingLinks(LinkType linkType,
 			CollectedReflectLink ret) {
-		if (linkType == CadseGCST.CONTENT_ITEM_lt_OWNER_ITEM) {
-			ret.addOutgoing(linkType, _ownerItem);
+		if (linkType == null || linkType == CadseGCST.CONTENT_ITEM_lt_OWNER_ITEM) {
+			ret.addOutgoing(CadseGCST.CONTENT_ITEM_lt_OWNER_ITEM, _ownerItem);
+			if (linkType != null) return;
 		}
 		
-		if (linkType == CadseGCST.CONTENT_ITEM_lt_CHILDREN) {
-			ret.addOutgoing(linkType, _childrenFromParent);
-			ret.addOutgoing(linkType, _children);
+		if (linkType == null || linkType == CadseGCST.CONTENT_ITEM_lt_CHILDREN) {
+			ret.addOutgoing(CadseGCST.CONTENT_ITEM_lt_CHILDREN, _childrenFromParent);
+			ret.addOutgoing(CadseGCST.CONTENT_ITEM_lt_CHILDREN, _children);
+			if (linkType != null) return;
 		}
 		super.collectOutgoingLinks(linkType, ret);
 	}

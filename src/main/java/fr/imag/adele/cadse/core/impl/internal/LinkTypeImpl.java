@@ -640,14 +640,17 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 
 	@Override
 	public void collectOutgoingLinks(LinkType linkType, CollectedReflectLink ret) {
-		if (linkType == CadseGCST.LINK_TYPE_lt_DESTINATION) {
+		if (linkType == null || linkType == CadseGCST.LINK_TYPE_lt_DESTINATION) {
 			ret.addOutgoing(CadseGCST.LINK_TYPE_lt_DESTINATION, _destination);
+			if (linkType != null) return;
 		}
-		if (linkType == CadseGCST.LINK_TYPE_lt_SOURCE) {
+		if (linkType == null || linkType == CadseGCST.LINK_TYPE_lt_SOURCE) {
 			ret.addOutgoing(CadseGCST.LINK_TYPE_lt_SOURCE, getSource());
+			if (linkType != null) return;
 		}
-		if (linkType == CadseGCST.LINK_TYPE_lt_INVERSE_LINK) {
+		if (linkType == null || linkType == CadseGCST.LINK_TYPE_lt_INVERSE_LINK) {
 			ret.addOutgoing(CadseGCST.LINK_TYPE_lt_INVERSE_LINK, _inverse);
+			if (linkType != null) return;
 		}
 		super.collectOutgoingLinks(linkType, ret);
 	}

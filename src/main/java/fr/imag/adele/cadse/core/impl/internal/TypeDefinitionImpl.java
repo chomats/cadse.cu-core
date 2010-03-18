@@ -173,21 +173,21 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 
 	@Override
 	public void collectOutgoingLinks(LinkType linkType, CollectedReflectLink ret) {
-		if (linkType == CadseGCST.TYPE_DEFINITION_lt_CADSE) {
+		if (linkType == null || linkType == CadseGCST.TYPE_DEFINITION_lt_CADSE) {
 			ret.addOutgoing(CadseGCST.TYPE_DEFINITION_lt_CADSE, getCadse(), Item.IS_HIDDEN);
-			return;
+			if (linkType != null) return;
 		}
-		if (linkType == CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES) {
+		if (linkType == null || linkType == CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES) {
 			ret.addOutgoing(CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES, _attributesDefinitions);
-			return;
+			if (linkType != null) return;
 		}
-		if (linkType == CadseGCST.TYPE_DEFINITION_lt_CREATION_PAGES) {
+		if (linkType == null || linkType == CadseGCST.TYPE_DEFINITION_lt_CREATION_PAGES) {
 			ret.addOutgoing(CadseGCST.TYPE_DEFINITION_lt_CREATION_PAGES, Item.IS_HIDDEN, _creationPages);
-			return;
+			if (linkType != null) return;
 		}
-		if (linkType == CadseGCST.TYPE_DEFINITION_lt_MODIFICATION_PAGES) {
+		if (linkType == null || linkType == CadseGCST.TYPE_DEFINITION_lt_MODIFICATION_PAGES) {
 			ret.addOutgoing(CadseGCST.TYPE_DEFINITION_lt_MODIFICATION_PAGES, Item.IS_HIDDEN, _modificationPages);
-			return;
+			if (linkType != null) return;
 		}
 		super.collectOutgoingLinks(linkType, ret);
 	}

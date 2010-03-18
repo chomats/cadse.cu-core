@@ -9,7 +9,7 @@ import fr.imag.adele.cadse.core.util.CreatedObjectManager;
 public class MC_Descriptor extends UIValidator_Descriptor {
 	
 	static {
-		CreatedObjectManager.DEFAULTObjectMANAGER.register(CadseGCST.MC_LINK, LinkModelController.class);
+		CreatedObjectManager.DEFAULTObjectMANAGER.register(CadseGCST.MC_LINK, MC_Link.class);
 		CreatedObjectManager.DEFAULTObjectMANAGER.register(CadseGCST.MC_DATE, MC_Date.class);
 		CreatedObjectManager.DEFAULTObjectMANAGER.register(CadseGCST.MC_BOOLEAN, MC_StringToBoolean.class);
 		CreatedObjectManager.DEFAULTObjectMANAGER.register(CadseGCST.MC_NAME_ATTRIBUTE, MC_Name.class);

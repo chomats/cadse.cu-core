@@ -364,8 +364,9 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 
 	@Override
 	public void collectOutgoingLinks(LinkType linkType, CollectedReflectLink ret) {
-		if (linkType == CadseGCST.PAGE_lt_ATTRIBUTES) {
+		if (linkType == null || linkType == CadseGCST.PAGE_lt_ATTRIBUTES) {
 			ret.addOutgoing(CadseGCST.PAGE_lt_ATTRIBUTES, this._attributes);
+			if (linkType != null) return;
 		}
 		/*
 		 * if (linkType == CadseGCST.PAGE_lt_LISTENER) {

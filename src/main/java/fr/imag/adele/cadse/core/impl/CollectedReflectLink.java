@@ -34,6 +34,7 @@ import fr.imag.adele.cadse.core.LinkType;
  */
 public class CollectedReflectLink extends ArrayList<Link> implements java.util.List<Link> {
 	Item	source_or_destination;
+	private boolean _derived;
 
 	/**
 	 * Give source item for collect outgoing links or give destination item for
@@ -54,48 +55,36 @@ public class CollectedReflectLink extends ArrayList<Link> implements java.util.L
 		if (singleton == null) {
 			return;
 		}
-		add(new ReflectLink(lt, source_or_destination, singleton, 0, flag));
+		flag |= _derived?Item.DERIVED:0;
+		super.add(new ReflectLink(lt, source_or_destination, singleton, 0, flag));
 	}
 
 	public void addIncoming(LinkType lt, Item src) {
 		if (src == null) {
 			return;
 		}
-		add(new ReflectLink(lt, src, source_or_destination, -1));
+		super.add(new ReflectLink(lt, src, source_or_destination, -1, _derived?Item.DERIVED:0));
 	}
 
 	public <T extends Item> void addOutgoing(LinkType lt, T[] items) {
-		if (items == null) {
-			return;
-		}
-		ensureCapacity(size() + items.length);
-		for (int i = 0; i < items.length; i++) {
-			if (items[i] != null) {
-				add(new ReflectLink(lt, source_or_destination, items[i], i));
-			}
-		}
+		addOutgoing(lt, 0, items);
 	}
 
 	public <T extends Item> void addOutgoing(LinkType lt, int flag, T[] items) {
 		if (items == null) {
 			return;
 		}
+		flag |= _derived?Item.DERIVED:0;
 		ensureCapacity(size() + items.length);
 		for (int i = 0; i < items.length; i++) {
 			if (items[i] != null) {
-				add(new ReflectLink(lt, source_or_destination, items[i], i, flag));
+				super.add(new ReflectLink(lt, source_or_destination, items[i], i, flag));
 			}
 		}
 	}
 
 	public <T extends Item> void addOutgoing(LinkType lt, List<T> items) {
-		if (items == null) {
-			return;
-		}
-		ensureCapacity(size() + items.size());
-		for (int i = 0; i < items.size(); i++) {
-			add(new ReflectLink(lt, source_or_destination, items.get(i), i));
-		}
+		addOutgoing(lt, 0, items);
 	}
 	
 	public <T extends Item> void addOutgoing(LinkType lt, int flag, List<T> items) {
@@ -103,8 +92,9 @@ public class CollectedReflectLink extends ArrayList<Link> implements java.util.L
 			return;
 		}
 		ensureCapacity(size() + items.size());
+		flag |= _derived?Item.DERIVED:0;
 		for (int i = 0; i < items.size(); i++) {
-			add(new ReflectLink(lt, source_or_destination, items.get(i), i, flag));
+			super.add(new ReflectLink(lt, source_or_destination, items.get(i), i, flag));
 		}
 	}
 	
@@ -115,7 +105,35 @@ public class CollectedReflectLink extends ArrayList<Link> implements java.util.L
 		ensureCapacity(size() + items.size());
 		int i = 0;
 		for (T t : items) {
-			add(new ReflectLink(lt, source_or_destination, t, i++));
+			super.add(new ReflectLink(lt, source_or_destination, t, i++, _derived?Item.DERIVED:0));
 		}
+	}
+
+	public void setDerived(boolean b) {
+		_derived = b;
+	}
+	
+	@Override
+	public boolean add(Link e) {
+		if (_derived) {
+			return super.add(new ReflectLink(e.getLinkType(), e.getSource(), e.getDestination(), -1, Item.DERIVED));
+		}
+		else
+			return super.add(e);
+	}
+	
+	@Override
+	public boolean addAll(Collection<? extends Link> c) {
+		if (_derived) {
+			boolean ret = false;
+			ensureCapacity(size() + c.size());
+			for (Link e : c) {
+				if (super.add(new ReflectLink(e.getLinkType(), e.getSource(), e.getDestination(), -1, Item.DERIVED)))
+					ret = true;
+			}
+			return ret;
+		}
+		else
+			return super.addAll(c);
 	}
 }
