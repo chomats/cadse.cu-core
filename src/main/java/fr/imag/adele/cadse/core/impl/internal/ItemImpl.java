@@ -433,39 +433,12 @@ public class ItemImpl extends AbstractItem implements Item {
 	}
 
 	@Override
-	public List<Link> getOutgoingLinks() {
-		return getOutgoingLinks(null);
-	}
-
-	/**
-	 * Get <tt>outgoings</tt> links by link type.<br/>
-	 * <br/>
-	 * 
-	 * @param lt
-	 *            : link type used as filter to seek.
-	 * 
-	 * @return list outgoing links have the same type. jamais null
-	 * 
-	 * @exception IllegalArgumentException
-	 *                : Link type is null.<br/>
-	 *                IllegalArgumentException: Link type <tt>$name</tt> is not
-	 *                selected in this workspace type. <br/>
-	 * <br/>
-	 */
-	@Override
-	public List<Link> getOutgoingLinks(LinkType lt) {
-		CollectedReflectLink ret = new CollectedReflectLink(this);
-		if (lt == null) {
-			List<LinkType> lts = getLocalOutgoingLinkTypes();
-			for (LinkType linkType : lts) {
-				collectOutgoingLinks(linkType, ret);
-			}
+	public void collectOutgoingLinks(LinkType linkType, CollectedReflectLink ret) {
+		super.collectOutgoingLinks(linkType, ret);
+		if (linkType == null)
 			ret.addAll(m_outgoings);
-		} else {
-			collectOutgoingLinks(lt, ret);
-			filterByLinkType(m_outgoings, lt, ret);
-		}
-		return ret;
+		else
+			filterByLinkType(m_outgoings, linkType, ret);
 	}
 
 	/**
@@ -494,30 +467,6 @@ public class ItemImpl extends AbstractItem implements Item {
 			if (l.getLinkType() == lt && l.getSourceId().equals(srcId)) {
 				return l;
 			}
-		}
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.imag.adele.cadse.core.Item#getOutgoingLink(fr.imag.adele.cadse.core
-	 * .LinkType)
-	 */
-	@Override
-	public Link getOutgoingLink(LinkType lt) {
-		preconditions_getLink(lt);
-		if (lt.getMax() != 1) {
-			throw new CadseIllegalArgumentException(
-					Messages.error_maximum_cardinality_must_be_one, lt
-							.getName());
-		}
-
-		List<Link> ret = getOutgoingLinks(lt);
-
-		if (ret.size() >= 1) {
-			return ret.get(0);
 		}
 		return null;
 	}

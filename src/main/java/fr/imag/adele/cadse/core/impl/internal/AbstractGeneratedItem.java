@@ -738,11 +738,15 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 	}
 
 	public Link getOutgoingLink(LinkType linkType) {
-		CollectedReflectLink ret = new CollectedReflectLink(this);
-		if (isDelegatedValue(linkType))
-			((AbstractGeneratedItem) _group).collectOutgoingLinks(linkType,ret);
-		else
-			collectOutgoingLinks(linkType, ret);
+		if (linkType == null)
+			throw new CadseIllegalArgumentException("link type is null");
+		if (linkType.getMax() != 1) {
+			throw new CadseIllegalArgumentException(
+					Messages.error_maximum_cardinality_must_be_one, linkType
+							.getName());
+		}
+
+		List<Link> ret = getOutgoingLinks(linkType);
 		return ret.size() == 1 ? ret.get(0) : null;
 	}
 
@@ -756,10 +760,13 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 		return Accessor.getOutgoingLink(destId, links);
 	}
 
-	public List<Link> getOutgoingLinks(LinkType linkType) {
+	final public List<Link> getOutgoingLinks(LinkType linkType) {
 		CollectedReflectLink ret = new CollectedReflectLink(this);
-		if (isDelegatedValue(linkType))
+		if (isDelegatedValue(linkType)) {
+			ret.setDerived(true);
 			((AbstractGeneratedItem) _group).collectOutgoingLinks(linkType,ret);
+			ret.setDerived(false);
+		}
 		else
 			collectOutgoingLinks(linkType, ret);
 		return ret;
@@ -1193,13 +1200,20 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 			return ret;
 		}
 
-		List<LinkType> lts = getLocalOutgoingLinkTypes();
-		for (LinkType linkType : lts) {
-			if (isDelegatedValue(linkType))
-				((AbstractGeneratedItem) _group).collectOutgoingLinks(linkType,ret);
-			else
-				collectOutgoingLinks(linkType, ret);
+		if (_group != null) {
+			List<LinkType> lts = getLocalOutgoingLinkTypes();
+			for (LinkType linkType : lts) {
+				if (isDelegatedValue(linkType)) {
+					ret.setDerived(true);
+					((AbstractGeneratedItem) _group).collectOutgoingLinks(linkType,ret);
+					ret.setDerived(false);
+				} else
+					collectOutgoingLinks(linkType, ret);
+			}
+		} else {
+			collectOutgoingLinks(null, ret);
 		}
+		
 		return ret;
 	}
 
@@ -1227,38 +1241,44 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 			((Internal) _group).computeOutgoingLinkTypes(ret, visited);
 	}
 
-
+	/**
+	 * Collect some links
+	 * 
+	 * @param linkType the link type selected or null if all.
+	 * @param ret the collection
+	 */
 	public void collectOutgoingLinks(LinkType linkType,
 			CollectedReflectLink ret) {
-		if (linkType == CadseGCST.GROUP_EXT_ITEM_lt_MEMBER_OF) {
+		if (linkType == null || linkType == CadseGCST.GROUP_EXT_ITEM_lt_MEMBER_OF) {
 			ret.addOutgoing(CadseGCST.GROUP_EXT_ITEM_lt_MEMBER_OF, _group);
-			return;
+			if (linkType != null) return;
 		}
-		if (linkType == CadseGCST.ITEM_lt_INSTANCE_OF) {
+		if (linkType == null || linkType == CadseGCST.ITEM_lt_INSTANCE_OF) {
 			ret.addOutgoing(CadseGCST.ITEM_lt_INSTANCE_OF, getType());
-			return;
+			if (linkType != null) return;
 		}
-		if (linkType == CadseGCST.ITEM_lt_MODIFIED_ATTRIBUTES) {
+		if (linkType == null || linkType == CadseGCST.ITEM_lt_MODIFIED_ATTRIBUTES) {
 			ret.addOutgoing(CadseGCST.ITEM_lt_MODIFIED_ATTRIBUTES,
 					Item.IS_HIDDEN, this._modifiedAttributeTypes);
-			return;
+			if (linkType != null) return;
 		}
-		if (linkType == CadseGCST.ITEM_lt_PARENT) {
+		if (linkType == null || linkType == CadseGCST.ITEM_lt_PARENT) {
 			ret.addOutgoing(CadseGCST.ITEM_lt_PARENT, _parent, Item.IS_HIDDEN);
-			return;
+			if (linkType != null) return;
 		}
 
-		if (linkType == CadseGCST.ITEM_lt_CONTENTS) {
+		if (linkType == null || linkType == CadseGCST.ITEM_lt_CONTENTS) {
 			if (_contentitem != ContentItem.NO_CONTENT
 					&& _contentitem != ContentItem.INVALID_CONTENT)
-				ret.addOutgoing(linkType, _contentitem, Item.IS_HIDDEN);
+				ret.addOutgoing(CadseGCST.ITEM_lt_CONTENTS, _contentitem, Item.IS_HIDDEN);
+			if (linkType != null) return;
 		}
 		if (_outgoings != null) {
 			for (int i = 0; i < _outgoings.length; i += 2) {
-				if (linkType == _outgoings[i]) {
+				if (linkType == null || linkType == _outgoings[i]) {
 					Item dest = (Item) _outgoings[i + 1];
 					try {
-						ret.add(new ReflectLink(linkType, this, dest, -1));
+						ret.add(new ReflectLink((LinkType) _outgoings[i], this, dest, -1));
 					} catch (Throwable e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

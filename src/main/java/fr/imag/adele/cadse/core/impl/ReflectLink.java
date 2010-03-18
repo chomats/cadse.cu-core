@@ -141,15 +141,11 @@ public class ReflectLink extends DBObject implements Link {
 	}
 
 	public boolean isDerived() {
-		return _linkType.isDerived();
+		return (_flag & Item.DERIVED) != 0 || _linkType.isDerived();
 	}
 
 	public boolean isHidden() {
 		return _linkType.isHidden() || (_flag & Item.IS_HIDDEN) != 0;
-	}
-
-	public boolean isPart() {
-		return _linkType.isPart();
 	}
 
 	public boolean isReadOnly() {

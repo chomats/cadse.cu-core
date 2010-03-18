@@ -36,7 +36,7 @@ import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.ui.UIPlatform;
 import fr.imag.adele.cadse.core.util.Convert;
 
-public class LinkModelController extends MC_AttributesItem implements RunningModelController {
+public class MC_Link extends MC_AttributesItem implements RunningModelController {
 
 	private boolean					mandatory	= false;
 	private String					msg			= null;
@@ -45,13 +45,13 @@ public class LinkModelController extends MC_AttributesItem implements RunningMod
 	
 	
 
-	public LinkModelController(boolean mandatory, String msg) {
+	public MC_Link(boolean mandatory, String msg) {
 		this.mandatory = mandatory;
 		this.msg = msg;
 		init = false;
 	}
 
-	public LinkModelController() {
+	public MC_Link() {
 		init = true;
 	}
 	

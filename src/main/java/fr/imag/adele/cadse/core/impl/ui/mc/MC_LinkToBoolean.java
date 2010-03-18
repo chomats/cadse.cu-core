@@ -27,7 +27,7 @@ import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.ui.UIField;
 
-public abstract class MC_LinkToBoolean extends LinkModelController   {
+public abstract class MC_LinkToBoolean extends MC_Link   {
 	Item currentItemDest = null;
 	
     public MC_LinkToBoolean(boolean mandatory, String msg) {
