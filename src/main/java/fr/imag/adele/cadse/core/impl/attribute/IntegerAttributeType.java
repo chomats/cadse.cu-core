@@ -195,7 +195,7 @@ public class IntegerAttributeType extends AttributeType implements
 	}
 
 	@Override
-	public Integer convertTo(Object v) {
+	public Integer convertTo(Object v) throws IllegalArgumentException {
 		if (v == null || "".equals(v) || "null".equals(v)) { //$NON-NLS-1$ //$NON-NLS-2$
 			return null;
 		}

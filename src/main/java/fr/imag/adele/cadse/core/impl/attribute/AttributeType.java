@@ -79,6 +79,9 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 		if (CadseGCST.ATTRIBUTE_at_MUST_BE_INITIALIZED_ == type) {
 			return (T) Boolean.valueOf(getFlag(SHOW_IN_DEFAULT_CP));
 		}
+		if (CadseGCST.ATTRIBUTE_at_HIDDEN_IN_COMPUTED_PAGES_ == type) {
+			return (T) Boolean.valueOf(getFlag(SHOW_IN_DEFAULT_MP));
+		}
 		/*
 		 * if (CadseGCST.ATTRIBUTE_at_IS_META_ATTRIBUTE_ == type) { return (T)
 		 * Boolean.valueOf(getFlag(IS_META_ATTRIBUTE)); }
@@ -119,6 +122,9 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 
 		if (CadseGCST.ATTRIBUTE_at_MUST_BE_INITIALIZED_ == type) {
 			return setFlag(SHOW_IN_DEFAULT_CP, Convert.toBoolean(value, false));
+		}
+		if (CadseGCST.ATTRIBUTE_at_HIDDEN_IN_COMPUTED_PAGES_ == type) {
+			return setFlag(SHOW_IN_DEFAULT_MP, Convert.toBoolean(value, true));
 		}
 		/*
 		 * if (CadseGCST.ATTRIBUTE_at_IS_META_ATTRIBUTE_ == type) { return setFlag(IS_META_ATTRIBUTE,

@@ -115,14 +115,14 @@ public class UIFieldImpl extends Item_Descriptor implements
 		this._posLabel = poslabel;
 		this._attributeRef = attr;
 		_hspan = 1;
-		if (it == CadseGCST.DBROWSER || it == CadseGCST.DLIST)
+		if (it == CadseGCST.DBROWSER || it == CadseGCST.DLIST || it == CadseGCST.DCHECKED_TREE || it == CadseGCST.DCHECKED_LIST)
 			_hspan = 3;
 	}
 
 	public UIFieldImpl(ItemType it, UUID id) {
 		super(id, it);
 		_hspan = 1;
-		if (it == CadseGCST.DBROWSER || it == CadseGCST.DLIST)
+		if (it == CadseGCST.DBROWSER || it == CadseGCST.DLIST || it == CadseGCST.DCHECKED_TREE || it == CadseGCST.DCHECKED_LIST)
 			_hspan = 3;
 	}
 
