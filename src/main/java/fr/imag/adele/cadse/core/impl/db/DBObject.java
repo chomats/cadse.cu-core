@@ -27,8 +27,13 @@ public class DBObject extends AdaptableObjectImpl implements INamedUUID, INamed 
 	@Override
 	public UUID getId() {
 		//return _uuid;
-		if (_objectId == -1)
+		if (_objectId == -1) {
+			if (_uuid != null) {
+				setUUID(_uuid);
+				return _uuid;
+			}
 			return null;
+		}
 		try {
 			return (_dblw == null || _dblw.getDB() == null) ? _uuid : _dblw.getDB().getUniqueIdentifier(_objectId);
 		} catch (ModelVersionDBException e) {
@@ -101,7 +106,7 @@ public class DBObject extends AdaptableObjectImpl implements INamedUUID, INamed 
 	public void setUUID(UUID uuid) {
 		if (uuid == null) return;
 		_uuid = uuid;
-		if (_dblw != null && _dblw.getDB() == null) {
+		if (_dblw != null && _dblw.getDB() != null) {
 				
 			try {
 				_objectId = _dblw.getDB().getOrCreateLocalIdentifier(uuid);

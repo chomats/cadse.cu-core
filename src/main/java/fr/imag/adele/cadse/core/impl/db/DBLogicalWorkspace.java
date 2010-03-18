@@ -276,6 +276,18 @@ public class DBLogicalWorkspace extends LogicalWorkspaceImpl implements
 		}
 		
 	}
+	
+	@Override
+	public void waitStart() {
+		while (getDB() == null) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
 
 	
 }

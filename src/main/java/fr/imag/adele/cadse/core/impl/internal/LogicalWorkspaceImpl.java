@@ -2454,5 +2454,9 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace,
 		return null;
 	}
 
+	@Override
+	public void waitStart() {
+	}
+
 	
 }
