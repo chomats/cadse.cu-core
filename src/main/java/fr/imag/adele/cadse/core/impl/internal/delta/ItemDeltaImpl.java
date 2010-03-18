@@ -199,6 +199,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		this._localId = original.getObjectId();
 		addItemType(original.getType());
 		this._baseItem = original;
+		this._group = original.getGroup();
 		Item partParent = original.getPartParent();
 		if (partParent != null)
 			this._parentItem = copy.getItem(partParent);
