@@ -155,7 +155,11 @@ public class AbstractModelController extends AbstractUIRunningValidator implemen
 		if (uiField == null) return ret;
 		IAttributeType<?> attRef = uiField.getAttributeDefinition();
 		if (attRef != null) {
-			return attRef.convertTo(ret);
+			try {
+				return attRef.convertTo(ret);
+			} catch (IllegalArgumentException e) {
+				//ignored;
+			}
 		}
 		return ret;
 	}

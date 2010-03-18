@@ -1034,7 +1034,8 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 			return new UIFieldImpl(CadseGCST.DLIST, UUID.randomUUID(), this, getDisplayName(), EPosLabel.defaultpos,
 					new MC_Descriptor(CadseGCST.MC_LINK), new IC_Descriptor(CadseGCST.IC_LINK_FOR_BROWSER_COMBO_LIST,
 							CadseGCST.IC_WITH_TITLE_FOR_DIALOG_at_SELECT_TITLE_, "Select a destination."),
-					CadseGCST.DLIST_at_EDITABLE_BUTTON_, Boolean.TRUE);
+					CadseGCST.DLIST_at_EDITABLE_BUTTON_, isPart()? Boolean.FALSE : Boolean.TRUE,
+					CadseGCST.DLIST_at_ORDER_BUTTON_, isOrdered()? Boolean.TRUE : Boolean.FALSE);
 		}
 		return new UIFieldImpl(CadseGCST.DBROWSER, UUID.randomUUID(), this, getDisplayName(), EPosLabel.defaultpos,
 				new MC_Descriptor(CadseGCST.MC_LINK), new IC_Descriptor(CadseGCST.IC_LINK_FOR_BROWSER_COMBO_LIST,
