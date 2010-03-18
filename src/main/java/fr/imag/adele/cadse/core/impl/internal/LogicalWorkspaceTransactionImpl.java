@@ -3455,4 +3455,9 @@ public class LogicalWorkspaceTransactionImpl implements
 	public LogicalWorkspaceTransactionListener getTeamWorkLWCListener() {
 		return _twListener;
 	}
+
+	@Override
+	public void waitStart() {
+		throw new UnsupportedOperationException();
+	}
 }
