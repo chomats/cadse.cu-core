@@ -1017,4 +1017,16 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements Li
 	@Override
 	public void setShowInDefaultMP(boolean flag) {
 	}
+
+	@Override
+	public boolean isNotEditableInCP() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not implemented method");
+	}
+
+	@Override
+	public boolean isNotEditableInMP() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not implemented method");
+	}
 }

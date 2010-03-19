@@ -259,6 +259,20 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 
 	}
 
+	/**
+	 * Please see {@link IAttributeType#isNotEditableInMP()}, the default implementation.
+	 */
+	public boolean isNotEditableInMP() {
+		return getFlag(NOT_EDITABLE_IN_DEFAULT_MP);
+	}
+	
+	/**
+	 * Please see {@link IAttributeType#isNotEditableInCP()}, the default implementation.
+	 */
+	public boolean isNotEditableInCP() {
+		return getFlag(NOT_EDITABLE_IN_DEFAULT_CP);
+	}
+	
 	public void setFinal(boolean flag) {
 		setFlag(FINAL, flag);
 	}

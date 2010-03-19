@@ -638,12 +638,17 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 			}
 			inSpecificPages.add(firstAtt);
 		}
+		final Item item = context.getItem();
 		if (_attributesDefinitions != null) {
 			for (IAttributeType<?> attr : _attributesDefinitions) {
+				if (item.isDelegatedValue(attr) 
+						|| attr.isReadOnly() 
+						|| (attr.isFinal() && item.getAttribute(attr) != null)
+						|| (attr.isNotEditableInCP() && !genericPage.isModificationPage())
+						|| (attr.isNotEditableInMP() && genericPage.isModificationPage())) {
+					ro.add(attr);
+				}
 				if (!inSpecificPages.contains(attr) && canBeAddedInGenericPage(genericPage, attr)) {
-					if (context.getItem().isDelegatedValue(attr)) {
-						ro.add(attr);
-					}
 					notPutAttr.add(attr);
 				}
 			}
