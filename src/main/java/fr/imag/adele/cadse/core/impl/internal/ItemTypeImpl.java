@@ -1194,8 +1194,8 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 						LogicalWorkspaceTransactionListener.class, ret,
 						localSuperIT.workspaceLogiqueCopyListeners);
 			}
-			if (_extendedBy != null) {
-				for (ExtendedType e : _extendedBy) {
+			if (localSuperIT._extendedBy != null) {
+				for (ExtendedType e : localSuperIT._extendedBy) {
 					ret = ArraysUtil.addList(
 							LogicalWorkspaceTransactionListener.class, ret, e
 									.getLogicalWorkspaceTransactionListener());
@@ -1204,7 +1204,6 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 			localSuperIT = (ItemTypeImpl) localSuperIT._superType;
 		}
 		return ret;
-
 	}
 
 	@Override
