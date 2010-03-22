@@ -106,12 +106,12 @@ public class MC_AttributesItem extends AbstractModelController implements Runnin
 			return null;
 		}
 		Object value = null;
-		if (item instanceof ItemDelta) {
-			value = ((ItemDelta) item).getAttribute(getAttributeDefinition(), false);
-		} else {
-			value = item.getAttribute(getAttributeDefinition());
-		}
 		IAttributeType<?> attrType = getUIField().getAttributeDefinition();
+		if (item instanceof ItemDelta) {
+			value = ((ItemDelta) item).getAttribute(attrType, false);
+		} else {
+			value = item.getAttributeOwner(attrType);
+		}
 		if (attrType != null && attrType.getType() == CadseGCST.LIST) {
 			value = new ArrayList<Object>((ArrayList) value);
 		}
