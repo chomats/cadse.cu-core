@@ -1564,6 +1564,10 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 		}
 		return (_flag & f) != 0;
 	}
+	
+	public int getFlag() {
+		return _flag;
+	}
 
 	public boolean isDefinedFlag(int f) {
 		return (_definedflag & f) != 0;
