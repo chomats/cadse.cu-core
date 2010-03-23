@@ -3631,14 +3631,14 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 					}
 
 			}
-			if (lt == null) {
-				if (_types != null)
-					for (ItemType it : _types) {
-						lt = it.getIncomingOne(parent.getType());
-						if (lt != null)
-							break;
-					}
-			}
+//			if (lt == null) {
+//				if (_types != null)
+//					for (ItemType it : _types) {
+//						lt = it.getIncomingOne(parent.getType());
+//						if (lt != null)
+//							break;
+//					}
+//			}
 
 			if (lt != null) {
 				this._parentLinkType = lt;

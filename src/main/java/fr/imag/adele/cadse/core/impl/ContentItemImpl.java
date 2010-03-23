@@ -491,9 +491,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 				cm.generate(sb, type, kind, imports, context);
 			}
 		}
-
 	}
-
 	
 	/*
 	 * (non-Javadoc)
@@ -515,7 +513,7 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 		//this.resourceName = resourceName;
 	}
 
-	public ItemType getType() {
+	final public ItemType getType() {
 		return CadseGCST.CONTENT_ITEM;
 	}
 
@@ -564,9 +562,6 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 		_childrenFromParent = ArraysUtil.remove(ContentItem.class, _childrenFromParent, contentItem);
 	}
 
-	
-	
-	
 	@Override
 	public String getName() {
 		ItemType type = getType();
