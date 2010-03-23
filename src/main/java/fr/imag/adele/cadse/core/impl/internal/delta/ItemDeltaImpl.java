@@ -3645,7 +3645,6 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 			}
 
 			if (createLinkIfNeed) {
-
 				LinkDelta l = getOutgoingLink(CadseGCST.ITEM_lt_PARENT);
 				if (l == null)
 					createLink(CadseGCST.ITEM_lt_PARENT, _parentItem, notify, true);
@@ -3662,8 +3661,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 							ltoparent.delete(new DeleteOperationImpl(null,
 									null, 0));
 					}
-					l = _parentItem.getOutgoingLink(CadseGCST.ITEM_lt_PARENT,
-							getId());
+					l = _parentItem.getOutgoingLink(lt,	getId());
 					if (l == null)
 						_parentItem.createLink(lt, this);
 				}
