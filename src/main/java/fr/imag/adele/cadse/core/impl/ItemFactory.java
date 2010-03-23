@@ -20,11 +20,15 @@ package fr.imag.adele.cadse.core.impl;
 
 import java.util.UUID;
 
+import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
+import fr.imag.adele.cadse.core.IContentItemFactory;
 import fr.imag.adele.cadse.core.IItemFactory;
+import fr.imag.adele.cadse.core.IItemManager;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.LogicalWorkspace;
+import fr.imag.adele.cadse.core.content.ContentItem;
 import fr.imag.adele.cadse.core.impl.attribute.BooleanAttributeType;
 import fr.imag.adele.cadse.core.impl.attribute.DateAttributeType;
 import fr.imag.adele.cadse.core.impl.attribute.DoubleAttributeType;
@@ -115,6 +119,26 @@ public class ItemFactory implements IItemFactory {
 		if (it == CadseGCST.CADSE_DEFINITION) {
 			return new CadseDefinitionImpl(item.getQualifiedName(), id, id);
 		}
+		
+//		if (it == CadseGCST.CONTENT_ITEM) {
+//			Item ownerItem = item.getOutgoingItem(CadseGCST.CONTENT_ITEM_lt_OWNER_ITEM, true);
+//			if (ownerItem == null)
+//				return null;
+//			if (ownerItem.isRuntime())
+//				return null;
+//			final IItemManager itemManager = ownerItem.getType().getItemManager();
+//			final IContentItemFactory contentItemFactory = itemManager
+//					.getContentItemFactory();
+//			if (contentItemFactory == null) {
+//				return null;
+//			}
+//			try {
+//				return contentItemFactory.createContentItem(item.getId(), ownerItem);
+//			} catch (CadseException e) {
+//				e.printStackTrace();
+//				return null;
+//			}
+//		}
 
 		return new ItemImpl(it, item);
 	}
