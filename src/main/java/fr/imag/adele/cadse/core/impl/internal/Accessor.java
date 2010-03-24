@@ -388,26 +388,27 @@ public class Accessor {
 		ItemType type = item.getType();
 		boolean ret = false;
 		if (it instanceof ItemType) {
-			ret = it == type || ((ItemType) it).isSuperTypeOf(type);
+			final ItemType mainType = (ItemType) it;
+			ret = it == type || mainType.isSuperTypeOf(type);
 			if (ret)
 				return true;
+			ItemType group = item.getGroup();
+			while (group != null) {
+				ret = it == group || mainType.isSuperTypeOf(group);
+				if (ret)
+					return true;
+				group = group.getGroup();
+			}
 		}
 		else if (it instanceof ExtendedType) {
 			ExtendedType et = (ExtendedType) it;
 			ItemType[] ext =	et.getExendsItemType();
 			if (ext != null)
 				for (ItemType it2 : ext) {
-					ret = it2 == type || it2.isSuperTypeOf(type);
-					if (ret) return true;
+					if (item.isInstanceOf(it2)) return true;
 				}
 		}
-		ItemType group = item.getGroup();
-		while (group != null) {
-			ret = it == group || ((ItemType) it).isSuperTypeOf(group);
-			if (ret)
-				return true;
-			group = group.getGroup();
-		}
+		
 		if (item instanceof ItemDelta) {
 			item = ((ItemDelta) item).getBaseItem();
 			if (item == null) return false;
