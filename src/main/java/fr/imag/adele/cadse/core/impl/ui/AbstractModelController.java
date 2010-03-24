@@ -19,6 +19,7 @@
 
 package fr.imag.adele.cadse.core.impl.ui;
 
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.ui.AbstractUIRunningValidator;
@@ -159,7 +160,11 @@ public class AbstractModelController extends AbstractUIRunningValidator implemen
 		final UIField uiField = getUIField();
 		if (uiField == null) return ret;
 		IAttributeType<?> attRef = uiField.getAttributeDefinition();
+		
 		if (attRef != null) {
+			if (attRef.getType() == CadseGCST.LINK_TYPE && attRef.getMax() != 1) {
+				return ret;
+			}
 			try {
 				return attRef.convertTo(ret);
 			} catch (IllegalArgumentException e) {
