@@ -145,6 +145,11 @@ public class AbstractModelController extends AbstractUIRunningValidator implemen
 	public Object getValue() {
 		return null;
 	}
+	
+	@Override
+	public Object getHeritableValue() {
+		return null;
+	}
 
 	@Override
 	public void initAfterUI(UIField field) {		

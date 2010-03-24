@@ -115,7 +115,30 @@ public class MC_AttributesItem extends AbstractModelController implements Runnin
 		if (attrType != null && attrType.getType() == CadseGCST.LIST) {
 			value = new ArrayList<Object>((ArrayList) value);
 		}
-		return value;
+		return modelToVisual(value);
+	}
+	
+	protected Object modelToVisual(Object ret) {
+		return ret;
+	}
+	
+	@Override
+	public Object getHeritableValue() {
+		Item item = getItem();
+		if (item == null) {
+			return null;
+		}
+		Object value = null;
+		IAttributeType<?> attrType = getUIField().getAttributeDefinition();
+		if (item instanceof ItemDelta) {
+			value = ((ItemDelta) item).getAttribute(attrType, false);
+		} else {
+			value = item.getAttribute(attrType);
+		}
+		if (attrType != null && attrType.getType() == CadseGCST.LIST) {
+			value = new ArrayList<Object>((ArrayList) value);
+		}
+		return modelToVisual(value);
 	}
 
 	public IAttributeType<?> getAttributeDefinition() {
@@ -145,6 +168,8 @@ public class MC_AttributesItem extends AbstractModelController implements Runnin
 		Item item = _uiPlatform.getItem(getUIField());
 		if (item == null || item.isReadOnly() || item.isRuntime())
 			return;
+		
+		value = visualToModel(value);
 		// item.setAttribute(getUIField().getKey(),value);
 		IAttributeType<?> attrType = getUIField().getAttributeDefinition();
 		if (attrType != null) {
