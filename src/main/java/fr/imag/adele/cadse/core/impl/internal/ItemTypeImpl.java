@@ -705,6 +705,23 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	}
 	
 	@Override
+	public LinkType getOutgoingLinkType(String name) {
+		if (_extendedBy != null) {
+			for (TypeDefinition ext : _extendedBy) {
+				LinkType ret = ext.getOutgoingLinkType(name);
+				if (ret != null) return ret;
+			}
+		}
+		LinkType ret = super.getOutgoingLinkType(name);
+		if (ret != null) return ret;
+		if (_superType != null) {
+			ret = _superType.getOutgoingLinkType(name);
+			if (ret != null) return ret;
+		}
+		return null;
+	}
+	
+	@Override
 	protected void computeLocalIncomingLinkTypes(List<LinkType> ret,
 			Set<TypeDefinition> visited) {
 		super.computeLocalIncomingLinkTypes(ret, visited);
