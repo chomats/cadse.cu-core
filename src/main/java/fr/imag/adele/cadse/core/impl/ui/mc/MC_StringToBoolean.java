@@ -19,7 +19,6 @@
 package fr.imag.adele.cadse.core.impl.ui.mc;
 
 import fr.imag.adele.cadse.core.Item;
-import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.util.Convert;
 
@@ -54,10 +53,6 @@ public class MC_StringToBoolean extends MC_AttributesItem {
 
 	@Override
 	public Object defaultValue() {
-//		IAttributeType<?> attr = getUIField().getAttributeDefinition();
-//		if (attr != null && attr.getDefaultValue() != null) {
-//			return attr.getDefaultValue();
-//		}
 		return Boolean.FALSE;
 	}
 
