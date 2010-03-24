@@ -903,7 +903,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 			return true;
 		}
 		if (CadseGCST.ITEM_TYPE_at_ITEM_FACTORY_ == type) {
-			if (value instanceof String) {
+			if (value instanceof String || value == null) {
 				_itemFactory = null;
 				return commitGenericSetAttribute(type, value);
 			}
