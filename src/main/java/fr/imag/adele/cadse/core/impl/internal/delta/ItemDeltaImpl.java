@@ -2416,7 +2416,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 
 			Object value;
 			if (t != null && t.isResolved()) {
-				value = t.getAttribute(key);
+				value = t.getAttributeOwner(key);
 				if (value != null) {
 					ret = new SetAttributeOperationImpl(this, key, value, value);
 					add(ret, false);
