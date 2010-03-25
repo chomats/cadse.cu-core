@@ -403,6 +403,12 @@ public class LogicalWorkspaceTransactionImpl implements
 	}
 	
 	@Override
+	public TypeDefinition getTypeDefinition(UUID itemTypeId) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not implemented method");
+	}
+	
+	@Override
 	public ExtendedType getExtendedType(UUID extUUID) {
 		return base.getExtendedType(extUUID);
 	}

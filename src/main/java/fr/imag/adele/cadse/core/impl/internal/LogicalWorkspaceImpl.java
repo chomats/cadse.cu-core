@@ -1454,6 +1454,35 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace,
 
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * fr.imag.adele.cadse.core.IWorkspaceLogique#getItemType(fr.imag.adele.
+	 * cadse.core.UUID)
+	 */
+	public TypeDefinition getTypeDefinition(UUID id) {
+
+		Item i = _items.get(id);
+		if (i != null) {
+			if (i instanceof TypeDefinition) {
+				return (TypeDefinition) i;
+			}
+			if (i instanceof ItemUnresolved) {
+				return null;
+			}
+
+			throw new CadseIllegalArgumentException(
+					"Le type est attendu est metaItemType pour l'id " + id
+							+ " alors qu'il est " + i.getType().getName()
+							+ " : bad type for " + id);
+		}
+		return null;
+
+	}
+	
+	
+	
 	@Override
 	public ExtendedType getExtendedType(UUID id) {
 		Item i = _items.get(id);
