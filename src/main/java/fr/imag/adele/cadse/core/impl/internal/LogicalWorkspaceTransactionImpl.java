@@ -3145,6 +3145,11 @@ public class LogicalWorkspaceTransactionImpl implements
 	}
 
 	public LinkDelta getLink(Link link) throws CadseException {
+		if (link instanceof LinkDelta) {
+			LinkDelta ld = (LinkDelta) link;
+			if (ld.getWorkingCopy() == this)
+				return ld;
+		}
 		ItemDelta delta = getItem(link.getSourceId());
 		if (delta == null) {
 			throw new CadseException(

@@ -547,19 +547,6 @@ public class ItemImpl extends AbstractItem implements Item {
 		return createLink(linkType, destination);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.imag.adele.cadse.core.Item#removeOutgoingItem(fr.imag.adele.cadse.
-	 * core.LinkType, fr.imag.adele.cadse.core.Item)
-	 */
-	@Override
-	public Link removeOutgoingItem(LinkType linkType, Item destination)
-			throws CadseException {
-		return Accessor.removeOutgoingItem(this, linkType, destination);
-	}
-
 	@Override
 	public boolean commitSetAttribute(IAttributeType<?> type, Object value) {
 		if (CadseGCST.ITEM_at_NAME_ == type) {

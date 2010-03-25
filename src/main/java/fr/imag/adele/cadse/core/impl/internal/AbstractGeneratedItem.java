@@ -223,7 +223,7 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 
 	public Link removeOutgoingItem(LinkType linkType, Item destination)
 			throws CadseException {
-		return Accessor.removeOutgoingItem(this, linkType, destination);
+		return Accessor.removeOutgoingItem(null, this, linkType, destination);
 	}
 
 	public void buildComposite() throws CadseException {

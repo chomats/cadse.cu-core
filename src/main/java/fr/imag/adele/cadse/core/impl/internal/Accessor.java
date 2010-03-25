@@ -296,10 +296,13 @@ public class Accessor {
 		transaction.commit();
 	}
 
-	public static Link removeOutgoingItem(Item source, LinkType linkType, Item destination) throws CadseException {
+	public static Link removeOutgoingItem(LogicalWorkspaceTransaction transaction, Item source, LinkType linkType, Item destination) throws CadseException {
 		Link l = source.getOutgoingLink(linkType, destination.getId());
 		if (l != null) {
-			delete(l);
+			if (transaction != null)
+				transaction.getLink(l).delete();
+			else
+				delete(l);
 		}
 		return l;
 	}
