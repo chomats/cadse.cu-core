@@ -992,4 +992,10 @@ public class DBItemImpl extends DBObject implements Item {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Not implemented method");
 	}
+
+	@Override
+	public Composer[] getComposers() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not implemented method");
+	}
 }
