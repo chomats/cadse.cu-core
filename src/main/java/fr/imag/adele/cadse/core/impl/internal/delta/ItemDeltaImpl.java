@@ -4242,4 +4242,10 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		return AbstractGeneratedItem._isDelegatedValue(this, attr, _group);
 	}
 
+	@Override
+	public Composer[] getComposers() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not implemented method");
+	}
+
 }
