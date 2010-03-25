@@ -691,17 +691,24 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	}
 
 	@Override
-	public void computeOutgoingLinkTypes(List<LinkType> ret, Set<TypeDefinition> visited) {
-		if (visited.contains(this)) return;
-		if (_superType != null) {
-			((Internal) _superType).computeOutgoingLinkTypes(ret, visited);
+	public List<LinkType> computeOutgoingLinkTypes(int flag, ItemFilter<LinkType> filter, List<LinkType> ret, Set<TypeDefinition> visited) {
+		if (visited.contains(this)) return ret;
+		if ((flag & INHERITANCE_ATTRIBUTES) != 0 && _superType != null) {
+			((Internal) _superType).computeOutgoingLinkTypes(flag|OWNER_ATTRIBUTES, filter, ret, visited);
+			if (filter != null && filter.stop())
+				return ret;
 		}
-		super.computeOutgoingLinkTypes(ret, visited);
-		if (_extendedBy != null) {
+		super.computeOutgoingLinkTypes(flag, filter, ret, visited);
+		if (filter != null && filter.stop())
+			return ret;
+		if ((flag & EXTENDED_ATTRIBUTES) != 0 && _extendedBy != null) {
 			for (TypeDefinition ext : _extendedBy) {
-				((Internal) ext).computeOutgoingLinkTypes(ret, visited);
+				((Internal) ext).computeOutgoingLinkTypes(flag|OWNER_ATTRIBUTES, filter, ret, visited);
+				if (filter != null && filter.stop())
+					return ret;
 			}
 		}
+		return ret;
 	}
 	
 	@Override
@@ -731,11 +738,11 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	}
 	
 	@Override
-	protected void computeLocalOutgoingLinkTypes(List<LinkType> ret,
+	protected void computeLocalOutgoingLinkTypes(int flag, ItemFilter<LinkType> filter, List<LinkType> ret,
 			Set<TypeDefinition> visited) {
-		super.computeLocalOutgoingLinkTypes(ret, visited);
+		super.computeLocalOutgoingLinkTypes(flag, filter, ret, visited);
 		if (_type.isGroupType()) {
-			((Internal) CadseGCST.ITEM_TYPE).computeOutgoingLinkTypes(ret, visited); 
+			((Internal) CadseGCST.ITEM_TYPE).computeOutgoingLinkTypes(flag, filter, ret, visited); 
 		}
 	}
 

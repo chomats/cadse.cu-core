@@ -658,7 +658,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	@Override
 	public Link commitLoadCreateLink(LinkType lt, Item destination) throws CadseException {
 		if (lt == CadseGCST.LINK_TYPE_lt_DESTINATION) {
-			this._destination = (ItemType) destination;
+			this._destination = (TypeDefinition) destination;
 			if (this.getSource() != null && !this.getSource().isOrphan()) {
 				_destination.addIncomingLink(this, true);
 			}

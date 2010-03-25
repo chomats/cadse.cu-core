@@ -354,15 +354,25 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 		return _getOutgoingLinkType(this, dest, kind);
 	}
 
-	static public LinkType _getOutgoingLinkType(TypeDefinition _this, TypeDefinition dest, int kind) {
-		Iterator<LinkType> iter = _this.getOutgoingLinkTypes().iterator();
-		while (iter.hasNext()) {
-			LinkType lt = iter.next();
-			if (lt.getDestination().equals(dest) && (lt.getKind() == kind)) {
-				return lt;
+	static public LinkType _getOutgoingLinkType(TypeDefinition _this, final TypeDefinition dest, final int kind) {
+		final LinkType[]  ret = new LinkType[1];
+		_this.getOutgoingLinkTypes(ALL_ATTRIBUTES, new ItemFilter<LinkType>() {
+			
+			@Override
+			public boolean stop() {
+				return ret[0] != null;
 			}
-		}
-		return null;
+			
+			@Override
+			public boolean accept(LinkType lt) {
+				if (lt.getDestination().equals(dest) && (lt.getKind() == kind)) {
+					ret[0] = lt;
+					return true;
+				}
+				return false;
+			}
+		});
+		return ret[0];
 	}
 
 	public List<LinkType> getOwnerOugoingLinkTypes() {
@@ -380,31 +390,17 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 		return Accessor.filterName(getIncomingLinkTypes(), name);
 	}
 
-	/**
-	 * Get all outgoing link types.
-	 * 
-	 * @return an unmodifiable list all outgoing link types.
-	 */
 	public List<LinkType> getOutgoingLinkTypes() {
-		ArrayList<LinkType> ret = new ArrayList<LinkType>();
-		computeOutgoingLinkTypes(ret, new HashSet<TypeDefinition>());
-		return ret;
+		return getOutgoingLinkTypes(ALL_ATTRIBUTES, null);
+	}
+	
+	@Override
+	public List<LinkType> getOutgoingLinkTypes(int flag, ItemFilter<LinkType> filter) {
+		return computeOutgoingLinkTypes(flag, filter, new ArrayList<LinkType>(), new HashSet<TypeDefinition>());
 	}
 
-	/**
-	 * Get all owned outgoing link types, not hierarchical.
-	 * 
-	 * @return an unmodifiable list all owned outgoing link types.
-	 */
 	public List<LinkType> getOwnerOutgoingLinkTypes() {
-		List<LinkType> ret = new ArrayList<LinkType>();
-
-		for (Link l : this.m_outgoings) {
-			if (l.getLinkType() == CadseCore.theLinkType) {
-				ret.add((LinkType) l);
-			}
-		}
-		return ret;
+		return getOutgoingLinkTypes(OWNER_ATTRIBUTES, null);
 	}
 
 	/*
@@ -805,15 +801,20 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 	 * List<LinkType> ret = new ArrayList<LinkType>(); Compute ougoing link types.
 	 */
 	@Override
-	public void computeOutgoingLinkTypes(List<LinkType> ret, Set<TypeDefinition> visited) {
+	public List<LinkType> computeOutgoingLinkTypes(int flag, ItemFilter<LinkType> filter, List<LinkType> ret, Set<TypeDefinition> visited) {
 		if (!visited.add(this)) {
-			return;
+			return ret;
 		}
+		if ((flag & OWNER_ATTRIBUTES) == 0) return ret;
 		for (Link l : this.m_outgoings) {
 			if (l.getLinkType() == CadseCore.theLinkType) {
-				ret.add((LinkType) l);
+				if (filter == null || filter.accept((LinkType) l))
+					ret.add((LinkType) l);
+				if (filter != null && filter.stop())
+					return ret;
 			}
 		}
+		return ret;
 	}
 
 	/**

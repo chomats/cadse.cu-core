@@ -25,7 +25,7 @@ import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemFilter;
 
-public final class FilterOutLinkType implements ItemFilter {
+public final class FilterOutLinkType implements ItemFilter<Item> {
 	public boolean accept(Item item) {
 		return item.getType() != CadseGCST.LINK_TYPE;
 	}

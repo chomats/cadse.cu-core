@@ -1220,7 +1220,7 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 	public List<LinkType> getLocalOutgoingLinkTypes() {
 		Set<TypeDefinition> visited = new HashSet<TypeDefinition>();
 		List<LinkType> ret = new ArrayList<LinkType>();
-		computeLocalOutgoingLinkTypes(ret , visited);
+		computeLocalOutgoingLinkTypes(ALL_ATTRIBUTES, null, ret , visited);
 		return ret;
 	}
 
@@ -1233,12 +1233,12 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 			((Internal) _group).computeIncomingLinkTypes(ret, visited);
 	}
 
-	protected void computeLocalOutgoingLinkTypes(List<LinkType> ret, Set<TypeDefinition> visited) {
+	protected void computeLocalOutgoingLinkTypes(int flag, ItemFilter<LinkType> filter, List<LinkType> ret, Set<TypeDefinition> visited) {
 		if (getType() != null) {
-			((Internal) getType()).computeOutgoingLinkTypes(ret, visited);
+			((Internal) getType()).computeOutgoingLinkTypes(flag, filter, ret, visited);
 		}
 		if (_group != null)
-			((Internal) _group).computeOutgoingLinkTypes(ret, visited);
+			((Internal) _group).computeOutgoingLinkTypes(flag, filter, ret, visited);
 	}
 
 	/**
