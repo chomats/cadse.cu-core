@@ -733,4 +733,10 @@ public class ItemItemDeltaAdapter implements Item {
 		throw new UnsupportedOperationException("Not implemented method");
 	}
 
+	@Override
+	public Composer[] getComposers() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not implemented method");
+	}
+
 }
