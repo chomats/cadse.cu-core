@@ -3318,7 +3318,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 */
 	public Link removeOutgoingItem(LinkType linkType, Item destination)
 			throws CadseException {
-		return Accessor.removeOutgoingItem(this, linkType, destination);
+		return Accessor.removeOutgoingItem(getWorkingCopy(), this, linkType, destination);
 	}
 
 	/*
