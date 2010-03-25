@@ -1,6 +1,5 @@
 package fr.imag.adele.cadse.core.impl.internal.delta;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -777,13 +776,6 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	}
 
 	@Override
-	public void computeOutgoingLinkTypes(List<LinkType> ret,
-			Set<TypeDefinition> visited) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not implemented method");
-	}
-
-	@Override
 	public boolean isDelegatedAttribute(IAttributeType<?> attr) {
 		// FIXME: DELEGATE : implements
 		return false;
@@ -803,6 +795,20 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 
 	public ItemDelta delta() {
 		return _delta;
+	}
+
+	@Override
+	public List<LinkType> getOutgoingLinkTypes(int flag,
+			ItemFilter<LinkType> filter) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not implemented method");
+	}
+
+	@Override
+	public List<LinkType> computeOutgoingLinkTypes(int flag, ItemFilter<LinkType> filter,
+			List<LinkType> ret, Set<TypeDefinition> visited) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not implemented method");
 	}
 
 }

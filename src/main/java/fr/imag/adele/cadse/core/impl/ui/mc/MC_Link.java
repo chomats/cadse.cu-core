@@ -103,6 +103,22 @@ public class MC_Link extends MC_AttributesItem implements RunningModelController
 		}
 	}
 
+	
+	
+	@Override
+	protected Object modelToVisual(Object ret) {
+		IAttributeType<?> attRef = getUIField().getAttributeDefinition();
+		if (attRef.getType() == CadseGCST.LINK_TYPE) {
+			LinkType lt = (LinkType)attRef;
+			List<Link> ret2 = (List<Link>) ret;
+			if (lt.getMax() == 1) {
+				return ret2.size() >= 1 ? ret2.get(0) : null;
+			}
+			return ret;
+		}
+		return ret;
+	}
+	
 
 	@Override
 	public Object getValue() {
