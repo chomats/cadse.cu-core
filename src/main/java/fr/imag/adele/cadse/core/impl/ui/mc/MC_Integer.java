@@ -81,6 +81,10 @@ public class MC_Integer extends MC_AttributesItem {
 	
 	@Override
 	public Object visualToModel(Object ret) {
-		return Convert.toInteger(ret);
+		try {
+			return Convert.toInteger(ret);
+		} catch (NumberFormatException e) {
+			return ret;
+		}
 	}
 }
