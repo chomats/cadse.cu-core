@@ -130,6 +130,9 @@ public class MC_AttributesItem extends AbstractModelController implements Runnin
 		}
 		Object value = null;
 		IAttributeType<?> attrType = getUIField().getAttributeDefinition();
+		item = item.getOutgoingItem(CadseGCST.ITEM_TYPE_lt_SUPER_TYPE, true);
+		if (item == null)
+			return null;
 		if (item instanceof ItemDelta) {
 			value = ((ItemDelta) item).getAttribute(attrType, false);
 		} else {
