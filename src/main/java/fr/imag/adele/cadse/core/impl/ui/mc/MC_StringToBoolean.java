@@ -47,8 +47,8 @@ public class MC_StringToBoolean extends MC_AttributesItem {
 	}
 
 	@Override
-	public void notifieValueChanged(UIField field, Object value) {
-		super.notifieValueChanged(field, Convert.toBoolean(value));
+	public Object visualToModel(Object ret) {
+		return Convert.toBoolean(ret, null);
 	}
 
 	@Override
