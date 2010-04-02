@@ -104,7 +104,7 @@ public class BooleanAttributeType extends AttributeType implements
 			Boolean dv = Convert.toBoolean(value,  null);
 			boolean ret = Convert.equals(dv, _defaultValue);
 			_defaultValue = dv;
-			return ret;
+			return !ret;
 		}
 		return super.commitSetAttribute(type, value);
 	}
