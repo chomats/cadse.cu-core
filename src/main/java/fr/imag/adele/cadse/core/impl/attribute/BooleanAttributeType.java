@@ -61,7 +61,7 @@ public class BooleanAttributeType extends AttributeType implements
 	 */
 	public BooleanAttributeType(UUID id, int flag, String name, String value) {
 		super(id, name, flag);
-		this._defaultValue = value == null ? null : Boolean.valueOf(value);
+		this._defaultValue = Convert.toBoolean(value, null);
 	}
 
 	public BooleanAttributeType(ItemDelta item) {
