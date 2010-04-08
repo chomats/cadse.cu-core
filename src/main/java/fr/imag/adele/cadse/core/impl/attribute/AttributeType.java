@@ -76,10 +76,10 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 		if (CadseGCST.ATTRIBUTE_at_CANNOT_BE_UNDEFINED_ == type) {
 			return (T) Boolean.valueOf(!getFlag(CAN_BE_UNDEFINED));
 		}
-		if (CadseGCST.ATTRIBUTE_at_MUST_BE_INITIALIZED_ == type) {
+		if (CadseGCST.ATTRIBUTE_at_SHOW_IN_DEFAULT_CP_ == type) {
 			return (T) Boolean.valueOf(getFlag(SHOW_IN_DEFAULT_CP));
 		}
-		if (CadseGCST.ATTRIBUTE_at_HIDDEN_IN_COMPUTED_PAGES_ == type) {
+		if (CadseGCST.ATTRIBUTE_at_SHOW_IN_DEFAULT_MP_ == type) {
 			return (T) Boolean.valueOf(getFlag(SHOW_IN_DEFAULT_MP));
 		}
 		/*
@@ -120,10 +120,10 @@ public abstract class AttributeType extends AbstractGeneratedItem implements IIn
 			return setFlag(CAN_BE_UNDEFINED, !Convert.toBoolean(value));
 		}
 
-		if (CadseGCST.ATTRIBUTE_at_MUST_BE_INITIALIZED_ == type) {
+		if (CadseGCST.ATTRIBUTE_at_SHOW_IN_DEFAULT_CP_ == type) {
 			return setFlag(SHOW_IN_DEFAULT_CP, Convert.toBoolean(value, false));
 		}
-		if (CadseGCST.ATTRIBUTE_at_HIDDEN_IN_COMPUTED_PAGES_ == type) {
+		if (CadseGCST.ATTRIBUTE_at_SHOW_IN_DEFAULT_MP_ == type) {
 			return setFlag(SHOW_IN_DEFAULT_MP, Convert.toBoolean(value, true));
 		}
 		/*
