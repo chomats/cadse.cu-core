@@ -19,7 +19,6 @@
 package fr.imag.adele.cadse.core.impl.ui.mc;
 
 import fr.imag.adele.cadse.core.Item;
-import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.util.Convert;
 
 public class MC_StringToBoolean extends MC_AttributesItem {
@@ -35,13 +34,7 @@ public class MC_StringToBoolean extends MC_AttributesItem {
 	public Object getValue() {
 		Object value = super.getValue();
 		if (value == null) {
-			Object _defaultValue = defaultValue();
-			if (_defaultValue == null) {
-				_defaultValue = Boolean.FALSE;
-			}
-
-			super.notifieValueChanged(getUIField(), _defaultValue.toString());
-			return _defaultValue;
+			return null;
 		}
 		return Convert.toBoolean(value);
 	}
@@ -49,11 +42,6 @@ public class MC_StringToBoolean extends MC_AttributesItem {
 	@Override
 	public Object visualToModel(Object ret) {
 		return Convert.toBoolean(ret, null);
-	}
-
-	@Override
-	public Object defaultValue() {
-		return Boolean.FALSE;
 	}
 
 }
