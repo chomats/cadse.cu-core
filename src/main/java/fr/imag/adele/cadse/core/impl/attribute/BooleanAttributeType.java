@@ -43,11 +43,10 @@ public class BooleanAttributeType extends AttributeType implements
 		fr.imag.adele.cadse.core.attribute.BooleanAttributeType {
 
 	/** The value. */
-	private Boolean	_defaultValue;
+	private Boolean _defaultValue;
 
-    public BooleanAttributeType() {
-    }
-
+	public BooleanAttributeType() {
+	}
 
 	/**
 	 * Instantiates a new boolean attribute type.
@@ -66,34 +65,33 @@ public class BooleanAttributeType extends AttributeType implements
 
 	public BooleanAttributeType(ItemDelta item) {
 		super(item);
-		this._defaultValue = Convert.toBoolean(item.getAttribute(CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_),
-				null);
+		this._defaultValue = Convert.toBoolean(item.getAttribute(CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_), null);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.IAttributeType#getDefaultValue()
 	 */
 	@Override
 	public Boolean getDefaultValue() {
+		if (_defaultValue == null && !canBeUndefined()) {
+			return Boolean.FALSE;
+		}
 		return _defaultValue;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see fr.imag.adele.cadse.core.IAttributeType#getAttributeType()
 	 */
 	public Class<Boolean> getAttributeType() {
 		return Boolean.class;
 	}
 
-
 	@Override
 	public <T> T internalGetOwnerAttribute(IAttributeType<T> type) {
 		if (CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_ == type) {
-			return (T) (_defaultValue  == null ? null : _defaultValue.toString());
+			return (T) (_defaultValue == null ? null : _defaultValue.toString());
 		}
 		return super.internalGetOwnerAttribute(type);
 	}
@@ -101,7 +99,7 @@ public class BooleanAttributeType extends AttributeType implements
 	@Override
 	public boolean commitSetAttribute(IAttributeType<?> type, Object value) {
 		if (CadseGCST.ATTRIBUTE_at_DEFAULT_VALUE_ == type) {
-			Boolean dv = Convert.toBoolean(value,  null);
+			Boolean dv = Convert.toBoolean(value, null);
 			boolean ret = Convert.equals(dv, _defaultValue);
 			_defaultValue = dv;
 			return !ret;
@@ -109,6 +107,7 @@ public class BooleanAttributeType extends AttributeType implements
 		return super.commitSetAttribute(type, value);
 	}
 
+	@Override
 	public ItemType getType() {
 		return CadseGCST.BOOLEAN;
 	}
@@ -125,7 +124,7 @@ public class BooleanAttributeType extends AttributeType implements
 			return ret;
 		}
 
-		if (value == null|| "".equals(value)) {
+		if (value == null || "".equals(value)) {
 			return null;
 		}
 
@@ -140,6 +139,7 @@ public class BooleanAttributeType extends AttributeType implements
 
 	@Override
 	public UIField generateDefaultField() {
-		return new UIFieldImpl(CadseGCST.DCHECK_BOX, UUID.randomUUID(), this, getDisplayName(), EPosLabel.none, new MC_Descriptor(CadseGCST.MC_BOOLEAN), null);
+		return new UIFieldImpl(CadseGCST.DCHECK_BOX, UUID.randomUUID(), this, getDisplayName(), EPosLabel.none,
+				new MC_Descriptor(CadseGCST.MC_BOOLEAN), null);
 	}
 }
