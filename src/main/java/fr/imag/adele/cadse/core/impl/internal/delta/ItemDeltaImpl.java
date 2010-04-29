@@ -3840,8 +3840,9 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * .String, boolean)
 	 */
 	@Override
-	public void setQualifiedName(String uniqueName, boolean loaded) throws CadseException {
-		setAttribute(CadseGCST.ITEM_at_QUALIFIED_NAME_, uniqueName, loaded);
+	public void setQualifiedName(String qName, boolean loaded) throws CadseException {
+		setAttribute(CadseGCST.ITEM_at_QUALIFIED_NAME_, qName, loaded);
+		_copy.changeQualifiedName(this, qName);
 	}
 
 	/*
