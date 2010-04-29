@@ -3232,7 +3232,7 @@ public class LogicalWorkspaceTransactionImpl implements
 	}
 
 	public void changeQualifiedName(ItemDeltaImpl itemDeltaImpl, String qName) {
-		if (itemDeltaImpl.isAdded()) {
+		if (itemDeltaImpl.isAdded() || itemDeltaImpl.isLoaded()) {
 			items_by_unique_name.put(qName, itemDeltaImpl);
 		} else if (itemDeltaImpl.isDeleted()) {
 			items_by_unique_name_deleted.put(qName, itemDeltaImpl);
