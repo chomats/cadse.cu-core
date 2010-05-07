@@ -110,7 +110,11 @@ public class MC_AttributesItem extends AbstractModelController implements Runnin
 		if (item instanceof ItemDelta) {
 			value = ((ItemDelta) item).getAttribute(attrType, false);
 		} else {
-			value = item.getAttributeOwner(attrType);
+			if (item.isDelegatedValue(attrType)) {
+				value = item.getAttribute(attrType);
+			}
+			else 
+				value = item.getAttributeOwner(attrType);
 		}
 		if (attrType != null && attrType.getType() == CadseGCST.LIST) {
 			value = new ArrayList<Object>((ArrayList) value);
