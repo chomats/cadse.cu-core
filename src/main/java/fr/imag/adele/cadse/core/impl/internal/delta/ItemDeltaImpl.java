@@ -57,6 +57,7 @@ import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.Messages;
 import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.WorkspaceListener;
+import fr.imag.adele.cadse.core.TypeDefinition.Internal;
 import fr.imag.adele.cadse.core.attribute.BooleanAttributeType;
 import fr.imag.adele.cadse.core.attribute.DelegateValue;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
@@ -68,6 +69,7 @@ import fr.imag.adele.cadse.core.build.Exporter;
 import fr.imag.adele.cadse.core.build.IBuildingContext;
 import fr.imag.adele.cadse.core.content.ContentItem;
 import fr.imag.adele.cadse.core.impl.CadseIllegalArgumentException;
+import fr.imag.adele.cadse.core.impl.CollectedReflectLink;
 import fr.imag.adele.cadse.core.impl.PageRuntimeModel;
 import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
 import fr.imag.adele.cadse.core.impl.internal.Accessor;
@@ -1667,7 +1669,15 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * .adele.cadse.core.LinkType, boolean)
 	 */
 	public Collection<Item> getOutgoingItems(LinkType lt, boolean resovledOnly) {
-		return Accessor.getOutgoingItems(getOutgoingLinks(), lt, resovledOnly);
+		CollectedReflectLink ret = new CollectedReflectLink(this);
+		if (isDelegatedValue(lt)) {
+			ret.setDerived(true);
+			ret.addAll(_group.getOutgoingLinks(lt));
+			ret.setDerived(false);
+			return Accessor.getOutgoingItems(ret, lt, resovledOnly);
+		}
+		else
+			return Accessor.getOutgoingItems(getOutgoingLinks(), lt, resovledOnly);
 	}
 
 	/*
@@ -1986,17 +1996,28 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * @see fr.imag.adele.cadse.core.delta.ItemOperationItf#getOutgoingLinks()
 	 */
 	public List<Link> getOutgoingLinks() {
-		syncOutgoingLinks();
-		if (_orders == null) {
-			return Collections.emptyList();
-		}
-		ArrayList<Link> ret = new ArrayList<Link>();
-		for (LinkDelta lo : _orders) {
-			if (!false && lo.isDeleted()) {
-				continue;
+		CollectedReflectLink ret = new CollectedReflectLink(this);
+		if (_group != null) {
+			List<LinkType> lts = _group.getLocalOutgoingLinkTypes();
+			for (LinkType linkType : lts) {
+				if (isDelegatedValue(linkType)) {
+					ret.setDerived(true);
+					ret.addAll(_group.getOutgoingLinks(linkType));
+					ret.setDerived(false);
+				} 
 			}
-			ret.add(lo);
+		} 
+		
+		syncOutgoingLinks();
+		if (_orders != null) {
+			for (LinkDelta lo : _orders) {
+				if (!false && lo.isDeleted()) {
+					continue;
+				}
+				ret.add(lo);
+			}
 		}
+		
 		return ret;
 	}
 
@@ -2054,11 +2075,21 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 	 * .adele.cadse.core.LinkType)
 	 */
 	public List<Link> getOutgoingLinks(LinkType linkType) {
+		CollectedReflectLink ret = new CollectedReflectLink(this);
+		if (_group != null) {
+			if (isDelegatedValue(linkType)) {
+				ret.setDerived(true);
+				ret.addAll(_group.getOutgoingLinks(linkType));
+				ret.setDerived(false);
+				return ret;
+			}
+		} 
+		
 		syncOutgoingLinks();
 		if (_orders == null) {
 			return Collections.emptyList();
 		}
-		ArrayList<Link> ret = new ArrayList<Link>();
+		
 		for (LinkDelta lo : _orders) {
 			if (lo.isDeleted()) {
 				continue;
@@ -4211,10 +4242,19 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		
 	}
 
-	@Override
 	public List<LinkType> getLocalOutgoingLinkTypes() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not implemented method");
+		Set<TypeDefinition> visited = new HashSet<TypeDefinition>();
+		List<LinkType> ret = new ArrayList<LinkType>();
+		computeLocalOutgoingLinkTypes(ALL_ATTRIBUTES, null, ret , visited);
+		return ret;
+	}
+
+	protected void computeLocalOutgoingLinkTypes(int flag, ItemFilter<LinkType> filter, List<LinkType> ret, Set<TypeDefinition> visited) {
+		if (getType() != null) {
+			((Internal) getType()).computeOutgoingLinkTypes(flag, filter, ret, visited);
+		}
+		if (_group != null)
+			((Internal) _group).computeOutgoingLinkTypes(flag, filter, ret, visited);
 	}
 
 	@Override
