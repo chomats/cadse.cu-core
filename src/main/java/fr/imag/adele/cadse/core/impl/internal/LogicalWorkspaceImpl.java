@@ -2034,7 +2034,7 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		LinkedList<Iterator<Item>> stack = null;
 		if (source.isDelegatedValue(type)) {
 			if (ownerOnly) {
-				return (T) (type instanceof BooleanAttributeType ? Boolean.FALSE : null);
+				return (T) null;
 			}
 			return getAttribute(source.getGroup(), type, ownerOnly);
 		}
