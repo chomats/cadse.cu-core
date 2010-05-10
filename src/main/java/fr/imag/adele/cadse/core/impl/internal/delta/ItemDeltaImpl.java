@@ -1295,8 +1295,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		if (_group != null) {
 			ArrayList<IAttributeType<?>> ret = new ArrayList<IAttributeType<?>>();
 			ret.addAll(Arrays.asList(getType().getAllAttributeTypes()));
-			ret.addAll(Arrays.asList(((ItemType) _group)
-					.getLocalAllAttributeTypes()));
+			ret.addAll(Arrays.asList( _group.getAllAttributeTypes()));
 			return (IAttributeType<?>[]) ret.toArray(new IAttributeType<?>[ret
 					.size()]);
 		}

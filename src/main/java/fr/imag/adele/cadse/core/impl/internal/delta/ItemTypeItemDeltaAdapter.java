@@ -1,6 +1,7 @@
 package fr.imag.adele.cadse.core.impl.internal.delta;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -414,8 +415,17 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 
 	@Override
 	public IAttributeType<?>[] getAllAttributeTypes() {
-		// TODO Auto-generated method stub
-		return null;
+		HashSet<IAttributeType<?>> ret = new HashSet<IAttributeType<?>>();
+		for(Item item : _delta.getOutgoingItems(CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES,true)) {
+			if (item instanceof IAttributeType)
+				ret.add((IAttributeType<?>) item);
+		}
+		ItemType superType = getSuperType();
+		if (superType != null) {
+			IAttributeType<?>[] ss = superType.getAllAttributeTypes();
+			ret.addAll(Arrays.asList(ss));
+		}
+		return (IAttributeType<?>[]) ret.toArray(new IAttributeType<?>[ret.size()]);
 	}
 
 	@Override

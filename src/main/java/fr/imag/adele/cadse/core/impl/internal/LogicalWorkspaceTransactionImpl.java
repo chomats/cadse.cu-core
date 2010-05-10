@@ -747,13 +747,15 @@ public class LogicalWorkspaceTransactionImpl implements
 			notifyChangeAttribute(ret, setAtt);
 		}
 
-		IAttributeType<?>[] attributes = ret.getType().getAllAttributeTypes();
+		IAttributeType<?>[] attributes = ret.getLocalAllAttributeTypes();
 		for (IAttributeType<?> attributeType : attributes) {
 			Object v = attributeType.getDefaultValue();
 			if (v == null)
 				continue;
 			SetAttributeOperation value = ret.getSetAttributeOperation(attributeType, false);
 			if (value != null) 
+				continue;
+			if (ret.isDelegatedValue(attributeType)) 
 				continue;
 			
 			ret.setAttribute(attributeType, v);
