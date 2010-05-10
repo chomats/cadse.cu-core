@@ -417,6 +417,8 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	public IAttributeType<?>[] getAllAttributeTypes() {
 		HashSet<IAttributeType<?>> ret = new HashSet<IAttributeType<?>>();
 		for(Item item : _delta.getOutgoingItems(CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES,true)) {
+			if (item instanceof ItemDelta)
+				item = item.getBaseItem();
 			if (item instanceof IAttributeType)
 				ret.add((IAttributeType<?>) item);
 		}
@@ -443,7 +445,19 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 
 	@Override
 	public IAttributeType<?> getAttributeType(String name) {
-		// TODO Auto-generated method stub
+		for(Item item : _delta.getOutgoingItems(CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES,true)) {
+			if (!item.getName().equals(name))
+				continue;
+			if (item instanceof ItemDelta) {
+				return (IAttributeType<?>) item.getBaseItem();
+			} else if (item instanceof IAttributeType) {
+				return (IAttributeType<?>) item;
+			}
+		}
+		ItemType superType = getSuperType();
+		if (superType != null) {
+			return superType.getAttributeType(name);
+		}
 		return null;
 	}
 
