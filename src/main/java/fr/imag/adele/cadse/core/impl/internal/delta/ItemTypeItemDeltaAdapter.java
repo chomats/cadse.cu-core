@@ -299,14 +299,12 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 
 	@Override
 	public boolean hasShortNameAttribute() {
-		// TODO Auto-generated method stub
-		return false;
+		return _delta.getAttribute(CadseGCST.ITEM_TYPE_at_HAS_SHORT_NAME_);
 	}
 
 	@Override
 	public boolean hasQualifiedNameAttribute() {
-		// TODO Auto-generated method stub
-		return false;
+		return _delta.getAttribute(CadseGCST.ITEM_TYPE_at_HAS_UNIQUE_NAME_);
 	}
 
 	@Override
@@ -349,8 +347,11 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 
 	@Override
 	public void setHasNameAttribute(boolean val) {
-		// TODO Auto-generated method stub
-
+		try {
+			_delta.setAttribute(CadseGCST.ITEM_TYPE_at_HAS_SHORT_NAME_, val);
+		} catch (CadseException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -361,8 +362,11 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 
 	@Override
 	public void setIcon(String url) {
-		// TODO Auto-generated method stub
-
+		try {
+			_delta.setAttribute(CadseGCST.ITEM_TYPE_at_ICON_, url);
+		} catch (CadseException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -389,27 +393,37 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 
 	@Override
 	public <T> Link addAttributeType(IAttributeType<T> type) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void getAllAttributeTypes(List<IAttributeType<?>> all) {
-		// TODO Auto-generated method stub
-
+		all.addAll(Arrays.asList(getAllAttributeTypes()));
 	}
 
 	@Override
 	public void getAllAttributeTypes(Map<String, IAttributeType<?>> all,
 			boolean keepLastAttribute) {
-		// TODO Auto-generated method stub
-
+		getAllAttributeTypes(all, keepLastAttribute, null);
 	}
 
 	@Override
 	public void getAllAttributeTypes(List<IAttributeType<?>> all,
 			ItemFilter filter) {
-		// TODO Auto-generated method stub
+		for(Item item : _delta.getOutgoingItems(CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES,true)) {
+			if (item instanceof ItemDelta)
+				item = item.getBaseItem();
+			if (item instanceof IAttributeType) {
+				if (filter == null || filter.accept(item))
+					all.add((IAttributeType<?>) item);
+			}
+		}
+		//TODO Extension.
+		
+		ItemType superType = getSuperType();
+		if (superType != null) {
+			superType.getAllAttributeTypes(all, filter);
+		}
 
 	}
 
@@ -422,6 +436,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 			if (item instanceof IAttributeType)
 				ret.add((IAttributeType<?>) item);
 		}
+		//TODO Extension.
 		ItemType superType = getSuperType();
 		if (superType != null) {
 			IAttributeType<?>[] ss = superType.getAllAttributeTypes();
@@ -433,8 +448,21 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	@Override
 	public void getAllAttributeTypes(Map<String, IAttributeType<?>> all,
 			boolean keepLastAttribute, ItemFilter filter) {
-		// TODO Auto-generated method stub
-
+		for(Item item : _delta.getOutgoingItems(CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES,true)) {
+			if (item instanceof ItemDelta)
+				item = item.getBaseItem();
+			if (item instanceof IAttributeType) {
+				if (keepLastAttribute && all.containsKey(item.getName())) continue;
+				if (filter == null || filter.accept(item))
+					all.put(item.getName(), (IAttributeType<?>) item);
+			}
+		}
+		//TODO Extension.
+		
+		ItemType superType = getSuperType();
+		if (superType != null) {
+			superType.getAllAttributeTypes(all, keepLastAttribute, filter);
+		}
 	}
 
 	@Override
