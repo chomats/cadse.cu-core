@@ -41,6 +41,14 @@
             <artifactId>as.platformeIDE</artifactId>
         </dependency>
         <dependency>
+        	<groupId>${project.groupId}</groupId>
+        	<artifactId>as.persistence</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>as.scmservice</artifactId>
+        </dependency>
+        <dependency>
             <groupId>bak.pcj</groupId>
             <artifactId>bak.pcj</artifactId>
         </dependency>
@@ -51,18 +59,6 @@
         <dependency>
         	<groupId>org.apache.felix</groupId>
         	<artifactId>org.apache.felix.ipojo</artifactId>
-        </dependency>
-        <dependency>
-        	<groupId>fr.imag.adele.cadse</groupId>
-        	<artifactId>as.persistence</artifactId>
-        	<version>2.3.0-SNAPSHOT</version>
-        	<type>bundle</type>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>fr.imag.adele.cadse.as.workspace.scmservice</artifactId>
-            <version>2.3.0-SNAPSHOT</version>
-            <type>bundle</type>
         </dependency>
     </dependencies>
 </project>
