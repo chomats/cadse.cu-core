@@ -1,0 +1,77 @@
+format 29
+
+classcanvas 128081 class_ref 129745 // Item
+  draw_all_relations default hide_attributes default hide_operations default show_members_full_definition default show_members_visibility default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default shadow default
+  xyz 207 135 2000
+classcanvas 128337 class_ref 129873 // ItemType
+  draw_all_relations default hide_attributes default hide_operations default show_members_full_definition default show_members_visibility default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default shadow default
+  xyz 426 160 2000
+classcanvas 128465 class_ref 130001 // CadsegModel
+  draw_all_relations default hide_attributes default hide_operations default show_members_full_definition default show_members_visibility default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default shadow default
+  xyz 216 42 2000
+classcanvas 128721 class_ref 130129 // CadsegModelType
+  draw_all_relations default hide_attributes default hide_operations default show_members_full_definition default show_members_visibility default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default shadow default
+  xyz 393 41 2000
+classcanvas 129233 class_ref 130257 // Link
+  draw_all_relations default hide_attributes default hide_operations default show_members_full_definition default show_members_visibility default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default shadow default
+  xyz 248 261 2000
+classcanvas 129873 class_ref 130385 // LinkType
+  draw_all_relations default hide_attributes default hide_operations default show_members_full_definition default show_members_visibility default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default shadow default
+  xyz 426 261 2000
+classcanvas 132433 class_ref 130513 // ItemManager
+  draw_all_relations default hide_attributes default hide_operations default show_members_full_definition default show_members_visibility default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default shadow default
+  xyz 595 144 2000
+classcanvas 132817 class_ref 130641 // ContentManager
+  draw_all_relations default hide_attributes default hide_operations default show_members_full_definition default show_members_visibility default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default shadow default
+  xyz -6 116 2000
+relationcanvas 128593 relation_ref 130129 // <aggregation by value>
+  from ref 128465 z 1999 to ref 128081
+  no_role_a no_role_b
+  no_multiplicity_a no_multiplicity_b
+relationcanvas 128977 relation_ref 130385 // <unidirectional association>
+  from ref 128465 z 1999 to ref 128721
+  no_role_a no_role_b
+  no_multiplicity_a no_multiplicity_b
+relationcanvas 129105 relation_ref 130513 // <unidirectional association>
+  from ref 128081 z 1999 to ref 128337
+  no_role_a no_role_b
+  no_multiplicity_a no_multiplicity_b
+relationcanvas 129617 relation_ref 130257 // <aggregation by value>
+  from ref 128721 z 1999 to ref 128337
+  no_role_a no_role_b
+  no_multiplicity_a no_multiplicity_b
+relationcanvas 129745 relation_ref 130769 // <aggregation by value>
+  from ref 128081 z 1999 to ref 129233
+  no_role_a no_role_b
+  no_multiplicity_a no_multiplicity_b
+relationcanvas 130385 relation_ref 131025 // <aggregation by value>
+  from ref 128337 z 1999 to ref 129873
+  no_role_a no_role_b
+  no_multiplicity_a no_multiplicity_b
+relationcanvas 130513 relation_ref 131153 // <unidirectional association>
+  from ref 129873 z 1999 to point 509 278
+  line 131153 z 1999 to point 509 178
+  line 131025 z 1999 to ref 128337
+  no_role_a no_role_b
+  no_multiplicity_a no_multiplicity_b
+relationcanvas 131537 relation_ref 131281 // <unidirectional association>
+  from ref 129233 z 1999 to ref 129873
+  no_role_a no_role_b
+  no_multiplicity_a no_multiplicity_b
+relationcanvas 131665 relation_ref 131409 // <unidirectional association>
+  from ref 129233 z 1999 to point 190 279
+  line 131793 z 1999 to point 190 176
+  line 131921 z 1999 to ref 128081
+  no_role_a no_role_b
+  no_multiplicity_a no_multiplicity_b
+relationcanvas 132561 relation_ref 131537 // <unidirectional association>
+  from ref 128337 z 1999 to point 493 167
+  line 133201 z 1999 to ref 132433
+  no_role_a no_role_b
+  no_multiplicity_a no_multiplicity_b
+relationcanvas 132945 relation_ref 131665 // <unidirectional association>
+  from ref 128081 z 1999 to point 213 140
+  line 133073 z 1999 to ref 132817
+  no_role_a no_role_b
+  no_multiplicity_a no_multiplicity_b
+end
