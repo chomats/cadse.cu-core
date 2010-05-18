@@ -15,6 +15,7 @@ import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.CadseRuntime;
 import fr.imag.adele.cadse.core.ExtendedType;
 import fr.imag.adele.cadse.core.GroupType;
+import fr.imag.adele.cadse.core.IContentItemFactory;
 import fr.imag.adele.cadse.core.IItemFactory;
 import fr.imag.adele.cadse.core.IItemManager;
 import fr.imag.adele.cadse.core.Item;
@@ -117,6 +118,12 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 		if (cadseDelta == null)
 			return null;
 		return cadseDelta.getAdapter(CadseRuntime.class);
+	}
+	
+	@Override
+	public IContentItemFactory getContentFactory() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not implemented method");
 	}
 
 	@Override

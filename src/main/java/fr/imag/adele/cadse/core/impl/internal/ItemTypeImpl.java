@@ -41,6 +41,7 @@ import fr.imag.adele.cadse.core.CadseIllegalArgumentException;
 import fr.imag.adele.cadse.core.DerivedLinkType;
 import fr.imag.adele.cadse.core.ExtendedType;
 import fr.imag.adele.cadse.core.GroupType;
+import fr.imag.adele.cadse.core.IContentItemFactory;
 import fr.imag.adele.cadse.core.IItemFactory;
 import fr.imag.adele.cadse.core.IItemManager;
 import fr.imag.adele.cadse.core.Item;
@@ -132,6 +133,8 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	private ExtendedType[] _extendedBy;
 
 	private String _managerClass;
+
+	private IContentItemFactory _contentFactory;
 
 	public ItemTypeImpl() {
 	}
@@ -1517,6 +1520,15 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 		//FIXME attr.isAttributeHead() ???
 		
 		return isGroupHead();
+	}
+
+	@Override
+	public IContentItemFactory getContentFactory() {
+		return _contentFactory;
+	}
+	
+	public void setContentFactory(IContentItemFactory cf) {
+		_contentFactory = cf;
 	}
 	
 }
