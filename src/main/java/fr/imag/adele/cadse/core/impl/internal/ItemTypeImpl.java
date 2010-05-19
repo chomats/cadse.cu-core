@@ -41,7 +41,6 @@ import fr.imag.adele.cadse.core.CadseIllegalArgumentException;
 import fr.imag.adele.cadse.core.DerivedLinkType;
 import fr.imag.adele.cadse.core.ExtendedType;
 import fr.imag.adele.cadse.core.GroupType;
-import fr.imag.adele.cadse.core.IContentItemFactory;
 import fr.imag.adele.cadse.core.IItemFactory;
 import fr.imag.adele.cadse.core.IItemManager;
 import fr.imag.adele.cadse.core.Item;
@@ -51,9 +50,11 @@ import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.Messages;
+import fr.imag.adele.cadse.core.ObjectAdapter;
 import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.attribute.GroupOfAttributes;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
+import fr.imag.adele.cadse.core.content.ContentItem;
 import fr.imag.adele.cadse.core.impl.CadseCore;
 import fr.imag.adele.cadse.core.impl.CollectedReflectLink;
 import fr.imag.adele.cadse.core.impl.ItemFactory;
@@ -134,7 +135,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 
 	private String _managerClass;
 
-	private IContentItemFactory _contentFactory;
+	private Class<? extends ContentItem> _contentFactory;
 
 	public ItemTypeImpl() {
 	}
@@ -1523,12 +1524,14 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	}
 
 	@Override
-	public IContentItemFactory getContentFactory() {
+	public Class<? extends ContentItem> getContentItemClass() {
 		return _contentFactory;
 	}
 	
-	public void setContentFactory(IContentItemFactory cf) {
+	
+	public void setContentItemClass(Class<? extends ContentItem> cf) {
 		_contentFactory = cf;
 	}
+
 	
 }
