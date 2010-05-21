@@ -924,8 +924,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems,
 			ret = contentItemClass.newInstance();
 			ret.setUUID(idContent);
 			return ret;
-		} catch (InstantiationException e) {
-			e.printStackTrace();
+		} catch (InstantiationException ignored) {
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
