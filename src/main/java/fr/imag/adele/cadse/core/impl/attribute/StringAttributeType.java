@@ -141,6 +141,10 @@ public class StringAttributeType extends AttributeType implements
 	public void setIsNotEmpty(boolean flag) {
 		setFlag(NOT_EMPTY, flag);
 	}
+	
+	public boolean isNotEMpty() {
+		return getFlag(NOT_EMPTY);
+	}
 
 	@Override
 	public CheckStatus check(Item item, Object value) {
