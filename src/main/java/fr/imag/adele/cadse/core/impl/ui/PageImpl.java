@@ -206,8 +206,8 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 	}
 	
 	@Override
-	public void addLast(List<IAttributeType> attrs) {
-		_attributes = ArraysUtil.addList(IAttributeType.class, _attributes, attrs);	
+	public void addLast(List<IAttributeType<?>> attrs) {
+		_attributes = ArraysUtil.addList(IAttributeType.class, _attributes, (List<IAttributeType>)(List)attrs);	
 	}
 
 	
