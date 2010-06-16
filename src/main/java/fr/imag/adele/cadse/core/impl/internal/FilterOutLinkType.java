@@ -22,11 +22,11 @@
 package fr.imag.adele.cadse.core.impl.internal;
 
 import fr.imag.adele.cadse.core.CadseGCST;
-import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemFilter;
+import fr.imag.adele.cadse.core.attribute.IAttributeType;
 
-public final class FilterOutLinkType implements ItemFilter<Item> {
-	public boolean accept(Item item) {
+public final class FilterOutLinkType implements ItemFilter<IAttributeType<?>> {
+	public boolean accept(IAttributeType<?> item) {
 		return item.getType() != CadseGCST.LINK_TYPE;
 	}
 
