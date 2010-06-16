@@ -50,9 +50,11 @@ import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.Messages;
+import fr.imag.adele.cadse.core.ObjectAdapter;
 import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.attribute.GroupOfAttributes;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
+import fr.imag.adele.cadse.core.content.ContentItem;
 import fr.imag.adele.cadse.core.impl.CadseCore;
 import fr.imag.adele.cadse.core.impl.CollectedReflectLink;
 import fr.imag.adele.cadse.core.impl.ItemFactory;
@@ -132,6 +134,8 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	private ExtendedType[] _extendedBy;
 
 	private String _managerClass;
+
+	private Class<? extends ContentItem> _contentFactory;
 
 	public ItemTypeImpl() {
 	}
@@ -1529,5 +1533,16 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 		
 		return isGroupHead();
 	}
+
+	@Override
+	public Class<? extends ContentItem> getContentItemClass() {
+		return _contentFactory;
+	}
+	
+	
+	public void setContentItemClass(Class<? extends ContentItem> cf) {
+		_contentFactory = cf;
+	}
+
 	
 }
