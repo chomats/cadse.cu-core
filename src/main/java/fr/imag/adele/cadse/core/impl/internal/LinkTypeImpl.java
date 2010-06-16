@@ -948,7 +948,7 @@ public class LinkTypeImpl extends AttributeType implements LinkType, Item, IInte
 	}
 
 	public boolean isOrdered() {
-		return (_kind & (LinkType.ORDERED)) != 0;
+		return true; //(_kind & (LinkType.ORDERED)) != 0;
 	}
 
 	public IAttributeType<?> getLinkTypeAttributeType(String key) {
