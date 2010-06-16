@@ -18,7 +18,6 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
                 <configuration>
                     <instructions>
                         <Export-Package>fr.imag.adele.cadse.core.impl.*;version="${version.cadse}"</Export-Package>

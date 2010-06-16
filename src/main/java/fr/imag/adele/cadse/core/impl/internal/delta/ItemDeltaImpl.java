@@ -768,7 +768,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		
 		//delegation
 		if (isDelegatedValue(att)) {
-			return _group.getAttributeWithDefaultValue(att, att.getDefaultValue());
+			return _group.getAttribute(att);
 		}
 		if (this._attributes != null) {
 			SetAttributeOperation oa = this._attributes.get(att);
