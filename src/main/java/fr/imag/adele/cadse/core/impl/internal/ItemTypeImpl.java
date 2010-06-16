@@ -947,7 +947,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	}
 
 	public void getAllAttributeTypes(List<IAttributeType<?>> all,
-			ItemFilter filter) {
+			ItemFilter<IAttributeType<?>> filter) {
 		if (_superType != null) {
 			_superType.getAllAttributeTypes(all, filter);
 		}
@@ -960,7 +960,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	}
 
 	public void getAllAttributeTypes(Map<String, IAttributeType<?>> all,
-			boolean keepLastAttribute, ItemFilter filter) {
+			boolean keepLastAttribute, ItemFilter<IAttributeType<?>> filter) {
 		if (_extendedBy != null) {
 			for (TypeDefinition ext : _extendedBy) {
 				ext.getAllAttributeTypes(all, keepLastAttribute, filter);
@@ -973,7 +973,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 		}
 	}
 
-	public void getAllAttributeTypesKeys(Set<String> all, ItemFilter filter) {
+	public void getAllAttributeTypesKeys(Set<String> all, ItemFilter<IAttributeType<?>> filter) {
 		if (_extendedBy != null) {
 			for (TypeDefinition ext : _extendedBy) {
 				ext.getAllAttributeTypesKeys(all, filter);
