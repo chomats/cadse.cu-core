@@ -410,12 +410,12 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 
 	@Override
 	public void getAllAttributeTypes(List<IAttributeType<?>> all,
-			ItemFilter filter) {
+			ItemFilter<IAttributeType<?>> filter) {
 		for(Item item : _delta.getOutgoingItems(CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES,true)) {
 			if (item instanceof ItemDelta)
 				item = item.getBaseItem();
-			if (item instanceof IAttributeType) {
-				if (filter == null || filter.accept(item))
+			if (item instanceof IAttributeType<?>) {
+				if (filter == null || filter.accept((IAttributeType<?>) item))
 					all.add((IAttributeType<?>) item);
 			}
 		}
@@ -434,7 +434,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 		for(Item item : _delta.getOutgoingItems(CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES,true)) {
 			if (item instanceof ItemDelta)
 				item = item.getBaseItem();
-			if (item instanceof IAttributeType)
+			if (item instanceof IAttributeType<?>)
 				ret.add((IAttributeType<?>) item);
 		}
 		//TODO Extension.
@@ -448,13 +448,13 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 
 	@Override
 	public void getAllAttributeTypes(Map<String, IAttributeType<?>> all,
-			boolean keepLastAttribute, ItemFilter filter) {
+			boolean keepLastAttribute, ItemFilter<IAttributeType<?>> filter) {
 		for(Item item : _delta.getOutgoingItems(CadseGCST.TYPE_DEFINITION_lt_ATTRIBUTES,true)) {
 			if (item instanceof ItemDelta)
 				item = item.getBaseItem();
-			if (item instanceof IAttributeType) {
+			if (item instanceof IAttributeType<?>) {
 				if (keepLastAttribute && all.containsKey(item.getName())) continue;
-				if (filter == null || filter.accept(item))
+				if (filter == null || filter.accept((IAttributeType<?>) item))
 					all.put(item.getName(), (IAttributeType<?>) item);
 			}
 		}
@@ -467,7 +467,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 	}
 
 	@Override
-	public void getAllAttributeTypesKeys(Set<String> all, ItemFilter filter) {
+	public void getAllAttributeTypesKeys(Set<String> all, ItemFilter<IAttributeType<?>> filter) {
 		// TODO Auto-generated method stub
 
 	}
@@ -479,7 +479,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 				continue;
 			if (item instanceof ItemDelta) {
 				return (IAttributeType<?>) item.getBaseItem();
-			} else if (item instanceof IAttributeType) {
+			} else if (item instanceof IAttributeType<?>) {
 				return (IAttributeType<?>) item;
 			}
 		}
