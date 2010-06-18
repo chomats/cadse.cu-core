@@ -74,9 +74,6 @@ public class BooleanAttributeType extends AttributeType implements
 	 */
 	@Override
 	public Boolean getDefaultValue() {
-		if (_defaultValue == null && !canBeUndefined()) {
-			return Boolean.FALSE;
-		}
 		return _defaultValue;
 	}
 
