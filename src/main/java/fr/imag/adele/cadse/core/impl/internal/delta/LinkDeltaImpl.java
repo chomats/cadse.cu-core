@@ -922,11 +922,6 @@ public final class LinkDeltaImpl extends ItemOrLinkDeltaImpl implements Link,
 	}
 
 	@Override
-	public <T> T adapt(Class<T> clazz) {
-		return null;
-	}
-
-	@Override
 	public void setObjectID(int linkId) {
 		_objectID = linkId;
 	}

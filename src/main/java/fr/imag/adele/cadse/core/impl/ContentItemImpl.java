@@ -688,5 +688,25 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 		return super.commitSetAttribute(type, value);
 	}
 	
+	public ContentItem getParentContentItemWherePutMyContent() {
+		Item ownerItem = getOwnerItem();
+		Item parentItem = ownerItem.getPartParent(false);
+		if (parentItem == null) {
+			return null;
+		}
+		if (parentItem.getContentItem() != null) {
+			return parentItem.getContentItem();
+		}
+
+		ContentItem cm = null;
+		while (cm == null && parentItem != null) {
+			cm = parentItem.getContentItem();
+			parentItem = parentItem.getPartParent(false);
+		}
+		return cm;
+	}
+	
+	
+	
 	
 }
