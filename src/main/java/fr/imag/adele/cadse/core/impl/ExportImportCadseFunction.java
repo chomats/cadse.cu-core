@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -50,6 +51,19 @@ import fr.imag.adele.cadse.core.transaction.delta.SetAttributeOperation;
 
 public class ExportImportCadseFunction {
 
+	String MF_template = "Manifest-Version: 1.0\n"+
+"Bundle-ManifestVersion: 2\n"+
+"Bundle-Name: #BUNDLE-NAME#\n"+
+"Bundle-SymbolicName: #BUNDLE-NAME#\n"+
+"Bundle-Version: 2.3.0\n"+
+"Bundle-DocURL: http://www-adele.imag.fr/\n"+
+"Import-Package: fr.imag.adele.cadse.core;version=\"2.3\",\n"+
+" fr.imag.adele.cadse.core.transaction;version=\"2.3\",\n"+
+" fr.imag.adele.cadse.core.transaction.delta;version=\"2.3\",\n"+
+" fr.imag.adele.cadse.core.impl;version=\"2.3\"\n"+
+"Bundle-Activator: fr.imag.adele.cadse.core.impl.BundleInstallActivator\n";
+	
+	
 	protected Set<Link>						outgoinglinks				= new HashSet<Link>();
 	protected Set<ItemType>					requireItemType				= new HashSet<ItemType>();
 	protected Set<CadseRuntime>				requireCadse				= new HashSet<CadseRuntime>();
@@ -67,6 +81,9 @@ public class ExportImportCadseFunction {
 	 * Association file to zip entry path
 	 */
 	protected HashMap<File, String>			files;
+
+
+	protected String exportNameFile;
 
 	/** The Constant MELUSINE_DIR. */
 	public static final String		MELUSINE_DIR				= ".melusine-dir/";
@@ -89,6 +106,8 @@ public class ExportImportCadseFunction {
 
 	public File exportItems(File directory, String exportNameFile, String postFix, boolean tstamp, Item... rootItems)
 			throws FileNotFoundException, IOException {
+		this.exportNameFile = exportNameFile;
+		
 		File pf = null;
 		CadseCore.getCadseDomain().beginOperation("Export cadse");
 		try {
@@ -119,6 +138,8 @@ public class ExportImportCadseFunction {
 			includesContents(files);
 			worked(1);
 			setTaskName("zip entries...");
+			ZipUtil.addEntryZip(
+					outputStream, new ByteArrayInputStream(getManifest().getBytes()), "META-INF/MANIFEST.MF",-1);
 			ZipUtil.zip(files, outputStream);
 
 			worked(2);
@@ -181,6 +202,10 @@ public class ExportImportCadseFunction {
 	}
 
 	protected void beginTask(String name, int totalWork) {
+	}
+	
+	protected String getManifest() {
+		return MF_template.replaceAll("#BUNDLE-NAME#", exportNameFile);
 	}
 
 	private byte[] toByteArray(Object v) throws IOException {
@@ -300,7 +325,26 @@ public class ExportImportCadseFunction {
 		}
 	}
 
-	public void importCadseItems(File file) throws IOException, MalformedURLException,
+	public void importCadseItems(File file) throws MalformedURLException, IOException, JAXBException, CadseException, ClassNotFoundException {
+		importCadseItems(file.toURL());
+	}
+	
+	/**
+	 * Import a zip file and add new item...
+	 * Delete project original project 
+	 * @param file a zip file
+	 * @throws IOException
+	 * @throws MalformedURLException
+	 * @throws JAXBException
+	 * @throws CadseException
+	 *  - Internal error : cannot find .melusine-dir
+	 * 	- Missing cadse {0} version {1} ({2}, {3})
+	 *  - Item {0} version {1} is not a cadse ! ({2}, {3})
+	 *  - Missing item type {0} version {1} ({2}, {3})
+	 *  - Item {0} version {1} is not an item type ! ({2}, {3})
+	 * @throws ClassNotFoundException
+	 */
+	public void importCadseItems(URL file) throws IOException, MalformedURLException,
 			JAXBException, CadseException, ClassNotFoundException {
 		CadseCore.getCadseDomain().beginOperation("Import cadse");
 		File pf = null;
@@ -309,7 +353,7 @@ public class ExportImportCadseFunction {
 			pf = createTempDirectory(dir);
 			pf.mkdirs();
 
-			ZipUtil.unzipFile(file, pf);
+			ZipUtil.unzip(file.openStream(), pf);
 			String cadse = readCadseFolder(pf);
 			if (cadse != null) {
 				final File newDir = new File(dir, cadse);
