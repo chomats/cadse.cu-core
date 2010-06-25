@@ -617,11 +617,13 @@ public class LogicalWorkspaceTransactionImpl extends AdaptableObjectImpl impleme
 		throw new UnsupportedOperationException();
 	}
 
-	public void loadItems(Collection<URL> itemdescription)
+	public List<ItemDelta> loadItems(Collection<URL> itemdescription)
 			throws CadseException, IOException {
+		 ArrayList<ItemDelta> ret =new ArrayList<ItemDelta>();
 		 for (URL itemURL : itemdescription) {
-			 CadseCore.loadFromPersistence(this, itemURL);
+			ret.add(CadseCore.loadFromPersistence(this, itemURL));
 		 }
+		 return ret;
 	}
 
 	public void loadMetaModel() {
@@ -1198,7 +1200,7 @@ public class LogicalWorkspaceTransactionImpl extends AdaptableObjectImpl impleme
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		for (ItemDelta oper : this._operations.values()) {
-			if (oper.isModified()) {
+			if (oper.isModified() || oper.isLoaded()) {
 				oper.toString(sb, "");
 			}
 		}
