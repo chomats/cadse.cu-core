@@ -59,7 +59,7 @@ public class ExportImportCadseFunction {
 "Bundle-DocURL: http://www-adele.imag.fr/\n"+
 "Import-Package: fr.imag.adele.cadse.core;version=\"2.3\",\n"+
 " fr.imag.adele.cadse.core.transaction;version=\"2.3\",\n"+
-" fr.imag.adele.cadse.core.transaction;version=\"2.3\",\n"+
+" fr.imag.adele.cadse.core.transaction.delta;version=\"2.3\",\n"+
 " fr.imag.adele.cadse.core.impl;version=\"2.3\"\n"+
 "Bundle-Activator: fr.imag.adele.cadse.core.impl.BundleInstallActivator\n";
 	
