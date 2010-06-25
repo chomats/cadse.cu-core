@@ -1,6 +1,7 @@
 package fr.imag.adele.cadse.core.impl;
 
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -19,10 +20,10 @@ public class BundleInstallActivator implements BundleActivator {
 	
 	@Override
 	public void start(BundleContext context) throws Exception {
-		URL cadsezip = context.getBundle().getEntry("/");
+		Enumeration en = context.getBundle().findEntries("/", null, true);
 		
 		final ExportImportCadseFunction exportImportCadseFunction = new ExportImportCadseFunction();
-		exportImportCadseFunction.importCadseItems(cadsezip);
+		exportImportCadseFunction.importCadseItems(en);
 		
 		for (Item item : exportImportCadseFunction.getItemsHash()) {
 			itemsloaded.add(item.getId());
