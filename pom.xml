@@ -60,7 +60,7 @@
         	<artifactId>org.apache.felix.ipojo</artifactId>
         </dependency>
         <dependency>
-        	<groupId>fr.imag.adele.cadse</groupId>
+        	<groupId>fr.imag.adele.cadse.runtime</groupId>
         	<artifactId>util.io</artifactId>
         </dependency>
     </dependencies>
