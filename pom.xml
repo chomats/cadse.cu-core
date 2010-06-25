@@ -21,6 +21,7 @@
                 <configuration>
                     <instructions>
                         <Export-Package>fr.imag.adele.cadse.core.impl.*;version="${version.cadse}"</Export-Package>
+                        <Import-Package>javax.xml.bind*;version=!, *</Import-Package>
                     </instructions>
                 </configuration>
             </plugin>
