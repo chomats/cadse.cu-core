@@ -622,6 +622,7 @@ public class LogicalWorkspaceTransactionImpl implements
 		 for (URL itemURL : itemdescription) {
 			ret.add(CadseCore.loadFromPersistence(this, itemURL));
 		 }
+		 return ret;
 	}
 
 	public void loadMetaModel() {
