@@ -32,6 +32,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import fr.imag.adele.cadse.core.AdaptableObjectImpl;
 import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
@@ -92,7 +93,7 @@ import fr.imag.adele.cadse.core.var.ContextVariable;
 import fr.imag.adele.cadse.util.ArraysUtil;
 import fr.imag.adele.cadse.util.NLS;
 
-public class LogicalWorkspaceTransactionImpl implements
+public class LogicalWorkspaceTransactionImpl extends AdaptableObjectImpl implements
 		LogicalWorkspaceTransaction, InternalLogicalWorkspace {
 
 	private final InternalLogicalWorkspace base;
@@ -3408,11 +3409,7 @@ public class LogicalWorkspaceTransactionImpl implements
 		return itemTypeDelta.getAdapter(ItemType.class);
 	}
 
-	@Override
-	public <T> T adapt(Class<T> clazz) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
 	@Override
 	public void addKey(INamedUUID item, Key key) {
