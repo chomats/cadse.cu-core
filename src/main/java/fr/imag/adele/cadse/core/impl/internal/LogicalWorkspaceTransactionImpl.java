@@ -1198,7 +1198,7 @@ public class LogicalWorkspaceTransactionImpl implements
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		for (ItemDelta oper : this._operations.values()) {
-			if (oper.isModified()) {
+			if (oper.isModified() || oper.isLoaded()) {
 				oper.toString(sb, "");
 			}
 		}
