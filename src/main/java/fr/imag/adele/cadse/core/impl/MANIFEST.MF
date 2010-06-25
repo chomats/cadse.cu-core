@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: #BUNDLE-NAME#
+Bundle-SymbolicName: #BUNDLE-NAME#
+Bundle-Version: 2.3.0
+Bundle-DocURL: http://www-adele.imag.fr/
+Import-Package: fr.imag.adele.cadse.core;version="2.3",
+ fr.imag.adele.cadse.core.transaction;version="2.3",
+ fr.imag.adele.cadse.core.transaction;version="2.3",
+ fr.imag.adele.cadse.core.impl;version="2.3"
+Bundle-Activator: fr.imag.adele.cadse.core.impl.BundleInstallActivator
