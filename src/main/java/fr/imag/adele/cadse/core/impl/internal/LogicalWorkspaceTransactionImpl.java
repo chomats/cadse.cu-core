@@ -616,10 +616,11 @@ public class LogicalWorkspaceTransactionImpl implements
 		throw new UnsupportedOperationException();
 	}
 
-	public void loadItems(Collection<URL> itemdescription)
+	public List<ItemDelta> loadItems(Collection<URL> itemdescription)
 			throws CadseException, IOException {
+		 ArrayList<ItemDelta> ret =new ArrayList<ItemDelta>();
 		 for (URL itemURL : itemdescription) {
-			 CadseCore.loadFromPersistence(this, itemURL);
+			ret.add(CadseCore.loadFromPersistence(this, itemURL));
 		 }
 	}
 

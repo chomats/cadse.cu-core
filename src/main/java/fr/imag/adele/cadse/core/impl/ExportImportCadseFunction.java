@@ -12,12 +12,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.ObjectInputStream.GetField;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -70,6 +72,7 @@ public class ExportImportCadseFunction {
 
 	
 	
+	
 	protected final HashSet<Item>				items						= new HashSet<Item>();
 
 	/**
@@ -97,12 +100,12 @@ public class ExportImportCadseFunction {
 	public static final String		MELUSINE_DIR_CADSENAME_IDS	= ".melusine-dir/cadsename.ids";
 
 	/** The Constant MELUSINE_DIR_CADSENAME_ID. */
-	public static final String		REQUIRE_CADSEs				= ".melusine-dir/require-cadses";
+	public static final String		REQUIRE_CADSEs				= "/.melusine-dir/require-cadses";
 	/** The Constant MELUSINE_DIR_CADSENAME_ID. */
-	public static final String		REQUIRE_ITEM_TYPEs			= ".melusine-dir/require-its";
+	public static final String		REQUIRE_ITEM_TYPEs			= "/.melusine-dir/require-its";
 	/** The Constant MELUSINE_DIR_CADSENAME_ID. */
 
-	public static final String		PROJECTS					= ".melusine-dir/projects";
+	public static final String		PROJECTS					= "/.melusine-dir/projects";
 
 	public File exportItems(File directory, String exportNameFile, String postFix, boolean tstamp, Item... rootItems)
 			throws FileNotFoundException, IOException {
@@ -316,7 +319,11 @@ public class ExportImportCadseFunction {
 		File data = new File(pf, key);
 		if (!data.exists())
 			return null;
-		ObjectInputStream isr = new ObjectInputStream(new FileInputStream(data));
+		return readObject(new FileInputStream(data));
+	}
+	
+	public Object readObject(InputStream input) throws IOException, ClassNotFoundException {
+		ObjectInputStream isr = new ObjectInputStream(input);
 		try {
 			Object o = isr.readObject();
 			return o;
@@ -433,10 +440,10 @@ public class ExportImportCadseFunction {
 				projectAssociationSet.add(pa);
 			}
 			LogicalWorkspaceTransaction transaction = lw.createTransaction();
-			transaction.loadItems(itemdescription);
+			List<ItemDelta> Itemsdelta = transaction.loadItems(itemdescription);
 			migrate(transaction);
 			transaction.commit(false, true, false, projectAssociationSet);
-			checkAction(transaction);
+			checkAction(Itemsdelta, transaction);
 			
 		} catch (RuntimeException e) {
 			// TODO Auto-generated catch block
@@ -448,6 +455,128 @@ public class ExportImportCadseFunction {
 		}
 	}
 	
+	
+	/**
+	 * Import a zip file and add new item...
+	 * Delete project original project 
+	 * @param file a zip file
+	 * @throws IOException
+	 * @throws MalformedURLException
+	 * @throws JAXBException
+	 * @throws CadseException
+	 *  - Internal error : cannot find .melusine-dir
+	 * 	- Missing cadse {0} version {1} ({2}, {3})
+	 *  - Item {0} version {1} is not a cadse ! ({2}, {3})
+	 *  - Missing item type {0} version {1} ({2}, {3})
+	 *  - Item {0} version {1} is not an item type ! ({2}, {3})
+	 * @throws ClassNotFoundException
+	 */
+	public void importCadseItems(Enumeration<URL> enumURLs) throws IOException, MalformedURLException,
+			JAXBException, CadseException, ClassNotFoundException {
+		CadseCore.getCadseDomain().beginOperation("Import cadse");
+		Collection<URL> itemdescription = new ArrayList<URL>();
+		LogicalWorkspace lw = CadseCore.getLogicalWorkspace();
+		Collection<ProjectAssociation> projectAssociationSet = new ArrayList<ProjectAssociation>();
+		
+		try {
+			ArrayList<URL> contents = new ArrayList<URL>();
+			HashMap<String, ProjectAssociation> projects = new HashMap<String, ProjectAssociation>();
+			while(enumURLs.hasMoreElements()) {
+				URL urlEntry = enumURLs.nextElement();
+				String path = urlEntry.getPath();
+				if (path.startsWith("/META-INF/MANIFEST.MF") || path.startsWith("/META-INF/")) {
+					continue;
+				}
+				if (path.startsWith("/.melusine-dir/")) {
+					if (path.startsWith(REQUIRE_ITEM_TYPEs)) {
+						Object[] requireItemTypeIds = (Object[]) readObject(urlEntry.openStream());
+						for (int i = 0; i < requireItemTypeIds.length;) {
+							UUID id = (UUID) requireItemTypeIds[i++];
+							String name = (String) requireItemTypeIds[i++];
+							String qname = (String) requireItemTypeIds[i++];
+							Integer version = (Integer) requireItemTypeIds[i++];
+							Item cr = lw.getItem(id);
+							if (cr == null) {
+								throw new CadseException(
+										"Missing item type {0} version {1} ({2}, {3})",
+										name, version, qname, id);
+							}
+							if (!(cr instanceof ItemType)) {
+								throw new CadseException(
+										"Item {0} version {1} is not an item type ! ({2}, {3})",
+										name, version, qname, id);
+							}
+						}
+						continue;
+					}
+					if (path.startsWith(REQUIRE_CADSEs)) {
+						Object[] requireCadseIds = (Object[]) readObject(urlEntry.openStream());
+						for (int i = 0; i < requireCadseIds.length;) {
+							UUID id = (UUID) requireCadseIds[i++];
+							String name = (String) requireCadseIds[i++];
+							String qname = (String) requireCadseIds[i++];
+							Integer version = (Integer) requireCadseIds[i++];
+							Item cr = lw.getItem(id);
+							if (cr == null) {
+								throw new CadseException(
+										"Missing cadse {0} version {1} ({2}, {3})",
+										name, version, qname, id);
+							}
+							if (!(cr instanceof CadseRuntime)) {
+								throw new CadseException(
+										"Item {0} version {1} is not a cadse ! ({2}, {3})",
+										name, version, qname, id);
+							}
+						}
+						continue;
+					}
+					if (path.startsWith(PROJECTS)) {
+						projectsMap = (HashMap<String, UUID>) readObject(urlEntry.openStream());
+						if (projectsMap != null) {
+							for (Map.Entry<String, UUID> e : projectsMap.entrySet()) {
+								ProjectAssociation pa = new ProjectAssociation(
+										e.getValue(), e.getKey());
+								projectAssociationSet.add(pa);
+								projects.put(pa.getProjectName(), pa);
+							}
+						}
+						continue;
+					}
+					if (path.endsWith(".ser")) {
+						itemdescription.add(urlEntry);
+					}
+					continue;
+				}
+				
+				if (path.endsWith("/")) continue;
+				
+				contents.add(urlEntry);
+			}
+			if (itemdescription.size() == 0) throw new CadseException("Internal error : cannot find items");
+			for (URL url : contents) {
+				String path = url.getPath();
+				String projectName = path.substring(1);
+				int i = projectName.indexOf('/');
+				projectName = projectName.substring(0, i);
+				ProjectAssociation pa = projects.get(projectName);
+				if (pa != null)
+					pa.addContentEntry(path.substring(i+2), url);
+			}
+			
+			LogicalWorkspaceTransaction transaction = lw.createTransaction();
+			List<ItemDelta> Itemsdelta = transaction.loadItems(itemdescription);
+			migrate(transaction);
+			transaction.commit(false, true, false, projectAssociationSet);
+			checkAction(Itemsdelta, transaction);
+			
+		} catch (RuntimeException e) {
+			throw new CadseException(e.getMessage());
+		} finally {
+			CadseCore.getCadseDomain().endOperation();
+		}
+	}
+	
+
 	/**
 	 * 
 	 * @param cadse
@@ -457,7 +586,7 @@ public class ExportImportCadseFunction {
 	 * @throws IOException
 	 * @throws CadseException
 	 */
-	static public Item importCadse(String cadse, InputStream input) throws IOException, CadseException {
+	public Item importCadse(String cadse, InputStream input) throws IOException, CadseException {
 		CadseCore.getCadseDomain().beginOperation("Import cadse");
 		try {
 			File pf;
@@ -488,11 +617,11 @@ public class ExportImportCadseFunction {
 			projectAssociationSet.add(pa);
 			LogicalWorkspaceTransaction transaction = CadseCore.getLogicalWorkspace().createTransaction();
 
-			transaction.loadItems(itemdescription);
-			migrate(transaction);
+			List<ItemDelta> Itemsdelta = transaction.loadItems(itemdescription);
+		//	migrate(transaction);
 			ItemDelta cadseDef = transaction.getItem(uuid);
 			transaction.commit(false, true, false, projectAssociationSet);
-			checkAction(transaction);
+			checkAction(Itemsdelta, transaction);
 			return cadseDef.getBaseItem();
 		} finally {
 			CadseCore.getCadseDomain().endOperation();
@@ -677,15 +806,15 @@ public class ExportImportCadseFunction {
 		}
 	}
 
-	static private void checkAction(LogicalWorkspaceTransaction transaction) {
-		Collection<ItemDelta> operations = transaction.getItemOperations();
+	private void checkAction(List<ItemDelta> itemsdelta, LogicalWorkspaceTransaction transaction) {
 		LogicalWorkspace lw = CadseCore.getLogicalWorkspace();
-		for (ItemDelta itemDelta : operations) {
+		for (ItemDelta itemDelta : itemsdelta) {
 			Item gI = lw.getItem(itemDelta.getId());
 			if (gI == null) {
 				System.err.println("Cannot found commited item " + itemDelta);
 				continue;
 			}
+			items.add(gI);
 			Item parent = gI.getPartParent();
 			if (parent == null && itemDelta.getPartParent() != null) {
 				System.err.println("Parent not setted " + itemDelta + " -> " + itemDelta.getPartParent());
