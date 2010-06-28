@@ -1173,10 +1173,16 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 
 	@Override
 	public KeyDefinition getKeyDefinition() {
-		if (this._spaceKeytype == null && _superType != null) {
-			return _superType.getKeyDefinition();
+		KeyDefinition ret = _spaceKeytype;
+		if (ret == null) {
+			if (_superType != null) {
+				ret = _superType.getKeyDefinition();
+			}
+			if (ret == null && isGroupType()) {
+				ret = CadseGCST.ITEM_TYPE.getKeyDefinition();
+			}
 		}
-		return _spaceKeytype;
+		return ret;
 	}
 
 	public <T> T getApdapter(Item instance, Class<T> clazz) {
