@@ -502,7 +502,9 @@ public class ExportImportCadseFunction {
 			HashMap<String, ProjectAssociation> projects = new HashMap<String, ProjectAssociation>();
 			while(enumURLs.hasMoreElements()) {
 				URL urlEntry = enumURLs.nextElement();
+				if (urlEntry == null) continue;
 				String path = urlEntry.getPath();
+				if (path == null) continue;
 				if (path.startsWith("/"))
 					path = path.substring(1);
 				
