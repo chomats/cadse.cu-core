@@ -100,13 +100,24 @@ public class ExportImportCadseFunction {
 	public static final String		MELUSINE_DIR_CADSENAME_IDS	= ".melusine-dir/cadsename.ids";
 
 	/** The Constant MELUSINE_DIR_CADSENAME_ID. */
-	public static final String		REQUIRE_CADSEs				= "/.melusine-dir/require-cadses";
+	public static final String		REQUIRE_CADSEs				= ".melusine-dir/require-cadses";
 	/** The Constant MELUSINE_DIR_CADSENAME_ID. */
-	public static final String		REQUIRE_ITEM_TYPEs			= "/.melusine-dir/require-its";
+	public static final String		REQUIRE_ITEM_TYPEs			= ".melusine-dir/require-its";
 	/** The Constant MELUSINE_DIR_CADSENAME_ID. */
 
-	public static final String		PROJECTS					= "/.melusine-dir/projects";
+	public static final String		PROJECTS					= ".melusine-dir/projects";
 
+	/**
+	 * Le format du fichier <exportNameFile><postFix><-yyyy-MM-dd-HHmm>.zip
+	 * @param directory where the zip file is put
+	 * @param exportNameFile the name of zip file
+	 * @param postFix null if none 
+	 * @param tstamp true if want add postfix tstamp. 
+	 * @param rootItems
+	 * @return
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
 	public File exportItems(File directory, String exportNameFile, String postFix, boolean tstamp, Item... rootItems)
 			throws FileNotFoundException, IOException {
 		this.exportNameFile = exportNameFile;
@@ -115,6 +126,8 @@ public class ExportImportCadseFunction {
 		CadseCore.getCadseDomain().beginOperation("Export cadse");
 		try {
 
+			if (postFix == null)
+				postFix = "";
 			pf = new File(directory, exportNameFile + postFix+ ".zip");
 			if (tstamp) {
 				Date d = new Date(System.currentTimeMillis());
@@ -246,6 +259,8 @@ public class ExportImportCadseFunction {
 			return;
 		}
 
+		if (exclude(item)) return;
+		
 		items.add(item);
 		ItemType it = item.getType();
 		if (it != null) {
@@ -280,6 +295,10 @@ public class ExportImportCadseFunction {
 			}
 			getPersistanceFileAll(melusineDir, link.getDestination());
 		}
+	}
+
+	protected boolean exclude(Item item) {
+		return false;
 	}
 
 	protected void computeContentFromItem(Item item) {
@@ -484,10 +503,13 @@ public class ExportImportCadseFunction {
 			while(enumURLs.hasMoreElements()) {
 				URL urlEntry = enumURLs.nextElement();
 				String path = urlEntry.getPath();
-				if (path.startsWith("/META-INF/MANIFEST.MF") || path.startsWith("/META-INF/")) {
+				if (path.startsWith("/"))
+					path = path.substring(1);
+				
+				if (path.startsWith("META-INF/")) {
 					continue;
 				}
-				if (path.startsWith("/.melusine-dir/")) {
+				if (path.startsWith(".melusine-dir/")) {
 					if (path.startsWith(REQUIRE_ITEM_TYPEs)) {
 						Object[] requireItemTypeIds = (Object[]) readObject(urlEntry.openStream());
 						for (int i = 0; i < requireItemTypeIds.length;) {
@@ -552,6 +574,8 @@ public class ExportImportCadseFunction {
 				
 				contents.add(urlEntry);
 			}
+			
+			
 			if (itemdescription.size() == 0) throw new CadseException("Internal error : cannot find items");
 			for (URL url : contents) {
 				String path = url.getPath();
