@@ -621,7 +621,9 @@ public class LogicalWorkspaceTransactionImpl extends AdaptableObjectImpl impleme
 			throws CadseException, IOException {
 		 ArrayList<ItemDelta> ret =new ArrayList<ItemDelta>();
 		 for (URL itemURL : itemdescription) {
-			ret.add(CadseCore.loadFromPersistence(this, itemURL));
+			final ItemDelta item = CadseCore.loadFromPersistence(this, itemURL);
+			if (item != null)
+				ret.add(item);
 		 }
 		 return ret;
 	}
