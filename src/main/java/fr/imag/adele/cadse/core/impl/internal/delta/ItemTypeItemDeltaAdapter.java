@@ -25,6 +25,7 @@ import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.attribute.GroupOfAttributes;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
+import fr.imag.adele.cadse.core.content.ContentItem;
 import fr.imag.adele.cadse.core.impl.internal.Accessor;
 import fr.imag.adele.cadse.core.impl.internal.ItemTypeImpl;
 import fr.imag.adele.cadse.core.key.KeyDefinition;
@@ -861,6 +862,18 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 			List<LinkType> ret, Set<TypeDefinition> visited) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Not implemented method");
+	}
+
+	@Override
+	public Class<? extends ContentItem> getContentItemClass() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setContentItemClass(Class<? extends ContentItem> cf) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
