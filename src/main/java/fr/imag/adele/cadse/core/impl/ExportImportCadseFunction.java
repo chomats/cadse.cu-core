@@ -594,7 +594,7 @@ public class ExportImportCadseFunction {
 			checkAction(Itemsdelta, transaction);
 			
 		} catch (RuntimeException e) {
-			throw new CadseException(e.getMessage());
+			throw new CadseException(e.getMessage(), e);
 		} finally {
 			CadseCore.getCadseDomain().endOperation();
 		}
