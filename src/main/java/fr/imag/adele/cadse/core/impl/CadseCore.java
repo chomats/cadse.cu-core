@@ -282,7 +282,7 @@ public class CadseCore {
 	 * 
 	 * @return single instance of CadseCore
 	 */
-	public static CadseDomain getInstance() {
+	public static CadseDomainImpl getInstance() {
 		return CadseDomainImpl.getInstance();
 	}
 
@@ -487,6 +487,12 @@ public class CadseCore {
 		oldNameRE._attRe = attRe;
 		oldNameRE._att = att;
 		_oldNameREs = ArraysUtil.add(OldNameRE.class, _oldNameREs, oldNameRE);
+	}
+
+	public static boolean inDevelopmentMode() {
+		final CadseDomain cadseDomain = getCadseDomain();
+		if (cadseDomain == null) return false;
+		return cadseDomain.inDevelopmentMode();
 	}
 	
 	
