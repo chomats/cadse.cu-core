@@ -81,10 +81,22 @@ public class MC_Integer extends MC_AttributesItem {
 	
 	@Override
 	public Object visualToModel(Object ret) {
-		try {
-			return Convert.toInteger(ret);
-		} catch (NumberFormatException e) {
-			return ret;
-		}
+		IAttributeType<?> attDef = getAttributeDefinition();
+		if (attDef.isInstanceOf(CadseGCST.INTEGER))
+			try {
+				return Convert.toInteger(ret);
+			} catch (NumberFormatException e) {
+			}
+		if (attDef.isInstanceOf(CadseGCST.DOUBLE))
+			try {
+				return Convert.toDouble(ret);
+			} catch (NumberFormatException e) {
+			}
+		if (attDef.isInstanceOf(CadseGCST.LONG))
+			try {
+				return Convert.toLong(ret, null);
+			} catch (NumberFormatException e) {
+			}
+		return ret;
 	}
 }

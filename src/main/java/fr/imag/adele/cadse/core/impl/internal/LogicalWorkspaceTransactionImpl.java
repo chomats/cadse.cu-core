@@ -32,6 +32,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import fr.imag.adele.cadse.core.AdaptableObjectImpl;
 import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
@@ -92,7 +93,7 @@ import fr.imag.adele.cadse.core.var.ContextVariable;
 import fr.imag.adele.cadse.util.ArraysUtil;
 import fr.imag.adele.cadse.util.NLS;
 
-public class LogicalWorkspaceTransactionImpl implements
+public class LogicalWorkspaceTransactionImpl extends AdaptableObjectImpl implements
 		LogicalWorkspaceTransaction, InternalLogicalWorkspace {
 
 	private final InternalLogicalWorkspace base;
@@ -616,11 +617,15 @@ public class LogicalWorkspaceTransactionImpl implements
 		throw new UnsupportedOperationException();
 	}
 
-	public void loadItems(Collection<URL> itemdescription)
+	public List<ItemDelta> loadItems(Collection<URL> itemdescription)
 			throws CadseException, IOException {
+		 ArrayList<ItemDelta> ret =new ArrayList<ItemDelta>();
 		 for (URL itemURL : itemdescription) {
-			 CadseCore.loadFromPersistence(this, itemURL);
+			final ItemDelta item = CadseCore.loadFromPersistence(this, itemURL);
+			if (item != null)
+				ret.add(item);
 		 }
+		 return ret;
 	}
 
 	public void loadMetaModel() {
@@ -1197,7 +1202,7 @@ public class LogicalWorkspaceTransactionImpl implements
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		for (ItemDelta oper : this._operations.values()) {
-			if (oper.isModified()) {
+			if (oper.isModified() || oper.isLoaded()) {
 				oper.toString(sb, "");
 			}
 		}
@@ -3408,11 +3413,7 @@ public class LogicalWorkspaceTransactionImpl implements
 		return itemTypeDelta.getAdapter(ItemType.class);
 	}
 
-	@Override
-	public <T> T adapt(Class<T> clazz) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
 	@Override
 	public void addKey(INamedUUID item, Key key) {

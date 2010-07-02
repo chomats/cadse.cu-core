@@ -41,7 +41,6 @@ import fr.imag.adele.cadse.core.CadseIllegalArgumentException;
 import fr.imag.adele.cadse.core.DerivedLinkType;
 import fr.imag.adele.cadse.core.ExtendedType;
 import fr.imag.adele.cadse.core.GroupType;
-import fr.imag.adele.cadse.core.IContentItemFactory;
 import fr.imag.adele.cadse.core.IItemFactory;
 import fr.imag.adele.cadse.core.IItemManager;
 import fr.imag.adele.cadse.core.Item;
@@ -51,9 +50,11 @@ import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.Messages;
+import fr.imag.adele.cadse.core.ObjectAdapter;
 import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.attribute.GroupOfAttributes;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
+import fr.imag.adele.cadse.core.content.ContentItem;
 import fr.imag.adele.cadse.core.impl.CadseCore;
 import fr.imag.adele.cadse.core.impl.CollectedReflectLink;
 import fr.imag.adele.cadse.core.impl.ItemFactory;
@@ -134,7 +135,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 
 	private String _managerClass;
 
-	private IContentItemFactory _contentFactory;
+	private Class<? extends ContentItem> _contentFactory;
 
 	public ItemTypeImpl() {
 	}
@@ -950,7 +951,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	}
 
 	public void getAllAttributeTypes(List<IAttributeType<?>> all,
-			ItemFilter filter) {
+			ItemFilter<IAttributeType<?>> filter) {
 		if (_superType != null) {
 			_superType.getAllAttributeTypes(all, filter);
 		}
@@ -963,7 +964,12 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	}
 
 	public void getAllAttributeTypes(Map<String, IAttributeType<?>> all,
-			boolean keepLastAttribute, ItemFilter filter) {
+			boolean keepLastAttribute, ItemFilter<IAttributeType<?>> filter) {
+		if (_extendedBy != null) {
+			for (TypeDefinition ext : _extendedBy) {
+				ext.getAllAttributeTypes(all, keepLastAttribute, filter);
+			}
+		}
 		super.getAllAttributeTypes(all, keepLastAttribute, filter);
 
 		if (_superType != null) {
@@ -971,7 +977,13 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 		}
 	}
 
-	public void getAllAttributeTypesKeys(Set<String> all, ItemFilter filter) {
+	public void getAllAttributeTypesKeys(Set<String> all, ItemFilter<IAttributeType<?>> filter) {
+		if (_extendedBy != null) {
+			for (TypeDefinition ext : _extendedBy) {
+				ext.getAllAttributeTypesKeys(all, filter);
+			}
+		}
+		
 		super.getAllAttributeTypesKeys(all, filter);
 
 		if (_superType != null) {
@@ -1161,10 +1173,16 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 
 	@Override
 	public KeyDefinition getKeyDefinition() {
-		if (this._spaceKeytype == null && _superType != null) {
-			return _superType.getKeyDefinition();
+		KeyDefinition ret = _spaceKeytype;
+		if (ret == null) {
+			if (_superType != null) {
+				ret = _superType.getKeyDefinition();
+			}
+			if (ret == null && isGroupType()) {
+				ret = CadseGCST.ITEM_TYPE.getKeyDefinition();
+			}
 		}
-		return _spaceKeytype;
+		return ret;
 	}
 
 	public <T> T getApdapter(Item instance, Class<T> clazz) {
@@ -1523,12 +1541,14 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	}
 
 	@Override
-	public IContentItemFactory getContentFactory() {
+	public Class<? extends ContentItem> getContentItemClass() {
 		return _contentFactory;
 	}
 	
-	public void setContentFactory(IContentItemFactory cf) {
+	
+	public void setContentItemClass(Class<? extends ContentItem> cf) {
 		_contentFactory = cf;
 	}
+
 	
 }
