@@ -33,6 +33,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import fr.imag.adele.cadse.core.AdaptableObjectImpl;
 import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
@@ -52,6 +53,7 @@ import fr.imag.adele.cadse.core.LinkDescription;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.Messages;
+import fr.imag.adele.cadse.core.ObjectAdapter;
 import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.WSEvent;
 import fr.imag.adele.cadse.core.WSModelState;
@@ -89,7 +91,7 @@ import fr.imag.adele.fede.workspace.as.initmodel.ErrorWhenLoadedModel;
  * 
  * @author <a href="mailto:stephane.chomat@imag.fr">Stephane Chomat</a>
  */
-public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWorkspace {
+public class LogicalWorkspaceImpl extends AdaptableObjectImpl implements LogicalWorkspace, InternalLogicalWorkspace {
 
 	static public class CaptureNewOperation implements ILoggableAction {
 		ILoggableAction log;
@@ -2236,14 +2238,11 @@ public class LogicalWorkspaceImpl implements LogicalWorkspace, InternalLogicalWo
 		return cadseRuntime;
 	}
 
-	@Override
-	public <T> T adapt(Class<T> clazz) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public void waitStart() {
 	}
+
+	
 
 }

@@ -46,7 +46,6 @@ import fr.imag.adele.cadse.core.ItemState;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
-import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.Messages;
 import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
@@ -55,9 +54,7 @@ import fr.imag.adele.cadse.core.impl.CollectedReflectLink;
 import fr.imag.adele.cadse.core.internal.IWorkingLoadingItems;
 import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
 import fr.imag.adele.cadse.core.transaction.delta.LinkDelta;
-import fr.imag.adele.cadse.core.ui.IPage;
 import fr.imag.adele.cadse.core.util.IErrorCollector;
-import fr.imag.adele.cadse.util.ArraysUtil;
 import fr.imag.adele.cadse.util.OrderWay;
 
 /**

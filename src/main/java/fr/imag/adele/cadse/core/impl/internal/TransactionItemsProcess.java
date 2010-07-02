@@ -236,7 +236,10 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems,
 				((ContentItemImpl) contentItem).setOwnerItem(goodItem);
 				if (contentItem.getPartParent() == null)
 					((ContentItemImpl) contentItem)
-					.setParentContent(((ContentItemImpl) contentItem).getParentContentItemWherePutMyContent());
+							.setParentContent(goodItem.getType()
+									.getItemManager()
+									.getParentContentItemWherePutMyContent(
+											contentItem));
 				contentItem.init();
 				if (wl.getItem(contentItem.getId()) == null)
 					wl.addId(contentItem, notifie, this);
@@ -873,7 +876,10 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems,
 				if (contentItem != null) {
 					((ContentItemImpl) contentItem).setOwnerItem(goodItem);
 					((ContentItemImpl) contentItem)
-							.setParentContent(((ContentItemImpl) contentItem).getParentContentItemWherePutMyContent());
+							.setParentContent(goodItem.getType()
+									.getItemManager()
+									.getParentContentItemWherePutMyContent(
+											contentItem));
 					contentItem.init();
 					contentItem.create();
 					if (wl.getItem(contentItem.getId()) == null)
@@ -893,7 +899,9 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems,
 		try {
 			if (ownerItem.isRuntime())
 				return ContentItem.NO_CONTENT;
-			final IContentItemFactory contentItemFactory = it.getContentFactory();
+			final IItemManager itemManager = it.getItemManager();
+			final IContentItemFactory contentItemFactory = itemManager
+					.getContentItemFactory();
 			if (contentItemFactory == null) {
 				return ContentItem.NO_CONTENT;
 			}

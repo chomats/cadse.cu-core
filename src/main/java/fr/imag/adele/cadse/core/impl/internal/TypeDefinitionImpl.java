@@ -218,7 +218,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 				}
 			}
 
-			if (!(destination instanceof IAttributeType)) {
+			if (!(destination instanceof IAttributeType<?>)) {
 				throw new CadseException("Destination is not an IAttributeType : {0}", destination
 						.getQualifiedDisplayName());
 			}
@@ -274,7 +274,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 		preconditions_createLinkType(name, _kind, min, max, destination);
 
 		ret = new LinkTypeImpl(uuid, _kind, this, name, intID, min, max, selection, destination);
-		Link l = addOutgoingLinkType(ret);
+		/*Link l = */ addOutgoingLinkType(ret);
 		return ret;
 	}
 
@@ -536,7 +536,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 	 * @see fr.imag.adele.cadse.core.impl.internal.TypeDefinition#getAllAttributeTypes (java.util.List,
 	 * fr.imag.adele.cadse.core.ItemFilter)
 	 */
-	public void getAllAttributeTypes(List<IAttributeType<?>> all, ItemFilter filter) {
+	public void getAllAttributeTypes(List<IAttributeType<?>> all, ItemFilter<IAttributeType<?>> filter) {
 		if (_attributesDefinitions != null) {
 			if (filter == null) {
 				all.addAll(Arrays.asList(_attributesDefinitions));
@@ -627,8 +627,8 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 		if (!visited.add(this)) {
 			return;
 		}
-		ArrayList<IAttributeType> notPutAttr = new ArrayList<IAttributeType>();
-		for (IAttributeType firstAtt : firstAttributes) {
+		ArrayList<IAttributeType<?>> notPutAttr = new ArrayList<IAttributeType<?>>();
+		for (IAttributeType<?> firstAtt : firstAttributes) {
 			if (!inSpecificPages.contains(firstAtt)) {
 				notPutAttr.add(firstAtt);
 			}
@@ -1013,7 +1013,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 		}
 
 		// 4. pre: self.to->forAll(rt | rt.name <> id)
-		for (Iterator outgoers = getOwnerOutgoingLinkTypes().iterator(); outgoers.hasNext();) {
+		for (Iterator<LinkType> outgoers = getOwnerOutgoingLinkTypes().iterator(); outgoers.hasNext();) {
 			LinkType lt = (LinkType) outgoers.next();
 			if (lt.getName().equals(name)) {
 				throw new CadseIllegalArgumentException(Messages.error_linktype_id_already_exits, name, getId());
@@ -1057,7 +1057,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 	}
 
 	@Override
-	public void getAllAttributeTypes(Map<String, IAttributeType<?>> all, boolean keepLastAttribute, ItemFilter filter) {
+	public void getAllAttributeTypes(Map<String, IAttributeType<?>> all, boolean keepLastAttribute, ItemFilter<IAttributeType<?>>  filter) {
 		if (_attributesDefinitions != null) {
 			for (IAttributeType<?> att : _attributesDefinitions) {
 				if (keepLastAttribute && all.containsKey(att.getName())) {
@@ -1071,7 +1071,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 	}
 
 	@Override
-	public void getAllAttributeTypesKeys(Set<String> all, ItemFilter filter) {
+	public void getAllAttributeTypesKeys(Set<String> all, ItemFilter<IAttributeType<?>> filter) {
 		if (_attributesDefinitions != null) {
 			for (IAttributeType<?> att : _attributesDefinitions) {
 				if (filter == null || filter.accept(att)) {
