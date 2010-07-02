@@ -1,0 +1,393 @@
+format 29
+"fr.imag.adele.cadseg.specv2.editor" // fr.imag.adele.cadseg.specv2.editor
+  revision 1
+  modified_by 81 "chomats"
+  // class settings
+  //class diagram settings
+  draw_all_relations default hide_attributes default hide_operations default show_members_full_definition default show_members_visibility default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default shadow default
+  //use case diagram settings
+  package_name_in_tab default show_context default auto_label_position default shadow default
+  //sequence diagram settings
+  show_full_operations_definition default write_horizontally default drawing_language default shadow default
+  //collaboration diagram settings
+  show_full_operations_definition default show_hierarchical_rank default write_horizontally default drawing_language default package_name_in_tab default show_context default shadow default
+  //object diagram settings
+   write_horizontally default package_name_in_tab default show_context default auto_label_position default shadow default
+  //component diagram settings
+  package_name_in_tab default show_context default auto_label_position default shadow default
+  draw_component_as_icon default show_component_req_prov default show_component_rea default
+  //deployment diagram settings
+  package_name_in_tab default show_context default write_horizontally default auto_label_position default shadow default
+  draw_component_as_icon default show_component_req_prov default show_component_rea default
+  //state diagram settings
+  package_name_in_tab default show_context default auto_label_position default write_trans_label_horizontally default show_trans_definition default shadow default
+  show_activities default region_horizontally default drawing_language default
+  //activity diagram settings
+  package_name_in_tab default show_context default show_opaque_action_definition default auto_label_position default write_flow_label_horizontally default shadow default
+  show_infonote default drawing_language default
+  
+  classview 128081 "Class view2"
+    //class diagram settings
+    draw_all_relations default hide_attributes default hide_operations default show_members_full_definition default show_members_visibility default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default shadow default
+    //collaboration diagram settings
+    show_full_operations_definition default show_hierarchical_rank default write_horizontally default drawing_language default package_name_in_tab default show_context default shadow default
+    //object diagram settings
+     write_horizontally default package_name_in_tab default show_context default auto_label_position default shadow default
+    //sequence diagram settings
+    show_full_operations_definition default write_horizontally default drawing_language default shadow default
+    //state diagram settings
+    package_name_in_tab default show_context default auto_label_position default write_trans_label_horizontally default show_trans_definition default shadow default
+    show_activities default region_horizontally default drawing_language default
+    //class settings
+    //activity diagram settings
+    package_name_in_tab default show_context default show_opaque_action_definition default auto_label_position default write_flow_label_horizontally default shadow default
+    show_infonote default drawing_language default
+    
+    class 128081 "Manager"cpp_decl ""
+      java_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      attribute 128081 "displayName"
+	protected explicit_type "string"
+	cpp_decl ""
+	java_decl ""
+	idl_decl ""
+      end
+
+      attribute 128209 "longName"
+	protected explicit_type "string"
+	cpp_decl ""
+	java_decl ""
+	idl_decl ""
+      end
+
+      classrelation 128081 // <aggregation by value>
+	relation 128081 *---
+	  a role_name "" multiplicity "" protected
+	    classrelation_ref 128081 // <aggregation by value>
+	  b role_name "" multiplicity "" protected
+	    classrelation_ref 128209 // <aggregation by value>
+      end
+
+      classrelation 128337 // <aggregation by value>
+	relation 128209 *---
+	  a role_name "" multiplicity "" protected
+	    classrelation_ref 128337 // <aggregation by value>
+	  b role_name "" multiplicity "" protected
+	    classrelation_ref 128465 // <aggregation by value>
+      end
+
+      classrelation 128593 // <aggregation by value>
+	relation 128337 *---
+	  a role_name "" multiplicity "" protected
+	    classrelation_ref 128593 // <aggregation by value>
+	  b role_name "" multiplicity "" protected
+	    classrelation_ref 128721 // <aggregation by value>
+      end
+
+      classrelation 128849 // <aggregation by value>
+	relation 128465 *---
+	  a role_name "" multiplicity "" protected
+	    classrelation_ref 128849 // <aggregation by value>
+	  b role_name "" multiplicity "" protected
+	    classrelation_ref 128977 // <aggregation by value>
+      end
+
+      classrelation 129105 // <unidirectional association>
+	relation 128593 --->
+	  a role_name "" multiplicity "" protected
+	    classrelation_ref 129105 // <unidirectional association>
+	  b parent class_ref 128721 // ItemType
+      end
+    end
+
+    classdiagram 128209 "Diagram5"
+      draw_all_relations default hide_attributes default hide_operations yes show_members_full_definition yes show_members_visibility default package_name_in_tab default class_drawing_mode default drawing_language default show_context_mode default auto_label_position default shadow default
+      size A4
+    end
+
+    class 128209 "Page"cpp_decl ""
+      java_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      classrelation 128209 // <aggregation by value>
+	relation_ref 128081 // <aggregation by value>
+      end
+
+      attribute 128337 "title"
+	protected explicit_type "string"
+	cpp_decl ""
+	java_decl ""
+	idl_decl ""
+      end
+
+      attribute 128465 "extensAction"
+	protected explicit_type "bool"
+	cpp_decl ""
+	java_decl ""
+	idl_decl ""
+      end
+
+      attribute 128593 "description"
+	protected explicit_type "string"
+	cpp_decl ""
+	java_decl ""
+	idl_decl ""
+      end
+
+      attribute 128721 "numberOfColumn"
+	protected explicit_type "int"
+	cpp_decl ""
+	java_decl ""
+	idl_decl ""
+      end
+
+      classrelation 129617 // fields (<unidirectional association>)
+	relation 128977 --->
+	  a role_name "fields" multiplicity "" protected
+	    classrelation_ref 129617 // fields (<unidirectional association>)
+	  b parent class_ref 128337 // Field
+      end
+    end
+
+    class 128337 "Field"cpp_decl ""
+      java_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      classrelation 128465 // <aggregation by value>
+	relation_ref 128209 // <aggregation by value>
+      end
+
+      attribute 128849 "readonly"
+	protected explicit_type "bool"
+	cpp_decl ""
+	java_decl ""
+	idl_decl ""
+      end
+
+      attribute 128977 "label"
+	protected explicit_type "string"
+	cpp_decl ""
+	java_decl ""
+	idl_decl ""
+      end
+
+      attribute 129105 "position"
+	protected explicit_type "uint"
+	cpp_decl ""
+	java_decl ""
+	idl_decl ""
+      end
+
+      classrelation 129489 // attribute (<unidirectional association>)
+	relation 128849 --->
+	  a role_name "attribute" multiplicity "" protected
+	    classrelation_ref 129489 // attribute (<unidirectional association>)
+	  b parent class_ref 128849 // Attribute
+      end
+
+      classrelation 130001 // <unidirectional association>
+	relation 129361 --->
+	  a role_name "" multiplicity "" protected
+	    classrelation_ref 130001 // <unidirectional association>
+	  b parent class_ref 128977 // Display
+      end
+    end
+
+    class 128465 "Edition"cpp_decl ""
+      java_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      attribute 129489 "showInternalsAttributes"
+	protected explicit_type "bool"
+	cpp_decl ""
+	java_decl ""
+	idl_decl ""
+      end
+
+      classrelation 128977 // <aggregation by value>
+	relation_ref 128465 // <aggregation by value>
+      end
+
+      classrelation 129873 // pages (<unidirectional association>)
+	relation 129233 --->
+	  a role_name "pages" multiplicity "" protected
+	    classrelation_ref 129873 // pages (<unidirectional association>)
+	  b parent class_ref 128209 // Page
+      end
+    end
+
+    class 128593 "Creation"cpp_decl ""
+      java_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      attribute 129233 "automaticShortName"
+	protected explicit_type "bool"
+	cpp_decl ""
+	java_decl ""
+	idl_decl ""
+      end
+
+      attribute 129361 "extendsWizardController"
+	protected explicit_type "bool"
+	cpp_decl ""
+	java_decl ""
+	idl_decl ""
+      end
+
+      attribute 129617 "defaultShortName"
+	protected explicit_type "string"
+	cpp_decl ""
+	java_decl ""
+	idl_decl ""
+      end
+
+      classrelation 128721 // <aggregation by value>
+	relation_ref 128337 // <aggregation by value>
+      end
+
+      classrelation 129745 // pages (<unidirectional association>)
+	relation 129105 --->
+	  a role_name "pages" multiplicity "" protected
+	    classrelation_ref 129745 // pages (<unidirectional association>)
+	  b parent class_ref 128209 // Page
+      end
+    end
+
+    class 128721 "ItemType"cpp_decl ""
+      java_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      classrelation 129233 // <aggregation by value>
+	relation 128721 *---
+	  a role_name "" multiplicity "" protected
+	    classrelation_ref 129233 // <aggregation by value>
+	  b role_name "" multiplicity "" protected
+	    classrelation_ref 129361 // <aggregation by value>
+      end
+    end
+
+    class 128849 "Attribute"cpp_decl ""
+      java_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      classrelation 129361 // <aggregation by value>
+	relation_ref 128721 // <aggregation by value>
+      end
+    end
+
+    class 128977 "Display"cpp_decl ""
+      java_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      attribute 130001 "extendsUC"
+	protected explicit_type "bool"
+	cpp_decl ""
+	java_decl ""
+	idl_decl ""
+      end
+
+      attribute 130129 "extendsIUC"
+	protected explicit_type "bool"
+	cpp_decl ""
+	java_decl ""
+	idl_decl ""
+      end
+
+      attribute 130257 "extendsMC"
+	protected explicit_type "bool"
+	cpp_decl ""
+	java_decl ""
+	idl_decl ""
+      end
+    end
+
+    class 129105 "DText"cpp_decl ""
+      java_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      classrelation 130129 // <generalisation>
+	relation 129489 ---|>
+	  a public
+	    classrelation_ref 130129 // <generalisation>
+	  b parent class_ref 128977 // Display
+      end
+    end
+
+    class 129233 "DList"cpp_decl ""
+      java_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      attribute 130385 "messageAdd"
+	protected explicit_type "string"
+	cpp_decl ""
+	java_decl ""
+	idl_decl ""
+      end
+
+      attribute 130513 "titleAdd"
+	protected explicit_type "string"
+	cpp_decl ""
+	java_decl ""
+	idl_decl ""
+      end
+
+      classrelation 130257 // <generalisation>
+	relation 129617 ---|>
+	  a public
+	    classrelation_ref 130257 // <generalisation>
+	  b parent class_ref 128977 // Display
+      end
+    end
+
+    class 129361 "DCheckedList"cpp_decl ""
+      java_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      classrelation 130385 // <generalisation>
+	relation 129745 ---|>
+	  a public
+	    classrelation_ref 130385 // <generalisation>
+	  b parent class_ref 128977 // Display
+      end
+    end
+
+    class 129489 "DCombo"cpp_decl ""
+      java_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      classrelation 130513 // <generalisation>
+	relation 129873 ---|>
+	  a public
+	    classrelation_ref 130513 // <generalisation>
+	  b parent class_ref 128977 // Display
+      end
+    end
+
+    class 129617 "DCheckBox"cpp_decl ""
+      java_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      
+      classrelation 130641 // <generalisation>
+	relation 130001 ---|>
+	  a public
+	    classrelation_ref 130641 // <generalisation>
+	  b parent class_ref 128977 // Display
+      end
+    end
+  end
+
+end
