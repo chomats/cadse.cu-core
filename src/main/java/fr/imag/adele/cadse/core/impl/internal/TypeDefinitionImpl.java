@@ -2,11 +2,13 @@ package fr.imag.adele.cadse.core.impl.internal;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.UUID;
 
 import fr.imag.adele.cadse.core.CPackage;
@@ -1172,6 +1174,27 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 			return ArraysUtil.move(kind,  _attributesDefinitions, l1.getDestination(), l2.getDestination());
 		}
 		return super.commitMove(kind, l1, l2);
+	}
+
+	@Override
+	public ItemType[] getAllConcreteType() {
+		TreeSet<ItemType> set = new TreeSet<ItemType>(new Comparator<ItemType>() {
+
+			@Override
+			public int compare(ItemType o1, ItemType o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+		});
+		computeAllContcreteType(set, new HashSet<TypeDefinition>());
+		return (ItemType[]) set.toArray(new ItemType[set.size()]);
+	}
+
+	/**
+	 * Compute the concrete type which can be instantiate item.
+	 * @param set the result set.
+	 * @param visiteur the visiteur stack.
+	 */
+	public void computeAllContcreteType(TreeSet<ItemType> set, HashSet<TypeDefinition> visiteur) {
 	}
 
 }

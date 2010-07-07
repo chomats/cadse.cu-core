@@ -33,6 +33,7 @@ import fr.imag.adele.cadse.core.impl.attribute.DateAttributeType;
 import fr.imag.adele.cadse.core.impl.attribute.DoubleAttributeType;
 import fr.imag.adele.cadse.core.impl.attribute.EnumAttributeType;
 import fr.imag.adele.cadse.core.impl.attribute.IntegerAttributeType;
+import fr.imag.adele.cadse.core.impl.attribute.ListAttributeType;
 import fr.imag.adele.cadse.core.impl.attribute.LongAttributeType;
 import fr.imag.adele.cadse.core.impl.attribute.StringAttributeType;
 import fr.imag.adele.cadse.core.impl.attribute.TimeAttributeType;
@@ -83,11 +84,16 @@ public class ItemFactory implements IItemFactory {
 			return new LinkTypeImpl(item, it);
 		}
 		/*
-		 * if (it == CadseGCST.LIST_ATTRIBUTE_TYPE) { return new
-		 * ListAttributeType(item); } if (it == CadseGCST.MAP_ATTRIBUTE_TYPE) {
-		 * return new MapAttributeType(item); } if (it == CadseGCST.VARIABLE) {
-		 * // return new MapAttributeType(id,shortName, 0, null, null); }
 		 */
+		 if (it == CadseGCST.LIST) { 
+			 return new ListAttributeType(item); 
+		 } 
+		
+//		 if (it == CadseGCST.MAP_ATTRIBUTE_TYPE) {
+//		  return new MapAttributeType(item); } 
+//		 if (it == CadseGCST.VARIABLE) {
+		  // return new MapAttributeType(id,shortName, 0, null, null); }
+		 
 		if (it == CadseGCST.PAGE) {
 			return new PageImpl(id, shortName, null);
 		}

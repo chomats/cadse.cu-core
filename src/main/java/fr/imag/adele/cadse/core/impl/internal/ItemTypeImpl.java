@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -52,6 +53,7 @@ import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.Messages;
 import fr.imag.adele.cadse.core.ObjectAdapter;
 import fr.imag.adele.cadse.core.TypeDefinition;
+import fr.imag.adele.cadse.core.TypeDefinition.Internal;
 import fr.imag.adele.cadse.core.attribute.GroupOfAttributes;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.content.ContentItem;
@@ -1548,6 +1550,22 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	
 	public void setContentItemClass(Class<? extends ContentItem> cf) {
 		_contentFactory = cf;
+	}
+
+	
+	@Override
+	public void computeAllContcreteType(TreeSet<ItemType> set,
+			HashSet<TypeDefinition> visiteur) {
+		if (visiteur.contains(this))
+			return;
+		visiteur.add(this);
+		if( !isAbstract())
+			set.add(this);
+		if (_subTypes != null) {
+			for (ItemType it : _subTypes) {
+				((Internal) it).computeAllContcreteType(set, visiteur);
+			}
+		}
 	}
 
 	
