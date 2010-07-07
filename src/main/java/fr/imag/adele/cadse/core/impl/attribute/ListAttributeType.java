@@ -77,8 +77,8 @@ public class ListAttributeType<X> extends AttributeType implements
 		super(id, name, min > 0 ? SHOW_IN_DEFAULT_CP : 0 | flag);
 		this.min = min;
 		this.max = max;
+		this.subtype = subtype;
 		if (id != null && subtype != null) {
-			this.subtype = subtype;
 			this.subtype.setParent(this, CadseGCST.LIST_lt_SUB_TYPE);
 		}
 	}
