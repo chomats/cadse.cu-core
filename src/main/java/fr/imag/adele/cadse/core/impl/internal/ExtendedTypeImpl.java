@@ -1,9 +1,13 @@
 package fr.imag.adele.cadse.core.impl.internal;
 
+import java.util.HashSet;
+import java.util.TreeSet;
 import java.util.UUID;
 
 import fr.imag.adele.cadse.core.ExtendedType;
 import fr.imag.adele.cadse.core.ItemType;
+import fr.imag.adele.cadse.core.TypeDefinition;
+import fr.imag.adele.cadse.core.TypeDefinition.Internal;
 import fr.imag.adele.cadse.util.ArraysUtil;
 
 public class ExtendedTypeImpl extends TypeDefinitionImpl implements ExtendedType {
@@ -43,5 +47,19 @@ public class ExtendedTypeImpl extends TypeDefinitionImpl implements ExtendedType
 	@Override
 	public boolean isExtendedType() {
 		return true;
+	}
+	
+	@Override
+	public void computeAllContcreteType(TreeSet<ItemType> set,
+			HashSet<TypeDefinition> visiteur) {
+		if (visiteur.contains(this))
+			return;
+		visiteur.add(this);
+		
+		if (_exendsItemType != null) {
+			for (ItemType it : _exendsItemType) {
+				((Internal) it).computeAllContcreteType(set, visiteur);
+			}
+		}
 	}
 }

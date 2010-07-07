@@ -51,7 +51,7 @@ public class PageRuntimeModel {
 				createRunning(validators), ro, groups);
 	}
 
-	public Pages getCreationPages(Item item, NewContext context)
+	public Pages getCreationPages(Item item, NewContext context, IAttributeType<?> ...hiddenAttributesInGenericPage)
 			throws CadseException {
 		context.setItem(item);
 		
@@ -61,7 +61,7 @@ public class PageRuntimeModel {
 		iComputeValidators(item, context, validators);
 		HashSet<GroupOfAttributes> groups = new HashSet<GroupOfAttributes>();
 		iComputeGroup(item, groups);
-		IPage[] pages = iGetAllCreationPage(item, context, ro);
+		IPage[] pages = iGetAllCreationPage(item, context, ro, hiddenAttributesInGenericPage);
 		lastCreationPages = new PagesImpl(context, false, ((TypeDefinition.Internal) item
 				.getType()).createDefaultCreationAction(context),
 				iComputeFields(item, pages), pages,
@@ -111,9 +111,9 @@ public class PageRuntimeModel {
 	 * @return the good creation page_
 	 */
 	protected IPage[] iGetAllCreationPage(Item item, FilterContext context,
-			Set<IAttributeType<?>> ro) {
+			Set<IAttributeType<?>> ro, IAttributeType<?>[] hiddenAttributesInGenericPage) {
 		List<IPage> list = new ArrayList<IPage>();
-		iComputeCreationPage(item, context, list, ro);
+		iComputeCreationPage(item, context, list, ro, hiddenAttributesInGenericPage);
 		int count = list.size();
 		for (IPage p : list) {
 			if (p.isEmptyPage()) {
@@ -146,9 +146,10 @@ public class PageRuntimeModel {
 	 * @param ro
 	 */
 	protected void iComputeCreationPage(Item item, FilterContext context,
-			List<IPage> list, Set<IAttributeType<?>> ro) {
+			List<IPage> list, Set<IAttributeType<?>> ro, IAttributeType<?>[] hiddenAttributes) {
 		iRecurcifComputeCreationPage(item, context, list, ro);
 		HashSet<IAttributeType<?>> inSpecificPages = new HashSet<IAttributeType<?>>();
+		inSpecificPages.addAll(Arrays.asList(hiddenAttributes));
 		for (IPage iPage : list) {
 			inSpecificPages.addAll(Arrays.asList(iPage.getAttributes()));
 			inSpecificPages.addAll(Arrays.asList(iPage.getHiddenAttributes()));
@@ -244,56 +245,6 @@ public class PageRuntimeModel {
 		}
 	}
 	
-//	static class TypeOrder {
-//		ItemType it;
-//		int count;
-//		int index;
-//		TypeOrder[] parents;
-//	}
-	
-//	protected TypeDefinition[] computeTypeOrder(Item item) {
-//		HashMap<ItemType, TypeOrder> maps = new HashMap<ItemType, TypeOrder>();
-//		TypeOrder[] instanceTypeOrder = compute(maps, item.getType());
-//		if (item.getGroup() != null)
-//			instanceTypeOrder = ArraysUtil.addList(TypeOrder.class, instanceTypeOrder, compute(maps, item.getGroup()));
-//		
-//		ArrayList<TypeDefinition> ret = new ArrayList<TypeDefinition>();
-//		for (int i = 0; i < instanceTypeOrder.length; i++) {
-//			compute(ret, instanceTypeOrder[i]);
-//		}
-//	}
-//
-//	private void compute(TypeOrder ... typeOrder ) {
-//		ArrayList<TypeOrder> v;
-//		ArrayList<TypeOrder> next;
-//		int index = 0;
-//		
-//	}
-//
-//	private TypeOrder[] compute(HashMap<ItemType, TypeOrder> maps, ItemType... types) {
-//		if (types.length == 0)
-//			return null;
-//		if (types.length == 1 && types[0] == null)
-//			return null;
-//		int i = 0;
-//		TypeOrder[] retArray = new TypeOrder[types.length];
-//		for (ItemType type : types) {
-//			TypeOrder ret = maps.get(type);
-//			if (ret == null) {
-//				ret = new TypeOrder();
-//				ret.it = type;
-//				ret.count = 1;
-//				ret.parents = compute(maps, type.getSuperType());
-//				maps.put(type, ret);
-//			} else {
-//				ret.count++;
-//				compute(maps, type.getSuperType());
-//			}
-//			retArray[i++] = ret;
-//		}
-//		
-//		return retArray;
-//	}
 
 	protected Map<IAttributeType<?>, UIField> iComputeFields(Item item, IPage[] pages) {
 		Map<IAttributeType<?>, UIField> fiedls = new HashMap<IAttributeType<?>, UIField>();
