@@ -22,6 +22,7 @@
  */
 package fr.imag.adele.cadse.core.impl.internal;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -1566,6 +1567,58 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 				((Internal) it).computeAllContcreteType(set, visiteur);
 			}
 		}
+	}
+	
+	@Override
+	public <T extends ObjectAdapter<T>> T adapt(Class<T> clazz) {
+		if (_extendedBy != null) {
+			for (TypeDefinition ext : _extendedBy) {
+				T ret = ext.adapt(clazz);
+				if (ret != null)
+					return ret;
+			}
+		}
+		T ret = super.adapt(clazz);
+		if (ret != null)
+			return ret;
+		if (_superType != null)
+			return _superType.adapt(clazz);
+		return null;
+	}
+	
+	@Override
+	public <T extends ObjectAdapter<T>> T[] adapts(Class<T> clazz) {
+		HashSet<T> retSet = new HashSet<T>();
+		T[] ret = null;
+		if (_superType != null) {
+			ret = _superType.adapts(clazz);
+			if (ret != null) {
+				retSet.addAll(Arrays.asList(ret));
+			}
+		}
+		ret = super.adapts(clazz);
+		if (ret != null) {
+			retSet.addAll(Arrays.asList(ret));
+			for (int i = 0; i < ret.length; i++) {
+				T t = ret[i];
+				T[] ow = t.getOverrideObject();
+				if (ow != null)
+					retSet.removeAll(Arrays.asList(ow));
+			}
+		}
+		if (_extendedBy != null) {
+			for (TypeDefinition ext : _extendedBy) {
+				ret = ext.adapts(clazz);
+				retSet.addAll(Arrays.asList(ret));
+				for (int i = 0; i < ret.length; i++) {
+					T t = ret[i];
+					T[] ow = t.getOverrideObject();
+					if (ow != null)
+						retSet.removeAll(Arrays.asList(ow));
+				}
+			}
+		}		
+		return (T[]) retSet.toArray((T[]) Array.newInstance(clazz, retSet.size()));
 	}
 
 	

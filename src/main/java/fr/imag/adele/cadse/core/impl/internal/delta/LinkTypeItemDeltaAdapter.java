@@ -20,6 +20,7 @@ import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.LogicalWorkspace;
+import fr.imag.adele.cadse.core.ObjectAdapter;
 import fr.imag.adele.cadse.core.WorkspaceListener;
 import fr.imag.adele.cadse.core.attribute.CheckStatus;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
@@ -971,7 +972,12 @@ public class LinkTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements Li
 	}
 
 	@Override
-	public <T> T adapt(Class<T> clazz) {
+	public <T extends ObjectAdapter<T>> T adapt(Class<T> clazz) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+	
+	@Override
+	public <T extends ObjectAdapter<T>> T[] adapts(Class<T> clazz) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 

@@ -55,6 +55,7 @@ import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.Messages;
+import fr.imag.adele.cadse.core.ObjectAdapter;
 import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.WorkspaceListener;
 import fr.imag.adele.cadse.core.TypeDefinition.Internal;
@@ -4176,7 +4177,13 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 		return false;
 	}
 
-	public <T> T adapt(Class<T> clazz) {
+	@Override
+	public <T extends ObjectAdapter<T>> T adapt(Class<T> clazz) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+	
+	@Override
+	public <T extends ObjectAdapter<T>> T[] adapts(Class<T> clazz) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
@@ -4201,8 +4208,7 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 
 	@Override
 	public Exporter[] getExporter(String exporterType) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Not implemented method");
 	}
 
 	@Override
@@ -4213,32 +4219,27 @@ public class ItemDeltaImpl extends ItemOrLinkDeltaImpl implements ItemDelta {
 
 	@Override
 	public void build(IBuildingContext context) {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException("Not implemented method");
 	}
 
 	@Override
 	public void clean(IBuildingContext context, boolean componentsContent) {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException("Not implemented method");
 	}
 
 	@Override
 	public void compose(IBuildingContext context) {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException("Not implemented method");
 	}
 
 	@Override
 	public void setComposers(Composer... composers) {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException("Not implemented method");
 	}
 
 	@Override
 	public void setExporters(Exporter... exporters) {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException("Not implemented method");
 	}
 
 	public List<LinkType> getLocalOutgoingLinkTypes() {
