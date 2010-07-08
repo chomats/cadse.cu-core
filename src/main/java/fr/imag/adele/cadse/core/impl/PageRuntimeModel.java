@@ -20,14 +20,20 @@ import fr.imag.adele.cadse.core.impl.internal.ui.HierachicPageImpl;
 import fr.imag.adele.cadse.core.impl.internal.ui.PagesImpl;
 import fr.imag.adele.cadse.core.ui.AbstractUIRunningValidator;
 import fr.imag.adele.cadse.core.ui.IPage;
+import fr.imag.adele.cadse.core.ui.PageParticipator;
 import fr.imag.adele.cadse.core.ui.Pages;
 import fr.imag.adele.cadse.core.ui.UIField;
 import fr.imag.adele.cadse.core.ui.UIRunningValidator;
 import fr.imag.adele.cadse.core.ui.UIValidator;
 import fr.imag.adele.cadse.core.ui.view.FilterContext;
 import fr.imag.adele.cadse.core.ui.view.NewContext;
-import fr.imag.adele.cadse.util.ArraysUtil;
 
+/**
+ * Compute the pages structure en function du data model et des object (Fiel, validator, page, attribute, pageparticipator)
+ * 
+ * @author chomats
+ *
+ */
 public class PageRuntimeModel {
 	public static final IPage[] EMPTY_PAGE = new IPage[0];
 	public static PageRuntimeModel INSTANCE = new PageRuntimeModel();
@@ -36,8 +42,15 @@ public class PageRuntimeModel {
 	
 	public Pages getModificationPages(Item item, FilterContext context) {
 		context.setItem(item);
+		context.setModificationPages(true);
 		
+		/*
+		 * List des attributs read only
+		 */
 		Set<IAttributeType<?>> ro = new HashSet<IAttributeType<?>>();
+		/*
+		 * List des validators
+		 */
 		List<UIValidator> validators = new ArrayList<UIValidator>();
 		iComputeValidators(item, context, validators);
 
@@ -54,6 +67,7 @@ public class PageRuntimeModel {
 	public Pages getCreationPages(Item item, NewContext context, IAttributeType<?> ...hiddenAttributesInGenericPage)
 			throws CadseException {
 		context.setItem(item);
+		context.setModificationPages(false);
 		
 		Set<IAttributeType<?>> ro = new HashSet<IAttributeType<?>>();
 		context.setDefaultName(item.getType().getDefaultInstanceName());
@@ -155,6 +169,10 @@ public class PageRuntimeModel {
 			inSpecificPages.addAll(Arrays.asList(iPage.getHiddenAttributes()));
 		}
 
+		PageParticipator p = item.getType().adapt(PageParticipator.class);
+		if (p != null)
+			p.filterPage(item, context, list, ro, inSpecificPages);
+		
 		iComputeGenericPage(item, context, inSpecificPages, ro, list, false);
 	}
 
@@ -166,6 +184,11 @@ public class PageRuntimeModel {
 			inSpecificPages.addAll(Arrays.asList(iPage.getAttributes()));
 			inSpecificPages.addAll(Arrays.asList(iPage.getHiddenAttributes()));
 		}
+		
+		PageParticipator p = item.getType().adapt(PageParticipator.class);
+		if (p != null)
+			p.filterPage(item, context, list, ro, inSpecificPages);
+		
 		iComputeGenericPage(item, context, inSpecificPages, ro, list, true);
 		
 	}
@@ -233,6 +256,13 @@ public class PageRuntimeModel {
 		
 	}
 
+	/**
+	 * Compute the validator list in the main type and all the group.
+	 * 
+	 * @param item
+	 * @param context
+	 * @param validators
+	 */
 	protected void iComputeValidators(Item item, FilterContext context,
 			List<UIValidator> validators) {
 		Set<TypeDefinition> visited = new HashSet<TypeDefinition>();
@@ -255,14 +285,21 @@ public class PageRuntimeModel {
 		
 		for (IAttributeType<?> att : localAllAttributeTypes) {
 			UIField f = iFindField(item, att);
+			// if no field is found then create a default field.
 			if (f == null)
-				f = att.generateDefaultField();
+				f = att.generateDefaultField(); 
 			if (f != null)
 				fiedls.put(att, f);
 		}
 		return fiedls;
 	}
 
+	/**
+	 * Search a specific field form the main type of item or in group.
+	 * @param item the point from the field is searched
+	 * @param att the att associated for field
+	 * @return a specific field or null if not found.
+	 */
 	protected UIField iFindField(Item item, IAttributeType<?> att) {
 		UIField ret = null;
 		ItemType type = item.getType();
@@ -274,7 +311,12 @@ public class PageRuntimeModel {
 		}
 		return ret;
 	}
-
+	
+	/**
+	 * Create running validator from model validator.
+	 * @param validators
+	 * @return
+	 */
 	protected List<UIRunningValidator> createRunning(
 			List<UIValidator> validators) {
 		ArrayList<UIRunningValidator> ret = new ArrayList<UIRunningValidator>();
