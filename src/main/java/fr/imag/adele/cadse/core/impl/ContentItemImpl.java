@@ -380,118 +380,118 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 		return NO_CHILDREN;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.content.ContentItem#generate(fr.imag.adele.cadse.core.GenStringBuilder,
-	 *      java.lang.String, java.lang.String, java.util.Set,
-	 *      fr.imag.adele.cadse.core.GenContext)
-	 */
-	public void generate(GenStringBuilder sb, String type, String kind, Set<String> imports, GenContext context) {
-	}
-
-	/**
-	 * Generate.
-	 * 
-	 * @param item
-	 *            the item
-	 * @param sb
-	 *            the sb
-	 * @param type
-	 *            the type
-	 * @param kind
-	 *            the kind
-	 * @param imports
-	 *            the imports
-	 * @param context
-	 *            the context
-	 */
-	public static void generate(Item item, GenStringBuilder sb, String type, String kind, Set<String> imports,
-			GenContext context) {
-		ContentItem cm = item.getContentItem();
-		if (cm != null) {
-			cm.generate(sb, type, kind, imports, context);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.content.ContentItem#generateParts(fr.imag.adele.cadse.core.GenStringBuilder,
-	 *      java.lang.String, java.lang.String, java.util.Set,
-	 *      fr.imag.adele.cadse.core.GenContext)
-	 */
-	public void generateParts(GenStringBuilder sb, String type, String kind, Set<String> imports, GenContext context) {
-		generateParts(getOwnerItem(), sb, type, kind, imports, context);
-	}
-
-	/**
-	 * Generate parts.
-	 * 
-	 * @param item
-	 *            the item
-	 * @param sb
-	 *            the sb
-	 * @param type
-	 *            the type
-	 * @param kind
-	 *            the kind
-	 * @param imports
-	 *            the imports
-	 * @param context
-	 *            the context
-	 */
-	public static void generateParts(Item item, GenStringBuilder sb, String type, String kind, Set<String> imports,
-			GenContext context) {
-		for (Link l : new ArrayList<Link>(item.getOutgoingLinks())) {
-			if (l.getLinkType().isPart() && l.isLinkResolved()) {
-				ContentItem cm = l.getResolvedDestination().getContentItem();
-				if (cm != null) {
-					cm.generate(sb, type, kind, imports, context);
-				}
-			}
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.content.ContentItem#generatePart(java.lang.String,
-	 *      fr.imag.adele.cadse.core.GenStringBuilder, java.lang.String,
-	 *      java.lang.String, java.util.Set,
-	 *      fr.imag.adele.cadse.core.GenContext)
-	 */
-	public void generatePart(String linkID, GenStringBuilder sb, String type, String kind, Set<String> imports,
-			GenContext context) {
-
-		Item dest = _ownerItem.getOutgoingItem(linkID, false);
-		if (dest != null) {
-			ContentItem cm = dest.getContentItem();
-			if (cm != null) {
-				cm.generate(sb, type, kind, imports, context);
-			}
-		}
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.imag.adele.cadse.core.content.ContentItem#generateParts(java.lang.String,
-	 *      fr.imag.adele.cadse.core.GenStringBuilder, java.lang.String,
-	 *      java.lang.String, java.util.Set,
-	 *      fr.imag.adele.cadse.core.GenContext)
-	 */
-	public void generateParts(String linkID, GenStringBuilder sb, String type, String kind, Set<String> imports,
-			GenContext context) {
-		Collection<Item> dests = _ownerItem.getOutgoingItems(linkID, false);
-		for (Item aItem : dests) {
-			ContentItem cm = aItem.getContentItem();
-			if (cm != null) {
-				cm.generate(sb, type, kind, imports, context);
-			}
-		}
-	}
+//	/*
+//	 * (non-Javadoc)
+//	 * 
+//	 * @see fr.imag.adele.cadse.core.content.ContentItem#generate(fr.imag.adele.cadse.core.GenStringBuilder,
+//	 *      java.lang.String, java.lang.String, java.util.Set,
+//	 *      fr.imag.adele.cadse.core.GenContext)
+//	 */
+//	public void generate(GenStringBuilder sb, String type, String kind, Set<String> imports, GenContext context) {
+//	}
+//
+//	/**
+//	 * Generate.
+//	 * 
+//	 * @param item
+//	 *            the item
+//	 * @param sb
+//	 *            the sb
+//	 * @param type
+//	 *            the type
+//	 * @param kind
+//	 *            the kind
+//	 * @param imports
+//	 *            the imports
+//	 * @param context
+//	 *            the context
+//	 */
+//	public static void generate(Item item, GenStringBuilder sb, String type, String kind, Set<String> imports,
+//			GenContext context) {
+//		ContentItem cm = item.getContentItem();
+//		if (cm != null) {
+//			cm.generate(sb, type, kind, imports, context);
+//		}
+//	}
+//
+//	/*
+//	 * (non-Javadoc)
+//	 * 
+//	 * @see fr.imag.adele.cadse.core.content.ContentItem#generateParts(fr.imag.adele.cadse.core.GenStringBuilder,
+//	 *      java.lang.String, java.lang.String, java.util.Set,
+//	 *      fr.imag.adele.cadse.core.GenContext)
+//	 */
+//	public void generateParts(GenStringBuilder sb, String type, String kind, Set<String> imports, GenContext context) {
+//		generateParts(getOwnerItem(), sb, type, kind, imports, context);
+//	}
+//
+//	/**
+//	 * Generate parts.
+//	 * 
+//	 * @param item
+//	 *            the item
+//	 * @param sb
+//	 *            the sb
+//	 * @param type
+//	 *            the type
+//	 * @param kind
+//	 *            the kind
+//	 * @param imports
+//	 *            the imports
+//	 * @param context
+//	 *            the context
+//	 */
+//	public static void generateParts(Item item, GenStringBuilder sb, String type, String kind, Set<String> imports,
+//			GenContext context) {
+//		for (Link l : new ArrayList<Link>(item.getOutgoingLinks())) {
+//			if (l.getLinkType().isPart() && l.isLinkResolved()) {
+//				ContentItem cm = l.getResolvedDestination().getContentItem();
+//				if (cm != null) {
+//					cm.generate(sb, type, kind, imports, context);
+//				}
+//			}
+//		}
+//	}
+//
+//	/*
+//	 * (non-Javadoc)
+//	 * 
+//	 * @see fr.imag.adele.cadse.core.content.ContentItem#generatePart(java.lang.String,
+//	 *      fr.imag.adele.cadse.core.GenStringBuilder, java.lang.String,
+//	 *      java.lang.String, java.util.Set,
+//	 *      fr.imag.adele.cadse.core.GenContext)
+//	 */
+//	public void generatePart(String linkID, GenStringBuilder sb, String type, String kind, Set<String> imports,
+//			GenContext context) {
+//
+//		Item dest = _ownerItem.getOutgoingItem(linkID, false);
+//		if (dest != null) {
+//			ContentItem cm = dest.getContentItem();
+//			if (cm != null) {
+//				cm.generate(sb, type, kind, imports, context);
+//			}
+//		}
+//
+//	}
+//
+//	/*
+//	 * (non-Javadoc)
+//	 * 
+//	 * @see fr.imag.adele.cadse.core.content.ContentItem#generateParts(java.lang.String,
+//	 *      fr.imag.adele.cadse.core.GenStringBuilder, java.lang.String,
+//	 *      java.lang.String, java.util.Set,
+//	 *      fr.imag.adele.cadse.core.GenContext)
+//	 */
+//	public void generateParts(String linkID, GenStringBuilder sb, String type, String kind, Set<String> imports,
+//			GenContext context) {
+//		Collection<Item> dests = _ownerItem.getOutgoingItems(linkID, false);
+//		for (Item aItem : dests) {
+//			ContentItem cm = aItem.getContentItem();
+//			if (cm != null) {
+//				cm.generate(sb, type, kind, imports, context);
+//			}
+//		}
+//	}
 	
 	/*
 	 * (non-Javadoc)

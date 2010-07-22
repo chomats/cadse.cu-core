@@ -32,7 +32,6 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import fr.imag.adele.cadse.core.AdaptableObjectImpl;
 import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
@@ -90,6 +89,7 @@ import fr.imag.adele.cadse.core.util.Convert;
 import fr.imag.adele.cadse.core.util.ElementsOrder;
 import fr.imag.adele.cadse.core.util.HashList;
 import fr.imag.adele.cadse.core.var.ContextVariable;
+import fr.imag.adele.cadse.objectadapter.AdaptableObjectImpl;
 import fr.imag.adele.cadse.util.ArraysUtil;
 import fr.imag.adele.cadse.util.NLS;
 

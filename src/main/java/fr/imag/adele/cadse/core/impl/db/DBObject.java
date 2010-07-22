@@ -4,11 +4,11 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import fr.imag.adele.cadse.core.AdaptableObjectImpl;
 import fr.imag.adele.cadse.core.CadseIllegalArgumentException;
 import fr.imag.adele.cadse.core.INamed;
 import fr.imag.adele.cadse.core.INamedUUID;
 import fr.imag.adele.cadse.core.Item;
+import fr.imag.adele.cadse.objectadapter.AdaptableObjectImpl;
 import fr.imag.adele.teamwork.db.ModelVersionDBException;
 
 public class DBObject extends AdaptableObjectImpl implements INamedUUID, INamed {
