@@ -1,6 +1,5 @@
 package fr.imag.adele.cadse.core.impl;
 
-import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
