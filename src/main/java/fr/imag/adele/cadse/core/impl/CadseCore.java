@@ -33,12 +33,14 @@ import java.util.regex.Pattern;
 
 import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
+import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.IItemManager;
 import fr.imag.adele.cadse.core.Item;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
 import fr.imag.adele.cadse.core.LogicalWorkspace;
+import fr.imag.adele.cadse.core.WSModelState;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.impl.internal.CadseDomainImpl;
 import fr.imag.adele.cadse.core.oper.WSOperation;
@@ -208,7 +210,6 @@ public class CadseCore {
 	 * @throws CadseException
 	 *             the melusine exception
 	 */
-	@Deprecated
 	public static Item createItemIfNeed(String uniqueName, String shortname,
 			ItemType it, Item parent, LinkType lt, Object... attributes)
 			throws CadseException {
@@ -395,6 +396,15 @@ public class CadseCore {
 
 	public static boolean isStarted() {
 		return CadseDomainImpl.STARTED;
+	}
+	
+	/**
+	 * Return true if the cadse runtime is started, loaded and running
+	 * @return
+	 */
+	public static boolean isCadseRuntimeRunning() {
+		return CadseDomainImpl.STARTED && CadseGCST.ITEM != null && getLogicalWorkspace() != null
+		  && getLogicalWorkspace().getState() == WSModelState.RUN;
 	}
 
 	public static Map<String, IAttributeType<?>> getOldNameMap() {
