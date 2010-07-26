@@ -54,19 +54,19 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 
 	@Override
 	public void addActionContributeur(IActionContributor contributor) {
-		// TODO Auto-generated method stub
-
+	}
+	
+	@Override
+	public void removeActionContributeur(IActionContributor contributor) {
 	}
 
 	@Override
 	public LinkType createLinkType(UUID id, int intID, String name, int kind,
 			int min, int max, String selection, LinkType inverse)
 			throws CadseException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	// TODO LINK TYPE RUNTIME or LINK TYPE EDITION (CADSEG) ?
 	/*
 	 * id-runtime == id if item is static else attribute 'id-runtime'
 	 */

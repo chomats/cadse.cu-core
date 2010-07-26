@@ -347,6 +347,10 @@ public class LogicalWorkspaceTransactionImpl extends AdaptableObjectImpl impleme
 		}
 		return null;
 	}
+	
+	public Collection<ItemDelta> getItemsDelta() {
+		return _operations.values();
+	}
 
 	public ItemDelta getItem(Key key) {
 

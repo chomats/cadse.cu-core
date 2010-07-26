@@ -1154,8 +1154,6 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 	 */
 	public void setIcon(String url) {
 		_image = url;
-		Logger.getLogger("icon").log(Level.INFO,
-				"set icon to " + url + " of ItemType " + getDisplayName());
 	}
 
 	/*
@@ -1609,6 +1607,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 		if (_extendedBy != null) {
 			for (TypeDefinition ext : _extendedBy) {
 				ret = ext.adapts(clazz);
+				if (ret == null) continue;
 				retSet.addAll(Arrays.asList(ret));
 				for (int i = 0; i < ret.length; i++) {
 					T t = ret[i];

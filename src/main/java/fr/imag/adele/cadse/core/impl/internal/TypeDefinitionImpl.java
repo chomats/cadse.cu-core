@@ -902,6 +902,19 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 	public synchronized void addActionContributeur(IActionContributor contributor) {
 		_actionContributors = ArraysUtil.add(IActionContributor.class, _actionContributors, contributor);
 	}
+	
+
+	/**
+	 * Remove un contributeur d'actions.
+	 * 
+	 * @param contributor
+	 *            the contributor
+	 */
+	@Override
+	public synchronized void removeActionContributeur(IActionContributor contributor) {
+		_actionContributors = ArraysUtil.remove(IActionContributor.class, _actionContributors, contributor);
+	}
+
 
 	@Override
 	final public Set<IActionContributor> getAllActionContribution() {
