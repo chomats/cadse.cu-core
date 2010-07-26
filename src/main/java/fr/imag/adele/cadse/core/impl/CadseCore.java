@@ -444,8 +444,11 @@ public class CadseCore {
 	}
 
 	public static boolean ignoreAttribute(ItemType it, String attName) {
-		if (_ignoreCompiled == null)
+		if (_ignoreCompiled == null && _ignore != null)
 			_ignoreCompiled = Pattern.compile(_ignore);
+		if (_ignoreCompiled == null)
+			return false;
+		
 		while (it != null) {
 			if (_ignoreCompiled.matcher((it.getId()+"::"+attName)).matches())
 				return true;
