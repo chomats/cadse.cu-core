@@ -23,19 +23,18 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import fr.imag.adele.cadse.core.CadseDomain;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
+import fr.imag.adele.cadse.core.GenContext;
 import fr.imag.adele.cadse.core.IItemManager;
 import fr.imag.adele.cadse.core.Item;
+import fr.imag.adele.cadse.core.ItemFilter;
 import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.Link;
 import fr.imag.adele.cadse.core.LinkType;
@@ -43,9 +42,13 @@ import fr.imag.adele.cadse.core.LogicalWorkspace;
 import fr.imag.adele.cadse.core.WSModelState;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.impl.internal.CadseDomainImpl;
+import fr.imag.adele.cadse.core.iter.ItemIterable;
+import fr.imag.adele.cadse.core.iter.ItemPartIterable;
 import fr.imag.adele.cadse.core.oper.WSOperation;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
 import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
+import fr.imag.adele.cadse.core.var.ContextVariable;
+import fr.imag.adele.cadse.objectadapter.ObjectAdapter;
 import fr.imag.adele.cadse.util.ArraysUtil;
 
 /**
@@ -508,6 +511,35 @@ public class CadseCore {
 		return cadseDomain.inDevelopmentMode();
 	}
 	
+
+	static public <T extends ObjectAdapter<T>> void adapts(Item currentItem, 
+			ContextVariable context, ItemIterable giter,
+			Class<T> clazz, List<T> adapters, ItemFilter<T> filter) {
+		giter.beginAll(currentItem, context);
+		for (Item anItem : giter) {
+			T[] producteurs = anItem.getType().adapts(clazz);
+
+			for (int i = 0; i < producteurs.length; i++) {
+				T p = producteurs[i];
+				
+				if (filter != null && !filter.accept(p))
+					continue;
+				adapters.add(p);
+			}
+		}
+		giter.endAll(currentItem, context);
+
+	}
 	
+	static public <T extends ObjectAdapter<T>> void adapts(Item currentItem,
+			ContextVariable context,
+			Class<T> clazz, List<T> adapters, ItemFilter<T> filter) {
+		ItemIterable iter = null;
+		iter = currentItem.getType().adapt(ItemIterable.class);
+		if (iter == null)
+			iter = new ItemPartIterable();
+		
+		adapts(currentItem, context, iter, clazz, adapters, filter);
+	}
 
 }
