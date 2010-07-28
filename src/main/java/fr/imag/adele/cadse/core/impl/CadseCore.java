@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -511,10 +512,20 @@ public class CadseCore {
 		return cadseDomain.inDevelopmentMode();
 	}
 	
+	static public <T extends ObjectAdapter<T>> void adapts(Item currentItem,
+			ContextVariable context,
+			Class<T> clazz, Set<T> adapters, ItemFilter<T> filter) {
+		ItemIterable iter = null;
+		iter = currentItem.getType().adapt(ItemIterable.class);
+		if (iter == null)
+			iter = new ItemPartIterable();
+		
+		adapts(currentItem, context, iter, clazz, adapters, filter);
+	}
 
 	static public <T extends ObjectAdapter<T>> void adapts(Item currentItem, 
 			ContextVariable context, ItemIterable giter,
-			Class<T> clazz, List<T> adapters, ItemFilter<T> filter) {
+			Class<T> clazz, Set<T> adapters, ItemFilter<T> filter) {
 		giter.beginAll(currentItem, context);
 		for (Item anItem : giter) {
 			T[] producteurs = anItem.getType().adapts(clazz);
@@ -531,15 +542,113 @@ public class CadseCore {
 
 	}
 	
+	public interface AdapterCalleble<T extends ObjectAdapter<T>> {
+		
+		void call(Item currentItem, T adapter);
+	}
+	
+	static public <T extends ObjectAdapter<T>> void callAdapts(Item currentItem,
+			ContextVariable context,
+			Class<T> clazz, AdapterCalleble<T> call, ItemFilter<T> filter) throws CadseException {
+		ItemIterable iter = null;
+		iter = currentItem.getType().adapt(ItemIterable.class);
+		if (iter == null)
+			iter = new ItemPartIterable();
+		
+		callAdapts(currentItem, context, iter, clazz, call, filter);
+	}
+	
+	static public <T extends ObjectAdapter<T>> void callAdapts(Item currentItem, 
+			ContextVariable context, ItemIterable giter,
+			Class<T> clazz, AdapterCalleble<T> call, ItemFilter<T> filter) throws CadseException {
+		List<Throwable> errors = new ArrayList<Throwable>();
+		giter.beginAll(currentItem, context);
+		for (Item anItem : giter) {
+			T[] producteurs = anItem.getType().adapts(clazz);
+
+			for (int i = 0; i < producteurs.length; i++) {
+				T p = producteurs[i];
+				
+				if (filter != null && !filter.accept(p))
+					continue;
+				try {
+					call.call(anItem, p);
+				} catch (Throwable e) {
+					errors.add(e);
+				}
+			}
+		}
+		giter.endAll(currentItem, context);
+		if (!errors.isEmpty()) {
+			throw new CadseException("Errors in call adapter", (Throwable[]) errors.toArray(new Throwable[errors.size()]));
+		}
+
+	}
+	
+	static public class AdapterEntry<T extends ObjectAdapter<T>> {
+		
+		public AdapterEntry(Item currentItem, T adapter) {
+			super();
+			this.currentItem = currentItem;
+			this.adapter = adapter;
+		}
+		
+		public final T adapter;
+		public final Item currentItem;
+		
+		
+		public T getAdapter() {
+			return adapter;
+		}
+		
+		public Item getCurrentItem() {
+			return currentItem;
+		}
+	}
+	
 	static public <T extends ObjectAdapter<T>> void adapts(Item currentItem,
 			ContextVariable context,
-			Class<T> clazz, List<T> adapters, ItemFilter<T> filter) {
+			Class<T> clazz, List<AdapterEntry<T>> adapters, ItemFilter<T> filter) {
 		ItemIterable iter = null;
 		iter = currentItem.getType().adapt(ItemIterable.class);
 		if (iter == null)
 			iter = new ItemPartIterable();
 		
 		adapts(currentItem, context, iter, clazz, adapters, filter);
+	}
+	
+	static public <T extends ObjectAdapter<T>> void adapts(Item currentItem, 
+			ContextVariable context, ItemIterable giter,
+			Class<T> clazz, List<AdapterEntry<T>> adatpters, ItemFilter<T> filter)  {
+		giter.beginAll(currentItem, context);
+		for (Item anItem : giter) {
+			T[] producteurs = anItem.getType().adapts(clazz);
+
+			for (int i = 0; i < producteurs.length; i++) {
+				T p = producteurs[i];
+				
+				if (filter != null && !filter.accept(p))
+					continue;
+					adatpters.add(new AdapterEntry<T>(anItem, p));
+			}
+		}
+		giter.endAll(currentItem, context);
+	}
+
+	public static <T extends ObjectAdapter<T>> T adapt(Item currentItem,
+			Class<T> clazz, ItemFilter<T> filter) {
+		
+		T[] producteurs = currentItem.getType().adapts(clazz);
+
+		for (int i = 0; i < producteurs.length; i++) {
+			T p = producteurs[i];
+			
+			if (filter != null && !filter.accept(p))
+				continue;
+			
+			return p;
+		}
+		return null;
 	}
 
 }
