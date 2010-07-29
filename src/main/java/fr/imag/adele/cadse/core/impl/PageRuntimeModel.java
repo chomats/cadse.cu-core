@@ -239,6 +239,13 @@ public class PageRuntimeModel {
 		item.getType().computeGenericPage(context,
 				genericPage, inSpecificPages, ro, visited, CadseGCST.ITEM_at_NAME_);
 		list.add(0, genericPage);
+		IPage[] blocs = genericPage.getBlocks();
+		for (IPage b : blocs) {
+			if (b.isEmptyPage()) continue;
+			b.setTitle(item.getType().getDisplayName());
+			b.setLabel(item.getType().getDisplayName());
+			break;
+		}
 		ItemType group = item.getGroup();
 		if (group instanceof ItemTypeItemDeltaAdapter) {
 			group = (ItemType) ((ItemTypeItemDeltaAdapter) group).delta().getBaseItem();

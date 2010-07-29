@@ -177,5 +177,16 @@ public class HierachicPageImpl extends AbstractGeneratedItem implements IPage, H
 	public void addOverridePage(IPage... pages) {
 		throw new UnsupportedOperationException();
 	}
+
+
+	@Override
+	public void setTitle(String title) {
+		// do nothing : cannot change
+	}
+	
+	@Override
+	public void setLabel(String label) {
+		// do nothing : cannot change
+	}
 	
 }

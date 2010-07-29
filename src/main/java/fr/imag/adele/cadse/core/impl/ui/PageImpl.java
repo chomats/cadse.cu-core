@@ -268,6 +268,10 @@ public class PageImpl extends AbstractGeneratedItem implements IPage {
 		return _label;
 	}
 
+	@Override
+	public void setLabel(String label) {
+		_label = label;		
+	}
 	
 
 
