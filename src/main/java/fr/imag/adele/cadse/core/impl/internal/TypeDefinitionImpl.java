@@ -35,7 +35,7 @@ import fr.imag.adele.cadse.core.impl.ui.ModificationAction;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransactionListener;
 import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
 import fr.imag.adele.cadse.core.ui.AbstractActionContributor;
-import fr.imag.adele.cadse.core.ui.HierarchicPage;
+import fr.imag.adele.cadse.core.ui.HierarchicalPage;
 import fr.imag.adele.cadse.core.ui.IActionContributor;
 import fr.imag.adele.cadse.core.ui.IActionPage;
 import fr.imag.adele.cadse.core.ui.IPage;
@@ -623,7 +623,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 	 * (fr.imag.adele.cadse.core.ui.view.FilterContext, fr.imag.adele.cadse.core.impl.internal.ui.HierachicPageImpl,
 	 * java.util.HashSet, java.util.Set)
 	 */
-	public void computeGenericPage(FilterContext context, HierarchicPage genericPage,
+	public void computeGenericPage(FilterContext context, HierarchicalPage genericPage,
 			HashSet<IAttributeType<?>> inSpecificPages, Set<IAttributeType<?>> ro, Set<TypeDefinition> visited,
 			IAttributeType<?>... firstAttributes) {
 		if (!visited.add(this)) {
@@ -690,7 +690,7 @@ public class TypeDefinitionImpl extends ItemImpl implements TypeDefinition, Type
 		return null;
 	}
 
-	protected boolean canBeAddedInGenericPage(HierarchicPage genericPage, IAttributeType<?> attr) {
+	protected boolean canBeAddedInGenericPage(HierarchicalPage genericPage, IAttributeType<?> attr) {
 		if (!attr.isShowInDefaultMP() && genericPage.isModificationPage()) {
 			return false;
 		}

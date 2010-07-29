@@ -7,18 +7,18 @@ import fr.imag.adele.cadse.core.ItemType;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.impl.internal.AbstractGeneratedItem;
 import fr.imag.adele.cadse.core.impl.ui.PageImpl;
-import fr.imag.adele.cadse.core.ui.HierarchicPage;
+import fr.imag.adele.cadse.core.ui.HierarchicalPage;
 import fr.imag.adele.cadse.core.ui.IActionPage;
 import fr.imag.adele.cadse.core.ui.IPage;
 import fr.imag.adele.cadse.util.ArraysUtil;
 
-public class HierachicPageImpl extends AbstractGeneratedItem implements IPage, HierarchicPage {
+public class HierachicalPageImpl extends AbstractGeneratedItem implements IPage, HierarchicalPage {
 	protected IPage[] _bloc = null;
 	private ItemType _it;
 	boolean _modificationPage;
 	boolean _groupPage;
 	
-	public HierachicPageImpl(ItemType it, boolean modificationPage) {
+	public HierachicalPageImpl(ItemType it, boolean modificationPage) {
 		_it = it;
 		_modificationPage = modificationPage;
 	}
