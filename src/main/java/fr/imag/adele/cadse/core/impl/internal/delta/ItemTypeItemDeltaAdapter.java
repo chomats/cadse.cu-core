@@ -36,7 +36,7 @@ import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransaction;
 import fr.imag.adele.cadse.core.transaction.LogicalWorkspaceTransactionListener;
 import fr.imag.adele.cadse.core.transaction.delta.ItemDelta;
 import fr.imag.adele.cadse.core.transaction.delta.LinkDelta;
-import fr.imag.adele.cadse.core.ui.HierarchicPage;
+import fr.imag.adele.cadse.core.ui.HierarchicalPage;
 import fr.imag.adele.cadse.core.ui.IActionContributor;
 import fr.imag.adele.cadse.core.ui.IActionPage;
 import fr.imag.adele.cadse.core.ui.IPage;
@@ -760,7 +760,7 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 
 	@Override
 	public void computeGenericPage(FilterContext context,
-			HierarchicPage genericPage,
+			HierarchicalPage genericPage,
 			HashSet<IAttributeType<?>> inSpecificPages,
 			Set<IAttributeType<?>> ro, Set<TypeDefinition> visited, IAttributeType<?>... firstAttributes) {
 		// TODO Auto-generated method stub

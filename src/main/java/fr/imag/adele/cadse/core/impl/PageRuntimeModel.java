@@ -16,7 +16,7 @@ import fr.imag.adele.cadse.core.TypeDefinition;
 import fr.imag.adele.cadse.core.attribute.GroupOfAttributes;
 import fr.imag.adele.cadse.core.attribute.IAttributeType;
 import fr.imag.adele.cadse.core.impl.internal.delta.ItemTypeItemDeltaAdapter;
-import fr.imag.adele.cadse.core.impl.internal.ui.HierachicPageImpl;
+import fr.imag.adele.cadse.core.impl.internal.ui.HierachicalPageImpl;
 import fr.imag.adele.cadse.core.impl.internal.ui.PagesImpl;
 import fr.imag.adele.cadse.core.ui.AbstractUIRunningValidator;
 import fr.imag.adele.cadse.core.ui.IPage;
@@ -233,7 +233,7 @@ public class PageRuntimeModel {
 	protected void iComputeGenericPage(Item item, FilterContext context,
 			HashSet<IAttributeType<?>> inSpecificPages,
 			Set<IAttributeType<?>> ro, List<IPage> list, boolean modificationPage) {
-		HierachicPageImpl genericPage = new HierachicPageImpl(item.getType(),
+		HierachicalPageImpl genericPage = new HierachicalPageImpl(item.getType(),
 				modificationPage);
 		Set<TypeDefinition> visited = new HashSet<TypeDefinition>();
 		item.getType().computeGenericPage(context,
@@ -250,7 +250,7 @@ public class PageRuntimeModel {
 		if (group instanceof ItemTypeItemDeltaAdapter) {
 			group = (ItemType) ((ItemTypeItemDeltaAdapter) group).delta().getBaseItem();
 		}
-		genericPage = new HierachicPageImpl(group,
+		genericPage = new HierachicalPageImpl(group,
 				modificationPage);
 		genericPage.setGroupPage(true);
 		while (group != null) {
