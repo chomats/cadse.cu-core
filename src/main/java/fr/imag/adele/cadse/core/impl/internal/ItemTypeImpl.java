@@ -1446,7 +1446,7 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 			return (IAttributeType<?>[]) ret.toArray(new IAttributeType<?>[ret
 					.size()]);
 		}
-		return getType().getAllAttributeTypes();
+		return super.getLocalAllAttributeTypes();
 	}
 	
 	
