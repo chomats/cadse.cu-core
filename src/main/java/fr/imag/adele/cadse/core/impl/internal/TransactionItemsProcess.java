@@ -948,8 +948,6 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems,
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
 		return ContentItem.INVALID_CONTENT;
 	}
 
