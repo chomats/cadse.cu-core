@@ -236,10 +236,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems,
 				((ContentItemImpl) contentItem).setOwnerItem(goodItem);
 				if (contentItem.getPartParent() == null)
 					((ContentItemImpl) contentItem)
-							.setParentContent(goodItem.getType()
-									.getItemManager()
-									.getParentContentItemWherePutMyContent(
-											contentItem));
+					.setParentContent(((ContentItemImpl) contentItem).getParentContentItemWherePutMyContent());
 				contentItem.init();
 				if (wl.getItem(contentItem.getId()) == null)
 					wl.addId(contentItem, notifie, this);
@@ -876,10 +873,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems,
 				if (contentItem != null) {
 					((ContentItemImpl) contentItem).setOwnerItem(goodItem);
 					((ContentItemImpl) contentItem)
-							.setParentContent(goodItem.getType()
-									.getItemManager()
-									.getParentContentItemWherePutMyContent(
-											contentItem));
+							.setParentContent(((ContentItemImpl) contentItem).getParentContentItemWherePutMyContent());
 					contentItem.init();
 					contentItem.create();
 					if (wl.getItem(contentItem.getId()) == null)
@@ -899,7 +893,7 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems,
 		try {
 			if (ownerItem.isRuntime())
 				return ContentItem.NO_CONTENT;
-
+			
 			ContentItem ret = null;
 			ret = createContentItem(it, idContent, ownerItem);
 			if (ret == null) {
