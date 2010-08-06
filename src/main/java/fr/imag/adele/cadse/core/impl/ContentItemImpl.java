@@ -706,7 +706,4 @@ public abstract class ContentItemImpl extends AbstractGeneratedItem implements C
 		return cm;
 	}
 	
-	
-	
-	
 }
