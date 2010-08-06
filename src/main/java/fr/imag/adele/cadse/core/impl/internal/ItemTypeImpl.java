@@ -1551,7 +1551,6 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 		_contentFactory = cf;
 	}
 
-	
 	@Override
 	public void computeAllContcreteType(TreeSet<ItemType> set,
 			HashSet<TypeDefinition> visiteur) {
@@ -1619,6 +1618,4 @@ public class ItemTypeImpl extends TypeDefinitionImpl implements ItemType,
 		}		
 		return (T[]) retSet.toArray((T[]) Array.newInstance(clazz, retSet.size()));
 	}
-
-	
 }
