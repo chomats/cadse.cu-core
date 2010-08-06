@@ -3,6 +3,7 @@
  */
 package fr.imag.adele.cadse.core.impl.internal;
 
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -15,7 +16,6 @@ import java.util.UUID;
 import fr.imag.adele.cadse.core.CadseException;
 import fr.imag.adele.cadse.core.CadseGCST;
 import fr.imag.adele.cadse.core.ChangeID;
-import fr.imag.adele.cadse.core.IContentItemFactory;
 import fr.imag.adele.cadse.core.IItemFactory;
 import fr.imag.adele.cadse.core.IItemManager;
 import fr.imag.adele.cadse.core.Item;
@@ -899,14 +899,9 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems,
 		try {
 			if (ownerItem.isRuntime())
 				return ContentItem.NO_CONTENT;
-			final IItemManager itemManager = it.getItemManager();
-			final IContentItemFactory contentItemFactory = itemManager
-					.getContentItemFactory();
-			if (contentItemFactory == null) {
-				return ContentItem.NO_CONTENT;
-			}
+
 			ContentItem ret = null;
-			ret = contentItemFactory.createContentItem(idContent, ownerItem);
+			ret = createContentItem(it, idContent, ownerItem);
 			if (ret == null) {
 				ret = ContentItem.INVALID_CONTENT;
 			} else if (ret != ContentItem.NO_CONTENT
@@ -922,6 +917,46 @@ public final class TransactionItemsProcess implements IWorkingLoadingItems,
 			wl.getCadseDomain().log(ownerItem, 0, "error", e.getMessage(), e);
 			return ContentItem.INVALID_CONTENT;
 		}
+	}
+
+	public static ContentItem createContentItem(ItemType it, UUID idContent, Item ownerItem) {
+		final Class<? extends ContentItem> contentItemClass = it.getContentItemClass();
+		if (contentItemClass == null) {
+			return ContentItem.NO_CONTENT;
+		}
+		
+		ContentItem ret;
+		try {
+			ret = contentItemClass.newInstance();
+			ret.setUUID(idContent);
+			return ret;
+		} catch (InstantiationException ignored) {
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		try {
+			ret = contentItemClass.getConstructor(UUID.class).newInstance(idContent);
+			return ret;
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		return ContentItem.INVALID_CONTENT;
 	}
 
 	void loadProjectAssociation(Item item) throws CadseException {

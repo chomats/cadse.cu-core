@@ -904,5 +904,4 @@ public class ItemTypeItemDeltaAdapter extends ItemItemDeltaAdapter implements
 			((Internal) it).computeAllContcreteType(set, visiteur);
 		}
 	}
-
 }
