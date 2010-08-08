@@ -22,6 +22,7 @@ package fr.imag.adele.cadse.core.impl;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -314,12 +315,12 @@ public class CadseCore {
 	 * @throws IOException
 	 * Signals that an I/O exception has occurred.
 	 */
-	 public static ItemDelta loadFromPersistence(LogicalWorkspaceTransaction
-	 transaction, URL url) throws CadseException {
+	 public static ItemDelta[] loadFromPersistence(LogicalWorkspaceTransaction
+	 transaction, Map<UUID, URL> urls) throws CadseException {
 		 if (getInstance() == null) {
 			 return null;
 		 }
-		 return ((CadseDomainImpl)  getInstance()).getPersistence().loadFromPersistence(transaction, url);
+		 return ((CadseDomainImpl)  getInstance()).getPersistence().loadFromPersistence(transaction, urls);
 	 }
 
 	/**

@@ -391,10 +391,18 @@ public class ExportImportCadseFunction {
 			File melusineDir = new File(pf, ".melusine-dir");
 			if (!melusineDir.exists()) throw new CadseException("Internal error : cannot find .melusine-dir");
 			File[] filesserxml = melusineDir.listFiles();
-			Collection<URL> itemdescription = new ArrayList<URL>();
+			Map<UUID, URL> itemdescription = new HashMap<UUID, URL>();
 			for (File fser : filesserxml) {
-				if (fser.getName().endsWith(".ser")) {
-					itemdescription.add(fser.toURI().toURL());
+				String name = fser.getName();
+				if (name.endsWith(".ser")) {
+					UUID uuid;
+					try {
+						uuid = UUID.fromString(name.substring(0,name.length()-4));
+						itemdescription.put(uuid, fser.toURI().toURL());
+					} catch (RuntimeException e) {
+						e.printStackTrace();
+					}
+					
 				}
 			}
 			
@@ -493,7 +501,7 @@ public class ExportImportCadseFunction {
 	public void importCadseItems(Enumeration<URL> enumURLs) throws IOException, MalformedURLException,
 			JAXBException, CadseException, ClassNotFoundException {
 		CadseCore.getCadseDomain().beginOperation("Import cadse");
-		Collection<URL> itemdescription = new ArrayList<URL>();
+		Map<UUID, URL> itemdescription = new HashMap<UUID, URL>();
 		LogicalWorkspace lw = CadseCore.getLogicalWorkspace();
 		Collection<ProjectAssociation> projectAssociationSet = new ArrayList<ProjectAssociation>();
 		
@@ -567,7 +575,14 @@ public class ExportImportCadseFunction {
 						continue;
 					}
 					if (path.endsWith(".ser")) {
-						itemdescription.add(urlEntry);
+						int index = path.lastIndexOf('/');
+						UUID uuid;
+						try {
+							uuid = UUID.fromString(path.substring(index+1,path.length()-4));
+							itemdescription.put(uuid, urlEntry);
+						} catch (RuntimeException e) {
+							e.printStackTrace();
+						}
 					}
 					continue;
 				}
@@ -632,10 +647,18 @@ public class ExportImportCadseFunction {
 
 			File melusineDir = new File(pf, ".melusine-dir");
 			File[] filesserxml = melusineDir.listFiles();
-			Collection<URL> itemdescription = new ArrayList<URL>();
+			HashMap<UUID, URL> itemdescription = new HashMap<UUID, URL>();
 			for (File fser : filesserxml) {
-				if (fser.getName().endsWith(".ser")) {
-					itemdescription.add(fser.toURI().toURL());
+				String name = fser.getName();
+				if (name.endsWith(".ser")) {
+					UUID uuid2;
+					try {
+						uuid2 = UUID.fromString(name.substring(0,name.length()-4));
+						itemdescription.put(uuid2, fser.toURI().toURL());
+					} catch (RuntimeException e) {
+						e.printStackTrace();
+					}
+					
 				}
 			}
 			Collection<ProjectAssociation> projectAssociationSet = new ArrayList<ProjectAssociation>();
