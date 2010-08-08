@@ -621,15 +621,14 @@ public class LogicalWorkspaceTransactionImpl extends AdaptableObjectImpl impleme
 		throw new UnsupportedOperationException();
 	}
 
-	public List<ItemDelta> loadItems(Collection<URL> itemdescription)
+	@Override
+	public List<ItemDelta> loadItems(Map<UUID, URL> itemdescription)
 			throws CadseException, IOException {
-		 ArrayList<ItemDelta> ret =new ArrayList<ItemDelta>();
-		 for (URL itemURL : itemdescription) {
-			final ItemDelta item = CadseCore.loadFromPersistence(this, itemURL);
-			if (item != null)
-				ret.add(item);
-		 }
-		 return ret;
+		ArrayList<ItemDelta> ret =new ArrayList<ItemDelta>();
+	 	final ItemDelta[] item = CadseCore.loadFromPersistence(this, itemdescription);
+		if (item != null)
+			ret.addAll(Arrays.asList(item));
+		return ret;
 	}
 
 	public void loadMetaModel() {
