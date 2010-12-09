@@ -765,9 +765,17 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 	final public List<Link> getOutgoingLinks(LinkType linkType) {
 		CollectedReflectLink ret = new CollectedReflectLink(this);
 		if (isDelegatedValue(linkType)) {
-			ret.setDerived(true);
-			((AbstractGeneratedItem) _group).collectOutgoingLinks(linkType,ret);
-			ret.setDerived(false);
+			
+//			FIXME We try to find the link value recursively up the group hierarchy, this is similar to what is done
+//			in LogicalWorkspace.getAtttribute when owner is false. We have to make the API coherent, with an option
+//			to get owned/inherited outgoing links, that allows filtering. Here we are supposing that getOutgoingLinks
+//			returns all the links.
+//			
+//			ret.setDerived(true);
+//			((AbstractGeneratedItem) _group).collectOutgoingLinks(linkType,ret);
+//			ret.setDerived(false);
+			
+			return _group.getOutgoingLinks(linkType);
 		}
 		else
 			collectOutgoingLinks(linkType, ret);
@@ -2144,16 +2152,38 @@ public abstract class AbstractGeneratedItem extends DBObject implements Item,
 			if (attrSource == null) {
 				return false;
 			}
-			if (attrSource.isMainType()) {
-				return ((ItemType)attrSource).isSuperTypeOf(group);
-			}
-			ExtendedType eAttrSource = (ExtendedType) attrSource;
-			ItemType[] it = eAttrSource.getExendsItemType();
-			for (ItemType type : it) {
-				if (type.isSuperTypeOf(group))
-					return true;
-			}
 			
+			/*
+			 * Attribute is defined in my direct group, it is not delegated
+			 */
+			if (attrSource == group)
+				return false;
+			
+			/*
+			 * Verify f it is an attribute defined in one of my ancestor groups
+			 */
+			while(group != null) {
+
+				/*
+				 * Attribute is defined in indirect group, it is delegated
+				 */
+				if (attrSource == group)
+					return true;
+
+				if (attrSource.isMainType()) {
+					if (((ItemType)attrSource).isSuperTypeOf(group))
+						return true;
+				}
+				else {
+					ExtendedType eAttrSource = (ExtendedType) attrSource;
+					ItemType[] it = eAttrSource.getExendsItemType();
+					for (ItemType type : it) {
+						if (type.isSuperTypeOf(group))
+							return true;
+					}
+				}
+				group = group.getGroup();
+			}
 		}
 		return false;
 	}
