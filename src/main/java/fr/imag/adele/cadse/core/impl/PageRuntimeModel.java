@@ -333,6 +333,11 @@ public class PageRuntimeModel {
 		ItemType type = item.getType();
 		ret = type.findField(att);
 		ItemType group = item.getGroup();
+		
+		if (group instanceof ItemTypeItemDeltaAdapter) {
+			group = (ItemType) ((ItemTypeItemDeltaAdapter) group).delta().getBaseItem();
+		}
+		
 		while (ret == null && group != null) {
 			ret = group.findField(att);
 			group = group.getGroup();
