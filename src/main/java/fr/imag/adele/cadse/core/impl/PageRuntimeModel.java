@@ -307,7 +307,8 @@ public class PageRuntimeModel {
 		Map<IAttributeType<?>, UIField> fiedls = new HashMap<IAttributeType<?>, UIField>();
 		HashSet<IAttributeType<?>> localAllAttributeTypes = new HashSet<IAttributeType<?>>(Arrays.asList(item.getLocalAllAttributeTypes()));
 		for (IPage p : pages) {
-			localAllAttributeTypes.addAll(Arrays.asList(p.getAttributes()));
+			//localAllAttributeTypes.addAll(Arrays.asList(p.getAttributes()));
+			p.getAllAttributes(localAllAttributeTypes);
 		}
 		
 		for (IAttributeType<?> att : localAllAttributeTypes) {
